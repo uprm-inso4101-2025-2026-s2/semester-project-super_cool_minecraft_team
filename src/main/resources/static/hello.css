@@ -1,0 +1,66 @@
+/* Basic, minimal stylesheet for the tutorial page */
+:root{
+    --bg: #f7f9fb;
+    --card-bg: #ffffff;
+    --text: #111827;
+    --muted: #6b7280;
+    --accent: #2563eb; /* blue-600 */
+    --radius: 8px;
+    --max-width: 720px;
+}
+
+/* Simple reset to produce consistent results across browsers */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.45;
+}
+
+.container{
+    max-width:var(--max-width);
+    margin:40px auto;
+    padding:24px;
+}
+
+header h1{font-size:1.6rem;margin-bottom:8px}
+.lead{color:var(--muted);margin-bottom:18px}
+
+.card{
+    background:var(--card-bg);
+    border-radius:var(--radius);
+    padding:18px;
+    box-shadow:0 1px 3px rgba(15,23,42,0.05), 0 1px 2px rgba(15,23,42,0.03);
+    margin-bottom:18px;
+}
+
+.counter-readout{font-weight:600;margin-bottom:12px}
+
+/* A simple, reusable button style */
+.btn{
+    display:inline-block;
+    padding:10px 16px;
+    background:var(--accent);
+    color:white;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+    font-weight:600;
+}
+
+.btn:focus{outline:3px solid rgba(37,99,235,0.18);outline-offset:2px}
+
+/* Utility: visually-hidden but available to screen readers */
+.sr-only{
+    position:absolute!important;
+    width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0
+}
+
+/* Small responsive tweak */
+/* On small screens (max-width: 480px), reduce padding and font size for better readability */
+@media (max-width:480px){
+    .container{padding:16px;margin:20px}
+    header h1{font-size:1.25rem}
+}

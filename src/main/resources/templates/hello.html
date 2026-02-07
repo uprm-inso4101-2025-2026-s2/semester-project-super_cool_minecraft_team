@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Hello — HTML/CSS/JS Tutorial</title>
+
+    <!-- Link to the stylesheet served from Spring Boot's /static folder. -->
+    <link rel="stylesheet" href="/hello.css">
+</head>
+<body>
+
+    <!-- Main container: semantic structure helps learners understand document layout -->
+    <main class="container">
+
+        <header>
+            <h1>Welcome — Hello World</h1>
+            <!-- Short description visible on the page explaining purpose of this example -->
+            <p class="lead">A minimal, formal example showing HTML structure, separation of concerns with CSS and JavaScript, and an accessible counter component.</p>
+        </header>
+
+        <!-- Counter component: demonstrates DOM interaction and accessibility patterns -->
+        <section aria-labelledby="counter-title" class="card">
+            <h2 id="counter-title">Counter demo</h2>
+
+            <!--
+                The live readout element uses aria-live so screen readers announce updates automatically.
+                Keep the value in a plain element (span) so JavaScript can update only the content, not structure.
+            -->
+            <p class="counter-readout">Current value: <span id="counter-value" aria-live="polite">0</span></p>
+
+            <!--
+                Use a native <button> for actions — it is keyboard-focusable and has built-in semantics.
+                The button uses aria-describedby to attach a short helper text for assistive technologies.
+            -->
+            <button id="counter-button" class="btn" type="button" aria-describedby="counter-desc">Increment</button>
+            <p id="counter-desc" class="sr-only">Press to increase the counter by one.</p>
+        </section>
+
+        <section aria-labelledby="message-server" class="card">
+            <h2 id="message-server">Message from the server</h2>
+            <!--
+                This section demonstrates how to render dynamic content from the server.
+                The message variable is passed from the Spring controller and rendered here.
+            -->
+            <p class="server-message" th:text="${message}"></p>
+        </section>
+
+        <hr>
+
+        <section>
+            <h3>Notes for learners</h3>
+            <ul>
+                <li>HTML provides structure and semantics (this file).</li>
+                <li>CSS defines presentation (separate file: <code>/hello.css</code>).</li>
+                <li>JavaScript implements behavior (separate file: <code>/hello.js</code>).</li>
+            </ul>
+        </section>
+
+    </main>
+
+    <!--
+        Load the script with <script defer> so the HTML parses first and the script can assume the DOM exists.
+        The JS file lives in the static folder so it is served directly at /hello.js.
+    -->
+    <script src="/hello.js" defer></script>
+</body>
+</html>
