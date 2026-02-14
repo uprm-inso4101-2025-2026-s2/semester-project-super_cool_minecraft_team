@@ -90,9 +90,79 @@ Minecraft Dependency Visualizer
     Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
 2.3 Requirements
-    - Requirement 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-    - Requirement 2: Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-    - Requirement 3: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+# 2.3.2 — Personas
+
+The following personas represent typical stakeholders who would use the mod dependency analyzer web application. They justify the previously defined epics and user stories.
+
+---
+
+## Persona 1 — “the Modpack Builder”
+
+**Profile:**  
+- 20–25 years old  
+- Experienced Minecraft player  
+- Builds custom modpacks for personal use or friends  
+- Familiar with Fabric and mod loaders  
+- Comfortable with technical tools but values automation  
+
+**Goals:**  
+- Quickly detect missing dependencies  
+- Avoid version conflicts  
+- Export a clean, ready-to-run modpack  
+- Visualize how mods depend on each other  
+
+**Frustrations:**  
+- Manually tracking dependencies  
+- Broken modpacks due to missing or incompatible versions  
+- Searching multiple websites for correct download links  
+
+**Why this persona matters:**  
+Alex justifies features such as automatic dependency detection, graph visualization, conflict resolution, and modpack re-packaging.
+
+---
+
+## Persona 2 — “the Casual Player”
+
+**Profile:**  
+- 16–22 years old  
+- Limited technical knowledge of mod loaders  
+- Downloads modpacks from friends or online communities  
+- Wants simple, reliable setup  
+
+**Goals:**  
+- Ensure all required mods are included  
+- Fix missing dependencies easily  
+- Avoid technical errors during installation  
+
+**Frustrations:**  
+- Game crashes due to missing mods  
+- Confusing download pages  
+- Not knowing which dependency version is correct  
+
+**Why this persona matters:**  
+Sam justifies features like automatic download fetching, clear dependency previews, and guided fixes for missing mods.
+
+---
+
+## Persona 3 — “the Server Organizer”
+
+**Profile:**  
+- 22–30 years old  
+- Runs small multiplayer servers  
+- Manages shared modpacks for a group  
+- Needs consistency across players  
+
+**Goals:**  
+- Maintain a stable modpack  
+- Ensure all players use identical mod versions  
+- Quickly update packs when dependencies change  
+
+**Frustrations:**  
+- Version mismatches between players  
+- Manual updates for every change  
+- Lack of visibility into dependency chains  
+
+---  
 
 2.4 Terminology
     - Term 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
