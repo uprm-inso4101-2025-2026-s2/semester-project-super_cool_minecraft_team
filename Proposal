@@ -90,14 +90,12 @@ Minecraft Dependency Visualizer
     Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
 2.3 Requirements
-    - Requirement 1: User must be able to create and have autentication for their accounts, in the account will be saved the mods and dependencies list.
-    - Requirement 2: Fetching dependencies of mods, this could be created with fabric API for maximum efficency and modularity.
-    - Requirement 3: Fetch the "breaks" in the mods for comparing with dependencies in the modpack and indicate if some mods are incompatible, coul use fabric API too.
-    - Requirement 4: Open the mod packs and read the content for the fetch functions. Needs to read each mod individually to check for the "breaks".
-    - Requirement 5: Pass the data to the other layers of the project to be used on the graph and display.
-    - Requirement 6: Storing the dependencies needed and the mods passed by the user.
-    - Requirement 7: Update the modpacks once is modified on the other layers (depends of the coordinated work with team B with download liks and manegement).
-    - Requirement 8: Merge the dependencies and "breaks" for comparate and identify the incompatibilities.
+    - Requirement 1: Fetching dependencies of mods, this could be created with fabric API for maximum efficency and modularity.
+    - Requirement 2: Fetch the "breaks" in the mods for comparing with dependencies in the modpack and indicate if some mods are incompatible, coul use fabric API too.
+    - Requirement 3: Open the mod packs and read the content for the fetch functions. Needs to read each mod individually to check for the "breaks".
+    - Requirement 4: Pass the data to the other layers of the project to be used on the graph and display.
+    - Requirement 5: Storing the dependencies needed and the mods passed by the user.
+    - Requirement 6: Merge the dependencies and "breaks" for comparate and identify the incompatibilities.
 
 2.4 Terminology
     - Term 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
