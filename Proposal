@@ -128,9 +128,9 @@ Minecraft Dependency Visualizer
     - Function 3: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 
 2.7 Domain Events
-    - Event 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-    - Event 2: Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-    - Event 3: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    Backend
+    - Event 1: Upload endpoint triggered by user uploading a mod to the server.
+    - Event 2: Data System system responds with a ststus to the request to store the mod.
 
 2.8 Interface Requirements
 
