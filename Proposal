@@ -38,9 +38,10 @@ Minecraft Dependency Visualizer
         - Michael Wilson
 
 1.3 Current Situation
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    Minecraft mods rely on other mods, loaders, libraries and specific minecraft versions which would be the mod dependedncies. 
+    If these dependencies aren't met the game will crash or won't launch. This leads to user frustration and wasting their time. These dependencies arent very 
+    easy to acces, and while it would be better to have them in the main dowloader page they are usually seen as plain text in metadata or in dedicated wikis which
+    people who aren't welled versed wont find.
 
 == 1.4. Needs and Ideas
 
