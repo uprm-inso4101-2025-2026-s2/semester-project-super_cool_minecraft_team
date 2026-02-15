@@ -152,6 +152,26 @@ Minecraft Dependency Visualizer
         Represents an individual interacting with the platform to analyze Mods and Modpacks.
         A User can upload or select a Modpack, inspect Dependencies, and view detected Incompatibilities.
         The User initiates analysis processes but does not directly modify domain relationships.
+
+		- Dependency Resolution:
+		    Represents the process of determining and retrieving all Mods required for a Modpack to function correctly.
+		    It identifies missing dependencies and coordinates their acquisition from available repositories.
+
+		- Mod Source:
+		    Represents an external repository or provider from which Mods can be located and downloaded.
+		    A Mod Source contains available versions and metadata needed for dependency satisfaction.
+
+		- Download Task:
+		    Represents the retrieval of a specific Mod version required to satisfy a Dependency.
+		    It ensures the Mod is obtained and prepared for inclusion in the Modpack configuration.
+
+		- Retrieved Mod:
+		    Represents a Mod that has been successfully obtained from a Mod Source to fulfill a Dependency.
+		    It becomes part of the resolved Modpack configuration.
+
+		- Resolution Result:
+		    Represents the outcome of dependency resolution indicating whether all required Mods were found, missing, or conflicting.
+		    It summarizes the state of the Modpack after analysis.
         
 2.6 Domain Functions
     - Function 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
