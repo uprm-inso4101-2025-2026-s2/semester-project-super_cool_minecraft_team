@@ -154,29 +154,29 @@ Minecraft Dependency Visualizer
         The User initiates analysis processes but does not directly modify domain relationships.
         
 2.6 Domain Functions
- - getDependencies(mod) -> Set<DependencyDecl>
-        Gets what mods this mod says it needs (and maybe version rules).
+ - extractDependencies(mod) -> Dependency Resolution
+        Gets the dependencies a Mod says it needs, and the basic rules to satisfy them.
 
-    - findMissingDeps(modpack) -> Set<ModRef>
-        Checks what required mods are missing from the modpack.
+    - resolveDependencies(modpack) -> Resolution Result
+        Tries to satisfy all required dependencies for a Modpack and summarizes if anything is missing or conflicting.
 
-    - findConflicts(modpack) -> Set<Conflict>
-        Finds mods that don’t work together (if that info exists).
+    - findMissingDependencies(modpack) -> Resolution Result
+        Checks what required Mods are missing from the Modpack.
 
-    - versionMatches(version: Version, rule: VersionConstraint) -> Boolean
-        Checks if a version fits a required version range.
+    - findConflicts(modpack) -> Resolution Result
+        Detects Mods that can’t coexist in the same Modpack (if incompatibility info exists).
 
-    - getTransitiveDeps(modpack, limit: Integer) -> Set<ModRef>
-        Gets dependencies of dependencies (up to a limit so it doesn’t go crazy).
+    - checkVersionRules(mod, dependency) -> Resolution Result
+        Checks if the versions in the Modpack match the dependency/version rules.
 
-    - findDownloadLink(missing: ModRef, env: Environment) -> DownloadReference?
-        Tries to find a usable download link/reference for a missing dependency (or returns none if not found).
+    - locateModSources(dependency) -> Set<Mod Source>
+        Finds possible Mod Sources (providers/repositories) where a missing dependency can be obtained.
 
-    - pickBestOption(options: List<DownloadReference>, env: Environment) -> DownloadReference?
-        If there are multiple options, pick the one that matches best.
+    - createDownloadTask(dependency, source) -> Download Task
+        Creates the idea of retrieving a specific Mod version from a chosen Mod Source.
 
-    - makeReport(modpack) -> ResolutionReport
-        Makes a quick report: missing deps, conflicts, and links (if we found them).
+    - retrieveMod(downloadTask) -> Retrieved Mod
+        Represents obtaining the Mod from the Mod Source so it can be included in the resolved Modpack.
 
 2.7 Domain Events
     - Event 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
