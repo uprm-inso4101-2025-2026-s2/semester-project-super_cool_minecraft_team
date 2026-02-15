@@ -111,6 +111,8 @@ Minecraft Dependency Visualizer
     - Requirement 4: Pass the data to the other layers of the project to be used on the graph and display.
     - Requirement 5: Storing the dependencies needed and the mods passed by the user.
     - Requirement 6: Merge the dependencies and "breaks" for comparate and identify the incompatibilities.
+    - Requirement 7: The platform must associate each dependency with exactly one dependency type: required, optional, or incompatible.
+    - Requirement 8: The platform must represent dependencies transitively, such that dependencies of dependencies are included.
 
 2.4 Terminology
     - Term 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
