@@ -141,6 +141,14 @@ Minecraft Dependency Visualizer
 3. Analytical
 
 3.1 Concept Formation
+    The Team A domain sketch illustrates the operation of the Mod Dependency Analyzer tool.
+    - Based on these observations :
+        - Mod : an artifact software uploaded by the user.
+        - Dependecy : relationship that indicates that one mod requiere another.
+        - DTO : abstraction used to carry mod and dependecy.
+        - Dependency Graph — structured network formed by interconnected dependency relationships.
+    - Grouping decisions: libraries needed and mods needed for a mod to work are grouped as Dependency because both are prerequisites.
+    - Conflicts : dependecy referes to both libraries and mods, graph refres to a data structure and not a visual representation.
 
 3.2 Validation
 
