@@ -90,9 +90,11 @@ Minecraft Dependency Visualizer
     Risk: If these resources are unavailable or improperly configured, progress may be delayed and errors could be introduced.
 
 1.9 Implicit and Derived Goals
-    - Goal 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-    - Goal 2: Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-    - Goal 3: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    - Goal 1: Simplify and automate the management of Minecraft mods and libraries to ensure all dependencies are correctly installed and compatible, reducing errors and manual configuration for users.
+
+    - Goal 2: Provide a reliable system for detecting version conflicts and missing dependencies, enabling mod developers and players to maintain stable modpacks without technical troubleshooting.
+
+    - Goal 3: Offer optional features such as dependency visualization and compatibility suggestions to enhance user experience and improve modpack maintenance efficiency.
 
 2. Descriptive
 
