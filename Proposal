@@ -133,6 +133,11 @@ Minecraft Dependency Visualizer
     - Event 3: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 
 2.8 Interface Requirements
+    - Allow users to upload mod files or submit mod metadata for processing.
+    - Fetch required, optional, and incompatible dependency information from uploaded mods.
+    - Normalize the fetched dependency data into a format usable by other teams for visualization.
+    - Validate uploaded metadata and report errors for missing or malformed entries.
+    - Support refreshing or updating uploaded metadata when mods are modified.
 
 2.9 Machine Requirements
 
