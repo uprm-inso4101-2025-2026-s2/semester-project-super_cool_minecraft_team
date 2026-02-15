@@ -182,6 +182,39 @@ Minecraft Dependency Visualizer
     - Conflicts : dependecy referes to both libraries and mods, graph refres to a data structure and not a visual representation.
 
 3.2 Validation
+The team validates the requirements and domain understanding through structured scenario-based walkthroughs. These walkthroughs simulate realistic modpack configurations and are discussed collectively to identify ambiguities, missing edge cases, or incorrect assumptions about domain concepts such as Mod, Dependency, Incompatibility, and Modpack.
+
+The goal of validation is not to obtain approval, but to ensure that the system-to-be correctly reflects the domain relationships and user needs.
+
+Scenario 1: Missing Mandatory Dependency
+
+Context:
+A user uploads a modpack containing Mod A, which declares a mandatory dependency on Mod B. Mod B is not included in the uploaded modpack.
+
+Walkthrough Steps:
+
+1. The system parses metadata of all uploaded mods.
+2. The declared dependencies of Mod A are extracted.
+3. The system checks whether Mod B exists in the modpack.
+4. The dependency graph is generated.
+5. Missing dependency is visually highlighted.
+
+Validation Outcome:
+During walkthrough discussion, the team clarified the distinction between mandatory and optional dependencies. The requirement was refined to explicitly differentiate these cases and ensure that only mandatory dependencies trigger critical warnings.
+
+Scenario 2: Circular Dependency Case
+
+Context:
+Mod A depends on Mod B, and Mod B depends on Mod A.
+
+Walkthrough Steps:
+
+1. Dependencies are parsed.
+2. The graph is constructed.
+3. The system analyzes graph structure for cycles.
+
+Validation Outcome:
+A new requirement was added to explicitly detect circular dependencies and notify users when a cycle exists. The concept of “graph as structural model” was distinguished from “graph as visual representation.”
 
 3.3 Verification
 
