@@ -70,9 +70,24 @@ Minecraft Dependency Visualizer
 
 
 1.8 Assumptions and Dependencies
-    - Assumption A
-    - Assumption B
-    - Assumption C
+
+    - Assumption A: Reliable access to Minecraft mod metadata sources is available during development.
+    
+    Dependency: The project depends on these sources to design and test dependency parsing and resolution logic.
+
+    Risk: If metadata access is disrupted or formats change, development may be delayed while adapting the tool.
+
+    - Assumption B: The project’s requirements and scope will stay consistent during the development phase.
+
+    Dependency: Design choices and implementation plans depend on stable requirements to minimize the need for rework.
+
+    Risk: Major changes may affect the schedule and necessitate adjustments to key components.
+
+    - Assumption C: The necessary development tools, environments, and test data are accessible and correctly set up.
+
+    Dependency: The team depends on these resources to develop and test the dependency tool.
+
+    Risk: If these resources are unavailable or improperly configured, progress may be delayed and errors could be introduced.
 
 1.9 Implicit and Derived Goals
     - Goal 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
