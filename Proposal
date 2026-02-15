@@ -76,10 +76,11 @@ Minecraft Dependency Visualizer
     - Span 3: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 
 1.7 Synopsis
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Minecraft modding has become a common way for players to expand and personalize the game experience, but it also introduces a recurring challenge: many mods rely on other mods, libraries, specific loaders, and specific Minecraft versions in order to function correctly. When these dependencies are missing, incompatible, or incorrectly ordered, Minecraft may fail to launch or crash during runtime. This situation is often made worse by the lack of accessibility in dependency documentation, since users are frequently forced to interpret technical plain text and logs, and many mods do not clearly display their dependencies or incompatibilities on their main pages. As a result, many users become frustrated and abandon the idea of using mods because they cannot easily understand what is going wrong.
 
+To help diminish the effects of this problem, the team proposes the Minecraft Dependency Visualizer, a web-based platform intended to make dependency management more understandable and approachable. The platform will represent mods as nodes and dependencies as directed connections, forming a Dynamic Dependency Graph that users can explore. Users will be able to select a mod and view which mods depend on it, as well as why it is required within a configuration. In addition, the platform will support identifying and signaling conflicts through incompatibility information, helping users recognize when certain mods cannot coexist in the same mod configuration.
+
+At the core of the platform is the ability to analyze a user’s selected mod collection (modpack) and validate it through dependency resolution and conflict analysis. Dependencies will be classified into exactly one type—required, optional, or incompatible—and the platform will represent dependencies transitively, ensuring that dependencies of dependencies are also included. By shifting the experience away from text-heavy troubleshooting and toward a clear visual representation, the Minecraft Dependency Visualizer aims to reduce confusion, improve accessibility for all users, and make modpack setup and maintenance significantly easier.
 
 1.8 Assumptions and Dependencies
 
