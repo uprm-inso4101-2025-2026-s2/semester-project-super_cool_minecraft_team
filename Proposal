@@ -154,9 +154,29 @@ Minecraft Dependency Visualizer
         The User initiates analysis processes but does not directly modify domain relationships.
         
 2.6 Domain Functions
-    - Function 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-    - Function 2: Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-    - Function 3: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+ - getDependencies(mod) -> Set<DependencyDecl>
+        Gets what mods this mod says it needs (and maybe version rules).
+
+    - findMissingDeps(modpack) -> Set<ModRef>
+        Checks what required mods are missing from the modpack.
+
+    - findConflicts(modpack) -> Set<Conflict>
+        Finds mods that don’t work together (if that info exists).
+
+    - versionMatches(version: Version, rule: VersionConstraint) -> Boolean
+        Checks if a version fits a required version range.
+
+    - getTransitiveDeps(modpack, limit: Integer) -> Set<ModRef>
+        Gets dependencies of dependencies (up to a limit so it doesn’t go crazy).
+
+    - findDownloadLink(missing: ModRef, env: Environment) -> DownloadReference?
+        Tries to find a usable download link/reference for a missing dependency (or returns none if not found).
+
+    - pickBestOption(options: List<DownloadReference>, env: Environment) -> DownloadReference?
+        If there are multiple options, pick the one that matches best.
+
+    - makeReport(modpack) -> ResolutionReport
+        Makes a quick report: missing deps, conflicts, and links (if we found them).
 
 2.7 Domain Events
     - Event 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
