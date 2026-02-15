@@ -51,9 +51,21 @@ Minecraft Dependency Visualizer
     There is, therefore, a need to develop a mod dependency visualization platform that represents mods as nodes and dependencies as directed connections. The platform will allow users to select a mod and view which mods depend on it and why it is required. The team will develop a comprehensive web-based platform designed to transform the way Minecraft players interact with mod configurations. The approach is to move away from text-heavy logs and provide a Dynamic Dependency Graph. This will make conflict detection visual and easy to manage for all users.
 
 1.5 Concepts
-    - Concept 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-    - Concept 2: Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-    - Concept 3: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    - Concept 1: Mod Ecosystem
+       The interconnected environment of modifications, loaders, libraries, and version constraints within Minecraft.
+       It defines how mods interact and coexist within the game environment.
+    - Concept 2: Dependency Relationship
+       A directed relationship in which one mod requires another mod, library, or specific version in order to
+       function correctly. Dependencies may include version constraints and define structural relationships between mods.
+    - Concept 3: Incompatibility (Conflict)
+       A relationship indicating that two mods cannot operate together within the same configuration due to functional
+       overlap, version mismatch, or explicit conflict declarations.
+    - Concept 4: Dependency Graph Model
+       An abstraction representing mods as nodes and dependencies as directed edges, enabling structural analysis of
+       relationships and transitive requirements.
+    - Concept 5: Dependency Resolution Process
+       The domain-level process of verifying that all required dependencies are present, compatible, and structurally
+       consistent before execution.
 
 1.6 Scope and Span
     - Scope 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
