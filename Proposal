@@ -177,6 +177,10 @@ At the core of the platform is the ability to analyze a user’s selected mod co
     - Event 3: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 
 2.8 Interface Requirements
+    - Allow users to upload mod files or submit mod metadata for processing.
+    - Validate uploaded metadata and report errors for missing or malformed entries.
+    - Provide client-side feedback and visual indicators during file upload.
+    - Implement responsive UI behavior to ensure usability across screen sizes.
 
 2.9 Machine Requirements
 
