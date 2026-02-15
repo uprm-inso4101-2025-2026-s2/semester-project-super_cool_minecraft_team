@@ -135,7 +135,59 @@ Minecraft Dependency Visualizer
 2.8 Interface Requirements
 
 2.9 Machine Requirements
+## Performance Requirements
 
+- The system must respond to a mod metadata lookup request (via external API such as Modrinth) within **3 seconds** under normal load (≤ 20 simultaneous users performing lookup operations).
+
+- The system must update and re-render the dependency graph within **2 seconds** after a mod is added, removed, or modified, for modpacks containing up to **150 mods**.
+
+- The system must download and append a mod file (≤ 20MB) to the modpack archive within **10 seconds**, excluding external network delays beyond the system’s control.
+
+---
+
+## Concurrency Requirements
+
+- The system must support at least **20 simultaneous active users**, each performing metadata lookups and graph updates, without service interruption.
+
+- If the number of simultaneous active users exceeds 20, the system must continue operating and may queue additional requests with a maximum delay of **10 seconds**.
+
+- The system must not crash when handling concurrent download and graph update operations.
+
+---
+
+## Reliability Requirements
+
+- The system must maintain **95% uptime** during scheduled operational hours.
+
+- If an external API (e.g., Modrinth) fails or becomes unreachable, the system must:
+  - Return a clear error message to the user within **5 seconds**, and  
+  - Allow the user to retry the operation.
+
+- The failure of an external API must not cause the entire application to terminate.
+
+---
+
+## Integrity Requirements
+
+- The system must validate that a downloaded mod file is successfully retrieved before appending it to the modpack archive.
+
+- The system must ensure that the modpack archive remains structurally valid after file modifications.
+
+- The system must prevent duplicate mod files with identical identifiers from being appended without user confirmation.
+
+---
+
+## Degradation & Limits
+
+- Under heavy load, the system may:
+  - Increase response time up to **8 seconds** for metadata lookups, and  
+  - Queue download operations.
+
+- The system must not terminate unexpectedly under heavy load conditions.
+
+- Criteria for long-term scalability beyond 30 simultaneous users remain to be researched and defined.
+
+---
 2.10 Software Architecture Design
 
 3. Analytical
