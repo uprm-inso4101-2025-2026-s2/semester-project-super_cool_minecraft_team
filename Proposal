@@ -175,9 +175,29 @@ At the core of the platform is the ability to analyze a user’s selected mod co
         The User initiates analysis processes but does not directly modify domain relationships.
         
 2.6 Domain Functions
-    - Function 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-    - Function 2: Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-    - Function 3: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+ - extractDependencies(mod) -> Dependency Resolution
+        Gets the dependencies a Mod says it needs, and the basic rules to satisfy them.
+
+    - resolveDependencies(modpack) -> Resolution Result
+        Tries to satisfy all required dependencies for a Modpack and summarizes if anything is missing or conflicting.
+
+    - findMissingDependencies(modpack) -> Resolution Result
+        Checks what required Mods are missing from the Modpack.
+
+    - findConflicts(modpack) -> Resolution Result
+        Detects Mods that can’t coexist in the same Modpack (if incompatibility info exists).
+
+    - checkVersionRules(mod, dependency) -> Resolution Result
+        Checks if the versions in the Modpack match the dependency/version rules.
+
+    - locateModSources(dependency) -> Set<Mod Source>
+        Finds possible Mod Sources (providers/repositories) where a missing dependency can be obtained.
+
+    - createDownloadTask(dependency, source) -> Download Task
+        Creates the idea of retrieving a specific Mod version from a chosen Mod Source.
+
+    - retrieveMod(downloadTask) -> Retrieved Mod
+        Represents obtaining the Mod from the Mod Source so it can be included in the resolved Modpack.
 
 2.7 Domain Events
     - DependencyHasJustBeenDeclared
