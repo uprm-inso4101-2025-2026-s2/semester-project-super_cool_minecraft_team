@@ -162,6 +162,35 @@ Sam justifies features like automatic download fetching, clear dependency previe
 - Manual updates for every change  
 - Lack of visibility into dependency chains  
 
+# 2.3.4 - Interface requirements
+
+- The subsystem must be capable of receiving dependency metadata from the Mod Uploading subsystem, including mod identifiers, version information, and declared dependencies.
+- Queries to the Modrinth API (or similar repositories) should allow the system to locate required mods using dependency identifiers.
+- Download URLs for compatible dependency versions must be retrieved and made available for installation.
+- Structured results of the dependency resolution process are returned to the Visualization subsystem, including resolved dependencies, version matches, and any unresolved items.
+- Notifications are provided whenever a required dependency cannot be resolved, ensuring the system or user is aware of the issue.
+- Failed API requests should trigger automatic retries up to a configurable limit to maintain reliability.
+- All interactions with external APIs are logged for debugging, verification, and auditing purposes.
+
+# 2.3.5 – Machine Requirements
+
+Performance:
+- The subsystem shall process dependency resolution requests efficiently, ensuring reasonable response times for typical user workloads.
+- The system shall handle multiple simultaneous requests without significant delays or system instability.
+- Retrieval of download links for dependencies shall be performed in a timely manner to support smooth operation of the user workflow.
+
+Reliability:
+- The subsystem shall maintain continuous operation during normal usage, with minimal downtime.
+- External API failures shall be handled gracefully, ensuring that partial failures do not crash the system or corrupt data.
+- Errors and exceptions shall be logged to support debugging and verification.
+
+Resource and Stability:
+- The subsystem shall operate within reasonable memory and CPU usage to avoid affecting other system components.
+
+Scalability: 
+- The system shall be designed to accommodate growth in mod volume and user activity.
+
+
 ---  
 
 2.4 Terminology
