@@ -130,6 +130,70 @@ At the core of the platform is the ability to analyze a user’s selected mod co
 2.3 Requirements
 # 2.3.2 — Personas
 
+
+(Joyson addition)
+
+
+Recommended Algorithms for the project's sorting
+
+Lists (ArrayList) used for:
+
+Storing installed mods
+Storing dependencies
+Storing search results
+
+HashSet used for:
+
+Quickly checking if a dependency is already installed and avoid duplicate entries
+
+HashMap used for:
+
+Map Mod → List of Dependencies
+Map Mod → Status
+
+Sorting
+
+Bubble Sort
+
+For small lists of download links
+
+Selection Sort
+
+To sort mods by status (Missing, Resolved, Incompatible, etc.).
+
+Searching Techniques
+Linear Search
+
+To find a mod in a list.
+
+Simple String Matching (equals / contains / not equal to [to avoid erroneous links])
+
+To match mod names from web results.
+
+
+
+2.4 Terminology 
+
+Naming Convention for Functions
+
+Use simple:
+Verb + Object
+
+Examples:
+
+_detectMissingDependencies()
+
+searchOnline()
+
+sortDownloadLinks()
+
+allocateStatus()
+
+downloadFile()_
+
+Keep naming consistent and clear. as close to the nose as possible to avoid confusing to read code. As well as keeping comments close and handy to quickly explain what the function and code is doing.
+
+While easy to provide a list for developers to use, this will hinder in the long run seeing as options are limited for any x amount of variables needed. A simple rule of concise, legible, and easy to understand naming conventions, will be far more beneficial in the long run.
 The following personas represent typical stakeholders who would use the mod dependency analyzer web application. They justify the previously defined epics and user stories.
 
 ---
