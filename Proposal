@@ -128,7 +128,7 @@ Minecraft Dependency Visualizer
         ->Phase Introduced (Domain = Minecraft ecosystem concept, System = project-specific concept)
         ->Definition (Implementation-independent)
 
-    1. Mod(Modification)
+    1. Mod (Modification)
 
         Classification: Entity
         Phase Introduced: Domain
@@ -158,65 +158,89 @@ Minecraft Dependency Visualizer
         Phase Introduced: Domain
         Definition: A rule that specifies which versions of a mod are acceptable within a dependency relationship. A version constraint defines a valid range or condition that must be satisfied.
 
-    6. Mod Loader
+    6. Minecraft Version
+
+        Classification: Entity
+        Phase Introduced: Domain
+        Definition: A specific release of Minecraft and its updates. It defines the base environment and APIs that mods and mod loader target. Important for the compatibility constraint in the dependency graph.
+
+    7. Mod Loader
 
         Classification: Entity
         Phase Introduced: Domain
         Definition: A runtime framework responsible for loading and managing mods within Minecraft. A mod loader establishes compatibility rules and governs how mods are initialized and executed.
 
-    7. Mod Instance
+    8. Fabric
+
+        Classification: Entity
+        Phase Introduced: Domain
+        Definition: The mod loader to be used for this project. It provides the framework for loading mods. 
+
+    9. Mod Instance
 
         Classification: Entity
         Phase Introduced: System
         Definition: A specific occurrence of a mod identified by name and version within the system. A mod instance represents a concrete node in the dependency graph.
 
-    8. Dependency Graph
+    10. Mod pack
+    
+        Classification: Entity
+	    Phase Introduced: Domain
+	    Definition: A collection of mod instances, their version, and associated configuration files.
+
+    11. Dependency Graph
 
         Classification: Entity
         Phase Introduced: System
         Definition: A directed graph structure that represents mod instances as nodes and dependency relationships as edges. The graph models how mods depend on one another.
 
-    9. Node
+    12. Node
 
         Classification: Entity
         Phase Introduced: System
         Definition: A logical and visual representation of a mod instance within the dependency graph.
 
-    10. Edge
+    13. Edge
 
         Classification: Relation
         Phase Introduced: System
         Definition: A directed connection between two nodes that represents a dependency relationship.
 
-    11. Resolution
+    14. Resolution
 
         Classification: Behavior
         Phase Introduced: System
         Definition: The process of evaluating whether all declared dependencies within a given mod set are satisfied according to version constraints and compatibility rules.
 
-    12. Conflict
+    15. Conflict
 
         Classification: Event
         Phase Introduced: System
         Definition: A condition that occurs when dependency requirements or version constraints cannot be satisfied simultaneously. A conflict prevents successful resolution of the mod set.
 
-    13. Compatibility
+    16. Compatibility
 
         Classification: Attribute
         Phase Introduced: Domain
         Definition: The state in which two or more mods, versions, or loaders can operate together without violating declared dependencies or constraints.
 
-    14. Installation State
+    17. Installation State
 
         Classification: Attribute
         Phase Introduced: System
         Definition: The current status of a mod instance within the managed environment, such as installed, missing, unresolved, or conflicting.
 
-    15. Transitive Dependency
+    18. Transitive Dependency
 
         Classification: Relation
         Phase Introduced: System
         Definition: A dependency that arises indirectly through a chain of other dependencies. If Mod A depends on Mod B, and Mod B depends on Mod C, then Mod A has a transitive dependency on Mod C.
+
+    19. Profile
+
+        Classification: Entity
+        Phase Introduced: System
+        Definition: A named container that stores a user’s mod instances and their installation statuses. 
 
 2.5 Domain Entities
     - Mod:
