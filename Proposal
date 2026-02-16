@@ -734,6 +734,17 @@ Scalability:
     - Grouping decisions: libraries needed and mods needed for a mod to work are grouped as Dependency because both are prerequisites.
     - Conflicts : dependecy referes to both libraries and mods, graph refres to a data structure and not a visual representation.
 
+    The Team B analysis focuses on situations where declared dependencies must be located and associated in order to complete a mod configuration.
+        -Required dependencies are often not included in the initial modpack configuration.
+        -Missing components must be identified by consulting external mod repositories.
+        -Resolving dependency issues involves not only recognizing relationships between mods, but also locating the components that satisfy those relationships.
+        -Mod repositories function as reference environments that describe and provide the required mods.
+
+    From these observations, dependency resolution is understood as a domain process connecting declared relationships with available components.
+        -A dependency implies that the required mod exists in the ecosystem and must be discoverable.
+        -Completing a configuration involves identifying and associating those components with the current modpack.
+        -External sources are treated as part of the environment where dependencies are satisfied.
+
 3.2 Validation
 The team validates the requirements and domain understanding through structured scenario-based walkthroughs. These walkthroughs simulate realistic modpack configurations and are discussed collectively to identify ambiguities, missing edge cases, or incorrect assumptions about domain concepts such as Mod, Dependency, Incompatibility, and Modpack.
 
