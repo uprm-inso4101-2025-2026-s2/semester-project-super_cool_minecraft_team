@@ -115,9 +115,7 @@ At the core of the platform is the ability to analyze a user’s selected mod co
     [Insert rough sketch of the domain here]
 
 2.2 Narrative
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    Within the mod ecosystem of Minecraft, users construct gameplay configurations by combining independently developed modifications, each of which declares structural constraints through metadata. A Mod specifies its identity, supported versions, required dependencies, optional dependencies, and declared incompatibilities. When multiple Mods are grouped into a Modpack, they form a configuration whose validity depends on the collective satisfaction of all declared requirements and constraints. Adding or removing a Mod triggers domain behaviors such as dependency expansion (through transitive requirements), compatibility evaluation, and conflict detection. A configuration is considered structurally valid only if every required dependency is present in a compatible version and no declared incompatibilities exist among included Mods. These relationships can be abstracted as a dependency network in which Mods participate in directed requirement relations and constraint relations.
 
 2.3 Requirements
     - Requirement 1: Fetching dependencies of mods, this could be created with fabric API for maximum efficency and modularity.
