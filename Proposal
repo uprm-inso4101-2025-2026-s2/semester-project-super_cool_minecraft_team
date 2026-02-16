@@ -85,6 +85,76 @@ Minecraft Dependency Visualizer
     - Span 2: Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
     - Span 3: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 
+
+1.6.2 Project Span
+    This section outlines the specific boundaries, key activities, and focus areas of the project, translating the high-level goals from
+    the project scope into a concrete and actionable plan. It defines what the project will and will not undertake to ensure its
+    objectives are realistic and achievable within the constraints for a cohort of 43 students.
+
+1.6.2.1 Inclusions
+    The project will focus on the design, development, and evaluation of a web-based proof-of-concept platform for visualizing
+        -Minecraft mod dependencies. The core activities included in the project span:
+        -Platform Development: Create an interactive, browser-based prototype that visualizes mods as nodes and their
+        dependencies as directed edges in a graph data structure. The platform will be designed to support a curated dataset of
+        mods, rather than attempting to index the entire CurseForge and Modrinth repositories.
+        -Metadata Parsing and Normalization: Develop scripts to programmatically parse dependency metadata from a preselected set of mods sourced from CurseForge and Modrinth. This includes identifying required dependencies, optional
+        dependencies, and incompatible mod versions. The project will handle all mod metadata in accordance with ethical data
+        handling principles, ensuring that any data acquisition, storage, and processing respects the terms of use and privacy
+        expectations established by the source repositories. The data will then be normalized into a unified internal schema to
+        manage inconsistencies between the two source platforms.
+        -Visual Highlighting of Critical Information: Implement visual cues within the graph interface to draw user attention to key
+        issues. This will include distinct highlighting for missing dependencies, version incompatibilities, and optional relationships.
+        -Decision-Support Features: Enable users to interact with the graph and access relevant information. Upon selecting a
+        specific mod node, the platform will display:
+        Its direct and transitive dependents (i.e., which other mods rely on it).
+        A plain-language explanation of its dependency requirements (e.g., "Required for game launch on the client-side").
+        A simulation of the potential impact, highlighting which other mods would be affected if the selected mod were
+        removed or updated.
+        -Evaluation with Sample Modpacks: Conduct a formal evaluation of the prototype's effectiveness using sample modpacks.
+
+1.6.2.2 Exclusions
+    To maintain a realistic scope and focus on the core problem of visualization and understanding, the following activities are
+    explicitly excluded from the project span:
+        -Automated Installation or Management: The platform will function solely as a decision-support tool. It will not download,
+        install, update, remove, or modify a user's Minecraft instance.
+        -Visual Highlighting of Critical Information: Implement visual cues within the graph interface to draw user attention to key
+        launcher, MultiMC, Prism Launcher).
+        -Exhaustive Mod Indexing: The project will not attempt to index or visualize all mods available on CurseForge and Modrinth.
+        The focus will be on a curated, representative dataset sufficient to demonstrate the platform's functionality and core
+        features.
+        -Generalization to Other Games: Potential for future generalization is acknowledged (Section 6), but the development and
+        testing of the prototype will be strictly confined to the Minecraft modding ecosystem.
+
+        -Addressing Runtime Errors: The project will not build a system that diagnoses live game crashes or reads Minecraft log
+        files. Its purpose is preventative and analytical, focusing on understanding dependencies before launching the game.
+        -Commercial Deployment: The final deliverable will be a functional prototype for academic evaluation, not a productionready, publicly hosted service.
+
+1.6.2.3 Key Focus Areas and Methodology
+    The project will be executed using an agile-inspired methodology suitable for a student team. Work will be organized into
+    iterative sprints, each focusing on a key deliverable. The primary focus areas are:
+        -Data Acquisition & Modeling: Researching and implementing the parsing of metadata from CurseForge/Modrinth APIs and
+        designing the internal graph data structure.
+        -Graph Visualization Engine: Selecting and implementing a suitable JavaScript library (e.g., D3.js, vis.js, Cytoscape.js) to
+        render the interactive dependency graph.
+        -User Interface & Interaction: Designing and building the user interface components for displaying mod information, search,
+        and selection, ensuring clarity and ease of use.
+        -Evaluation & Analysis: Defining success metrics, designing user test cases, conducting the evaluation, and analyzing the
+        results to determine the project's success against the criteria outlined in Section 5.
+
+1.6.2.4 Timeline
+    The project milestones and key dates are as follows:
+        - Project A3 submissions: January 27–30
+        - Project selection: February 2
+        - First milestone ends: February 27
+        - Milestone 1 presentation: March 2
+        - Second milestone ends: April 3
+        - Milestone 2 presentation: April 6
+        - Final milestone ends: May 8
+        - Final milestone presentation: May 11
+These dates define the structured time frame within which all planning, development, evaluation, and reporting activities will be
+conducted. All deliverables and presentations will be completed in accordance with this timeline to ensure timely progress and
+academic review.
+
 1.7 Synopsis
 Minecraft modding has become a common way for players to expand and personalize the game experience, but it also introduces a recurring challenge: many mods rely on other mods, libraries, specific loaders, and specific Minecraft versions in order to function correctly. When these dependencies are missing, incompatible, or incorrectly ordered, Minecraft may fail to launch or crash during runtime. This situation is often made worse by the lack of accessibility in dependency documentation, since users are frequently forced to interpret technical plain text and logs, and many mods do not clearly display their dependencies or incompatibilities on their main pages. As a result, many users become frustrated and abandon the idea of using mods because they cannot easily understand what is going wrong.
 
