@@ -68,9 +68,19 @@ Minecraft Dependency Visualizer
        consistent before execution.
 
 1.6 Scope and Span
-    - Scope 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-    - Scope 2: Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-    - Scope 3: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    The completed project will be a web-app that can be given an input of Fabric or Forge mod files or a medium sized modpack for the game Minecraft Java Edition to view what the user can safely update and/or remove from it without having to go through trial and error of removing and adding them manually to see what doesn't crash the game or prevent you from joining a modded multiplayer server.
+
+    It will visually demonstrate to the user what dependencies are installed or missing, as well as if they are required or supplementary. It will also show how many mods depend on each dependency and if they are safe to remove or not. 
+
+    It will be able to separate Client-side mods from Host-side and Client-Host-Sided mods so you don't accidentally remove something necessary for multiplayer.
+
+    Detect known incompatibilities and point them out to the user, and identify known compatible versions when metadata exists that particular mods may have with other mods.
+
+    If a mod has an update, or a missing required/supplementary dependency it will give the user a CurseForge or Modrinth link so they can choose to install. 
+
+    This web-app will not install/modify the mods, or launch the game with mods, only point out to the user what they can do with their current mod list in terms of updating/removing mods.
+
+    Access to a Chromium or Firefox based browser on a Computer with an Internet connection will be required.
     - Span 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
     - Span 2: Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
     - Span 3: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
