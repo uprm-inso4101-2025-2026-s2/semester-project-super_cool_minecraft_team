@@ -117,9 +117,106 @@ Minecraft Dependency Visualizer
     - Requirement 8: The platform must represent dependencies transitively, such that dependencies of dependencies are included.
 
 2.4 Terminology
-    - Term 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-    - Term 2: Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-    - Term 3: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+
+    This section defines the core terms that will be used throughout the project. These definitions apply to both the backend dependency logic and the frontend graph interface.
+
+    Goal -> Keep the language consistent across documentation and communication.
+
+    Each term includes:
+
+        ->Classification (Entity, Relation, Attribute, Event, Behavior)
+        ->Phase Introduced (Domain = Minecraft ecosystem concept, System = project-specific concept)
+        ->Definition (Implementation-independent)
+
+    1. Mod(Modification)
+
+        Classification: Entity
+        Phase Introduced: Domain
+        Definition: A mod (modification) is a packaged software extension that alters or adds functionality to Minecraft. A mod may introduce new content, mechanics, or systems and may declare dependencies or incompatibilities with other mods.
+
+    2. Dependency
+    
+        Classification: Relation
+        Phase Introduced: Domain
+        Definition: A dependency is a directed relationship in which one mod requires another mod in order to function correctly. If the required mod is missing or does not satisfy the stated version constraint, the dependent mod cannot operate as intended.
+
+    3. Optional Dependency
+
+        Classification: Relation
+        Phase Introduced: Domain
+        Definition: A relationship where a mod can integrate with another mod if it is present, but does not require it for core functionality.
+
+    4. Version
+
+        Classification: Attribute
+        Phase Introduced: Domain
+        Definition: A structured identifier assigned to a specific release of a mod. Versions are used to distinguish releases and evaluate compatibility between mods.
+
+    5. Version Constraint
+
+        Classification: Attribute
+        Phase Introduced: Domain
+        Definition: A rule that specifies which versions of a mod are acceptable within a dependency relationship. A version constraint defines a valid range or condition that must be satisfied.
+
+    6. Mod Loader
+
+        Classification: Entity
+        Phase Introduced: Domain
+        Definition: A runtime framework responsible for loading and managing mods within Minecraft. A mod loader establishes compatibility rules and governs how mods are initialized and executed.
+
+    7. Mod Instance
+
+        Classification: Entity
+        Phase Introduced: System
+        Definition: A specific occurrence of a mod identified by name and version within the system. A mod instance represents a concrete node in the dependency graph.
+
+    8. Dependency Graph
+
+        Classification: Entity
+        Phase Introduced: System
+        Definition: A directed graph structure that represents mod instances as nodes and dependency relationships as edges. The graph models how mods depend on one another.
+
+    9. Node
+
+        Classification: Entity
+        Phase Introduced: System
+        Definition: A logical and visual representation of a mod instance within the dependency graph.
+
+    10. Edge
+
+        Classification: Relation
+        Phase Introduced: System
+        Definition: A directed connection between two nodes that represents a dependency relationship.
+
+    11. Resolution
+
+        Classification: Behavior
+        Phase Introduced: System
+        Definition: The process of evaluating whether all declared dependencies within a given mod set are satisfied according to version constraints and compatibility rules.
+
+    12. Conflict
+
+        Classification: Event
+        Phase Introduced: System
+        Definition: A condition that occurs when dependency requirements or version constraints cannot be satisfied simultaneously. A conflict prevents successful resolution of the mod set.
+
+    13. Compatibility
+
+        Classification: Attribute
+        Phase Introduced: Domain
+        Definition: The state in which two or more mods, versions, or loaders can operate together without violating declared dependencies or constraints.
+
+    14. Installation State
+
+        Classification: Attribute
+        Phase Introduced: System
+        Definition: The current status of a mod instance within the managed environment, such as installed, missing, unresolved, or conflicting.
+
+    15. Transitive Dependency
+
+        Classification: Relation
+        Phase Introduced: System
+        Definition: A dependency that arises indirectly through a chain of other dependencies. If Mod A depends on Mod B, and Mod B depends on Mod C, then Mod A has a transitive dependency on Mod C.
 
 2.5 Domain Entities
     - Mod:
