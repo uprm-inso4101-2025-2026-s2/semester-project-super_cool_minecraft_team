@@ -159,9 +159,33 @@ Minecraft Dependency Visualizer
     - Function 3: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 
 2.7 Domain Events
-    - Event 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-    - Event 2: Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-    - Event 3: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    - DependencyHasJustBeenDeclared
+        A Dependency has just been declared by a Mod, establishing a required relationship between two Mods in the Dependency Graph.
+
+    - IncompatibilityHasJustBeenDeclared
+        An Incompatibility has just been declared between two Mods, defining that they cannot coexist in the same Modpack configuration.
+
+    - ModHasJustBeenAddedToModpack
+        A Mod has just been added to a Modpack, changing the Modpack’s composition and potentially affecting Dependency satisfaction or Incompatibilities.
+
+    - ModHasJustBeenRemovedFromModpack
+        A Mod has just been removed from a Modpack, altering its structure and possibly causing a Dependency to become unsatisfied or resolving an existing Incompatibility.
+
+    - DependencyResolutionHasJustBeenCompleted
+        A Dependency Resolution process has just been completed for a Modpack.
+        This event determines whether all required Mods have been retrieved and whether any Dependencies remain unsatisfied.
+
+    - RetrievedModHasJustBeenObtained
+        A Retrieved Mod has just been successfully obtained from a Mod Source in order to satisfy a declared Dependency.
+
+    - DependencyHasJustBecomeUnsatisfied
+        A declared Dependency has just become unsatisfied within a Modpack because a required Mod is missing or no longer satisfies its version constraint.
+        
+    - IncompatibilityHasJustBeenDetected
+        An Incompatibility has just been detected within a Modpack configuration, indicating that two incompatible Mods coexist in the same Modpack.
+        
+    - ModpackHasJustBecomeConsistent
+        A Modpack has just become consistent, meaning all declared Dependencies are satisfied and no declared Incompatibilities are violated.
 
 2.8 Interface Requirements
 
