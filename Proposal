@@ -184,6 +184,33 @@ At the core of the platform is the ability to analyze a user’s selected mod co
 
 2.9 Machine Requirements
 
+    The backend system must meet measurable and realistic machine requirements to ensure efficient dependency graph construction, scalability, and reliability when processing Minecraft mod metadata.
+
+    Graph Processing Performance:
+    The system must generate a dependency graph for modpacks containing between 30 and 100 mods under typical conditions in less than 5 seconds. For larger modpacks containing up to 200 mods, the system must generate the dependency graph in less than 10 seconds. For extreme cases containing between 200 and 500 mods, the system may require between 30 seconds and 2 minutes depending on graph complexity but must complete the process in a stable and predictable manner without system failure.
+
+    Concurrent Requests:
+    The backend must be designed to support multiple concurrent users performing dependency analysis and graph generation. Since the expected number of concurrent users depends on the final scope of the application, the system must maintain stable performance and predictable response times under moderate and peak usage scenarios.
+
+    External Metadata Handling:
+    The system must retrieve dependency and incompatibility data from external platforms such as CurseForge and Modrinth. The backend must handle rate limits, temporary service failures, incomplete responses, and data inconsistencies. When external services are unavailable, the system must use cached or previously processed data when possible and provide meaningful feedback to the user.
+
+    Reliability and Availability:
+    The system must maintain high availability during active usage. Automatic recovery mechanisms must handle network failures, API interruptions, and temporary service outages. The backend must prevent corruption of dependency and modpack data and ensure consistent graph construction results.
+
+    Scalability:
+    The architecture must support horizontal scaling to accommodate future increases in modpack size, graph complexity, and user demand. The backend must be modular to allow improvements and extensions without redesigning core components.
+
+    Resource Usage:
+    Memory and CPU usage must remain within acceptable limits during graph construction and metadata processing. Monitoring and logging must be implemented to detect performance bottlenecks and abnormal resource consumption.
+
+    Stability and Graceful Degradation:
+    Under overload conditions or limited resources, the system must degrade gracefully by prioritizing essential operations, applying request throttling, and avoiding system crashes.
+
+    Data Integrity and Validation:
+    Dependency data must be validated and normalized before graph construction. The system must ensure accurate representation of required, optional, and incompatible dependencies, as well as version constraints.
+
+
 2.10 Software Architecture Design
 
 3. Analytical
