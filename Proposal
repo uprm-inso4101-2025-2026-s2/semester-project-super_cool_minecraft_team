@@ -51,9 +51,21 @@ Minecraft Dependency Visualizer
     There is, therefore, a need to develop a mod dependency visualization platform that represents mods as nodes and dependencies as directed connections. The platform will allow users to select a mod and view which mods depend on it and why it is required. The team will develop a comprehensive web-based platform designed to transform the way Minecraft players interact with mod configurations. The approach is to move away from text-heavy logs and provide a Dynamic Dependency Graph. This will make conflict detection visual and easy to manage for all users.
 
 1.5 Concepts
-    - Concept 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-    - Concept 2: Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-    - Concept 3: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    - Concept 1: Mod Ecosystem
+       The interconnected environment of modifications, loaders, libraries, and version constraints within Minecraft.
+       It defines how mods interact and coexist within the game environment.
+    - Concept 2: Dependency Relationship
+       A directed relationship in which one mod requires another mod, library, or specific version in order to
+       function correctly. Dependencies may include version constraints and define structural relationships between mods.
+    - Concept 3: Incompatibility (Conflict)
+       A relationship indicating that two mods cannot operate together within the same configuration due to functional
+       overlap, version mismatch, or explicit conflict declarations.
+    - Concept 4: Dependency Graph Model
+       An abstraction representing mods as nodes and dependencies as directed edges, enabling structural analysis of
+       relationships and transitive requirements.
+    - Concept 5: Dependency Resolution Process
+       The domain-level process of verifying that all required dependencies are present, compatible, and structurally
+       consistent before execution.
 
 1.6 Scope and Span
     - Scope 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
@@ -64,10 +76,11 @@ Minecraft Dependency Visualizer
     - Span 3: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 
 1.7 Synopsis
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Minecraft modding has become a common way for players to expand and personalize the game experience, but it also introduces a recurring challenge: many mods rely on other mods, libraries, specific loaders, and specific Minecraft versions in order to function correctly. When these dependencies are missing, incompatible, or incorrectly ordered, Minecraft may fail to launch or crash during runtime. This situation is often made worse by the lack of accessibility in dependency documentation, since users are frequently forced to interpret technical plain text and logs, and many mods do not clearly display their dependencies or incompatibilities on their main pages. As a result, many users become frustrated and abandon the idea of using mods because they cannot easily understand what is going wrong.
 
+To help diminish the effects of this problem, the team proposes the Minecraft Dependency Visualizer, a web-based platform intended to make dependency management more understandable and approachable. The platform will represent mods as nodes and dependencies as directed connections, forming a Dynamic Dependency Graph that users can explore. Users will be able to select a mod and view which mods depend on it, as well as why it is required within a configuration. In addition, the platform will support identifying and signaling conflicts through incompatibility information, helping users recognize when certain mods cannot coexist in the same mod configuration.
+
+At the core of the platform is the ability to analyze a user’s selected mod collection (modpack) and validate it through dependency resolution and conflict analysis. Dependencies will be classified into exactly one type—required, optional, or incompatible—and the platform will represent dependencies transitively, ensuring that dependencies of dependencies are also included. By shifting the experience away from text-heavy troubleshooting and toward a clear visual representation, the Minecraft Dependency Visualizer aims to reduce confusion, improve accessibility for all users, and make modpack setup and maintenance significantly easier.
 
 1.8 Assumptions and Dependencies
 
@@ -90,9 +103,11 @@ Minecraft Dependency Visualizer
     Risk: If these resources are unavailable or improperly configured, progress may be delayed and errors could be introduced.
 
 1.9 Implicit and Derived Goals
-    - Goal 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-    - Goal 2: Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-    - Goal 3: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    - Goal 1: Simplify and automate the management of Minecraft mods and libraries to ensure all dependencies are correctly installed and compatible, reducing errors and manual configuration for users.
+
+    - Goal 2: Provide a reliable system for detecting version conflicts and missing dependencies, enabling mod developers and players to maintain stable modpacks without technical troubleshooting.
+
+    - Goal 3: Offer optional features such as dependency visualization and compatibility suggestions to enhance user experience and improve modpack maintenance efficiency.
 
 2. Descriptive
 
@@ -100,9 +115,7 @@ Minecraft Dependency Visualizer
     [Insert rough sketch of the domain here]
 
 2.2 Narrative
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    Within the mod ecosystem of Minecraft, users construct gameplay configurations by combining independently developed modifications, each of which declares structural constraints through metadata. A Mod specifies its identity, supported versions, required dependencies, optional dependencies, and declared incompatibilities. When multiple Mods are grouped into a Modpack, they form a configuration whose validity depends on the collective satisfaction of all declared requirements and constraints. Adding or removing a Mod triggers domain behaviors such as dependency expansion (through transitive requirements), compatibility evaluation, and conflict detection. A configuration is considered structurally valid only if every required dependency is present in a compatible version and no declared incompatibilities exist among included Mods. These relationships can be abstracted as a dependency network in which Mods participate in directed requirement relations and constraint relations.
 
 2.3 Requirements
     - Requirement 1: Fetching dependencies of mods, this could be created with fabric API for maximum efficency and modularity.
@@ -111,6 +124,8 @@ Minecraft Dependency Visualizer
     - Requirement 4: Pass the data to the other layers of the project to be used on the graph and display.
     - Requirement 5: Storing the dependencies needed and the mods passed by the user.
     - Requirement 6: Merge the dependencies and "breaks" for comparate and identify the incompatibilities.
+    - Requirement 7: The platform must associate each dependency with exactly one dependency type: required, optional, or incompatible.
+    - Requirement 8: The platform must represent dependencies transitively, such that dependencies of dependencies are included.
 
 2.4 Terminology
     - Term 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
@@ -118,10 +133,37 @@ Minecraft Dependency Visualizer
     - Term 3: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 
 2.5 Domain Entities
-    - Entity 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-    - Entity 2: Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-    - Entity 3: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    - Mod:
+        Represents a Minecraft modification that extends or alters the base game functionality.
+        A Mod contains metadata such as its name, version, supported Minecraft version, and declared dependencies.
+        Each Mod may depend on other Mods and may also declare incompatibilities.
+        It is the central entity of the system and serves as a node within the dependency graph.
+        
+    - Dependency:
+        Represents a directed relationship in which one Mod requires another Mod in order to function correctly.
+        A Dependency specifies the required Mod and any version constraints associated with that requirement.
+        It is responsible for defining mandatory relationships between Mods and enabling validation of mod configurations.
 
+    - Incompatibility:
+        Represents a conflict relationship between two Mods where they cannot coexist in the same mod configuration.
+        An Incompatibility defines which Mods are incompatible and may include version-based conditions.
+        It is responsible for identifying and signaling potential runtime conflicts within a mod set.
+
+    - Modpack:
+        Represents a collection of Mods selected by a user to be used together.
+        A Modpack aggregates multiple Mods and serves as the context for dependency resolution and conflict analysis.
+        It is responsible for grouping Mods and enabling validation of their combined compatibility.
+
+    - Dependency Graph:
+        Represents the structured visualization of Mods as nodes and Dependencies as directed connections.
+        The Dependency Graph models the relationships between Mods and provides a conceptual view of dependency chains.
+        It is responsible for enabling analysis of required Mods, reverse dependencies, and structural relationships.
+
+    - User:
+        Represents an individual interacting with the platform to analyze Mods and Modpacks.
+        A User can upload or select a Modpack, inspect Dependencies, and view detected Incompatibilities.
+        The User initiates analysis processes but does not directly modify domain relationships.
+        
 2.6 Domain Functions
     - Function 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
     - Function 2: Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
@@ -133,6 +175,10 @@ Minecraft Dependency Visualizer
     - Event 3: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 
 2.8 Interface Requirements
+    - Allow users to upload mod files or submit mod metadata for processing.
+    - Validate uploaded metadata and report errors for missing or malformed entries.
+    - Provide client-side feedback and visual indicators during file upload.
+    - Implement responsive UI behavior to ensure usability across screen sizes.
 
 2.9 Machine Requirements
 ## Performance Requirements
@@ -188,13 +234,81 @@ Minecraft Dependency Visualizer
 - Criteria for long-term scalability beyond 30 simultaneous users remain to be researched and defined.
 
 ---
+    The backend system must meet measurable and realistic machine requirements to ensure efficient dependency graph construction, scalability, and reliability when processing Minecraft mod metadata.
+
+    Graph Processing Performance:
+    The system must generate a dependency graph for modpacks containing between 30 and 100 mods under typical conditions in less than 5 seconds. For larger modpacks containing up to 200 mods, the system must generate the dependency graph in less than 10 seconds. For extreme cases containing between 200 and 500 mods, the system may require between 30 seconds and 2 minutes depending on graph complexity but must complete the process in a stable and predictable manner without system failure.
+
+    Concurrent Requests:
+    The backend must be designed to support multiple concurrent users performing dependency analysis and graph generation. Since the expected number of concurrent users depends on the final scope of the application, the system must maintain stable performance and predictable response times under moderate and peak usage scenarios.
+
+    External Metadata Handling:
+    The system must retrieve dependency and incompatibility data from external platforms such as CurseForge and Modrinth. The backend must handle rate limits, temporary service failures, incomplete responses, and data inconsistencies. When external services are unavailable, the system must use cached or previously processed data when possible and provide meaningful feedback to the user.
+
+    Reliability and Availability:
+    The system must maintain high availability during active usage. Automatic recovery mechanisms must handle network failures, API interruptions, and temporary service outages. The backend must prevent corruption of dependency and modpack data and ensure consistent graph construction results.
+
+    Scalability:
+    The architecture must support horizontal scaling to accommodate future increases in modpack size, graph complexity, and user demand. The backend must be modular to allow improvements and extensions without redesigning core components.
+
+    Resource Usage:
+    Memory and CPU usage must remain within acceptable limits during graph construction and metadata processing. Monitoring and logging must be implemented to detect performance bottlenecks and abnormal resource consumption.
+
+    Stability and Graceful Degradation:
+    Under overload conditions or limited resources, the system must degrade gracefully by prioritizing essential operations, applying request throttling, and avoiding system crashes.
+
+    Data Integrity and Validation:
+    Dependency data must be validated and normalized before graph construction. The system must ensure accurate representation of required, optional, and incompatible dependencies, as well as version constraints.
+
+
 2.10 Software Architecture Design
 
 3. Analytical
 
 3.1 Concept Formation
+    The Team A domain sketch illustrates the operation of the Mod Dependency Analyzer tool.
+    - Based on these observations :
+        - Mod : an artifact software uploaded by the user.
+        - Dependecy : relationship that indicates that one mod requiere another.
+        - DTO : abstraction used to carry mod and dependecy.
+        - Dependency Graph — structured network formed by interconnected dependency relationships.
+    - Grouping decisions: libraries needed and mods needed for a mod to work are grouped as Dependency because both are prerequisites.
+    - Conflicts : dependecy referes to both libraries and mods, graph refres to a data structure and not a visual representation.
 
 3.2 Validation
+The team validates the requirements and domain understanding through structured scenario-based walkthroughs. These walkthroughs simulate realistic modpack configurations and are discussed collectively to identify ambiguities, missing edge cases, or incorrect assumptions about domain concepts such as Mod, Dependency, Incompatibility, and Modpack.
+
+The goal of validation is not to obtain approval, but to ensure that the system-to-be correctly reflects the domain relationships and user needs.
+
+Scenario 1: Missing Mandatory Dependency
+
+Context:
+A user uploads a modpack containing Mod A, which declares a mandatory dependency on Mod B. Mod B is not included in the uploaded modpack.
+
+Walkthrough Steps:
+
+1. The system parses metadata of all uploaded mods.
+2. The declared dependencies of Mod A are extracted.
+3. The system checks whether Mod B exists in the modpack.
+4. The dependency graph is generated.
+5. Missing dependency is visually highlighted.
+
+Validation Outcome:
+During walkthrough discussion, the team clarified the distinction between mandatory and optional dependencies. The requirement was refined to explicitly differentiate these cases and ensure that only mandatory dependencies trigger critical warnings.
+
+Scenario 2: Circular Dependency Case
+
+Context:
+Mod A depends on Mod B, and Mod B depends on Mod A.
+
+Walkthrough Steps:
+
+1. Dependencies are parsed.
+2. The graph is constructed.
+3. The system analyzes graph structure for cycles.
+
+Validation Outcome:
+A new requirement was added to explicitly detect circular dependencies and notify users when a cycle exists. The concept of “graph as structural model” was distinguished from “graph as visual representation.”
 
 3.3 Verification
 
