@@ -442,6 +442,25 @@ Scalability:
     - retrieveMod(downloadTask) -> Retrieved Mod
         Represents obtaining the Mod from the Mod Source so it can be included in the resolved Modpack.
 
+    - addModNode(mod) 
+        creates mod Node and adds it to the dependecy graph by its name attribute. 
+
+    - addDependencyEdge(dependency, mod) 
+        adds dependency edge to the mod specified in the parameters.
+    
+    - hasDependency(mod, dependency)  
+        checks for the existence of a dependency in the dependency graph to avoid duplicates. 
+    
+    - hasMod(mod)  
+        checks for the existence of a mod in the dependency graph to avoid duplicates. 
+    
+    - exportDependencyGraph()
+        converts dependecy graph into a JSON file. 
+    
+    - buildDependencyGraph(mods)
+        builds a dependency graph based on a list of mods provided in the parameters. 
+    
+
 2.7 Domain Events
     - DependencyHasJustBeenDeclared
         A Dependency has just been declared by a Mod, establishing a required relationship between two Mods in the Dependency Graph.
