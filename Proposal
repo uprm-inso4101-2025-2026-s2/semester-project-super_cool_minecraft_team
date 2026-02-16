@@ -128,6 +128,108 @@ At the core of the platform is the ability to analyze a user’s selected mod co
     Within the mod ecosystem of Minecraft, users construct gameplay configurations by combining independently developed modifications, each of which declares structural constraints through metadata. A Mod specifies its identity, supported versions, required dependencies, optional dependencies, and declared incompatibilities. When multiple Mods are grouped into a Modpack, they form a configuration whose validity depends on the collective satisfaction of all declared requirements and constraints. Adding or removing a Mod triggers domain behaviors such as dependency expansion (through transitive requirements), compatibility evaluation, and conflict detection. A configuration is considered structurally valid only if every required dependency is present in a compatible version and no declared incompatibilities exist among included Mods. These relationships can be abstracted as a dependency network in which Mods participate in directed requirement relations and constraint relations.
 
 2.3 Requirements
+# 2.3.2 — Personas
+
+The following personas represent typical stakeholders who would use the mod dependency analyzer web application. They justify the previously defined epics and user stories.
+
+---
+
+## Persona 1 — “the Modpack Builder”
+
+**Profile:**  
+- 20–25 years old  
+- Experienced Minecraft player  
+- Builds custom modpacks for personal use or friends  
+- Familiar with Fabric and mod loaders  
+- Comfortable with technical tools but values automation  
+
+**Goals:**  
+- Quickly detect missing dependencies  
+- Avoid version conflicts  
+- Export a clean, ready-to-run modpack  
+- Visualize how mods depend on each other  
+
+**Frustrations:**  
+- Manually tracking dependencies  
+- Broken modpacks due to missing or incompatible versions  
+- Searching multiple websites for correct download links  
+
+**Why this persona matters:**  
+Alex justifies features such as automatic dependency detection, graph visualization, conflict resolution, and modpack re-packaging.
+
+---
+
+## Persona 2 — “the Casual Player”
+
+**Profile:**  
+- 16–22 years old  
+- Limited technical knowledge of mod loaders  
+- Downloads modpacks from friends or online communities  
+- Wants simple, reliable setup  
+
+**Goals:**  
+- Ensure all required mods are included  
+- Fix missing dependencies easily  
+- Avoid technical errors during installation  
+
+**Frustrations:**  
+- Game crashes due to missing mods  
+- Confusing download pages  
+- Not knowing which dependency version is correct  
+
+**Why this persona matters:**  
+Sam justifies features like automatic download fetching, clear dependency previews, and guided fixes for missing mods.
+
+---
+
+## Persona 3 — “the Server Organizer”
+
+**Profile:**  
+- 22–30 years old  
+- Runs small multiplayer servers  
+- Manages shared modpacks for a group  
+- Needs consistency across players  
+
+**Goals:**  
+- Maintain a stable modpack  
+- Ensure all players use identical mod versions  
+- Quickly update packs when dependencies change  
+
+**Frustrations:**  
+- Version mismatches between players  
+- Manual updates for every change  
+- Lack of visibility into dependency chains  
+
+# 2.3.4 - Interface requirements
+
+- The subsystem must be capable of receiving dependency metadata from the Mod Uploading subsystem, including mod identifiers, version information, and declared dependencies.
+- Queries to the Modrinth API (or similar repositories) should allow the system to locate required mods using dependency identifiers.
+- Download URLs for compatible dependency versions must be retrieved and made available for installation.
+- Structured results of the dependency resolution process are returned to the Visualization subsystem, including resolved dependencies, version matches, and any unresolved items.
+- Notifications are provided whenever a required dependency cannot be resolved, ensuring the system or user is aware of the issue.
+- Failed API requests should trigger automatic retries up to a configurable limit to maintain reliability.
+- All interactions with external APIs are logged for debugging, verification, and auditing purposes.
+
+# 2.3.5 – Machine Requirements
+
+Performance:
+- The subsystem shall process dependency resolution requests efficiently, ensuring reasonable response times for typical user workloads.
+- The system shall handle multiple simultaneous requests without significant delays or system instability.
+- Retrieval of download links for dependencies shall be performed in a timely manner to support smooth operation of the user workflow.
+
+Reliability:
+- The subsystem shall maintain continuous operation during normal usage, with minimal downtime.
+- External API failures shall be handled gracefully, ensuring that partial failures do not crash the system or corrupt data.
+- Errors and exceptions shall be logged to support debugging and verification.
+
+Resource and Stability:
+- The subsystem shall operate within reasonable memory and CPU usage to avoid affecting other system components.
+
+Scalability: 
+- The system shall be designed to accommodate growth in mod volume and user activity.
+
+
+---  
     - Requirement 1: Fetching dependencies of mods, this could be created with fabric API for maximum efficency and modularity.
     - Requirement 2: Fetch the "breaks" in the mods for comparing with dependencies in the modpack and indicate if some mods are incompatible, coul use fabric API too.
     - Requirement 3: Open the mod packs and read the content for the fetch functions. Needs to read each mod individually to check for the "breaks".
