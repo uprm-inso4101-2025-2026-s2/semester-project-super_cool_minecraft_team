@@ -128,9 +128,23 @@ Minecraft Dependency Visualizer
     - Function 3: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 
 2.7 Domain Events
-    - Event 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-    - Event 2: Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-    - Event 3: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    - Event 1: Show the user the interface/menu.
+    - Event 2: When the user access the mod storage show a loading screen(depends on the optimization)
+    - Event 3: Show a output of all mods that need to be updated when editing. 
+    - Event 4: Show a output when a mod is successfully added, deleted or updated. 
+    - Event 5: Show a output if a errors occurs with a mod when added, updated or deleted. 
+    
+    Objective
+        -Define and document Section 2.7: "Domain Events" for the proposal.txt ASCII documentation
+
+        Description
+        -Domain events represent user actions in the interface (such as creating, editing, or saving a mod) and notify the system to update accordingly.
+
+    Acceptance Criteria
+        -Domain events are created for key front-end actions (e.g., creating, editing, or saving a mod).
+        -Events can be listened to by other parts of the system.
+        -The system logs or handles each event correctly without crashing.
+        -Events are reusable and easy to extend for new game actions.
 
 2.8 Interface Requirements
 
