@@ -858,7 +858,17 @@ Validation Outcome:
 A new requirement was added to explicitly detect circular dependencies and notify users when a cycle exists. The concept of “graph as structural model” was distinguished from “graph as visual representation.”
 
 3.3 Verification
+Verification ensures that the Minecraft Mod Dependency Visualizer functions as intended and satisfies the specified requirements. The system will be verified through functional testing and user validation.
 
+-Unit Testing: Individual components such as metadata extraction, and dependency parsing will be tested independently to ensure they produce correct and consistent results.
+
+-Functional Testing: The system will be tested to confirm that a user can upload a mod file, generate a dependency graph, and receive accurate compatibility feedback.
+
+-User Validation: A small group of users will test the application to verify usability, clarity of the visualization, and correctness of the compatibility results. Feedback will be used to improve system behavior and interface design.
+
+-Performance Testing: The system will be evaluated to ensure it processes mod files within the required response time and maintains stability under multiple usage scenarios.
+
+Verification will be considered successful when all functional requirements are met and no critical defects are present.
 
 
 
