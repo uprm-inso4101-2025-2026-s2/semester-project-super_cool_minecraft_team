@@ -250,95 +250,125 @@ To match mod names from web results.
 
 2.4 Terminology 
 
-Naming Convention for Functions
+Term: UploadSession
+Classification: Entity
+Phase: Domain
+Definition: The complete process of uploading one or more mod files, from initial selection to final confirmation.
 
-Use simple:
-Verb + Object
+Term: ModFile
+Classification: Entity
+Phase: Domain
+Definition: The actual game modification file being uploaded, typically in .jar, .zip, or .rar format.
 
-Examples:
+Term: UploadQueue
+Classification: Entity
+Phase: System
+Definition: A visual list component displaying all files selected for upload and their current processing status.
 
-_detectMissingDependencies()
+Term: UploadStatus
+Classification: Attribute
+Phase: System
+Definition: The current state of an upload (idle, uploading, paused, completed, failed, or cancelled).
 
-searchOnline()
+Term: FilePicker
+Classification: Entity
+Phase: System
+Definition: A UI component that opens the system dialog for users to browse and select files from their computer.
 
-sortDownloadLinks()
+Term: DragAndDropZone
+Classification: Entity
+Phase: System
+Definition: A designated UI area where users can drag files directly from their desktop to initiate upload.
 
-allocateStatus()
+Term: FileSelected
+Classification: Event
+Phase: Domain
+Definition: User action of choosing a file through the file picker dialog.
 
-downloadFile()_
+Term: FileDropped
+Classification: Event
+Phase: Domain
+Definition: User action of dragging and releasing a file into the drag and drop zone.
 
-Keep naming consistent and clear. as close to the nose as possible to avoid confusing to read code. As well as keeping comments close and handy to quickly explain what the function and code is doing.
+Term: UploadStarted
+Classification: Event
+Phase: Domain
+Definition: User action of initiating the upload process after file selection.
 
-While easy to provide a list for developers to use, this will hinder in the long run seeing as options are limited for any x amount of variables needed. A simple rule of concise, legible, and easy to understand naming conventions, will be far more beneficial in the long run.
-The following personas represent typical stakeholders who would use the mod dependency analyzer web application. They justify the previously defined epics and user stories.
+Term: UploadCancelled
+Classification: Event
+Phase: Domain
+Definition: User action that aborts an ongoing file upload.
 
----
+Term: UploadPaused
+Classification: Event
+Phase: Domain
+Definition: User action that temporarily stops an active upload.
 
-## Persona 1 — “the Modpack Builder”
+Term: UploadResumed
+Classification: Event
+Phase: Domain
+Definition: User action that continues a paused upload.
 
-**Profile:**  
-- 20–25 years old  
-- Experienced Minecraft player  
-- Builds custom modpacks for personal use or friends  
-- Familiar with Fabric and mod loaders  
-- Comfortable with technical tools but values automation  
+Term: RetryUpload
+Classification: Event
+Phase: Domain
+Definition: User action that attempts to upload a previously failed file again.
 
-**Goals:**  
-- Quickly detect missing dependencies  
-- Avoid version conflicts  
-- Export a clean, ready-to-run modpack  
-- Visualize how mods depend on each other  
+Term: UploadProgress
+Classification: Attribute
+Phase: System
+Definition: Numerical value (0-100%) indicating how much of a file has been successfully transferred.
 
-**Frustrations:**  
-- Manually tracking dependencies  
-- Broken modpacks due to missing or incompatible versions  
-- Searching multiple websites for correct download links  
+Term: ProgressIndicator
+Classification: Entity
+Phase: System
+Definition: Visual element showing upload completion percentage, can be a progress bar, spinner, or percentage text.
 
-**Why this persona matters:**  
-Alex justifies features such as automatic dependency detection, graph visualization, conflict resolution, and modpack re-packaging.
+Term: FilePreview
+Classification: Entity
+Phase: System
+Definition: Thumbnail, icon, or filename display representing the uploaded file.
 
----
+Term: ValidationFeedback
+Classification: Behavior
+Phase: System
+Definition: Visual messages displayed to users indicating if a selected file meets requirements.
 
-## Persona 2 — “the Casual Player”
+Term: ValidationError
+Classification: Attribute
+Phase: System
+Definition: A specific message indicating why a file was rejected (wrong format, too large, etc.).
 
-**Profile:**  
-- 16–22 years old  
-- Limited technical knowledge of mod loaders  
-- Downloads modpacks from friends or online communities  
-- Wants simple, reliable setup  
+Term: FileSizeWarning
+Classification: Attribute
+Phase: System
+Definition: Notification that the selected file exceeds recommended size limits.
 
-**Goals:**  
-- Ensure all required mods are included  
-- Fix missing dependencies easily  
-- Avoid technical errors during installation  
+Term: UploadComplete
+Classification: Event
+Phase: Domain
+Definition: Notification that all files have been successfully transferred to the server.
 
-**Frustrations:**  
-- Game crashes due to missing mods  
-- Confusing download pages  
-- Not knowing which dependency version is correct  
+Term: MetadataForm
+Classification: Entity
+Phase: System
+Definition: UI form where users can add additional information about the uploaded mod.
 
-**Why this persona matters:**  
-Sam justifies features like automatic download fetching, clear dependency previews, and guided fixes for missing mods.
+Term: CancelButton
+Classification: Entity
+Phase: System
+Definition: UI element that allows users to abort an ongoing upload.
 
----
+Term: TimeRemaining
+Classification: Attribute
+Phase: System
+Definition: Estimated time display showing how long until upload completes.
 
-## Persona 3 — “the Server Organizer”
-
-**Profile:**  
-- 22–30 years old  
-- Runs small multiplayer servers  
-- Manages shared modpacks for a group  
-- Needs consistency across players  
-
-**Goals:**  
-- Maintain a stable modpack  
-- Ensure all players use identical mod versions  
-- Quickly update packs when dependencies change  
-
-**Frustrations:**  
-- Version mismatches between players  
-- Manual updates for every change  
-- Lack of visibility into dependency chains  
+Term: UploadSpeed
+Classification: Attribute
+Phase: System
+Definition: Real-time display of data transfer rate during upload.
 
 # 2.3.4 - Interface requirements
 
