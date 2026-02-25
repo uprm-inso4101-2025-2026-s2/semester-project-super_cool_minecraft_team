@@ -598,49 +598,38 @@ Scalability:
 		    Represents the outcome of dependency resolution indicating whether all required Mods were found, missing, or conflicting.
 		    It summarizes the state of the Modpack after analysis.
         
-2.6 Domain Functions
- - extractDependencies(mod) -> Dependency Resolution
-        Gets the dependencies a Mod says it needs, and the basic rules to satisfy them.
-
-    - resolveDependencies(modpack) -> Resolution Result
-        Tries to satisfy all required dependencies for a Modpack and summarizes if anything is missing or conflicting.
-
-    - findMissingDependencies(modpack) -> Resolution Result
-        Checks what required Mods are missing from the Modpack.
-
-    - findConflicts(modpack) -> Resolution Result
-        Detects Mods that can’t coexist in the same Modpack (if incompatibility info exists).
-
-    - checkVersionRules(mod, dependency) -> Resolution Result
-        Checks if the versions in the Modpack match the dependency/version rules.
-
-    - locateModSources(dependency) -> Set<Mod Source>
-        Finds possible Mod Sources (providers/repositories) where a missing dependency can be obtained.
-
-    - createDownloadTask(dependency, source) -> Download Task
-        Creates the idea of retrieving a specific Mod version from a chosen Mod Source.
-
-    - retrieveMod(downloadTask) -> Retrieved Mod
-        Represents obtaining the Mod from the Mod Source so it can be included in the resolved Modpack.
-
-    - addModNode(mod) 
-        creates mod Node and adds it to the dependecy graph by its name attribute. 
-
-    - addDependencyEdge(dependency, mod) 
-        adds dependency edge to the mod specified in the parameters.
-    
-    - hasDependency(mod, dependency)  
-        checks for the existence of a dependency in the dependency graph to avoid duplicates. 
-    
-    - hasMod(mod)  
-        checks for the existence of a mod in the dependency graph to avoid duplicates. 
-    
-    - exportDependencyGraph()
-        converts dependecy graph into a JSON file. 
-    
-    - buildDependencyGraph(mods)
-        builds a dependency graph based on a list of mods provided in the parameters. 
-    
+	2.6 Domain Functions
+		
+		A. Resolve Dependencies
+		   a. Collect dependency information declared by each Mod in a Modpack.
+		   b. Determine whether required dependencies are satisfied.
+		   c. Produce a Resolution Result summarizing satisfied, missing, and conflicting items.
+		
+		B. Find Missing Dependencies
+		   a. Compare required dependencies against the Mods included in the Modpack.
+		   b. List missing required dependencies in the Resolution Result.
+		
+		C. Detect Conflicts / Incompatibilities
+		   a. Check incompatibility rules when available.
+		   b. Identify mods that cannot coexist and record conflicts in the Resolution Result.
+		
+		D. Check Version Rules
+		   a. Verify that mod versions satisfy dependency version constraints.
+		   b. Record version mismatches in the Resolution Result.
+		
+		E. Locate Mod Sources
+		   a. Identify possible Mod Sources where missing dependencies can be found.
+		   b. Collect candidate references/versions from those sources.
+		
+		F. Create and Execute a Download Task
+		   a. Create a Download Task for a selected candidate reference.
+		   b. Retrieve the dependency as a Retrieved Mod (conceptually) for inclusion in the resolved configuration.
+		
+		G. Build and Export the Dependency Graph
+		   a. Add Mod nodes to the Dependency Graph.
+		   b. Add Dependency edges between Mods based on declared relationships.
+		   c. Avoid duplicate nodes/edges when building the graph.
+		   d. Export the Dependency Graph into a JSON representation for visualization.
 
 2.7 Domain Events
 
