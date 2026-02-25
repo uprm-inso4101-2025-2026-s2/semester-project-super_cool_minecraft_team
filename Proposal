@@ -216,6 +216,8 @@ At the core of the platform is the ability to analyze a user’s selected mod co
 - The system shall prevent submission if validation fails and display a clear, user-friendly error message.
 
 - The system shall allow the user to retry the upload process without restarting the application.
+
+- The UI shall provide clear instructions describing how users can compress their modpack into a .zip file before uploading.
 # 2.3.2 — Personas
 
 
