@@ -258,8 +258,6 @@ Simple String Matching (equals / contains / not equal to [to avoid erroneous lin
 To match mod names from web results.
 
 
-
-
 2.4 Terminology
 
 This section defines the core terms that will be used throughout the project. These definitions apply to both the backend dependency logic and the frontend graph interface.
