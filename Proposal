@@ -38,9 +38,10 @@ Minecraft Dependency Visualizer
         - Michael Wilson
 
 1.3 Current Situation
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    Minecraft mods rely on other mods, loaders, libraries and specific minecraft versions which would be the mod dependedncies. 
+    If these dependencies aren't met the game will crash or won't launch. This leads to user frustration and wasting their time. These dependencies arent very 
+    easy to acces, and while it would be better to have them in the main dowloader page they are usually seen as plain text in metadata or in dedicated wikis which
+    people who aren't welled versed wont find.
 
 == 1.4. Needs and Ideas
 
@@ -215,6 +216,8 @@ At the core of the platform is the ability to analyze a user’s selected mod co
 - The system shall prevent submission if validation fails and display a clear, user-friendly error message.
 
 - The system shall allow the user to retry the upload process without restarting the application.
+
+- The UI shall provide clear instructions describing how users can compress their modpack into a .zip file before uploading.
 # 2.3.2 — Personas
 
 
@@ -256,6 +259,45 @@ To find a mod in a list.
 Simple String Matching (equals / contains / not equal to [to avoid erroneous links])
 
 To match mod names from web results.
+
+# 2.3.4 - Interface requirements
+
+- The subsystem must be capable of receiving dependency metadata from the Mod Uploading subsystem, including mod identifiers, version information, and declared dependencies.
+- Queries to the Modrinth API (or similar repositories) should allow the system to locate required mods using dependency identifiers.
+- Download URLs for compatible dependency versions must be retrieved and made available for installation.
+- Structured results of the dependency resolution process are returned to the Visualization subsystem, including resolved dependencies, version matches, and any unresolved items.
+- Notifications are provided whenever a required dependency cannot be resolved, ensuring the system or user is aware of the issue.
+- Failed API requests should trigger automatic retries up to a configurable limit to maintain reliability.
+- All interactions with external APIs are logged for debugging, verification, and auditing purposes.
+
+# 2.3.5 – Machine Requirements
+
+Performance:
+- The subsystem shall process dependency resolution requests efficiently, ensuring reasonable response times for typical user workloads.
+- The system shall handle multiple simultaneous requests without significant delays or system instability.
+- Retrieval of download links for dependencies shall be performed in a timely manner to support smooth operation of the user workflow.
+
+Reliability:
+- The subsystem shall maintain continuous operation during normal usage, with minimal downtime.
+- External API failures shall be handled gracefully, ensuring that partial failures do not crash the system or corrupt data.
+- Errors and exceptions shall be logged to support debugging and verification.
+
+Resource and Stability:
+- The subsystem shall operate within reasonable memory and CPU usage to avoid affecting other system components.
+
+Scalability: 
+- The system shall be designed to accommodate growth in mod volume and user activity.
+
+
+---  
+    - Requirement 1: Fetching dependencies of mods, this could be created with fabric API for maximum efficency and modularity.
+    - Requirement 2: Fetch the "breaks" in the mods for comparing with dependencies in the modpack and indicate if some mods are incompatible, coul use fabric API too.
+    - Requirement 3: Open the mod packs and read the content for the fetch functions. Needs to read each mod individually to check for the "breaks".
+    - Requirement 4: Pass the data to the other layers of the project to be used on the graph and display.
+    - Requirement 5: Storing the dependencies needed and the mods passed by the user.
+    - Requirement 6: Merge the dependencies and "breaks" for comparate and identify the incompatibilities.
+    - Requirement 7: The platform must associate each dependency with exactly one dependency type: required, optional, or incompatible.
+    - Requirement 8: The platform must represent dependencies transitively, such that dependencies of dependencies are included.
 
 
 2.4 Terminology
@@ -514,55 +556,37 @@ Definition: Real-time display of data transfer rate during upload.
 
 2.5 Domain Entities
     - Mod:
-        Represents a Minecraft modification that extends or alters the base game functionality.
-        A Mod contains metadata such as its name, version, supported Minecraft version, and declared dependencies.
-        Each Mod may depend on other Mods and may also declare incompatibilities.
-        It is the central entity of the system and serves as a node within the dependency graph.
+        Represents a Minecraft modification that extends the base game and may declare dependencies or incompatibilities.
         
     - Dependency:
-        Represents a directed relationship in which one Mod requires another Mod in order to function correctly.
-        A Dependency specifies the required Mod and any version constraints associated with that requirement.
-        It is responsible for defining mandatory relationships between Mods and enabling validation of mod configurations.
+        Represents a directed requirement where one Mod depends on another Mod, possibly constrained by version.
 
     - Incompatibility:
-        Represents a conflict relationship between two Mods where they cannot coexist in the same mod configuration.
-        An Incompatibility defines which Mods are incompatible and may include version-based conditions.
-        It is responsible for identifying and signaling potential runtime conflicts within a mod set.
+        Represents a conflict condition in which two Mods cannot coexist in the same Modpack.
 
     - Modpack:
-        Represents a collection of Mods selected by a user to be used together.
-        A Modpack aggregates multiple Mods and serves as the context for dependency resolution and conflict analysis.
-        It is responsible for grouping Mods and enabling validation of their combined compatibility.
+        Represents a collection of Mods intended to function together within a Minecraft instance
 
     - Dependency Graph:
-        Represents the structured visualization of Mods as nodes and Dependencies as directed connections.
-        The Dependency Graph models the relationships between Mods and provides a conceptual view of dependency chains.
-        It is responsible for enabling analysis of required Mods, reverse dependencies, and structural relationships.
+        Represents the conceptual structure of Mods and their dependency relationships.
 
     - User:
-        Represents an individual interacting with the platform to analyze Mods and Modpacks.
-        A User can upload or select a Modpack, inspect Dependencies, and view detected Incompatibilities.
-        The User initiates analysis processes but does not directly modify domain relationships.
+        Represents an individual who analyzes Modpacks and their dependencies.
 
 		- Dependency Resolution:
-		    Represents the process of determining and retrieving all Mods required for a Modpack to function correctly.
-		    It identifies missing dependencies and coordinates their acquisition from available repositories.
+		    Represents the process of identifying and retrieving required Mods for a Modpack.
 
 		- Mod Source:
-		    Represents an external repository or provider from which Mods can be located and downloaded.
-		    A Mod Source contains available versions and metadata needed for dependency satisfaction.
+		    Represents an external repository from which Mods and their versions can be obtained.
 
 		- Download Task:
 		    Represents the retrieval of a specific Mod version required to satisfy a Dependency.
-		    It ensures the Mod is obtained and prepared for inclusion in the Modpack configuration.
 
 		- Retrieved Mod:
-		    Represents a Mod that has been successfully obtained from a Mod Source to fulfill a Dependency.
-		    It becomes part of the resolved Modpack configuration.
+		    Represents a Mod successfully obtained to fulfill a Dependency requirement.
 
 		- Resolution Result:
-		    Represents the outcome of dependency resolution indicating whether all required Mods were found, missing, or conflicting.
-		    It summarizes the state of the Modpack after analysis.
+		    Represents the outcome of dependency analysis, indicating satisfied, missing, or conflicting Mods.
         
 	2.6 Domain Functions
 		
@@ -824,7 +848,3 @@ Verification ensures that the Minecraft Mod Dependency Visualizer functions as i
 -Performance Testing: The system will be evaluated to ensure it processes mod files within the required response time and maintains stability under multiple usage scenarios.
 
 Verification will be considered successful when all functional requirements are met and no critical defects are present.
-
-
-
-
