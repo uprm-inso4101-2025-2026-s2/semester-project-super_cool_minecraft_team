@@ -16,26 +16,52 @@ Minecraft Dependency Visualizer
     Date: February 2026
 
 1.2 Team Members
-1.2.1 Managers:
-    - John Doe
-1.2.2 Team Leaders:
-    - Team A:
-        - John Doe
-    - Team B:
-        - Jane Smith
-    - Team C:
-        - Alice Johnson
+    1.2.1 Managers:
+        - Harry Y. Ruiz-Figueroa
+        - Juan J. Pumarejo Bello
+        - Victor E. Ravelo Santana
+    1.2.2 Team Leaders:
+        - Team A:
+            - Zabdiel J. Valentin-Perez
+            - Karilýs A. Muñiz-Ramos
+        - Team B:
+            - Gabriel A. Sanchez-Santos
+            - Ricardo Burgos
+        - Team C:
+            - Victor M De Jesús
+            - Javier M. Aguilo Agosto
 
-1.2.3 Team Members:
-    - Team A:
-        - John Doe
-        - Mark Brown
-    - Team B:
-        - Jane Smith
-        - Emily Davis
-    - Team C:
-        - Alice Johnson
-        - Michael Wilson
+    1.2.3 Team Members:
+        - Team A:
+            - Christian J Berberena 
+            - Julian A. Laracuente-Matos
+            - Yahir J. Reyes-Padilla
+            - Alondra Soto-Feliciano
+            - Andrews Y. Molina-Matos
+            - Carlos A. Negron-Ramirez
+            - Roberto J. Fuertes-Casse
+            - Sergio A. Cartagena-Reyes
+            - Nathalie M. Castro-Mojica
+            - Merced J. Rivera-Mercado
+            - Isamar Z. Garcia-Rivera
+        - Team B:
+            - Joyson J. Martinez-Andujar
+            - Lorenzo Ramos-Martinez
+            - Wesley M. Rodriguez-Mojica
+            - Andres M. Roldan-Hanke
+            - Jordan O. DeLeon-Orama
+            - Manuel O. Vazquez-Rodriguez
+            - Kevin L. Ruiz-Sanchez
+            - Jan E. Ramos-Vazquez
+            - Cheselyn Morales-Santiago
+        - Team C:
+            - Alexander M. Garcia
+            - Edgar Y. Colon-Sanchez
+            - Hector J. Vale-Melendez
+            - Jaiden X. Roman-Mejias
+            - Booker A. Robinson
+            - David Semidoy
+            - Hector G. Ramos-Cortes
 
 1.3 Current Situation
     Minecraft mods rely on other mods, loaders, libraries and specific minecraft versions which would be the mod dependedncies. 
