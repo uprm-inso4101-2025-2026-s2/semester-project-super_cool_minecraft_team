@@ -292,32 +292,34 @@ To match mod names from web results.
 
 # 2.3.5 – Machine Requirements
 
-Performance:
-- The subsystem shall process dependency resolution requests efficiently, ensuring reasonable response times for typical user workloads.
-- The system shall handle multiple simultaneous requests without significant delays or system instability.
-- Retrieval of download links for dependencies shall be performed in a timely manner to support smooth operation of the user workflow.
+Performance
+    -The subsystem shall process dependency resolution requests efficiently, ensuring reasonable response times under typical user workloads.
+    -The system shall support multiple simultaneous requests without significant performance degradation or instability.
+    -Retrieval of dependency metadata and download links shall be performed in a timely manner to maintain smooth workflow execution.
+    -The subsystem shall efficiently read and analyze modpack contents, including individual mod files, to detect dependencies and incompatibilities.
 
-Reliability:
-- The subsystem shall maintain continuous operation during normal usage, with minimal downtime.
-- External API failures shall be handled gracefully, ensuring that partial failures do not crash the system or corrupt data.
-- Errors and exceptions shall be logged to support debugging and verification.
+Functional Processing Requirements
+    -The subsystem shall fetch mod dependencies using external APIs (e.g., Fabric API) to ensure modularity and extensibility.
+    -The subsystem shall detect and retrieve declared incompatibilities ("breaks") for each mod.
+    -The system shall compare mod dependencies and incompatibilities against the contents of the modpack to identify conflicts.
+    -The subsystem shall merge dependency and incompatibility data to determine valid, missing, optional, or conflicting components.
+    -The platform shall associate each dependency with exactly one dependency type: required, optional, or incompatible.
+    -The system shall represent dependencies transitively, including dependencies of dependencies.
+    -The subsystem shall store user-provided mod information and resolved dependency data for processing and validation.
+    -Processed data shall be passed to other system layers for visualization, graph representation, and user interface display.
 
-Resource and Stability:
-- The subsystem shall operate within reasonable memory and CPU usage to avoid affecting other system components.
+Reliability
+    -The subsystem shall maintain stable operation during normal usage with minimal downtime.
+    -External API failures shall be handled gracefully, ensuring partial failures do not crash the system or corrupt stored data.
+    -Errors and exceptions shall be logged to support debugging, testing, and verification activities.
 
-Scalability: 
-- The system shall be designed to accommodate growth in mod volume and user activity.
+Resource and Stability Constraints
+    -The subsystem shall operate within reasonable CPU and memory limits to avoid negatively impacting other system components.
+    -The system shall ensure consistent behavior during extended processing tasks such as large modpack analysis.
 
-
----  
-    - Requirement 1: Fetching dependencies of mods, this could be created with fabric API for maximum efficency and modularity.
-    - Requirement 2: Fetch the "breaks" in the mods for comparing with dependencies in the modpack and indicate if some mods are incompatible, coul use fabric API too.
-    - Requirement 3: Open the mod packs and read the content for the fetch functions. Needs to read each mod individually to check for the "breaks".
-    - Requirement 4: Pass the data to the other layers of the project to be used on the graph and display.
-    - Requirement 5: Storing the dependencies needed and the mods passed by the user.
-    - Requirement 6: Merge the dependencies and "breaks" for comparate and identify the incompatibilities.
-    - Requirement 7: The platform must associate each dependency with exactly one dependency type: required, optional, or incompatible.
-    - Requirement 8: The platform must represent dependencies transitively, such that dependencies of dependencies are included.
+Scalability
+    -The system shall support growth in mod volume, dependency complexity, and user activity without requiring architectural redesign.
+    -The subsystem architecture shall allow integration of additional mod sources or APIs in future iterations.
 
 
 2.4 Terminology
