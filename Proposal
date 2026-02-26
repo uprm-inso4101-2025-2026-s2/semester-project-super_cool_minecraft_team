@@ -224,7 +224,22 @@ At the core of the platform is the ability to analyze a user’s selected mod co
 2.2 Narrative
     Within the mod ecosystem of Minecraft, users construct gameplay configurations by combining independently developed modifications, each of which declares structural constraints through metadata. A Mod specifies its identity, supported versions, required dependencies, optional dependencies, and declared incompatibilities. When multiple Mods are grouped into a Modpack, they form a configuration whose validity depends on the collective satisfaction of all declared requirements and constraints. Adding or removing a Mod triggers domain behaviors such as dependency expansion (through transitive requirements), compatibility evaluation, and conflict detection. A configuration is considered structurally valid only if every required dependency is present in a compatible version and no declared incompatibilities exist among included Mods. These relationships can be abstracted as a dependency network in which Mods participate in directed requirement relations and constraint relations.
 
-2.2.1 Domain Requirements
+2.3 Requirements
+## Team C – Frontend (Mod Uploading) Requirements
+
+- The system shall provide a user interface that allows the user to upload a modpack file or a supported mods folder.
+
+- The system shall validate that the uploaded file is not empty and is in a supported format before processing.
+
+- The system shall display real-time feedback during upload (idle, uploading, processing, success, error).
+
+- The system shall prevent submission if validation fails and display a clear, user-friendly error message.
+
+- The system shall allow the user to retry the upload process without restarting the application.
+
+- The UI shall provide clear instructions describing how users can compress their modpack into a .zip file before uploading.
+
+2.3.1 Domain Requirements
 
 This section derives requirements from observed properties of the Minecraft modding domain. Each requirement is grounded in the domain narrative and domain events.
 
@@ -260,23 +275,6 @@ The system shall detect circular dependency structures in the dependency network
 
 DR-10 — Resolution Result
 The system shall produce a resolution result identifying satisfied dependencies, missing dependencies, incompatibilities, version violations, and cycles.
-
-2.3 Requirements
-## Team C – Frontend (Mod Uploading) Requirements
-
-- The system shall provide a user interface that allows the user to upload a modpack file or a supported mods folder.
-
-- The system shall validate that the uploaded file is not empty and is in a supported format before processing.
-
-- The system shall display real-time feedback during upload (idle, uploading, processing, success, error).
-
-- The system shall prevent submission if validation fails and display a clear, user-friendly error message.
-
-- The system shall allow the user to retry the upload process without restarting the application.
-
-- The UI shall provide clear instructions describing how users can compress their modpack into a .zip file before uploading.
-# 2.3.2 — Personas
-
 
 (Joyson addition)
 
