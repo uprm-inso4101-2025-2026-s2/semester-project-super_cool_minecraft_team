@@ -551,55 +551,37 @@ Scalability:
 
 2.5 Domain Entities
     - Mod:
-        Represents a Minecraft modification that extends or alters the base game functionality.
-        A Mod contains metadata such as its name, version, supported Minecraft version, and declared dependencies.
-        Each Mod may depend on other Mods and may also declare incompatibilities.
-        It is the central entity of the system and serves as a node within the dependency graph.
+        Represents a Minecraft modification that extends the base game and may declare dependencies or incompatibilities.
         
     - Dependency:
-        Represents a directed relationship in which one Mod requires another Mod in order to function correctly.
-        A Dependency specifies the required Mod and any version constraints associated with that requirement.
-        It is responsible for defining mandatory relationships between Mods and enabling validation of mod configurations.
+        Represents a directed requirement where one Mod depends on another Mod, possibly constrained by version.
 
     - Incompatibility:
-        Represents a conflict relationship between two Mods where they cannot coexist in the same mod configuration.
-        An Incompatibility defines which Mods are incompatible and may include version-based conditions.
-        It is responsible for identifying and signaling potential runtime conflicts within a mod set.
+        Represents a conflict condition in which two Mods cannot coexist in the same Modpack.
 
     - Modpack:
-        Represents a collection of Mods selected by a user to be used together.
-        A Modpack aggregates multiple Mods and serves as the context for dependency resolution and conflict analysis.
-        It is responsible for grouping Mods and enabling validation of their combined compatibility.
+        Represents a collection of Mods intended to function together within a Minecraft instance
 
     - Dependency Graph:
-        Represents the structured visualization of Mods as nodes and Dependencies as directed connections.
-        The Dependency Graph models the relationships between Mods and provides a conceptual view of dependency chains.
-        It is responsible for enabling analysis of required Mods, reverse dependencies, and structural relationships.
+        Represents the conceptual structure of Mods and their dependency relationships.
 
     - User:
-        Represents an individual interacting with the platform to analyze Mods and Modpacks.
-        A User can upload or select a Modpack, inspect Dependencies, and view detected Incompatibilities.
-        The User initiates analysis processes but does not directly modify domain relationships.
+        Represents an individual who analyzes Modpacks and their dependencies.
 
 		- Dependency Resolution:
-		    Represents the process of determining and retrieving all Mods required for a Modpack to function correctly.
-		    It identifies missing dependencies and coordinates their acquisition from available repositories.
+		    Represents the process of identifying and retrieving required Mods for a Modpack.
 
 		- Mod Source:
-		    Represents an external repository or provider from which Mods can be located and downloaded.
-		    A Mod Source contains available versions and metadata needed for dependency satisfaction.
+		    Represents an external repository from which Mods and their versions can be obtained.
 
 		- Download Task:
 		    Represents the retrieval of a specific Mod version required to satisfy a Dependency.
-		    It ensures the Mod is obtained and prepared for inclusion in the Modpack configuration.
 
 		- Retrieved Mod:
-		    Represents a Mod that has been successfully obtained from a Mod Source to fulfill a Dependency.
-		    It becomes part of the resolved Modpack configuration.
+		    Represents a Mod successfully obtained to fulfill a Dependency requirement.
 
 		- Resolution Result:
-		    Represents the outcome of dependency resolution indicating whether all required Mods were found, missing, or conflicting.
-		    It summarizes the state of the Modpack after analysis.
+		    Represents the outcome of dependency analysis, indicating satisfied, missing, or conflicting Mods.
         
 	2.6 Domain Functions
 		
