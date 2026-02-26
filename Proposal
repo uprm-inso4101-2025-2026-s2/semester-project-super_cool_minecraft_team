@@ -700,6 +700,92 @@ Definition: Real-time display of data transfer rate during upload.
       
     
 
+    - Event 1: Modpack Uploaded
+      Triggered when a user uploads a modpack or mod collection for analysis.
+      Outcome: The system initiates metadata parsing and begins extracting dependency information from all included mods.
+      State Change: The modpack transitions from "not analyzed" to "parsing in progress."
+
+    - Event 2: Dependencies Extracted
+      Triggered when metadata parsing completes and all mod dependencies are successfully identified.
+      Outcome: The system classifies each dependency as required, optional, or incompatible and prepares data for graph construction.
+      State Change: Dependency data transitions from "raw metadata" to "normalized and classified."
+
+    - Event 3: Dependency Graph Generated
+      Triggered when the system successfully constructs the dependency graph from normalized dependency data.
+      Outcome: The graph is made available for visualization and analysis, representing all mods as nodes and their relationships as directed edges.
+      State Change: The modpack analysis transitions to "graph ready for visualization."
+
+    - Event 4: Missing Dependency Detected
+      Triggered when the system identifies that a mod declares a required dependency that is not present in the modpack.
+      Outcome: The system flags the missing dependency, identifies which mod requires it, and signals a critical configuration error.
+      State Change: The modpack configuration transitions to "invalid - missing required dependency."
+
+    - Event 5: Incompatibility Detected
+      Triggered when the system identifies that two or more mods in the modpack declare mutual incompatibility.
+      Outcome: The system highlights the conflicting mods and the reason for incompatibility in the dependency graph.
+      State Change: The modpack configuration transitions to "invalid - incompatibility conflict."
+
+    - Event 6: Circular Dependency Detected
+      Triggered when the system identifies a cycle in the dependency graph (e.g., Mod A requires Mod B, and Mod B requires Mod A).
+      Outcome: The system reports the circular dependency chain and prevents graph construction from entering an infinite loop.
+      State Change: The modpack configuration transitions to "invalid - circular dependency."
+
+    - Event 7: Version Constraint Violation Detected
+      Triggered when a mod's version does not satisfy the version constraints specified by its dependent mods.
+      Outcome: The system identifies which mods have incompatible versions and suggests compatible alternatives or version updates.
+      State Change: The modpack configuration transitions to "invalid - version constraint violation."
+
+    - Event 8: Transitive Dependencies Resolved
+      Triggered when the system expands the dependency graph to include all transitive dependencies (dependencies of dependencies).
+      Outcome: The complete dependency chain is made visible, showing not only direct dependencies but also indirect requirements.
+      State Change: The modpack representation transitions from "direct dependencies only" to "complete transitive dependency view."
+
+    - Event 9: Modpack Configuration Validated
+      Triggered when all dependency checks, incompatibility checks, and version constraint validations complete successfully.
+      Outcome: The system marks the modpack as structurally valid and ready for use, providing a summary of all valid mods and dependencies.
+      State Change: The modpack configuration transitions to "valid and ready for deployment."
+
+    - Event 10: Mod Removed or Updated
+      Triggered when a user modifies the modpack by removing a mod or updating an existing mod to a new version.
+      Outcome: The system recalculates the dependency graph, identifies new missing dependencies or incompatibilities, and updates the visualization.
+      State Change: The modpack configuration reverts to analysis mode and reassesses validity based on the new composition.
+
+    - Event 11: Dependency Graph Visualized
+      Triggered when the system renders the dependency graph for user interaction and exploration.
+      Outcome: Users can select mods, view which mods depend on them, understand why dependencies are required, and explore impact of potential removals.
+      State Change: The modpack transitions from "analyzed" to "interactive visualization available."
+
+    - Event 12: Dependency Has Just Been Declared
+      Triggered when a mod explicitly declares a required relationship with another mod within its metadata.
+      Outcome: The system records the dependency as a directed relationship in the dependency model and prepares it for validation and resolution.
+      State Change: The dependency model transitions from "no declared relationship" to "declared dependency recorded."
+
+    - Event 13: Mod Has Just Been Added To Modpack
+      Triggered when a user adds a new mod to an existing modpack configuration.
+      Outcome: The system updates the modpack composition, re-evaluates declared dependencies and incompatibilities, and schedules dependency resolution if required.
+      State Change: The modpack configuration transitions from "stable composition" to "composition modified - revalidation required."
+
+    - Event 14: Dependency Resolution Has Just Been Completed
+      Triggered when the system completes the process of resolving all declared dependencies for the current modpack configuration.
+      Outcome: The system determines whether all required mods are present and whether any dependencies remain unsatisfied.
+      State Change: The dependency resolution process transitions from "in progress" to either "resolved successfully" or "resolution failed."
+
+    - Event 15: Retrieved Mod Has Just Been Obtained
+      Triggered when a required mod is successfully retrieved from a mod source to satisfy a previously declared dependency.
+      Outcome: The retrieved mod is added to the modpack configuration and incorporated into the dependency graph for further validation.
+      State Change: The modpack transitions from "dependency unsatisfied" to "dependency provisionally satisfied pending validation."
+
+    - Event 16: Dependency Has Just Become Unsatisfied
+      Triggered when a previously satisfied dependency becomes invalid due to mod removal, version change, or constraint violation.
+      Outcome: The system flags the dependency as unsatisfied and initiates corrective actions such as retrieval suggestions or configuration warnings.
+      State Change: The modpack configuration transitions from "dependency satisfied" to "dependency unsatisfied."
+
+    - Event 17: Modpack Has Just Become Consistent
+      Triggered when all declared dependencies are satisfied and no declared incompatibilities are violated within the modpack configuration.
+      Outcome: The system confirms the structural integrity of the modpack and allows it to proceed to validation or deployment stages.
+      State Change: The modpack configuration transitions from "inconsistent or under validation" to "consistent configuration state."
+
+2.8 Interface Requirements
     2.8 Interface Requirements
     - Allow users to upload mod files or submit mod metadata for processing.
     - Validate uploaded metadata and report errors for missing or malformed entries.
@@ -714,6 +800,27 @@ Definition: Real-time display of data transfer rate during upload.
     - Provide clear feedback messages when dependency data cannot be loaded or is incomplete.
     - Maintain consistent layout and labeling to ensure ease of understanding for non-technical users.
 
+The system shall provide a user-friendly and responsive interface that supports the visualization and management of mod dependencies. The interface must ensure clarity, accessibility, and usability for both technical and non-technical users.
+
+A. File Submission and Validation
+1. The system shall allow users to upload mod files or submit mod metadata for processing.
+2. The system shall validate uploaded metadata and report errors for missing or malformed entries.
+3. The interface shall provide visual feedback and progress indicators during file upload operations.
+
+B. Dependency Visualization
+1. The system shall provide an interactive dependency graph to visually explore mod relationships.
+2. Users shall be able to select a mod and view its required, optional, and incompatible dependencies.
+3. The interface shall display clear visual indicators distinguishing satisfied, missing, and incompatible dependencies.
+4. Users shall be able to navigate between related mods directly from the dependency visualization.
+
+C. Search and Information Display
+1. The system shall provide a search interface to locate mods by name or identifier.
+2. The interface shall display a detailed view panel containing information about the selected mod and its dependency relationships.
+
+D. Usability and Responsiveness
+1. The interface shall implement responsive behavior to ensure usability across different screen sizes.
+2. The system shall provide clear feedback messages when dependency data cannot be loaded or is incomplete.
+3. The layout and labeling shall remain consistent to ensure ease of understanding for non-technical users.
 
 2.9 Machine Requirements
 ## Performance Requirements
