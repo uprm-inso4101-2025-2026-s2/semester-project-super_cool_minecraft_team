@@ -242,11 +242,48 @@ directed requirement relations and constraint relations.
 
 - The UI shall provide clear instructions describing how users can compress their modpack into a .zip file before uploading.
 
+
+2.3.1 Domain Requirements
+
+This section derives requirements from observed properties of the Minecraft modding domain. Each requirement is grounded in the domain narrative and domain events.
+
+DR-1 — Mod Identity
+The system shall represent each Mod with an identifier and a version such that two Mods are distinguishable by (identifier, version).
+
+DR-2 — Declared Dependency Relationships
+The system shall represent declared dependency relationships as directed relations from a source Mod to a target Mod.
+
+DR-3 — Dependency Type Exclusivity
+The system shall classify each declared relationship between two Mods into exactly one of the following types: required, optional, or incompatible.
+
+DR-4 — Version Constraints
+The system shall associate a version constraint to a dependency or incompatibility relation when such a constraint is declared.
+
+DR-5 — Structural Validity
+The system shall determine whether a Modpack is structurally valid by verifying that:
+(a) all required dependencies are present,
+(b) no declared incompatibilities are violated,
+(c) all version constraints are satisfied.
+
+DR-6 — Transitive Dependency Closure
+The system shall compute the transitive closure of required dependencies.
+
+DR-7 — Missing Dependency Identification
+The system shall identify each missing required dependency in a Modpack.
+
+DR-8 — Incompatibility Detection
+The system shall detect incompatibility violations in a Modpack.
+
+DR-9 — Circular Dependency Detection
+The system shall detect circular dependency structures in the dependency network.
+
+DR-10 — Resolution Result
+The system shall produce a resolution result identifying satisfied dependencies, missing dependencies, incompatibilities, version violations, and cycles.
+
 # 2.3.2 — Personas
 
 The following personas represent typical stakeholders who would use the mod dependency analyzer web application. They justify the previously defined epics and user stories.
 
----
 
 ## Persona 1 — “the Modpack Builder”
 
