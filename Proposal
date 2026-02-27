@@ -1064,7 +1064,26 @@ D. Usability and Responsiveness
 
 
 2.10 Software Architecture Design
+  The system follows a layered client–server architecture composed of four main components:
 
+  Frontend (Presentation Layer)
+  - Handles mod upload, user interaction, search functionality, and visualization of the dependency graph.
+    It renders mods as nodes and dependencies as directed edges, and provides visual indicators for missing,
+    satisfied, or incompatible dependencies.
+
+  Backend API Layer
+  - Receives uploaded metadata, validates input, coordinates processing, and returns structured JSON results
+    to the frontend. It also manages request handling, logging, and retry mechanisms for external API calls.
+
+  Dependency Resolution Engine (Core Layer)
+  - Parses mod metadata, normalizes dependency information, resolves required and optional dependencies, 
+    detects incompatibilities and circular dependencies, validates version constraints, expands transitive
+    dependencies, and constructs the internal dependency graph model.
+
+  Data & Integration Layer
+  - Communicates with external mod repositories such as Modrinth and CurseForge. It handles metadata retrieval,
+    caching of previously accessed data, and graceful error handling when external services are unavailable.
+    
 3. Analytical
 
 3.1 Concept Formation
