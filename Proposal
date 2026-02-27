@@ -92,46 +92,39 @@ Minecraft Dependency Visualizer
         The process of determining whether a Modpack satisfies all required Dependencies, including transitive ones, and does not violate declared Incompatibilities or Version Constraints.
 
 1.6 Scope and Span
-    The completed project will be a web-app that can be given an input of Fabric or Forge mod files or a medium sized modpack for the game Minecraft Java Edition to view what the user can safely update and/or remove from it without having to go through trial and error of removing and adding them manually to see what doesn't crash the game or prevent you from joining a modded multiplayer server.
+    1.6.1 Project Scope
+        - This project operates within the domain of gaming software tooling, specifically targeting the Minecraft Java Edition modding ecosystem.
+        - Minecraft modding involves the integration of community-developed modifications that extend or alter gameplay, requiring understanding of complex dependency relationships between mod files, mod loaders, and game versions.
+        - The project addresses the broader challenge of dependency management and mod compatibility analysis, areas where existing tooling is either too technical for general users or entirely absent.
+        - The scope encompasses domain engineering, requirements engineering, software architecture, and the design and development of a web-based dependency visualization platform that makes mod management more accessible and understandable for a non-technical audience.
 
-    It will visually demonstrate to the user what dependencies are installed or missing, as well as if they are required or supplementary. It will also show how many mods depend on each dependency and if they are safe to remove or not. 
-
-    It will be able to separate Client-side mods from Host-side and Client-Host-Sided mods so you don't accidentally remove something necessary for multiplayer.
-
-    Detect known incompatibilities and point them out to the user, and identify known compatible versions when metadata exists that particular mods may have with other mods.
-
-    If a mod has an update, or a missing required/supplementary dependency it will give the user a CurseForge or Modrinth link so they can choose to install. 
-
-    This web-app will not install/modify the mods, or launch the game with mods, only point out to the user what they can do with their current mod list in terms of updating/removing mods.
-
-    Access to a Chromium or Firefox based browser on a Computer with an Internet connection will be required.
-
-
-1.6.2 Project Span
-    This section outlines the specific boundaries, key activities, and focus areas of the project, translating the high-level goals from
-    the project scope into a concrete and actionable plan. It defines what the project will and will not undertake to ensure its
-    objectives are realistic and achievable within the constraints for a cohort of 43 students.
-
+    1.6.2 Project Span
+        - The platform will target users of Minecraft Java Edition using either the Fabric or Forge mod loaders, the two most widely adopted modding frameworks for the game.
+        - It will support the analysis of individual mod files and medium-sized modpacks, defined as collections typically ranging from a handful of mods up to roughly one hundred.
+        - Mod metadata will be sourced from CurseForge and Modrinth, the two primary mod distribution repositories for Minecraft.
+        - The platform will classify mods by runtime context, distinguishing between client-side, host-side, and client-host-sided mods.
+        - Dependencies will be resolved transitively and classified as required, optional, or incompatible.
+        - Where metadata is available, the platform will surface known version incompatibilities and link users to the relevant CurseForge or Modrinth pages for missing or outdated dependencies.
+        - The platform will function strictly as a decision-support tool and will not modify the user's game installation or launch the game.
 1.6.2.1 Inclusions
     The project will focus on the design, development, and evaluation of a web-based proof-of-concept platform for visualizing
-        -Minecraft mod dependencies. The core activities included in the project span:
-        -Platform Development: Create an interactive, browser-based prototype that visualizes mods as nodes and their
+        - Minecraft mod dependencies. The core activities included in the project span:
+        - Platform Development: Create an interactive, browser-based prototype that visualizes mods as nodes and their
         dependencies as directed edges in a graph data structure. The platform will be designed to support a curated dataset of
         mods, rather than attempting to index the entire CurseForge and Modrinth repositories.
-        -Metadata Parsing and Normalization: Develop scripts to programmatically parse dependency metadata from a preselected set of mods sourced from CurseForge and Modrinth. This includes identifying required dependencies, optional
+        - Metadata Parsing and Normalization: Develop scripts to programmatically parse dependency metadata from a preselected set of mods sourced from CurseForge and Modrinth. This includes identifying required dependencies, optional
         dependencies, and incompatible mod versions. The project will handle all mod metadata in accordance with ethical data
         handling principles, ensuring that any data acquisition, storage, and processing respects the terms of use and privacy
         expectations established by the source repositories. The data will then be normalized into a unified internal schema to
         manage inconsistencies between the two source platforms.
-        -Visual Highlighting of Critical Information: Implement visual cues within the graph interface to draw user attention to key
+        - Visual Highlighting of Critical Information: Implement visual cues within the graph interface to draw user attention to key
         issues. This will include distinct highlighting for missing dependencies, version incompatibilities, and optional relationships.
-        -Decision-Support Features: Enable users to interact with the graph and access relevant information. Upon selecting a
+        - Decision-Support Features: Enable users to interact with the graph and access relevant information. Upon selecting a
         specific mod node, the platform will display:
-        Its direct and transitive dependents (i.e., which other mods rely on it).
-        A plain-language explanation of its dependency requirements (e.g., "Required for game launch on the client-side").
-        A simulation of the potential impact, highlighting which other mods would be affected if the selected mod were
-        removed or updated.
-        -Evaluation with Sample Modpacks: Conduct a formal evaluation of the prototype's effectiveness using sample modpacks.
+            - Its direct and transitive dependents (i.e., which other mods rely on it).
+            - A plain-language explanation of its dependency requirements (e.g., "Required for game launch on the client-side").
+            - A simulation of the potential impact, highlighting which other mods would be affected if the selected mod were removed or updated.
+        - Evaluation with Sample Modpacks: Conduct a formal evaluation of the prototype's effectiveness using sample modpacks.
 
 1.6.2.2 Exclusions
     To maintain a realistic scope and focus on the core problem of visualization and understanding, the following activities are
@@ -153,13 +146,13 @@ Minecraft Dependency Visualizer
 1.6.2.3 Key Focus Areas and Methodology
     The project will be executed using an agile-inspired methodology suitable for a student team. Work will be organized into
     iterative sprints, each focusing on a key deliverable. The primary focus areas are:
-        -Data Acquisition & Modeling: Researching and implementing the parsing of metadata from CurseForge/Modrinth APIs and
+        - Data Acquisition & Modeling: Researching and implementing the parsing of metadata from CurseForge/Modrinth APIs and
         designing the internal graph data structure.
-        -Graph Visualization Engine: Selecting and implementing a suitable JavaScript library (e.g., D3.js, vis.js, Cytoscape.js) to
+        - Graph Visualization Engine: Selecting and implementing a suitable JavaScript library (e.g., D3.js, vis.js, Cytoscape.js) to
         render the interactive dependency graph.
-        -User Interface & Interaction: Designing and building the user interface components for displaying mod information, search,
+        - User Interface & Interaction: Designing and building the user interface components for displaying mod information, search,
         and selection, ensuring clarity and ease of use.
-        -Evaluation & Analysis: Defining success metrics, designing user test cases, conducting the evaluation, and analyzing the
+        - Evaluation & Analysis: Defining success metrics, designing user test cases, conducting the evaluation, and analyzing the
         results to determine the project's success against the criteria outlined in Section 5.
 
 1.6.2.4 Timeline
@@ -931,6 +924,27 @@ limits and thresholds used to evaluate performance, reliability, and scalability
     Dependency data must be validated and normalized before graph construction. The system must ensure accurate representation of required, optional, and incompatible dependencies, as well as version constraints.
 
 
+2.10 Software Architecture Design
+  The system follows a layered client–server architecture composed of four main components:
+
+  Frontend (Presentation Layer)
+  - Handles mod upload, user interaction, search functionality, and visualization of the dependency graph.
+    It renders mods as nodes and dependencies as directed edges, and provides visual indicators for missing,
+    satisfied, or incompatible dependencies.
+
+  Backend API Layer
+  - Receives uploaded metadata, validates input, coordinates processing, and returns structured JSON results
+    to the frontend. It also manages request handling, logging, and retry mechanisms for external API calls.
+
+  Dependency Resolution Engine (Core Layer)
+  - Parses mod metadata, normalizes dependency information, resolves required and optional dependencies, 
+    detects incompatibilities and circular dependencies, validates version constraints, expands transitive
+    dependencies, and constructs the internal dependency graph model.
+
+  Data & Integration Layer
+  - Communicates with external mod repositories such as Modrinth and CurseForge. It handles metadata retrieval,
+    caching of previously accessed data, and graceful error handling when external services are unavailable.
+    
 3. Analytical
 
 3.1 Concept Formation
