@@ -712,13 +712,13 @@ Definition: Real-time display of data transfer rate during upload.
       State Change: The modpack transitions from “not analyzed” to “analysis in progress.”
 
     - Event 2: Dependencies Identified
-      Meaning:All declared dependencies of included mods have been extracted from metadata.
-      After:Each dependency exists in normalized form and is classified as required, optional, incompatible, or version-constrained.
+      Meaning: All declared dependencies of included mods have been extracted from metadata.
+      After: Each dependency exists in normalized form and is classified as required, optional, incompatible, or version-constrained.
       State Change: Dependency data transitions from “raw metadata” to “identified and classified.”
 
     - Event 3: Dependency Graph Exists
-      Meaning:A dependency graph representing all declared relationships among mods has been constructed.
-      After:All mods appear as nodes and their declared relationships exist as directed edges.
+      Meaning: A dependency graph representing all declared relationships among mods has been constructed.
+      After: All mods appear as nodes and their declared relationships exist as directed edges.
       State Change: The modpack transitions to “dependency graph constructed.”
 
     - Event 4: Missing Dependency Exists 
@@ -747,7 +747,7 @@ Definition: Real-time display of data transfer rate during upload.
       State Change: The modpack transitions from “direct dependencies only” to “complete dependency closure.”
 
     - Event 9: Dependency Resolution Completed
-      Meaning:The process of resolving all declared dependencies has finished.
+      Meaning: The process of resolving all declared dependencies has finished.
       After: It is determined whether all required dependencies are satisfied.
       State Change: The modpack transitions from “resolution in progress” to either “resolved successfully” or “resolution failed.”
 
@@ -767,83 +767,93 @@ Definition: Real-time display of data transfer rate during upload.
       Triggered when a user uploads a modpack or mod collection for analysis.
       Outcome: The system initiates metadata parsing and begins extracting dependency information from all included mods.
       State Change: The modpack transitions from "not analyzed" to "parsing in progress."
+      
+    - Event 2: Modpack Store to Data Storage System Initiated.
+      Triggered after the system recieves an uploaded Modpack.
+      Outcome: The storage system is queried to store the Modpack so that new mods can be added later and evaluated against the Modpack.
+      State Change: A Modpack storage request has been sent to the data storage system.
+      
+    - Event 3: Modpack Store to Data Storage System Response Received.
+      Data Storage system responded to the request to store a Modpack.
+      Outcome: The data storage system confirms the storage request.
+      State Change: The Modpack has been stored in the data storage system.
 
-    - Event 2: Dependencies Extracted
+    - Event 4: Dependencies Extracted
       Triggered when metadata parsing completes and all mod dependencies are successfully identified.
       Outcome: The system classifies each dependency as required, optional, or incompatible and prepares data for graph construction.
       State Change: Dependency data transitions from "raw metadata" to "normalized and classified."
 
-    - Event 3: Dependency Graph Generated
+    - Event 5: Dependency Graph Generated
       Triggered when the system successfully constructs the dependency graph from normalized dependency data.
       Outcome: The graph is made available for visualization and analysis, representing all mods as nodes and their relationships as directed edges.
       State Change: The modpack analysis transitions to "graph ready for visualization."
 
-    - Event 4: Missing Dependency Detected
+    - Event 6: Missing Dependency Detected
       Triggered when the system identifies that a mod declares a required dependency that is not present in the modpack.
       Outcome: The system flags the missing dependency, identifies which mod requires it, and signals a critical configuration error.
       State Change: The modpack configuration transitions to "invalid - missing required dependency."
 
-    - Event 5: Incompatibility Detected
+    - Event 7: Incompatibility Detected
       Triggered when the system identifies that two or more mods in the modpack declare mutual incompatibility.
       Outcome: The system highlights the conflicting mods and the reason for incompatibility in the dependency graph.
       State Change: The modpack configuration transitions to "invalid - incompatibility conflict."
 
-    - Event 6: Circular Dependency Detected
+    - Event 8: Circular Dependency Detected
       Triggered when the system identifies a cycle in the dependency graph (e.g., Mod A requires Mod B, and Mod B requires Mod A).
       Outcome: The system reports the circular dependency chain and prevents graph construction from entering an infinite loop.
       State Change: The modpack configuration transitions to "invalid - circular dependency."
 
-    - Event 7: Version Constraint Violation Detected
+    - Event 9: Version Constraint Violation Detected
       Triggered when a mod's version does not satisfy the version constraints specified by its dependent mods.
       Outcome: The system identifies which mods have incompatible versions and suggests compatible alternatives or version updates.
       State Change: The modpack configuration transitions to "invalid - version constraint violation."
 
-    - Event 8: Transitive Dependencies Resolved
+    - Event 10: Transitive Dependencies Resolved
       Triggered when the system expands the dependency graph to include all transitive dependencies (dependencies of dependencies).
       Outcome: The complete dependency chain is made visible, showing not only direct dependencies but also indirect requirements.
       State Change: The modpack representation transitions from "direct dependencies only" to "complete transitive dependency view."
 
-    - Event 9: Modpack Configuration Validated
+    - Event 11: Modpack Configuration Validated
       Triggered when all dependency checks, incompatibility checks, and version constraint validations complete successfully.
       Outcome: The system marks the modpack as structurally valid and ready for use, providing a summary of all valid mods and dependencies.
       State Change: The modpack configuration transitions to "valid and ready for deployment."
 
-    - Event 10: Mod Removed or Updated
+    - Event 12: Mod Removed or Updated
       Triggered when a user modifies the modpack by removing a mod or updating an existing mod to a new version.
       Outcome: The system recalculates the dependency graph, identifies new missing dependencies or incompatibilities, and updates the visualization.
       State Change: The modpack configuration reverts to analysis mode and reassesses validity based on the new composition.
 
-    - Event 11: Dependency Graph Visualized
+    - Event 13: Dependency Graph Visualized
       Triggered when the system renders the dependency graph for user interaction and exploration.
       Outcome: Users can select mods, view which mods depend on them, understand why dependencies are required, and explore impact of potential removals.
       State Change: The modpack transitions from "analyzed" to "interactive visualization available."
 
-    - Event 12: Dependency Has Just Been Declared
+    - Event 14: Dependency Has Just Been Declared
       Triggered when a mod explicitly declares a required relationship with another mod within its metadata.
       Outcome: The system records the dependency as a directed relationship in the dependency model and prepares it for validation and resolution.
       State Change: The dependency model transitions from "no declared relationship" to "declared dependency recorded."
 
-    - Event 13: Mod Has Just Been Added To Modpack
+    - Event 15: Mod Has Just Been Added To Modpack
       Triggered when a user adds a new mod to an existing modpack configuration.
       Outcome: The system updates the modpack composition, re-evaluates declared dependencies and incompatibilities, and schedules dependency resolution if required.
       State Change: The modpack configuration transitions from "stable composition" to "composition modified - revalidation required."
 
-    - Event 14: Dependency Resolution Has Just Been Completed
+    - Event 16: Dependency Resolution Has Just Been Completed
       Triggered when the system completes the process of resolving all declared dependencies for the current modpack configuration.
       Outcome: The system determines whether all required mods are present and whether any dependencies remain unsatisfied.
       State Change: The dependency resolution process transitions from "in progress" to either "resolved successfully" or "resolution failed."
 
-    - Event 15: Retrieved Mod Has Just Been Obtained
+    - Event 17: Retrieved Mod Has Just Been Obtained
       Triggered when a required mod is successfully retrieved from a mod source to satisfy a previously declared dependency.
       Outcome: The retrieved mod is added to the modpack configuration and incorporated into the dependency graph for further validation.
       State Change: The modpack transitions from "dependency unsatisfied" to "dependency provisionally satisfied pending validation."
 
-    - Event 16: Dependency Has Just Become Unsatisfied
+    - Event 18: Dependency Has Just Become Unsatisfied
       Triggered when a previously satisfied dependency becomes invalid due to mod removal, version change, or constraint violation.
       Outcome: The system flags the dependency as unsatisfied and initiates corrective actions such as retrieval suggestions or configuration warnings.
       State Change: The modpack configuration transitions from "dependency satisfied" to "dependency unsatisfied."
 
-    - Event 17: Modpack Has Just Become Consistent
+    - Event 19: Modpack Has Just Become Consistent
       Triggered when all declared dependencies are satisfied and no declared incompatibilities are violated within the modpack configuration.
       Outcome: The system confirms the structural integrity of the modpack and allows it to proceed to validation or deployment stages.
       State Change: The modpack configuration transitions from "inconsistent or under validation" to "consistent configuration state."
