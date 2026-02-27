@@ -393,6 +393,9 @@ Definition: Real-time display of data transfer rate during upload.
 - Notifications are provided whenever a required dependency cannot be resolved, ensuring the system or user is aware of the issue.
 - Failed API requests should trigger automatic retries up to a configurable limit to maintain reliability.
 - All interactions with external APIs are logged for debugging, verification, and auditing purposes.
+- Allow users to upload mod files or submit mod metadata for processing.
+- Validate uploaded metadata and report errors for missing or malformed entries.
+- Provide clear feedback messages when dependency data cannot be loaded or is incomplete.
 
 # 2.3.5 – Machine Requirements
 
@@ -673,22 +676,6 @@ Scalability:
     After: The modpack is structurally valid.
     State Change: The modpack transitions to “valid configuration.”
       
-    
-
-    2.8 Interface Requirements
-    - Allow users to upload mod files or submit mod metadata for processing.
-    - Validate uploaded metadata and report errors for missing or malformed entries.
-    - Provide client-side feedback and visual indicators during file upload.
-    - Implement responsive UI behavior to ensure usability across screen sizes.
-    - Allow users to visually explore mod dependency relationships through an interactive dependency graph.
-    - Allow users to select a mod and view its required, optional, and incompatible dependencies.
-    - Provide a search interface to locate mods by name or identifier.
-    - Display clear visual indicators to distinguish between satisfied, missing, and incompatible dependencies.
-    - Provide a detailed view panel showing information about the selected mod and its dependency relationships.
-    - Allow users to navigate between related mods directly from the dependency visualization.
-    - Provide clear feedback messages when dependency data cannot be loaded or is incomplete.
-    - Maintain consistent layout and labeling to ensure ease of understanding for non-technical users.
-
 
 2.9 Machine Requirements
 ## Performance Requirements
