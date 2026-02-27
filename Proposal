@@ -574,6 +574,173 @@ Classification: Attribute
 Phase: System
 Definition: Real-time display of data transfer rate during upload.
 
+# 2.3.4 - Interface requirements
+
+- The subsystem must be capable of receiving dependency metadata from the Mod Uploading subsystem, including mod identifiers, version information, and declared dependencies.
+- Queries to the Modrinth API (or similar repositories) should allow the system to locate required mods using dependency identifiers.
+- Download URLs for compatible dependency versions must be retrieved and made available for installation.
+- Structured results of the dependency resolution process are returned to the Visualization subsystem, including resolved dependencies, version matches, and any unresolved items.
+- Notifications are provided whenever a required dependency cannot be resolved, ensuring the system or user is aware of the issue.
+- Failed API requests should trigger automatic retries up to a configurable limit to maintain reliability.
+- All interactions with external APIs are logged for debugging, verification, and auditing purposes.
+
+# 2.3.5 – Machine Requirements
+
+Performance
+    -The subsystem shall process dependency resolution requests efficiently, ensuring reasonable response times under typical user workloads.
+    -The system shall support multiple simultaneous requests without significant performance degradation or instability.
+    -Retrieval of dependency metadata and download links shall be performed in a timely manner to maintain smooth workflow execution.
+    -The subsystem shall efficiently read and analyze modpack contents, including individual mod files, to detect dependencies and incompatibilities.
+
+Functional Processing Requirements
+    -The subsystem shall fetch mod dependencies using external APIs (e.g., Fabric API) to ensure modularity and extensibility.
+    -The subsystem shall detect and retrieve declared incompatibilities ("breaks") for each mod.
+    -The system shall compare mod dependencies and incompatibilities against the contents of the modpack to identify conflicts.
+    -The subsystem shall merge dependency and incompatibility data to determine valid, missing, optional, or conflicting components.
+    -The platform shall associate each dependency with exactly one dependency type: required, optional, or incompatible.
+    -The system shall represent dependencies transitively, including dependencies of dependencies.
+    -The subsystem shall store user-provided mod information and resolved dependency data for processing and validation.
+    -Processed data shall be passed to other system layers for visualization, graph representation, and user interface display.
+
+Reliability
+    -The subsystem shall maintain stable operation during normal usage with minimal downtime.
+    -External API failures shall be handled gracefully, ensuring partial failures do not crash the system or corrupt stored data.
+    -Errors and exceptions shall be logged to support debugging, testing, and verification activities.
+    
+Resource and Stability Constraints
+    -The subsystem shall operate within reasonable CPU and memory limits to avoid negatively impacting other system components.
+    -The system shall ensure consistent behavior during extended processing tasks such as large modpack analysis.
+
+Scalability
+    -The system shall support growth in mod volume, dependency complexity, and user activity without requiring architectural redesign.
+    -The subsystem architecture shall allow integration of additional mod sources or APIs in future iterations.
+    
+2.4 Terminology
+
+    This section defines the core terms that will be used throughout the project. These definitions apply to both the backend dependency logic and the frontend graph interface.
+
+    Goal -> Keep the language consistent across documentation and communication.
+
+    Each term includes:
+
+        ->Classification (Entity, Relation, Attribute, Event, Behavior)
+        ->Phase Introduced (Domain = Minecraft ecosystem concept, System = project-specific concept)
+        ->Definition (Implementation-independent)
+
+    1. Mod (Modification)
+
+        Classification: Entity
+        Phase Introduced: Domain
+        Definition: A mod (modification) is a packaged software extension that alters or adds functionality to Minecraft. A mod may introduce new content, mechanics, or systems and may declare dependencies or incompatibilities with other mods.
+
+    2. Dependency
+    
+        Classification: Relation
+        Phase Introduced: Domain
+        Definition: A dependency is a directed relationship in which one mod requires another mod in order to function correctly. If the required mod is missing or does not satisfy the stated version constraint, the dependent mod cannot operate as intended.
+
+    3. Optional Dependency
+
+        Classification: Relation
+        Phase Introduced: Domain
+        Definition: A relationship where a mod can integrate with another mod if it is present, but does not require it for core functionality.
+
+    4. Version
+
+        Classification: Attribute
+        Phase Introduced: Domain
+        Definition: A structured identifier assigned to a specific release of a mod. Versions are used to distinguish releases and evaluate compatibility between mods.
+
+    5. Version Constraint
+
+        Classification: Attribute
+        Phase Introduced: Domain
+        Definition: A rule that specifies which versions of a mod are acceptable within a dependency relationship. A version constraint defines a valid range or condition that must be satisfied.
+
+    6. Minecraft Version
+
+        Classification: Entity
+        Phase Introduced: Domain
+        Definition: A specific release of Minecraft and its updates. It defines the base environment and APIs that mods and mod loader target. Important for the compatibility constraint in the dependency graph.
+
+    7. Mod Loader
+
+        Classification: Entity
+        Phase Introduced: Domain
+        Definition: A runtime framework responsible for loading and managing mods within Minecraft. A mod loader establishes compatibility rules and governs how mods are initialized and executed.
+
+    8. Fabric
+
+        Classification: Entity
+        Phase Introduced: Domain
+        Definition: The mod loader to be used for this project. It provides the framework for loading mods. 
+
+    9. Mod Instance
+
+        Classification: Entity
+        Phase Introduced: System
+        Definition: A specific occurrence of a mod identified by name and version within the system. A mod instance represents a concrete node in the dependency graph.
+
+    10. Mod pack
+    
+        Classification: Entity
+	    Phase Introduced: Domain
+	    Definition: A collection of mod instances, their version, and associated configuration files.
+
+    11. Dependency Graph
+
+        Classification: Entity
+        Phase Introduced: System
+        Definition: A directed graph structure that represents mod instances as nodes and dependency relationships as edges. The graph models how mods depend on one another.
+
+    12. Node
+
+        Classification: Entity
+        Phase Introduced: System
+        Definition: A logical and visual representation of a mod instance within the dependency graph.
+
+    13. Edge
+
+        Classification: Relation
+        Phase Introduced: System
+        Definition: A directed connection between two nodes that represents a dependency relationship.
+
+    14. Resolution
+
+        Classification: Behavior
+        Phase Introduced: System
+        Definition: The process of evaluating whether all declared dependencies within a given mod set are satisfied according to version constraints and compatibility rules.
+
+    15. Conflict
+
+        Classification: Event
+        Phase Introduced: System
+        Definition: A condition that occurs when dependency requirements or version constraints cannot be satisfied simultaneously. A conflict prevents successful resolution of the mod set.
+
+    16. Compatibility
+
+        Classification: Attribute
+        Phase Introduced: Domain
+        Definition: The state in which two or more mods, versions, or loaders can operate together without violating declared dependencies or constraints.
+
+    17. Installation State
+
+        Classification: Attribute
+        Phase Introduced: System
+        Definition: The current status of a mod instance within the managed environment, such as installed, missing, unresolved, or conflicting.
+
+    18. Transitive Dependency
+
+        Classification: Relation
+        Phase Introduced: System
+        Definition: A dependency that arises indirectly through a chain of other dependencies. If Mod A depends on Mod B, and Mod B depends on Mod C, then Mod A has a transitive dependency on Mod C.
+
+    19. Profile
+
+        Classification: Entity
+        Phase Introduced: System
+        Definition: A named container that stores a user’s mod instances and their installation statuses. 
+
 2.5 Domain Entities
     - Mod:
         Represents a Minecraft modification that extends the base game and may declare dependencies or incompatibilities.
