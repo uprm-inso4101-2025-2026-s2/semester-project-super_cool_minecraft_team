@@ -238,49 +238,80 @@ At the core of the platform is the ability to analyze a user’s selected mod co
 - The system shall allow the user to retry the upload process without restarting the application.
 
 - The UI shall provide clear instructions describing how users can compress their modpack into a .zip file before uploading.
+
 # 2.3.2 — Personas
 
+The following personas represent typical stakeholders who would use the mod dependency analyzer web application. They justify the previously defined epics and user stories.
 
-(Joyson addition)
+---
 
+## Persona 1 — “the Modpack Builder”
 
-Recommended Algorithms for the project's sorting
+**Profile:**  
+- 20–25 years old  
+- Experienced Minecraft player  
+- Builds custom modpacks for personal use or friends  
+- Familiar with Fabric and mod loaders  
+- Comfortable with technical tools but values automation  
 
-Lists (ArrayList) used for:
+**Goals:**  
+- Quickly detect missing dependencies  
+- Avoid version conflicts  
+- Export a clean, ready-to-run modpack  
+- Visualize how mods depend on each other  
 
-Storing installed mods
-Storing dependencies
-Storing search results
+**Frustrations:**  
+- Manually tracking dependencies  
+- Broken modpacks due to missing or incompatible versions  
+- Searching multiple websites for correct download links  
 
-HashSet used for:
+**Why this persona matters:**  
+Alex justifies features such as automatic dependency detection, graph visualization, conflict resolution, and modpack re-packaging.
 
-Quickly checking if a dependency is already installed and avoid duplicate entries
+---
 
-HashMap used for:
+## Persona 2 — “the Casual Player”
 
-Map Mod → List of Dependencies
-Map Mod → Status
+**Profile:**  
+- 16–22 years old  
+- Limited technical knowledge of mod loaders  
+- Downloads modpacks from friends or online communities  
+- Wants simple, reliable setup  
 
-Sorting
+**Goals:**  
+- Ensure all required mods are included  
+- Fix missing dependencies easily  
+- Avoid technical errors during installation  
 
-Bubble Sort
+**Frustrations:**  
+- Game crashes due to missing mods  
+- Confusing download pages  
+- Not knowing which dependency version is correct  
 
-For small lists of download links
+**Why this persona matters:**  
+Sam justifies features like automatic download fetching, clear dependency previews, and guided fixes for missing mods.
 
-Selection Sort
+---
 
-To sort mods by status (Missing, Resolved, Incompatible, etc.).
+## Persona 3 — “the Server Organizer”
 
-Searching Techniques
-Linear Search
+**Profile:**  
+- 22–30 years old  
+- Runs small multiplayer servers  
+- Manages shared modpacks for a group  
+- Needs consistency across players  
 
-To find a mod in a list.
+**Goals:**  
+- Maintain a stable modpack  
+- Ensure all players use identical mod versions  
+- Quickly update packs when dependencies change  
 
-Simple String Matching (equals / contains / not equal to [to avoid erroneous links])
+**Frustrations:**  
+- Version mismatches between players  
+- Manual updates for every change  
+- Lack of visibility into dependency chains  
 
-To match mod names from web results.
-
-# 2.3.4 - Interface requirements
+# 2.3.3 - Interface requirements
 
 - The subsystem must be capable of receiving dependency metadata from the Mod Uploading subsystem, including mod identifiers, version information, and declared dependencies.
 - Queries to the Modrinth API (or similar repositories) should allow the system to locate required mods using dependency identifiers.
@@ -290,35 +321,26 @@ To match mod names from web results.
 - Failed API requests should trigger automatic retries up to a configurable limit to maintain reliability.
 - All interactions with external APIs are logged for debugging, verification, and auditing purposes.
 
-# 2.3.5 – Machine Requirements
+# 2.3.4 – Machine Requirements
 
 Performance:
-- The subsystem shall process dependency resolution requests efficiently, ensuring reasonable response times for typical user workloads.
-- The system shall handle multiple simultaneous requests without significant delays or system instability.
-- Retrieval of download links for dependencies shall be performed in a timely manner to support smooth operation of the user workflow.
+- The subsystem shall process dependency resolution requests efficiently, ensuring reasonable response times under typical user workloads.
+- The system shall support multiple simultaneous requests without significant performance degradation or instability.
+- Retrieval of dependency metadata and download links shall be performed in a timely manner to maintain smooth workflow execution.
+- The subsystem shall efficiently read and analyze modpack contents, including individual mod files, to detect dependencies and incompatibilities.
 
 Reliability:
-- The subsystem shall maintain continuous operation during normal usage, with minimal downtime.
-- External API failures shall be handled gracefully, ensuring that partial failures do not crash the system or corrupt data.
-- Errors and exceptions shall be logged to support debugging and verification.
+- The subsystem shall maintain stable operation during normal usage, with minimal downtime.
+- External API failures shall be handled gracefully, ensuring partial failures do not crash the system or corrupt stored data.
+- Errors and exceptions shall be logged to support debugging, testing, and verification activities.
 
 Resource and Stability:
-- The subsystem shall operate within reasonable memory and CPU usage to avoid affecting other system components.
+- The subsystem shall operate within reasonable CPU and memory limits to avoid negatively impacting other system components.
+- The system shall ensure consistent behavior during extended processing tasks such as large modpack analysis.
 
-Scalability: 
-- The system shall be designed to accommodate growth in mod volume and user activity.
-
-
----  
-    - Requirement 1: Fetching dependencies of mods, this could be created with fabric API for maximum efficency and modularity.
-    - Requirement 2: Fetch the "breaks" in the mods for comparing with dependencies in the modpack and indicate if some mods are incompatible, coul use fabric API too.
-    - Requirement 3: Open the mod packs and read the content for the fetch functions. Needs to read each mod individually to check for the "breaks".
-    - Requirement 4: Pass the data to the other layers of the project to be used on the graph and display.
-    - Requirement 5: Storing the dependencies needed and the mods passed by the user.
-    - Requirement 6: Merge the dependencies and "breaks" for comparate and identify the incompatibilities.
-    - Requirement 7: The platform must associate each dependency with exactly one dependency type: required, optional, or incompatible.
-    - Requirement 8: The platform must represent dependencies transitively, such that dependencies of dependencies are included.
-
+Scalability:
+- The system shall support growth in mod volume, dependency complexity, and user activity without requiring architectural redesign.
+- The subsystem architecture shall allow integration of additional mod sources or APIs in future iterations.
 
 2.4 Terminology
 
@@ -574,172 +596,6 @@ Classification: Attribute
 Phase: System
 Definition: Real-time display of data transfer rate during upload.
 
-# 2.3.4 - Interface requirements
-
-- The subsystem must be capable of receiving dependency metadata from the Mod Uploading subsystem, including mod identifiers, version information, and declared dependencies.
-- Queries to the Modrinth API (or similar repositories) should allow the system to locate required mods using dependency identifiers.
-- Download URLs for compatible dependency versions must be retrieved and made available for installation.
-- Structured results of the dependency resolution process are returned to the Visualization subsystem, including resolved dependencies, version matches, and any unresolved items.
-- Notifications are provided whenever a required dependency cannot be resolved, ensuring the system or user is aware of the issue.
-- Failed API requests should trigger automatic retries up to a configurable limit to maintain reliability.
-- All interactions with external APIs are logged for debugging, verification, and auditing purposes.
-
-# 2.3.5 – Machine Requirements
-
-Performance
-    -The subsystem shall process dependency resolution requests efficiently, ensuring reasonable response times under typical user workloads.
-    -The system shall support multiple simultaneous requests without significant performance degradation or instability.
-    -Retrieval of dependency metadata and download links shall be performed in a timely manner to maintain smooth workflow execution.
-    -The subsystem shall efficiently read and analyze modpack contents, including individual mod files, to detect dependencies and incompatibilities.
-
-Functional Processing Requirements
-    -The subsystem shall fetch mod dependencies using external APIs (e.g., Fabric API) to ensure modularity and extensibility.
-    -The subsystem shall detect and retrieve declared incompatibilities ("breaks") for each mod.
-    -The system shall compare mod dependencies and incompatibilities against the contents of the modpack to identify conflicts.
-    -The subsystem shall merge dependency and incompatibility data to determine valid, missing, optional, or conflicting components.
-    -The platform shall associate each dependency with exactly one dependency type: required, optional, or incompatible.
-    -The system shall represent dependencies transitively, including dependencies of dependencies.
-    -The subsystem shall store user-provided mod information and resolved dependency data for processing and validation.
-    -Processed data shall be passed to other system layers for visualization, graph representation, and user interface display.
-
-Reliability
-    -The subsystem shall maintain stable operation during normal usage with minimal downtime.
-    -External API failures shall be handled gracefully, ensuring partial failures do not crash the system or corrupt stored data.
-    -Errors and exceptions shall be logged to support debugging, testing, and verification activities.
-    
-Resource and Stability Constraints
-    -The subsystem shall operate within reasonable CPU and memory limits to avoid negatively impacting other system components.
-    -The system shall ensure consistent behavior during extended processing tasks such as large modpack analysis.
-
-Scalability
-    -The system shall support growth in mod volume, dependency complexity, and user activity without requiring architectural redesign.
-    -The subsystem architecture shall allow integration of additional mod sources or APIs in future iterations.
-    
-2.4 Terminology
-
-    This section defines the core terms that will be used throughout the project. These definitions apply to both the backend dependency logic and the frontend graph interface.
-
-    Goal -> Keep the language consistent across documentation and communication.
-
-    Each term includes:
-
-        ->Classification (Entity, Relation, Attribute, Event, Behavior)
-        ->Phase Introduced (Domain = Minecraft ecosystem concept, System = project-specific concept)
-        ->Definition (Implementation-independent)
-
-    1. Mod (Modification)
-
-        Classification: Entity
-        Phase Introduced: Domain
-        Definition: A mod (modification) is a packaged software extension that alters or adds functionality to Minecraft. A mod may introduce new content, mechanics, or systems and may declare dependencies or incompatibilities with other mods.
-
-    2. Dependency
-    
-        Classification: Relation
-        Phase Introduced: Domain
-        Definition: A dependency is a directed relationship in which one mod requires another mod in order to function correctly. If the required mod is missing or does not satisfy the stated version constraint, the dependent mod cannot operate as intended.
-
-    3. Optional Dependency
-
-        Classification: Relation
-        Phase Introduced: Domain
-        Definition: A relationship where a mod can integrate with another mod if it is present, but does not require it for core functionality.
-
-    4. Version
-
-        Classification: Attribute
-        Phase Introduced: Domain
-        Definition: A structured identifier assigned to a specific release of a mod. Versions are used to distinguish releases and evaluate compatibility between mods.
-
-    5. Version Constraint
-
-        Classification: Attribute
-        Phase Introduced: Domain
-        Definition: A rule that specifies which versions of a mod are acceptable within a dependency relationship. A version constraint defines a valid range or condition that must be satisfied.
-
-    6. Minecraft Version
-
-        Classification: Entity
-        Phase Introduced: Domain
-        Definition: A specific release of Minecraft and its updates. It defines the base environment and APIs that mods and mod loader target. Important for the compatibility constraint in the dependency graph.
-
-    7. Mod Loader
-
-        Classification: Entity
-        Phase Introduced: Domain
-        Definition: A runtime framework responsible for loading and managing mods within Minecraft. A mod loader establishes compatibility rules and governs how mods are initialized and executed.
-
-    8. Fabric
-
-        Classification: Entity
-        Phase Introduced: Domain
-        Definition: The mod loader to be used for this project. It provides the framework for loading mods. 
-
-    9. Mod Instance
-
-        Classification: Entity
-        Phase Introduced: System
-        Definition: A specific occurrence of a mod identified by name and version within the system. A mod instance represents a concrete node in the dependency graph.
-
-    10. Mod pack
-    
-        Classification: Entity
-	    Phase Introduced: Domain
-	    Definition: A collection of mod instances, their version, and associated configuration files.
-
-    11. Dependency Graph
-
-        Classification: Entity
-        Phase Introduced: System
-        Definition: A directed graph structure that represents mod instances as nodes and dependency relationships as edges. The graph models how mods depend on one another.
-
-    12. Node
-
-        Classification: Entity
-        Phase Introduced: System
-        Definition: A logical and visual representation of a mod instance within the dependency graph.
-
-    13. Edge
-
-        Classification: Relation
-        Phase Introduced: System
-        Definition: A directed connection between two nodes that represents a dependency relationship.
-
-    14. Resolution
-
-        Classification: Behavior
-        Phase Introduced: System
-        Definition: The process of evaluating whether all declared dependencies within a given mod set are satisfied according to version constraints and compatibility rules.
-
-    15. Conflict
-
-        Classification: Event
-        Phase Introduced: System
-        Definition: A condition that occurs when dependency requirements or version constraints cannot be satisfied simultaneously. A conflict prevents successful resolution of the mod set.
-
-    16. Compatibility
-
-        Classification: Attribute
-        Phase Introduced: Domain
-        Definition: The state in which two or more mods, versions, or loaders can operate together without violating declared dependencies or constraints.
-
-    17. Installation State
-
-        Classification: Attribute
-        Phase Introduced: System
-        Definition: The current status of a mod instance within the managed environment, such as installed, missing, unresolved, or conflicting.
-
-    18. Transitive Dependency
-
-        Classification: Relation
-        Phase Introduced: System
-        Definition: A dependency that arises indirectly through a chain of other dependencies. If Mod A depends on Mod B, and Mod B depends on Mod C, then Mod A has a transitive dependency on Mod C.
-
-    19. Profile
-
-        Classification: Entity
-        Phase Introduced: System
-        Definition: A named container that stores a user’s mod instances and their installation statuses. 
 
 2.5 Domain Entities
     - Mod:
@@ -953,7 +809,7 @@ Scalability
       State Change: The modpack configuration transitions from "inconsistent or under validation" to "consistent configuration state."
 
 2.8 Interface Requirements
-    2.8 Interface Requirements
+
     - Allow users to upload mod files or submit mod metadata for processing.
     - Validate uploaded metadata and report errors for missing or malformed entries.
     - Provide client-side feedback and visual indicators during file upload.
@@ -989,7 +845,12 @@ D. Usability and Responsiveness
 2. The system shall provide clear feedback messages when dependency data cannot be loaded or is incomplete.
 3. The layout and labeling shall remain consistent to ensure ease of understanding for non-technical users.
 
-2.9 Machine Requirements
+2.9 Operational Requirements
+
+This section defines measurable criteria based on the Machine Requirementsstated in Section 2.3.4. 
+While Section 2.3.4 explains how the system is expected to behave, this section specifies concrete 
+limits and thresholds used to evaluate performance, reliability, and scalability during testing.
+
 ## Performance Requirements
 
 - The system must respond to a mod metadata lookup request (via external API such as Modrinth) within **3 seconds** under normal load (≤ 20 simultaneous users performing lookup operations).
@@ -1069,8 +930,6 @@ D. Usability and Responsiveness
     Data Integrity and Validation:
     Dependency data must be validated and normalized before graph construction. The system must ensure accurate representation of required, optional, and incompatible dependencies, as well as version constraints.
 
-
-2.10 Software Architecture Design
 
 3. Analytical
 
