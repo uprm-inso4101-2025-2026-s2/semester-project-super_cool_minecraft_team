@@ -2,10 +2,6 @@
 University of Puerto Rico at Mayagüez
 Department of Computer Science and Engineering
 ICOM4009 | INSO4101 | Introduction to Software Engineering
-:toc:
-:toclevels: 4
-:sectnums:
-:icons: font
 
 == 1. Informative
 
@@ -226,11 +222,15 @@ By shifting the experience away from text-heavy troubleshooting and toward a cle
 
 === 2.1 Rough Sketch of the Domain
 
-Many users frequently confuse the Fabric Loader with the Fabric API, leading to situations like a case where a player complained that their game wouldn't start because it was missing the API, despite having already installed the loader.
-This confusion is tied to a general frustration with "Library mods," where an average player downloads a "main" mod but ignores the fact that it depends on three or four others, which in turn require specific matching versions of the API.
-For example, a player tried to move his world to a later Minecraft version, but the game crashed immediately because his existing mod list didn't meet the new version's dependencies; he spent hours trying to find the right files before eventually giving up.
-Furthermore, there is a segment of the audience that is interested in trying mods for the first time but lacks the technical knowledge to obtain them.
-These users find that existing guides are not very explicit and assume they already know how to handle file directories or Java versions, leading many potential players to simply stop trying altogether to avoid the complexity and frustration of the installation process.
+* Fabric Loader vs. Fabric API: Constant confusion between the two.
+** Players install the loader and don't understand why the game says the API is missing.
+* The "Library Mod" Problem: Average players download a "main" mod but ignore that it depends on 3 or 4 others.
+* Version Matching: Deep frustration because library mods require very specific, matching versions of the Fabric API to work.
+* Update Crashes: Case study of a player moving a world to a later Minecraft version; game crashes immediately because the mod list doesn't meet new dependency requirements.
+* Search Exhaustion: Users spend hours manually hunting for the "right" files for their specific version before giving up entirely.
+* New User Barrier: First-timers want to try mods but don't know how to handle file directories or Java versions.
+* Implicit Guides: Existing tutorials are not explicit enough; they assume the user already has technical knowledge.
+* Abandonment: Potential players stop trying to mod the game because the installation process is too complex and frustrating.
 
 === 2.2 Narrative
 
