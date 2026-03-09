@@ -1,6 +1,5 @@
 /* homepage.css - SOLO MONOCRAFT */
 
-/* IMPORTAR MONOCRAFT - TODAS LAS VARIANTES */
 @font-face {
     font-family: 'Monocraft';
     src: url('fonts/Monocraft-Light.ttf') format('truetype');
@@ -48,7 +47,6 @@ body#page-home {
     background-repeat: no-repeat;
     background-attachment: fixed;
 
-    /* SOLO MONOCRAFT - NADA DE MINECRAFTIA */
     font-family: 'Monocraft', sans-serif;
     font-weight: 300;
     min-height: 100vh;
@@ -57,7 +55,6 @@ body#page-home {
     position: relative;
 }
 
-/* Overlay para que el texto se vea mejor */
 body#page-home::before {
     content: "";
     position: fixed;
@@ -76,12 +73,11 @@ body#page-home::before {
 #main-title {
     color: #ffffff;
     font-size: 3.2rem;
-    font-weight: 600; /* SemiBold */
+    font-weight: 600; 
     letter-spacing: 1px;
     line-height: 1.3;
     margin-bottom: 20px;
     text-shadow: 2px 2px 6px rgba(0,0,0,0.6);
-    /* SOLO MONOCRAFT */
     font-family: 'Monocraft', sans-serif;
     max-width: 900px;
 }
@@ -90,13 +86,12 @@ body#page-home::before {
 #main-message {
     color: #ffffff;
     font-size: 1.4rem;
-    font-weight: 300; /* Light */
+    font-weight: 300; 
     letter-spacing: 0.3px;
     max-width: 750px;
     line-height: 1.6;
     margin-top: 10px;
     text-shadow: 1px 1px 4px rgba(0,0,0,0.6);
-    /* SOLO MONOCRAFT */
     font-family: 'Monocraft', sans-serif;
     opacity: 0.95;
 }
@@ -105,10 +100,10 @@ body#page-home::before {
 #main-content {
     flex: 1;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: flex-start;
     padding: 0 80px;
-    margin-top: -60px;  
+    margin-top: 40px;  
 }
 
 /* Button */
@@ -117,7 +112,7 @@ body#page-home::before {
     border: none;
     color: white;
     font-size: 2.5rem;
-    font-weight: 600; /* SemiBold */
+    font-weight: 600; 
     padding: 22px 80px;
     box-shadow: 0 12px 0 #267326, 0 20px 25px rgba(0,0,0,0.35);
     cursor: pointer;
@@ -125,7 +120,6 @@ body#page-home::before {
     text-shadow: 2px 2px 0 #267326;
     transition: all 0.1s ease;
     display: inline-block;
-    /* SOLO MONOCRAFT */
     font-family: 'Monocraft', sans-serif;
 }
 
@@ -140,7 +134,6 @@ body#page-home::before {
     box-shadow: 0 5px 0 #267326, 0 15px 20px rgba(0,0,0,0.3);
 }
 
-/* Responsive - IGUAL */
 @media (max-width: 1024px) {
     #app-header {
         padding: 40px 0 0 50px;
@@ -194,7 +187,8 @@ body#page-home::before {
 
 @media (max-width: 480px) {
     #app-header {
-        padding: 20px 0 0 20px;
+        padding: 120px 0 0 80px;
+        text-align: left;
     }
     
     #main-title {
@@ -210,4 +204,95 @@ body#page-home::before {
         padding: 15px 40px;
         border-radius: 40px;
     }
+}
+
+/* INFO SECTION */
+
+#info-section{
+    padding: 120px 80px;
+    background: rgba(0,0,0,0.55);
+    margin-top: 50vh;
+}
+
+.info-container{
+    max-width: 900px;
+    margin: auto;
+}
+
+#info-section h2{
+    color: white;
+    font-size: 2.2rem;
+    font-weight: 600;
+    margin-bottom: 25px;
+    font-family: 'Monocraft', sans-serif;
+}
+
+#info-section p{
+    color: #eaeaea;
+    font-size: 1.1rem;
+    line-height: 1.7;
+    margin-bottom: 16px;
+    font-family: 'Monocraft', sans-serif;
+}
+
+/* HEADER NAVBAR */
+
+#site-header{
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+padding: 15px 80px;
+background: rgba(0,0,0,0.05);
+backdrop-filter: blur(6px);
+z-index: 1000;
+}
+
+.nav-container{
+display: flex;
+justify-content: space-between;
+align-items: center;
+max-width: 1200px;
+margin: auto;
+}
+
+.logo{
+color: white;
+font-size: 1.3rem;
+font-weight: 600;
+font-family: 'Monocraft', sans-serif;
+}
+
+.nav-links a{
+color: white;
+margin-left: 25px;
+text-decoration: none;
+font-size: 1rem;
+font-family: 'Monocraft', sans-serif;
+transition: opacity 0.2s;
+}
+
+.nav-links a:hover{
+opacity: 0.7;
+}
+
+/* FOOTER */
+
+#site-footer{
+background: rgba(0,0,0,0.7);
+color: white;
+padding: 10px 80px;
+margin-top: 100px;
+}
+
+.footer-container{
+max-width: 900px;
+margin: auto;
+text-align: center;
+}
+
+.footer-container p{
+margin-bottom: 10px;
+line-height: 1.6;
+font-family: 'Monocraft', sans-serif;
 }
