@@ -1,0 +1,171 @@
+@font-face {
+    font-family: 'Monocraft';
+    src: url('/fonts/Monocraft-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Monocraft';
+    src: url('/fonts/Monocraft-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body#page-missing-dependencies {
+    font-family: 'Monocraft', sans-serif;
+    background: linear-gradient(180deg, #10151c 0%, #17212b 100%);
+    color: #f5f5f5;
+    min-height: 100vh;
+    padding: 40px 24px;
+}
+
+.page-container {
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+.page-header {
+    margin-bottom: 32px;
+}
+
+.page-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+}
+
+.page-header p {
+    font-size: 1rem;
+    color: #d6d6d6;
+    max-width: 850px;
+    line-height: 1.6;
+}
+
+.content-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+}
+
+.side-panels {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.card {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+.card h2 {
+    font-size: 1.25rem;
+    margin-bottom: 16px;
+}
+
+.info-banner {
+    background: rgba(62, 190, 69, 0.15);
+    border: 1px solid rgba(62, 190, 69, 0.45);
+    color: #dff6e2;
+    padding: 14px 16px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.dependency-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.dependency-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 12px;
+    padding: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dependency-main h3 {
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+}
+
+.dependency-main p {
+    color: #d2d2d2;
+    line-height: 1.5;
+}
+
+.download-btn {
+    display: inline-block;
+    text-decoration: none;
+    background: #3ebe45;
+    color: white;
+    padding: 12px 18px;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.download-btn:hover {
+    transform: translateY(-2px);
+    opacity: 0.95;
+}
+
+.unresolved {
+    text-align: right;
+}
+
+.unresolved-badge {
+    display: inline-block;
+    background: #b64646;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+}
+
+.warning-card ul,
+.card ul,
+.card ol {
+    padding-left: 20px;
+    line-height: 1.8;
+    color: #e2e2e2;
+}
+
+code {
+    background: rgba(255, 255, 255, 0.08);
+    padding: 2px 6px;
+    border-radius: 6px;
+}
+
+@media (max-width: 960px) {
+    .content-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dependency-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .unresolved {
+        text-align: left;
+    }
+}
