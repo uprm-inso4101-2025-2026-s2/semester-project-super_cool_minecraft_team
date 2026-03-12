@@ -305,3 +305,20 @@ margin-bottom: 10px;
 line-height: 1.6;
 font-family: 'Monocraft', sans-serif;
 }
+
+#about-message{
+max-width: 900px;
+margin: auto;
+padding: 40px;
+
+background: rgba(0,0,0,0.8);
+border-radius: 15px;
+
+}
+
+#about-message p{
+color: #ffffff;
+font-size: 1.1rem;
+line-height: 1.7;
+margin-bottom: 15px;
+}
