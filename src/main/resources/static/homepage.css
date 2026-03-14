@@ -263,6 +263,15 @@ font-weight: 600;
 font-family: 'Monocraft', sans-serif;
 }
 
+.logo-btn{
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.logo-btn img{
+    height: 40px;
+}
 .nav-links a{
 color: white;
 margin-left: 25px;
