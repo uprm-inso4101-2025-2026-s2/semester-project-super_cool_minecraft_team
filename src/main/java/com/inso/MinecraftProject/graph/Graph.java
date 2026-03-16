@@ -4,23 +4,14 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
 
-/**
- * Graph class responsible for managing all ModNode objects
- * in the mod dependency graph.
- */
 public class Graph implements GraphI<ModNode> {
 
-    /**
-     * Internal map used to store all mod nodes in the graph.
-     */
     private final Map<String, ModNode> nodes;
 
-    /**
-     * Constructs an empty Graph and initializes its internal storage.
-     */
     public Graph() {
         this.nodes = new HashMap<>();
     }
+
     @Override
     public String generateKey(ModNode modNode) throws IllegalArgumentException {
         if (modNode == null || modNode.getModId() == null || modNode.getVersion() == null) {
@@ -30,23 +21,29 @@ public class Graph implements GraphI<ModNode> {
     }
 
     @Override
-    public boolean addNode(ModNode modNode){
-        return false; //dummy return
+    public boolean addNode(ModNode modNode) {
+        String key = generateKey(modNode);
+
+        if (nodes.containsKey(key)) {
+            return false;
+        }
+
+        nodes.put(key, modNode);
+        return true;
     }
 
     @Override
-    public boolean removeNode(String key){
-        return false; //dummy return
+    public boolean removeNode(String key) {
+        return nodes.remove(key) != null;
     }
 
     @Override
-    public ModNode findNode(String key){
-        return null; //dummy return
+    public ModNode findNode(String key) {
+        return nodes.get(key);
     }
 
     @Override
-    public Iterator<ModNode> iterator(){
-        return null; //dummy return
+    public Iterator<ModNode> iterator() {
+        return nodes.values().iterator();
     }
-
 }

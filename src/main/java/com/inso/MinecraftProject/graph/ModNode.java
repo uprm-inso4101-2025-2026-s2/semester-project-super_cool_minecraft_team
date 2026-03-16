@@ -7,7 +7,7 @@ import java.util.*;
  * containing the mod ID, version, and a collection of its dependencies and conflicts.
  */
 
-public class ModNode {
+public class ModNode implements ModNodeI {
      // ModNode class attributes
      private String modID;
      private String modVersion;
