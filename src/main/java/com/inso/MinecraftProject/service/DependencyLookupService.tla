@@ -32,6 +32,7 @@ Init ==
 
 
 RequestLookup(dep, ver, loader) ==
+    /\ request = Null
     /\ dep \in Dependencies
     /\ ver \in Versions
     /\ loader \in Loaders
