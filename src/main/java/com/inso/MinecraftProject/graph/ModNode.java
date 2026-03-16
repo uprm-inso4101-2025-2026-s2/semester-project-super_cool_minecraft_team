@@ -7,7 +7,7 @@ import java.util.*;
  * containing the mod ID, version, and a collection of its dependencies and conflicts.
  */
 
-public class ModNode {
+public class ModNode implements ModNodeI {
      // ModNode class attributes
      private String modID;
      private String modVersion;
@@ -26,6 +26,7 @@ public class ModNode {
      /*
      * @returns the unique identifier of the mod 
      */
+    @Override
      public String getModId() {
          return modID;
      }
@@ -33,6 +34,7 @@ public class ModNode {
      /*
      * @returns the version of the mod 
      */
+     @Override
      public String getVersion() {
          return modVersion;
      }
@@ -40,6 +42,7 @@ public class ModNode {
      /*
      * @return A set of mod IDs that this mod depends on. Each dependency is represented as a string in the format "modId:version".
      */
+     @Override
      public Set<String> getDependencies() {
          return dependencies;
      }
@@ -47,7 +50,7 @@ public class ModNode {
      /*
      * @return A set of mod IDs that this mod conflicts with. Each conflict is represented as a string in the format "modId:version".
      */
- 
+    @Override
      public Set<String> getConflicts() {
          return conflicts;
      }
