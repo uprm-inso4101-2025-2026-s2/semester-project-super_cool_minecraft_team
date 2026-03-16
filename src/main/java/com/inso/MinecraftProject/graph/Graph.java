@@ -36,7 +36,17 @@ public class Graph implements GraphI<ModNode> {
 
     @Override
     public boolean removeNode(String key){
-        return false; //dummy return
+        if (key == null || !nodes.containsKey(key)) {
+            return false;
+        }
+        // Remove the node from all dependencies and conflicts of other nodes
+        for (ModNode node : nodes.values()) {        
+            node.getDependencies().remove(key);
+            node.getConflicts().remove(key);
+        }
+        // Remove the node from the graph
+        nodes.remove(key);
+        return true;
     }
 
     @Override
