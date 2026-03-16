@@ -1,7 +1,14 @@
 package com.inso.MinecraftProject.graph;
 
 import java.util.Map;
+import java.util.Set;
+
+import com.inso.MinecraftProject.dto.DTO;
+import com.inso.MinecraftProject.entity.Mod;
+
+
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 
 /**
@@ -21,6 +28,48 @@ public class Graph implements GraphI<ModNode> {
     public Graph() {
         this.nodes = new HashMap<>();
     }
+
+    /**
+     * Constructs a Graph using data from a DTO object.
+     *
+     * @param dto the DTO containing mod information
+     */
+    public Graph(DTO dto) {
+        this();
+
+        if (dto == null || dto.getMods() == null) {
+            return;
+        }
+
+        for (Mod mod : dto.getMods()) {
+            Set<String> dependencies = new HashSet<>();
+            Set<String> conflicts = new HashSet<>();
+
+            if (mod.getDepends() != null) {
+                for (Mod dependency : mod.getDepends()) {
+                    dependencies.add(dependency.getId() + "@" + dependency.getVersion());
+                }
+            }
+
+            if (mod.getConflicts() != null) {
+                for (Mod conflict : mod.getConflicts()) {
+                    conflicts.add(conflict.getId() + "@" + conflict.getVersion());
+                }
+            }
+
+            ModNode node = new ModNode(
+                    mod.getId(),
+                    mod.getVersion(),
+                    dependencies,
+                    conflicts
+            );
+
+            String key = mod.getId() + "@" + mod.getVersion();
+            nodes.put(key, node);
+        }
+    }
+
+
     @Override
     public String generateKey(ModNode modNode) throws IllegalArgumentException {
         if (modNode == null || modNode.getModId() == null || modNode.getVersion() == null) {
