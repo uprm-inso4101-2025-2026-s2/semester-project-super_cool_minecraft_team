@@ -100,7 +100,15 @@ public class Graph implements GraphI<ModNode> {
 
     @Override
     public ModNode findNode(String key){
-        return null; //dummy return
+        if (key == null) {
+            return null;
+        }
+        for (ModNode node : this) {
+            if (generateKey(node).equals(key)) {
+                return node;
+            }
+        }
+        return null;
     }
 
     @Override
