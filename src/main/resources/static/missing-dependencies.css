@@ -84,6 +84,16 @@ body#page-missing-dependencies {
     line-height: 1.5;
 }
 
+.error-banner {
+    background: rgba(182, 70, 70, 0.16);
+    border: 1px solid rgba(182, 70, 70, 0.5);
+    color: #ffe3e3;
+    padding: 14px 16px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
 .dependency-list {
     display: flex;
     flex-direction: column;
@@ -111,6 +121,17 @@ body#page-missing-dependencies {
     line-height: 1.5;
 }
 
+.dependency-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-end;
+}
+
+.dependency-meta {
+    color: #d2d2d2;
+}
+
 .download-btn {
     display: inline-block;
     text-decoration: none;
@@ -127,18 +148,26 @@ body#page-missing-dependencies {
     opacity: 0.95;
 }
 
-.unresolved {
-    text-align: right;
-}
-
-.unresolved-badge {
+.status-badge {
     display: inline-block;
-    background: #b64646;
     color: white;
     padding: 6px 10px;
     border-radius: 999px;
     font-size: 0.8rem;
-    margin-bottom: 8px;
+}
+
+.status-resolved {
+    background: #3ebe45;
+}
+
+.status-unresolved {
+    background: #b64646;
+}
+
+.status-message {
+    max-width: 260px;
+    text-align: right;
+    color: #f0d9d9;
 }
 
 .warning-card ul,
@@ -165,7 +194,11 @@ code {
         align-items: flex-start;
     }
 
-    .unresolved {
+    .dependency-actions {
+        align-items: flex-start;
+    }
+
+    .status-message {
         text-align: left;
     }
 }
