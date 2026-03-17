@@ -73,19 +73,45 @@ These dependencies are not easy to access; while it would be better to have them
 
 === 1.4 Needs and Ideas
 
-We identify that many Minecraft mods rely on other mods, libraries, specific loaders, and specific Minecraft versions in order to function correctly.
-When dependencies are missing, incompatible, or incorrectly ordered, the game often fails to launch or crashes during runtime.
+[.line-through]#We identify that many Minecraft mods rely on other mods, libraries, specific loaders, and specific Minecraft versions in order to function correctly.
+When dependencies are missing, incompatible, or incorrectly ordered, the game often fails to launch or crashes during runtime.#
 
-There is a significant lack of accessibility in dependency documentation.
+[.line-through]#There is a significant lack of accessibility in dependency documentation.
 Currently, users are forced to parse technical plain text, which is particularly exclusionary for younger audiences who make up a large portion of the Minecraft community.
 Furthermore, most mods do not display dependencies or incompatibilities clearly on their main mod pages.
-Users need a way to understand these dependencies and conflicts without technical barriers, so they do not abandon using Minecraft mods due to confusion or frustration.
+Users need a way to understand these dependencies and conflicts without technical barriers, so they do not abandon using Minecraft mods due to confusion or frustration.#
 
-There is, therefore, a need for a mod dependency visualization platform that allows users to explore mods and their dependencies in a clear and intuitive way.
+[.line-through]#There is, therefore, a need for a mod dependency visualization platform that allows users to explore mods and their dependencies in a clear and intuitive way.
 Users need to see which mods depend on a selected mod and understand why each dependency is required.
 The team will develop a comprehensive web-based platform designed to transform the way Minecraft players interact with mod configurations.
 The approach is to move away from text-heavy logs and provide a Dynamic Dependency Graph.
-This will make conflict detection visual and easy to manage for all users.
+This will make conflict detection visual and easy to manage for all users.#
+
+==== 1.4.1 Needs
+Based on the current situation, several needs arise for users interacting with Minecraft mods:
+
+* Users need clear and understandable information about mod dependencies so they can determine which additional components are required for a mod to function correctly.
+
+* Users need accessible explanations of compatibility relationships between mods, including which versions, loaders, or libraries are required, without relying on technical logs or developer-oriented documentation.
+
+* Users need an intuitive way to explore relationships between mods, including understanding which mods depend on others and how these dependencies affect the overall configuration.
+
+* Users need support in identifying potential conflicts or missing components before launching the game, so they can resolve problems earlier in the installation process.
+
+* Users also need a more approachable way to understand mod configurations, particularly for less technical users who may struggle with interpreting technical error messages or documentation.
+
+==== 1.4.2 Ideas
+To help satisfy these needs, the team proposes the development of a platform that assists users in exploring and understanding mod relationships.
+
+* One idea is to provide visual representations of mod dependencies, allowing users to see how mods connect to each other rather than reading long lists of requirements. A graphical representation could make these relationships easier to understand.
+
+* Another idea is to allow users to select a mod and view its dependency structure, including which additional mods are required and which other mods depend on it. This would help users better understand the role of each mod in their configuration.
+
+* The system could also highlight missing dependencies or potential incompatibilities, helping users identify issues before attempting to run the game.
+
+* Additionally, the platform could provide simplified explanations of dependency relationships, making technical information easier to interpret for a broader audience.
+
+Overall, these ideas aim to improve how players interact with mod configurations by presenting dependency information in a clearer, more intuitive format.
 
 === 1.5 Concepts
 
