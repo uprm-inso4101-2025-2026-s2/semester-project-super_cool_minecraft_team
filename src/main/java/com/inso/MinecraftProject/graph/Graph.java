@@ -126,7 +126,8 @@ public class Graph implements GraphI<ModNode> {
 
     @Override
     public Iterator<ModNode> iterator(){
-        return null; //dummy return
+        // Return an iterator over the values of the nodes map
+        return nodes.values().iterator();
     }
 
 }
