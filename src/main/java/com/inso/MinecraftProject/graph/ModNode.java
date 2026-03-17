@@ -26,7 +26,6 @@ public class ModNode implements ModNodeI {
      /*
      * @returns the unique identifier of the mod 
      */
-    @Override
      public String getModId() {
          return modID;
      }
@@ -34,7 +33,6 @@ public class ModNode implements ModNodeI {
      /*
      * @returns the version of the mod 
      */
-     @Override
      public String getVersion() {
          return modVersion;
      }
@@ -42,7 +40,6 @@ public class ModNode implements ModNodeI {
      /*
      * @return A set of mod IDs that this mod depends on. Each dependency is represented as a string in the format "modId:version".
      */
-     @Override
      public Set<String> getDependencies() {
          return dependencies;
      }
@@ -50,7 +47,7 @@ public class ModNode implements ModNodeI {
      /*
      * @return A set of mod IDs that this mod conflicts with. Each conflict is represented as a string in the format "modId:version".
      */
-    @Override
+ 
      public Set<String> getConflicts() {
          return conflicts;
      }
