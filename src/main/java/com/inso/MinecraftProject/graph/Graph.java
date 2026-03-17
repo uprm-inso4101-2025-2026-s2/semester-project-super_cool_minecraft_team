@@ -79,8 +79,21 @@ public class Graph implements GraphI<ModNode> {
     }
 
     @Override
-    public boolean addNode(ModNode modNode){
-        return false; //dummy return
+    public boolean addNode(ModNode modNode) {
+        if (modNode == null ||
+            modNode.getModId() == null || modNode.getModId().isBlank() ||
+            modNode.getVersion() == null || modNode.getVersion().isBlank()) {
+            return false;
+        }
+
+        String key = generateKey(modNode);
+
+        if (nodes.containsKey(key)) {
+            return false;
+        }
+
+        nodes.put(key, modNode);
+        return true;
     }
 
     @Override
