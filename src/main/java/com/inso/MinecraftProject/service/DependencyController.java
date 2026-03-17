@@ -1,118 +1,73 @@
 package com.inso.MinecraftProject.service;
 
-import com.inso.MinecraftProject.dto.DTO;
-import com.inso.MinecraftProject.entity.Mod;
-import org.springframework.http.ResponseEntity; // cambio: se usa para devolver 200, 429, 500, etc.
+import com.inso.MinecraftProject.dto.MissingDependenciesResponse;
+import com.inso.MinecraftProject.dto.MissingDependencyDto;
+import com.inso.MinecraftProject.dto.ResolvedDependencyDto;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam; // cambio: permite leer ?mode=ok|partial|fail429...
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays; // cambio: útil para crear listas rápidas en el modo partial
-import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 public class DependencyController {
 
-    @GetMapping("/api/dependencies/missing")
-    public ResponseEntity<?> getMissingDependencies(
-            @RequestParam(defaultValue = "ok") String mode) throws InterruptedException {
-        // cambio:
-        // antes el endpoint siempre devolvía el mismo DTO
-        // ahora acepta un query param "mode" para simular distintos escenarios del issue
-        // ejemplo:
-        // /api/dependencies/missing?mode=ok
-        // /api/dependencies/missing?mode=partial
-        // /api/dependencies/missing?mode=fail429
-        // /api/dependencies/missing?mode=fail500
-        // /api/dependencies/missing?mode=timeout
+    private final DependencyLookupService dependencyLookupService;
 
+    public DependencyController(DependencyLookupService dependencyLookupService) {
+        this.dependencyLookupService = dependencyLookupService;
+    }
+
+    @GetMapping("/api/dependencies/missing")
+    public ResponseEntity<?> getMissingDependencies(@RequestParam(defaultValue = "ok") String mode) {
         if ("fail429".equalsIgnoreCase(mode)) {
-            // cambio:
-            // simula rate limit del backend
-            // esto cubre el caso de error 429 pedido en el issue
-            return ResponseEntity.status(429).body("Rate limit simulated");
+            return ResponseEntity.status(429).body(Map.of("message", "Dependency lookup was rate limited."));
         }
 
         if ("fail500".equalsIgnoreCase(mode)) {
-            // cambio:
-            // simula error interno del servidor
-            // esto cubre el caso 500 pedido en el issue
-            return ResponseEntity.status(500).body("Server error simulated");
+            return ResponseEntity.status(500).body(Map.of("message", "Dependency lookup failed on the server."));
         }
 
         if ("timeout".equalsIgnoreCase(mode)) {
-            // cambio:
-            // simula que el backend tarda demasiado
-            // no se cambia estructura ni DTO, solo se retrasa la respuesta
-            Thread.sleep(10000);
+            return ResponseEntity.status(504).body(Map.of("message", "Dependency lookup timed out."));
+        }
 
-            DTO timeoutResponse = DTO.builder()
-                    .mods(Collections.emptyList())
-                    .edges(Collections.emptyList())
-                    .missingDependencies(Collections.emptyList())
-                    .resolvedDependencies(Collections.emptyList())
-                    .build();
+        List<MissingDependencyDto> missingDependencies = buildMissingDependencies(mode);
+        List<ResolvedDependencyDto> resolvedDependencies = dependencyLookupService.resolveDependencies(missingDependencies);
 
-            return ResponseEntity.ok(timeoutResponse);
+        if ("partial".equalsIgnoreCase(mode) && resolvedDependencies.size() > 1) {
+            resolvedDependencies = resolvedDependencies.subList(0, 1);
+        }
+
+        boolean hasPartialResults = !resolvedDependencies.isEmpty()
+                && resolvedDependencies.size() < missingDependencies.size();
+
+        MissingDependenciesResponse response = new MissingDependenciesResponse(
+                missingDependencies,
+                resolvedDependencies,
+                hasPartialResults
+        );
+
+        return ResponseEntity.ok(response);
+    }
+
+    private List<MissingDependencyDto> buildMissingDependencies(String mode) {
+        if ("empty".equalsIgnoreCase(mode)) {
+            return List.of();
         }
 
         if ("partial".equalsIgnoreCase(mode)) {
-            // cambio:
-            // este modo simula resultados parciales
-            // hay 2 mods faltantes, pero solo 1 link resuelto
-            // así se representa que "some dependencies have no resolved link"
-
-            Mod fabricApi = Mod.builder()
-                    .id("fabric-api")
-                    .version("0.100.1")
-                    .depends(Collections.emptyList())
-                    .breaks(Collections.emptyList())
-                    .suggests(Collections.emptyList())
-                    .recommends(Collections.emptyList())
-                    .conflicts(Collections.emptyList())
-                    .build();
-
-            Mod clothConfig = Mod.builder()
-                    .id("cloth-config")
-                    .version("unknown")
-                    .depends(Collections.emptyList())
-                    .breaks(Collections.emptyList())
-                    .suggests(Collections.emptyList())
-                    .recommends(Collections.emptyList())
-                    .conflicts(Collections.emptyList())
-                    .build();
-
-            DTO partialResponse = DTO.builder()
-                    .mods(Collections.emptyList())
-                    .edges(Collections.emptyList())
-                    .missingDependencies(Arrays.asList(fabricApi, clothConfig))
-                    // solo 1 link -> eso deja el otro mod sin link resuelto
-                    .resolvedDependencies(Collections.singletonList("https://modrinth.com/mod/fabric-api"))
-                    .build();
-
-            return ResponseEntity.ok(partialResponse);
+            return List.of(
+                    new MissingDependencyDto("fabric-api", "Fabric API", "0.100.1", "Fabric", "1.20.1"),
+                    new MissingDependencyDto("cloth-config", "Cloth Config", "11.1.136", "Fabric", "1.20.1")
+            );
         }
 
-        // cambio:
-        // modo normal / por defecto = "ok"
-        // mantiene casi la misma lógica original, pero con un ejemplo resuelto
-        Mod fabricApi = Mod.builder()
-                .id("fabric-api")
-                .version("0.100.1")
-                .depends(Collections.emptyList())
-                .breaks(Collections.emptyList())
-                .suggests(Collections.emptyList())
-                .recommends(Collections.emptyList())
-                .conflicts(Collections.emptyList())
-                .build();
-
-        DTO normalResponse = DTO.builder()
-                .mods(Collections.emptyList())
-                .edges(Collections.emptyList())
-                .missingDependencies(Collections.singletonList(fabricApi))
-                .resolvedDependencies(Collections.singletonList("https://modrinth.com/mod/fabric-api"))
-                .build();
-
-        return ResponseEntity.ok(normalResponse);
+        return List.of(
+                new MissingDependencyDto("fabric-api", "Fabric API", "0.100.1", "Fabric", "1.20.1"),
+                new MissingDependencyDto("modmenu", "Mod Menu", "10.0.0", "Fabric", "1.20.1")
+        );
     }
 }
