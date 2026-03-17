@@ -6,10 +6,10 @@ This README documents the frontend architecture for the dependency-graph UI. It 
 
 ## Key Concepts (at-a-glance)
 
-- **Data flow:** JSON (mock/backend) → Validation → Graph Renderer → Interaction → UI updates
-- **Graph lifecycle:** Init → Render → Update → Reset
-- **Core events:** Node click, Search input, Reset button
-- **Edit points:** see "Where to edit" section below
+ **Data flow:** JSON (mock/backend) → Validation → Graph Renderer → Interaction → UI updates
+ **Graph lifecycle:** Init → Render → Update → Reset
+ **Core events:** Node click, Search input, Reset button
+ **Edit points:** see "Where to edit" section below
 
 
 ## Separation of Responsibilities
@@ -20,11 +20,12 @@ We divide the frontend into three layers to keep code maintainable and testable.
 
 The page structure is provided by the main template (index.html). Key sections:
 
-- Header: title/description
-- Graph container: area where the graph is rendered
-- Side panel: details view for the selected mod
-- Navigation controls: search, reset, filters
-- Footer: auxiliary links and credits
+* Header: title/description
+* Graph container: area where the graph is rendered
+* Side panel: details view for the selected mod
+* Navigation controls: search, reset, filters
+* Footer: auxiliary links and credits
+* Typical files: index.html and templates under src/main/resources/templates/
 
 Typical files: index.html and templates under src/main/resources/templates/
 
@@ -32,10 +33,10 @@ Typical files: index.html and templates under src/main/resources/templates/
 
 CSS handles layout, responsive behavior, and visuals:
 
-- Layout: grid/flex to position graph and side panel
-- Theme/colors: base palette and highlight colors for dependency states
-- Typography and icons
-- Responsive rules: e.g., side panel becomes bottom drawer on small screens
+* Layout: grid/flex to position graph and side panel
+* Theme/colors: base palette and highlight colors for dependency states
+* Typography and icons
+* Responsive rules: e.g., side panel becomes bottom drawer on small screens
 
 Typical files: styles.css and static CSS under src/main/resources/static/
 
@@ -43,27 +44,28 @@ Typical files: styles.css and static CSS under src/main/resources/static/
 
 JS controls validation, rendering, and interactions:
 
-- Data validation and error reporting
-- Transform JSON into node/edge models for the graph library
-- Initialize and configure the graph library (layout, zoom, styles)
-- Event handling (click, search, reset) and side-panel population
+* Data validation and error reporting
+* Transform JSON into node/edge models for the graph library
+* Initialize and configure the graph library (layout, zoom, styles)
+* Event handling (click, search, reset) and side-panel population
 
 Typical files: script.js, graphRenderer.js, eventHandlers.js under static JS folders.
 
----
+
 
 ## Data Flow
 
 High-level path: JSON (mock or backend) → Validation → Graph Render → Interaction → UI updates
 
-1. JSON input: from `src/main/resources/mock/` (local) or backend API.
-2. Validation: check required/optional fields and reference integrity before rendering.
-3. Graph renderer: consumes validated model and creates nodes/edges for the chosen graph library.
-4. Interaction: user actions (click/search) update view and side panel.
+. JSON input: from `src/main/resources/mock/` (local) or backend API.
+. Validation: check required/optional fields and reference integrity before rendering.
+. Graph renderer: consumes validated model and creates nodes/edges for the chosen graph library.
+. Interaction: user actions (click/search) update view and side panel.
 
 Example JSON (minimal):
 
-```json
+[source,json]
+- - - -
 {
     "mods": [
         {
@@ -75,18 +77,21 @@ Example JSON (minimal):
         }
     ]
 }
-```
+- - - 
 
 Validation checklist (implemented or to implement):
 
-- Root object with `mods` array
-- Each mod has `id` (string) and `name` (string)
-- `dependencies` (if present) is an array of strings
-- Each dependency id refers to an existing mod id
+
+* Root object with `mods` array
+* Each mod has `id` (string) and `name` (string)
+* `dependencies` (if present) is an array of strings
+* Each dependency id refers to an existing mod id
+
 
 Validation pseudocode:
 
-```js
+[source,js]
+- - - -
 function validate(input) {
     if (!input || !Array.isArray(input.mods)) throw Error('Invalid payload');
     const ids = new Set(input.mods.map(m => m.id));
@@ -95,7 +100,7 @@ function validate(input) {
         if (m.dependencies) m.dependencies.forEach(d => { if (!ids.has(d)) throw Error('Unknown dependency'); });
     });
 }
-```
+- - - 
 
 How the renderer consumes JSON:
 
@@ -109,74 +114,71 @@ How interactions update the graph/panel:
 - Search: find node(s) by id/name → center/zoom to node → temporary highlight
 - Data update: re-validate JSON → compute diff → add/remove nodes and edges or re-render
 
----
 
 ## Graph Lifecycle
 
 Stages the graph goes through:
 
-1. Init
+. Init
      - Create container and initialize graph library
      - Set layout, zoom limits, styles, and event listeners
 
-2. Render
+. Render
      - Parse validated JSON into nodes/edges
      - Populate the graph instance and run layout
 
-3. Update
+. Update
      - Apply incremental changes (add/remove/update nodes/edges)
      - Optionally re-run layout or adjust camera
 
-4. Reset
+. Reset
      - Clear selections and highlights
      - Reset zoom/pan to default view
 
----
 
 ## Event Handling
 
 List of main frontend events and their effects:
 
-- Node Click
-    - Opens side panel with: name, version, description, dependency list, conflict/warning badges
-    - Highlights the node and its dependency edges
-    - Files: eventHandlers.js / graphRenderer.js
+* Node Click
+    ** Opens side panel with: name, version, description, dependency list, conflict/warning badges
+    ** Highlights the node and its dependency edges
+    ** Files: eventHandlers.js / graphRenderer.js
 
-- Search Input
-    - Filters node list and finds matches
-    - Centers and zooms to selected node, pulses highlight
-    - Should be debounced to avoid heavy re-renders
+* Search Input
+    ** Filters node list and finds matches
+    ** Centers and zooms to selected node, pulses highlight
+    ** Should be debounced to avoid heavy re-renders
 
-- Reset Button
-    - Clears filters and selection
-    - Centers graph and resets zoom
+* Reset Button
+    ** Clears filters and selection
+    ** Centers graph and resets zoom
 
-- Hover
-    - Shows tooltip with quick info (name/version)
+* Hover
+    ** Shows tooltip with quick info (name/version)
 
-Implementation tips:
+* Implementation tips:
+** Use a single source of truth for selection state (controller or simple store)
+** Animate camera moves for better UX when focusing nodes
+** Debounce heavy inputs and async data loads
 
-- Use a single source of truth for selection state (controller or simple store)
-- Animate camera moves for better UX when focusing nodes
-- Debounce heavy inputs and async data loads
-
----
 
 ## Where to Edit / Developer Pointers
 
-- Mock data: src/main/resources/mock/
-- Static assets (HTML/CSS/JS): src/main/resources/static/
-- Templates: src/main/resources/templates/
-- Server-side endpoints: search for controllers under src/main/java/com/.../view or controller packages
+* Mock data: src/main/resources/mock/
+* Static assets (HTML/CSS/JS): src/main/resources/static/
+* Templates: src/main/resources/templates/
+* Server-side endpoints: search for controllers under src/main/java/com/.../view or controller packages
 
 If you're changing rendering behavior, look for the graph initialization code (search for `cytoscape`, `vis`, `d3`, or `graphRenderer`).
 
----
 
 ## Diagram (flow)
 
-```mermaid
+[source]
+- - - -
 flowchart TD
+
     A[JSON: mock / API] --> B[Validation]
     B --> C[Graph Renderer]
     C --> D[Graph UI]
@@ -189,25 +191,12 @@ flowchart TD
     end
     E --> S
     E --> R
-```
+- - - 
 
----
+==Notes:
+* This README is the canonical project documentation for frontend architecture. The document will be mirrored/expanded into a Google Doc for team collaboration if needed.
+* Keep this file up to date when new attributes, validation rules, or UI behaviors are introduced.
 
-## Acceptance checklist
-
-- [x] Documentation file exists
-- [x] Explains data flow from JSON to interaction
-- [x] Describes graph lifecycle steps (Init/Render/Update/Reset)
-- [x] Details event handling (node click, search, reset)
-- [x] Clarifies separation of HTML/CSS/JS responsibilities
-- [x] Easy to understand for new team members
-
----
-
-Notes:
-
-- This README is the canonical project documentation for frontend architecture. The document will be mirrored/expanded into a Google Doc for team collaboration if needed.
-- Keep this file up to date when new attributes, validation rules, or UI behaviors are introduced.
 
 
 
