@@ -1,6 +1,6 @@
 @font-face {
     font-family: 'Monocraft';
-    src: url('/fonts/Monocraft-Light.ttf') format('truetype');
+    src: url('../fonts/Monocraft-Light.ttf') format('truetype');
     font-weight: 300;
     font-style: normal;
     font-display: swap;
@@ -8,7 +8,7 @@
 
 @font-face {
     font-family: 'Monocraft';
-    src: url('/fonts/Monocraft-SemiBold.ttf') format('truetype');
+    src: url('../fonts/Monocraft-SemiBold.ttf') format('truetype');
     font-weight: 600;
     font-style: normal;
     font-display: swap;
