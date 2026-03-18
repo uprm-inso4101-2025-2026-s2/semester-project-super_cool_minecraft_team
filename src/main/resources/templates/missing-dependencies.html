@@ -22,39 +22,26 @@
         <section class="card dependencies-card">
             <h2>Detected Missing Dependencies</h2>
 
-            <div th:if="${analysisHasPartialResults}" class="info-banner">
-                Some dependencies were resolved, but others could not be matched automatically.
-                You can still install the resolved ones first and retry analysis.
+           <div id="partial-results-banner" class="info-banner" hidden>
+            Some dependencies were resolved, but others could not be matched automatically.
+            You can still install the resolved ones first and retry analysis.
+
             </div>
 
-            <div class="dependency-list">
-                <div class="dependency-item" th:each="dependency : ${missingDependencies}">
-                    <div class="dependency-main">
-                        <h3 th:text="${dependency.name}">Dependency Name</h3>
-                        <p>
-                            Version:
-                            <span th:text="${dependency.version}">1.20.1</span>
-                            |
-                            Loader:
-                            <span th:text="${dependency.loader}">Fabric</span>
-                        </p>
-                    </div>
+            <div id="loading-state">
+            Loading missing dependencies...
 
-                    <div class="dependency-actions" th:if="${dependency.resolved}">
-                        <a class="download-btn"
-                           th:href="${dependency.downloadUrl}"
-                           target="_blank"
-                           rel="noopener noreferrer">
-                            Open Download Link
-                        </a>
-                    </div>
-
-                    <div class="dependency-actions unresolved" th:if="${!dependency.resolved}">
-                        <span class="unresolved-badge">Unresolved</span>
-                        <p>No safe download link could be resolved for this dependency.</p>
-                    </div>
-                </div>
             </div>
+
+            <div id="error-state" class="error-banner" hidden></div>
+
+            <div id="empty-state" hidden>
+            No missing dependencies were found.
+
+            </div>
+
+            <div id="dependency-list" class="dependency-list"></div>
+
         </section>
 
         <aside class="side-panels">
@@ -92,6 +79,7 @@
         </aside>
     </main>
 </div>
-
+<script src="/missing-dependencies.js"></script>
 </body>
+
 </html>

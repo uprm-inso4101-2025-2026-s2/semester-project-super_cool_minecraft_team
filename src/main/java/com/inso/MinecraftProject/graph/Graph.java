@@ -79,8 +79,21 @@ public class Graph implements GraphI<ModNode> {
     }
 
     @Override
-    public boolean addNode(ModNode modNode){
-        return false; //dummy return
+    public boolean addNode(ModNode modNode) {
+        if (modNode == null ||
+            modNode.getModId() == null || modNode.getModId().isBlank() ||
+            modNode.getVersion() == null || modNode.getVersion().isBlank()) {
+            return false;
+        }
+
+        String key = generateKey(modNode);
+
+        if (nodes.containsKey(key)) {
+            return false;
+        }
+
+        nodes.put(key, modNode);
+        return true;
     }
 
     @Override
@@ -100,12 +113,21 @@ public class Graph implements GraphI<ModNode> {
 
     @Override
     public ModNode findNode(String key){
-        return null; //dummy return
+        if (key == null) {
+            return null;
+        }
+        for (ModNode node : this) {
+            if (generateKey(node).equals(key)) {
+                return node;
+            }
+        }
+        return null;
     }
 
     @Override
     public Iterator<ModNode> iterator(){
-        return null; //dummy return
+        // Return an iterator over the values of the nodes map
+        return nodes.values().iterator();
     }
 
 }
