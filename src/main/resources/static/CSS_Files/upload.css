@@ -310,3 +310,119 @@ margin-right:auto;
 opacity:0.9;
 line-height:1.5;
 }
+
+
+.os-instructions-section{
+    max-width:900px;
+    margin:120px auto;
+    padding:40px;
+    background:rgba(0,0,0,0.65);
+    border-radius:12px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.5);
+    text-align:center;
+}
+
+.os-instructions-section h2{
+    font-size:28px;
+    margin-bottom:20px;
+}
+
+/* El texto */
+.instructions-text{
+    text-align:left;
+    max-width:600px;
+    margin:0 auto 20px auto;
+}
+
+.instruction-list{
+    list-style-type: decimal;
+    padding-left:20px;
+    line-height:1.8;
+}
+
+.instruction-list li{
+    margin-bottom:10px;
+}
+
+
+
+.instruction-image{
+    text-align:center;
+    margin:40px auto;
+}
+
+.instruction-image a {
+    display: inline-block;
+}
+
+.instruction-image img{
+    width:100%;
+    max-width:500px;
+    height:auto;
+    border-radius:10px;
+    margin:20px auto;
+    display:block;
+    box-shadow:0 5px 20px rgba(0,0,0,0.5);
+    cursor:pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
+}
+
+.instruction-image img:hover{
+    transform:scale(1.05);
+    box-shadow:0 10px 30px rgba(0,0,0,0.8);
+    filter:brightness(1.1);
+}
+
+
+
+.upload-limit {
+    font-size: 18px;
+    margin: 20px 0;
+    font-weight: 600;
+    text-align:center;
+}
+
+.upload-text{
+    font-size:18px;
+    opacity:0.9;
+}
+
+/* PLACEHOLDER */
+.instruction-container{
+    height:250px;
+    max-width:600px;
+    margin:20px auto;
+    border:3px dashed #ccc;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(0,0,0,0.6);
+    border-radius:12px;
+    transition:0.3s;
+    cursor:pointer;
+}
+
+.instruction-container:hover{
+    border-color:#7ff9ff;
+    background:rgba(0,0,0,0.8);
+    transform:scale(1.03);
+    box-shadow:0 0 25px rgba(127,249,255,0.4);
+}
+
+/* Final Section */
+.upload-final {
+    text-align: center;
+    margin-top: 60px;
+}
+
+/* Soft scroll*/
+html{
+    scroll-behavior:smooth;
+}
+
+.instructions-subtitle{
+    font-size:20px;
+    margin-bottom:15px;
+    color:#7ff9ff;
+    text-align:center;
+}
