@@ -1,11 +1,19 @@
-@Data
+package com.inso.MinecraftProject.dto;
 
+import java.util.List;
+
+import com.inso.MinecraftProject.entity.Dependency;
+
+import lombok.Data;
+import lombok.NonNull;
+
+@Data
 public class ModRequest {
 
-    @NotBlank
+    @NonNull
     private String modId;
 
-    @NotBlank
+    @NonNull
     private String version;
 
     private String minecraftVersion;
