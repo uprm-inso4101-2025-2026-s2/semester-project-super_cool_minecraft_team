@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Missing Dependencies</title>
+    <link rel="stylesheet" href="../static/CSS_Files/missing-dependencies.css" />
+</head>
+<body id="page-missing-dependencies">
+
+<div class="page-container">
+    <header class="page-header">
+        <h1>Missing Dependencies</h1>
+        <p>
+            Review the missing mods below, install the ones with available links,
+            and re-run analysis afterward.
+        </p>
+    </header>
+
+    <main class="content-grid">
+
+        <section class="card dependencies-card">
+            <h2>Detected Missing Dependencies</h2>
+
+           <div id="partial-results-banner" class="info-banner" hidden>
+            Some dependencies were resolved, but others could not be matched automatically.
+            You can still install the resolved ones first and retry analysis.
+
+            </div>
+
+            <div id="loading-state">
+            Loading missing dependencies...
+
+            </div>
+
+            <div id="error-state" class="error-banner" hidden></div>
+
+            <div id="empty-state" hidden>
+            No missing dependencies were found.
+
+            </div>
+
+            <div id="dependency-list" class="dependency-list"></div>
+
+        </section>
+
+        <aside class="side-panels">
+
+            <section class="card">
+                <h2>How to install</h2>
+                <ol>
+                    <li>Open the dependency link for each missing mod.</li>
+                    <li>Download the file that matches your Minecraft version.</li>
+                    <li>Make sure the mod also matches your loader (<span th:text="${loader}">Fabric</span>).</li>
+                    <li>Place the downloaded <code>.jar</code> file into your modpack’s <code>mods</code> folder.</li>
+                    <li>After installing the missing mods, re-run analysis.</li>
+                </ol>
+            </section>
+
+            <section class="card warning-card">
+                <h2>Warnings</h2>
+                <ul>
+                    <li>Do not install a Forge mod in a Fabric modpack.</li>
+                    <li>Do not install a mod built for a different Minecraft version.</li>
+                    <li>If multiple files are listed, choose the one matching your current setup.</li>
+                </ul>
+            </section>
+
+            <section class="card">
+                <h2>What to do if unresolved</h2>
+                <ul>
+                    <li>Search for the dependency manually on Modrinth or CurseForge.</li>
+                    <li>Confirm the exact mod ID, Minecraft version, and loader.</li>
+                    <li>If the dependency still cannot be found, remove the parent mod or replace it with a compatible alternative.</li>
+                    <li>After making changes, re-run analysis to verify the dependency graph again.</li>
+                </ul>
+            </section>
+
+        </aside>
+    </main>
+</div>
+<script src="/missing-dependencies.js"></script>
+</body>
+
+</html>

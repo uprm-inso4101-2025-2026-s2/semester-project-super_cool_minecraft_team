@@ -1,0 +1,11 @@
+{
+  "missingDependencies": [
+    {
+      "id": "fabric-api",
+      "version": "0.92"
+    }
+  ],
+  "resolvedDependencies": [
+    "https://modrinth.com/mod/fabric-api"
+  ]
+}
