@@ -8,25 +8,13 @@
   <title>Upload Modpack</title>
 
   <link rel="stylesheet" href="/images/textures/textures.css">
+  <link rel="stylesheet" href="/CSS_Files/homepage.css">
   <link rel="stylesheet" href="/CSS_Files/upload.css">
 </head>
 
 <body id="page-upload">
 
-  <header id="site-header">
-    <div class="nav-container">
-
-      <a href="/" class="logo">Minecraft Mod Analyzer</a>
-
-      <nav class="nav-links">
-        <a href="/">Home</a>
-        <a href="/upload">Upload</a>
-        <a href="/about">About</a>
-        <a href="https://github.com/uprm-inso4101-2025-2026-s2/semester-project-super_cool_minecraft_team" target="_blank">GitHub</a>
-      </nav>
-
-    </div>
-  </header>
+  <header th:replace="components/navbar :: navbar"></header>
 
   <section id="page-title">
     <h1>Select Your Operating System For Instructions</h1>
@@ -170,20 +158,7 @@
     </div>
     </section>
 
-  </section>
-
-  <footer id="site-footer">
-    <div class="footer-container">
-      <p>
-        Minecraft Mod Analyzer helps players analyze modpack dependencies
-        and detect compatibility conflicts.
-      </p>
-
-      <p>
-        © 2026 Super Cool Minecraft Team
-      </p>
-    </div>
-  </footer>
+ <footer th:replace="components/footer :: footer"></footer>
 
 </body>
 </html>

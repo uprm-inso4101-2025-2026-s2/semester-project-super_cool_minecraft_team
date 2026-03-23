@@ -9,26 +9,7 @@
 
 <body class="site-background" id="page-home">
 
-  <header id="site-header">
-    <div class="nav-container">
-
-      <button class="logo-btn" id="logo-btn" onclick="window.location.href='/'">
-        <img src="/images/logos/Header Icon- Rectangular.png" alt="logo">
-      </button>
-
-      <div class="logo">
-        Minecraft Mod Analyzer
-      </div>
-
-      <nav class="nav-links">
-        <a href="/">Home</a>
-        <a href="/upload">Upload</a>
-        <a href="/about">About</a>
-        <a href="https://github.com/uprm-inso4101-2025-2026-s2/semester-project-super_cool_minecraft_team" target="_blank">GitHub</a>
-      </nav>
-
-    </div>
-  </header>
+  <header th:replace="components/navbar :: navbar"></header>
 
   <header id="app-header">
     <div id="header-inner">
@@ -74,18 +55,7 @@
     </div>
   </section>
 
-  <footer id="site-footer">
-    <div class="footer-container">
-      <p>
-        Minecraft Mod Analyzer helps players analyze modpack dependencies
-        and detect compatibility conflicts.
-      </p>
-
-      <p>
-        © 2026 Super Cool Minecraft Team
-      </p>
-    </div>
-  </footer>
+  <footer th:replace="components/footer :: footer"></footer>
 
   <script src="/JS_Files/homepage.js"></script>
 

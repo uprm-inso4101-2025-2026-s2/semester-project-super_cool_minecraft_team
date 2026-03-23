@@ -9,25 +9,7 @@
 </head>
 
 <body class="site-background" id="page-about">
-    
-  <header id="site-header">
-  <div class="nav-container">
-      
-         
-    <div class="logo">
-      Minecraft Mod Analyzer
-    </div>
-
-    <nav class="nav-links">
-  <a href="/">Home</a>
-  <a href="/upload">Upload</a>
-  <a href="/about" id="about-btn">About</a>
-  <a href="https://github.com/uprm-inso4101-2025-2026-s2/semester-project-super_cool_minecraft_team" target="_blank">GitHub</a>
-    </nav>
-  
-  </div>
-
-</header>
+ <header th:replace="components/navbar :: navbar"></header>
   <header id="app-header">
     <div id="header-inner">
       <!-- <h1 id="main-title"></h1>
@@ -91,15 +73,6 @@
     </section>
   </main>
 
-<footer id="site-footer">
-  <div class="footer-container">
-
-    <p>
-      <!-- TODO (If needed) -->
-    </p>
-
-  </div>
-
-</footer>
+<footer th:replace="components/footer :: footer"></footer>
 </body>
 </html>
