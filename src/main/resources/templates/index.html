@@ -9,7 +9,7 @@
 
 <body class="site-background" id="page-home">
 
-  <header th:replace="components/navbar :: navbar"></header>
+  <header th:replace="~{components/navbar :: navbar}"></header>
 
   <header id="app-header">
     <div id="header-inner">
@@ -55,7 +55,7 @@
     </div>
   </section>
 
-  <footer th:replace="components/footer :: footer"></footer>
+  <footer th:replace="~{components/footer :: footer}"></footer>
 
   <script src="/JS_Files/homepage.js"></script>
 
