@@ -1,33 +1,35 @@
 package com.inso.MinecraftProject.controller;
 
+import com.inso.MinecraftProject.dto.MissingDependencyDto;
+import com.inso.MinecraftProject.dto.ResolvedDependencyDto;
+import com.inso.MinecraftProject.service.DependencyLookupService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/dependencies")
 public class DownloadRedirectController {
 
-    private static final Map<String, String> resolvedDependencies = Map.of(
-            "fabric-api", "https://cdn.modrinth.com/data/fabric-api/fabric-api.jar",
-            "example", "https://cdn.modrinth.com/data/example/example.jar"
-    );
+    private final DependencyLookupService dependencyLookupService;
+
+    public DownloadRedirectController(DependencyLookupService dependencyLookupService) {
+        this.dependencyLookupService = dependencyLookupService;
+    }
 
     @GetMapping("/{id}/download")
     public ResponseEntity<Void> redirectToDownload(@PathVariable String id) {
-
         try {
-            if (!resolvedDependencies.containsKey(id)) {
+            MissingDependencyDto dependency = new MissingDependencyDto(id, null, null, null, null);
+            Optional<ResolvedDependencyDto> resolved = dependencyLookupService.resolveDependency(dependency);
+
+            if (resolved.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
 
-            String downloadUrl = resolvedDependencies.get(id);
-
-            if (id.equals("incompatible")) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-            }
+            String downloadUrl = resolved.get().preferred();
 
             return ResponseEntity.status(HttpStatus.FOUND)
                     .header("Location", downloadUrl)
