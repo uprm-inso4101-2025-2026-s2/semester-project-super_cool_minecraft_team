@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -93,5 +94,31 @@ public class GraphDSTests {
         removed = graph.removeNode("modD@1.0");
         Assertions.assertFalse(removed, "Removing a non-existent node should fail");
     }
+     @Test
+    public void testFindNode() {
+        Graph graph = new Graph();
+
+        Set<String> deps = new HashSet<>();
+        Set<String> conf = new HashSet<>();
+
+        ModNode node = new ModNode("modA", "1.0", deps, conf);
+        Assertions.assertTrue(graph.addNode(node), "addNode should return true for a new node");
+
+        String key = graph.generateKey(node);
+        ModNode found = graph.findNode(key);
+        Assertions.assertNotNull(found, "findNode should return the previously added node");
+        Assertions.assertEquals("modA", found.getModId());
+        Assertions.assertEquals("1.0", found.getVersion());
+
+        Assertions.assertFalse(graph.addNode(node), "addNode should return false for duplicate node");
+
+        Assertions.assertNull(graph.findNode(null), "findNode should return null for null key");
+
+        Assertions.assertTrue(graph.removeNode(key), "removeNode should succeed for existing key");
+        Assertions.assertNull(graph.findNode(key), "Node should not be found after removal");
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> graph.generateKey(null));
+    }
+    
 
 }
