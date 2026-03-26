@@ -44,19 +44,12 @@ public DependencyController(DependencyLookupService lookupService,
         // Resolve external links
         List<ResolvedDependencyDto> resolved = dependencyLookupService.resolveDependencies(missingDtos);
 
-        // DTO build, replace this with a more comprehensive one
+        // DTO build
         DTO response = DTO.builder()
                 .mods(List.of(mod)) 
-                .edges(new ArrayList<>()) // This is fine if a "GraphService" handles it later
-                .missingDependencies(validation.getMissingDependencies().stream()
-                        .map(id -> {
-                            Mod m = new Mod();
-                            m.setId(id);
-                            return m;
-                        }).toList()) // Mapping IDs to Mod stubs so it's not an empty list!
-                .resolvedDependencies(resolved.stream()
-                        .map(ResolvedDependencyDto::name)
-                        .toList())
+                .edges(new ArrayList<>())
+                .missingDependencies(missingDtos)
+                .resolvedDependencies(resolved)
                 .build();
 
         return ResponseEntity.ok(response);
