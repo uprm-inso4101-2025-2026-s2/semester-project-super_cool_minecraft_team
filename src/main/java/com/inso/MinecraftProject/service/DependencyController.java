@@ -44,12 +44,28 @@ public DependencyController(DependencyLookupService lookupService,
         // Resolve external links
         List<ResolvedDependencyDto> resolved = dependencyLookupService.resolveDependencies(missingDtos);
 
-        // DTO build
+
+
+
+
+        // Convert MissingDependencyDto -> Mod      (these conversions fix an error in the DTO populating part since it wants these specific types)
+        List<Mod> missingMods = missingDtos.stream()    //But since i can't upload mods, i can't test if the DTO is actually working. 
+                .map(dto -> Mod.builder()
+                        .id(dto.id())
+                        .version(dto.requiredVersion())
+                        .build())
+                .toList();
+
+        // Convert ResolvedDependencyDto -> String
+        List<String> resolvedLinks = resolved.stream()
+                .map(ResolvedDependencyDto::preferred)
+                .toList();
+        // DTO build                            
         DTO response = DTO.builder()
                 .mods(List.of(mod)) 
                 .edges(new ArrayList<>())
-                .missingDependencies(missingDtos)
-                .resolvedDependencies(resolved)
+                .missingDependencies(missingMods)
+                .resolvedDependencies(resolvedLinks)
                 .build();
 
         return ResponseEntity.ok(response);
