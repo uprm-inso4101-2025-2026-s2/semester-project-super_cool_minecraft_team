@@ -1,19 +1,19 @@
-<header th:fragment="navbar" id="site-header">
+<header th:fragment="navbar(activePage)" id="site-header">
   <div class="nav-container">
 
     <button class="logo-btn" onclick="window.location.href='/'">
-      <img src="/images/logos/Header Icon- Rectangular.png" alt="logo">
+      <img src="/images/logos/Minecraft logo.png" alt="logo" id="nav-logo">
     </button>
 
-    <div class="logo">
-      Minecraft Mod Analyzer
-    </div>
-
     <nav class="nav-links">
-      <a href="/">Home</a>
-      <a href="/upload">Upload</a>
-      <a href="/about">About</a>
-      <a href="https://github.com/uprm-inso4101-2025-2026-s2/semester-project-super_cool_minecraft_team" target="_blank">GitHub</a>
+      <a href="/" 
+         th:classappend="${activePage == 'home'} ? 'active' : ''">Home</a>
+  
+      <a href="/about" 
+         th:classappend="${activePage == 'about'} ? 'active' : ''">About</a>
+  
+      <a href="/upload" 
+         th:classappend="${activePage == 'upload'} ? 'active' : ''">Upload</a>
     </nav>
 
   </div>

@@ -58,19 +58,22 @@ font-family: 'Monocraft', sans-serif;
 }
 
 .logo-btn{
-    position: absolute;
-    left: 16px;
+    /* left: 16px;
     top: 50%;
-    transform: translateY(-50%);
+    transform: translateY(-50%); */
+    position: static;
+    display: flex;
+    align-items: center;
+    padding: 0;
     background: none;
     border: none;
     cursor: pointer;
-    display: flex;
+
     
 }
 
 .logo-btn img{
-    height: 40px !important;
+    height: 40px !important ;
 }
 
 .nav-links a {
