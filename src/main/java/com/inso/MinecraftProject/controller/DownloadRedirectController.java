@@ -1,10 +1,15 @@
 package com.inso.MinecraftProject.controller;
 
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
+import com.inso.MinecraftProject.exception.ApiException;
 
 @RestController
 @RequestMapping("/dependencies")
@@ -16,25 +21,25 @@ public class DownloadRedirectController {
     );
 
     @GetMapping("/{id}/download")
-    public ResponseEntity<Void> redirectToDownload(@PathVariable String id) {
+public ResponseEntity<Void> redirectToDownload(@PathVariable String id) {
 
-        try {
-            if (!resolvedDependencies.containsKey(id)) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-            }
-
-            String downloadUrl = resolvedDependencies.get(id);
-
-            if (id.equals("incompatible")) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-            }
-
-            return ResponseEntity.status(HttpStatus.FOUND)
-                    .header("Location", downloadUrl)
-                    .build();
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+    if (!resolvedDependencies.containsKey(id)) {
+        throw new ApiException("Dependency not found", HttpStatus.NOT_FOUND);
     }
+
+    if (id.equals("incompatible")) {
+        throw new ApiException("Invalid version for dependency", HttpStatus.BAD_REQUEST);
+    }
+
+    try {
+        String downloadUrl = resolvedDependencies.get(id);
+
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .header("Location", downloadUrl)
+                .build();
+
+    } catch (Exception e) {
+        throw new ApiException("Failed to redirect", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
 }
