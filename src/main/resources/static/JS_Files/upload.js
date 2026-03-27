@@ -4,7 +4,7 @@ const filePicker = document.getElementById("file-picker");
 const statusText = document.getElementById("status");
 if (!filePicker || !statusText) {
     console.error("Required elements not found");
-    return;
+    return; // Is this return ok?
 }
 filePicker.addEventListener("change", function(event) {
     const file = event.target.files[0];
@@ -31,9 +31,25 @@ filePicker.addEventListener("change", function(event) {
 });
 
 async function uploadFile(file) {
-    const baseUrl = "minecraft.com/api/upload";
-    try {
-        //  TODO
+    const baseUrl = "minecraft.com/api/upload"; // Change?
+    try
+    {
+        const fData = new FormData();
+        fData.append("file", file);
+
+        const resp = await fetch(baseUrl,
+                                        {
+                                            method: "Post",
+                                            body: fData
+                                        }
+                                );
+        
+        if(!resp.ok)
+            throw new Error("Upload failed");
+
+        // Helper check:
+        const data = await resp.json();
+        console.log("Server responde: ", data);
     }
     catch (error) {
         console.error("Upload error:", error);
