@@ -13,11 +13,9 @@ public class DependencyController {
     public DTO getMissingDependencies() {
 
         DTO response = DTO.builder()
-                .mods(Collections.emptyList())
-                .edges(Collections.emptyList())
-                .missingDependencies(Collections.emptyList())
-                .resolvedDependencies(Collections.emptyList())
-                .build();
+            .missingDependencies(Collections.emptyList())
+            .resolvedDependencies(Collections.emptyList())
+            .build();
 
         return response;
     }
