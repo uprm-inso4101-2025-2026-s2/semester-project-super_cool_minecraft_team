@@ -8,8 +8,10 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -94,6 +96,33 @@ public class DependencyLookupService {
         } catch (RuntimeException ex) {
             return Optional.empty();
         }
+    }
+
+    public List<MissingDependencyDto> fetchMissingDependencies(String slug, String loader, String mcVersion) {
+        JsonNode deps = modrinthServiceWrapper.getProjectDependencies(slug);
+
+        // Deduplicate required deps by project_id
+        Map<String, String> seen = new LinkedHashMap<>();
+        for (JsonNode dep : deps) {
+            String type = dep.path("dependency_type").asText("");
+            if (!"required".equals(type)) continue;
+            String projectId = dep.path("project_id").asText("");
+            if (projectId.isBlank()) continue;
+            seen.putIfAbsent(projectId, dep.path("version_id").asText(null));
+        }
+
+        List<MissingDependencyDto> result = new ArrayList<>();
+        for (Map.Entry<String, String> entry : seen.entrySet()) {
+            String projectId = entry.getKey();
+            String versionId = entry.getValue();
+            String name = projectId;
+            try {
+                JsonNode project = modrinthServiceWrapper.getProjectById(projectId);
+                name = project.path("title").asText(projectId);
+            } catch (RuntimeException ignored) {}
+            result.add(new MissingDependencyDto(projectId, name, versionId, loader, mcVersion));
+        }
+        return result;
     }
 
     private String buildCacheKey(MissingDependencyDto dependency) {
