@@ -2,10 +2,13 @@
 
 const filePicker = document.getElementById("file-picker");
 const statusText = document.getElementById("status");
-if (!filePicker || !statusText) {
+if (!filePicker || !statusText)
+{
     console.error("Required elements not found");
-    return; // Is this return ok?
+    // return; // Is this return ok? Maybe change logic to flow better if needed
+    // Since without the return, this should lead to an error where filePicker or statusText is null and isn't handled
 }
+
 filePicker.addEventListener("change", function(event) {
     const file = event.target.files[0];
     if (!file) {
@@ -39,7 +42,7 @@ async function uploadFile(file) {
 
         const resp = await fetch(baseUrl,
                                         {
-                                            method: "Post",
+                                            method: "POST",
                                             body: fData
                                         }
                                 );
