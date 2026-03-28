@@ -358,6 +358,68 @@ body {
     display: none;
 }
 
+/* ===== POPUP PANEL ===== */
+#mod-info-panel {
+    position: absolute;
+    top: 300px;
+    right: 20px;
+    width: 220px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 14px;
+    display: none;
+    flex-direction: column;
+    z-index: 20;
+}
+
+#mod-info-panel h3 {
+    font-size: 0.8rem;
+    margin-bottom: 10px;
+}
+
+#mod-info-panel ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#mod-info-panel li {
+    font-size: 0.65rem;
+    padding: 6px;
+    margin-bottom: 6px;
+    border-left: 3px solid var(--line);
+}
+
+/* Dependency colors (match your legend) */
+.dep-required { border-color: var(--blue); }
+.dep-optional { border-color: var(--yellow); }
+.dep-conflict { border-color: var(--red); }
+
+#mod-info-panel button {
+    margin-top: 10px;
+    padding: 6px;
+    font-size: 0.65rem;
+    border: none;
+    background: var(--input-bg);
+    color: var(--text);
+    cursor: pointer;
+}
+
+#dependency-graph-canvas {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 650px;
+}
+
+#dependency-graph-canvas svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+
 /* Zoom buttons */
 .zoom-controls {
     position: absolute;
