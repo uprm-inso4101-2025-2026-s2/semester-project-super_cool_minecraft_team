@@ -125,6 +125,19 @@ public class Graph implements GraphI<ModNode> {
     }
 
     @Override
+    public boolean hasModNode(String key) {
+        return key != null && nodes.containsKey(key); 
+    }
+
+    @Override 
+    public boolean hasDependency(String dependency, ModNode modNode){
+        if (dependency == null || modNode == null){
+            return false;
+        }
+        return modNode.getDependencies() != null && modNode.getDependencies().contains(dependency);
+    }
+
+    @Override
     public Iterator<ModNode> iterator(){
         // Return an iterator over the values of the nodes map
         return nodes.values().iterator();
