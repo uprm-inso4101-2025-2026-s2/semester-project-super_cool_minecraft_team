@@ -8,12 +8,13 @@
     <nav class="nav-links">
       <a href="/" 
          th:classappend="${activePage == 'home'} ? 'active' : ''">Home</a>
-  
-      <a href="#" 
-         th:classappend="${activePage == 'visualizer'} ? 'active' : ''">Visualizer</a>
-  
+    
       <a href="/upload" 
          th:classappend="${activePage == 'upload'} ? 'active' : ''">Upload</a>
+
+      <a href="#" 
+         th:classappend="${activePage == 'visualizer'} ? 'active' : ''">Visualizer</a>
+
     </nav>
 
   </div>
