@@ -1,6 +1,5 @@
 package com.inso.MinecraftProject.controller;
 
-import com.inso.MinecraftProject.dto.DTO;
 import com.inso.MinecraftProject.service.ModpackParsingService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -24,29 +24,26 @@ public class ZipFileController {
     }
 
     @PostMapping(
-        path = "/zip",
-        consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-        produces = MediaType.APPLICATION_JSON_VALUE
+            path = "/zip",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<DTO> uploadZipFile(@RequestPart("file") MultipartFile file) {
-        
+    public ResponseEntity<Map<String, Object>> uploadZipFile(@RequestPart("file") MultipartFile file) {
         if (file == null || file.isEmpty()) {
-        return ResponseEntity.badRequest().build();
-    }
+            return ResponseEntity.badRequest().body(Map.of("message", "No file uploaded or file is empty."));
+        }
 
-    String originalFilename = file.getOriginalFilename();
+        String originalFilename = file.getOriginalFilename();
+        if (originalFilename == null || !originalFilename.toLowerCase(Locale.ROOT).endsWith(".zip")) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Only .zip files are supported."));
+        }
 
-    if (originalFilename == null || !originalFilename.toLowerCase(Locale.ROOT).endsWith(".zip")) {
-        return ResponseEntity.status(415).build();
-    }
+        String parsingStatus = modpackParsingService.parseModpack();
 
-    try {
-        DTO result = modpackParsingService.parseModpack();
-        return ResponseEntity.ok(result);
-
-    } catch (Exception e) {
-        return ResponseEntity.status(500).build();
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("message", "Zip file accepted.");
+        response.put("fileName", originalFilename);
+        response.put("status", parsingStatus);
+        return ResponseEntity.ok(response);
     }
 }
-}
-   

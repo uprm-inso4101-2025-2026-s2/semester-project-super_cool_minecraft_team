@@ -38,23 +38,6 @@ public interface GraphI <T extends ModNodeI> extends Iterable<T> {
     T findNode(String key);
 
     /**
-     * Adds a new mod node to the graph.
-     *
-     * @param key the node key (modid@version)
-     * @return true if the node was found, false if the node was not found in the dependency graph
-     */
-    boolean hasModNode(String key);
-
-    /**
-     * Adds a new mod node to the graph.
-     *
-     * @param dependency the dependency to find 
-     * @param modNode the mod node from which the dependencies are extracted from
-     * @return true if the dependency relationship was found, false if the dependency was not found in the dependency graph
-     */
-    boolean hasDependency(String dependency, ModNode modNode);
-
-    /**
      * Returns an iterator over all ModNode objects in the graph.
      *
      * @return iterator of ModNode

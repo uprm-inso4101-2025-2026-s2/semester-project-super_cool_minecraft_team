@@ -8,13 +8,25 @@
   <title>Upload Modpack</title>
 
   <link rel="stylesheet" href="/images/textures/textures.css">
-  <link rel="stylesheet" href="/CSS_Files/homepage.css">
   <link rel="stylesheet" href="/CSS_Files/upload.css">
 </head>
 
 <body id="page-upload">
 
-  <header th:replace="~{components/navbar :: navbar}"></header>
+  <header id="site-header">
+    <div class="nav-container">
+
+      <a href="/" class="logo">Minecraft Mod Analyzer</a>
+
+      <nav class="nav-links">
+        <a href="/">Home</a>
+        <a href="/upload">Upload</a>
+        <a href="/about">About</a>
+        <a href="https://github.com/uprm-inso4101-2025-2026-s2/semester-project-super_cool_minecraft_team" target="_blank">GitHub</a>
+      </nav>
+
+    </div>
+  </header>
 
   <section id="page-title">
     <h1>Select Your Operating System For Instructions</h1>
@@ -31,7 +43,7 @@
 
       <h2>For Windows</h2>
 
-      <a href="#windows-section">
+      <a href="/windows">
         <button class="details-btn">
           View Windows Details
         </button>
@@ -43,7 +55,7 @@
 
       <h2>For macOS</h2>
 
-      <a href="#mac-section">
+      <a href="/mac">
         <button class="details-btn">
           View macOS Details
         </button>
@@ -55,110 +67,27 @@
 
       <h2>For Linux</h2>
 
-      <a href="#linux-section">
+      <a href="/linux">
         <button class="details-btn">
           View Linux Details
         </button>
       </a>
     </div>
 
-    </section>
+  </section>
 
-   <section id="windows-section" class="os-instructions-section">
-    <h2>Windows Instructions</h2>
-
-    <h3 class="instructions-subtitle">How to Create a .zip File on Windows</h3>
-
-    <div class="instructions-text">
-      <p class="instruction-intro">
-          Follow these steps to compress your Minecraft modpack folder into a .zip file:
-      </p>
-      <ol class="instruction-list">
-        <li>Open File Explorer.</li>
-        <li>Locate the folder that contains your Minecraft modpack.</li>
-        <li>Right-click the folder.</li>
-        <li>Select <b>Send to → Compressed (zipped) folder</b>.</li>
-        <li>A .zip file will be created which you can upload to the analyzer.</li>
-      </ol>
-
-    </div>
-
-    <div class="instruction-image">
-      <a href="/images/windows.png" target="_blank">
-        <img src="/images/windows.png" alt="Windows zip example">
-      </a>
-    </div>
-
-    </section>
-
-    <section id="mac-section" class="os-instructions-section">
-    <h2>macOS Instructions</h2>
-
-    <h3 class="instructions-subtitle">How to Create a .zip File on macOS</h3>
-
-    <div class="instructions-text">
-
-      <p class="instruction-intro">
-        Follow these steps to compress your Minecraft modpack folder into a .zip file:
+  <footer id="site-footer">
+    <div class="footer-container">
+      <p>
+        Minecraft Mod Analyzer helps players analyze modpack dependencies
+        and detect compatibility conflicts.
       </p>
 
-      <ol class="instruction-list">
-        <li>Open Finder.</li>
-        <li>Locate the folder that contains your Minecraft modpack.</li>
-        <li>Right-click the folder.</li>
-        <li>Select <b>Compress</b>.</li>
-        <li>A .zip file will be created which you can upload to the analyzer.</li>
-      </ol>
-
-    </div>
-
-    <div class="instruction-image">
-      <a href="/images/macOS.png" target="_blank">
-        <img src="/images/macOS.png" alt="macOS zip example">
-      </a>
-    </div>
-
-    </section>
-
-  <section id="linux-section" class="os-instructions-section">
-    <h2>Linux Instructions</h2>
-
-    <h3 class="instructions-subtitle">How to Create a .zip File  on Linux</h3>
-
-    <div class="instructions-text">
-
-      <p class="instruction-intro">
-        Follow these steps to compress your Minecraft modpack folder into a .zip file:
+      <p>
+        © 2026 Super Cool Minecraft Team
       </p>
-
-      <ol class="instruction-list">
-        <li>Open your file manager.</li>
-        <li>Locate the folder that contains your Minecraft modpack.</li>
-        <li>Right-click the folder.</li>
-        <li>Select <b>Compress</b> or <b>Create Archive</b>.</li>
-        <li>A .zip file will be created which you can upload to the analyzer.</li>
-      </ol>
-
     </div>
-
-    <div class="instruction-image">
-      <a href="/images/linux.png" target="_blank">
-        <img src="/images/linux.png" alt="Linux zip example">
-      </a>
-    </div>
-
-
-    </section>
-
-    <section class="upload-final">
-    <p class="upload-limit">Maximum file size: 1GB</p>
-
-    <div class="instruction-container">
-    <p class="upload-text">⬆ Upload your modpack (.zip)</p>
-    </div>
-    </section>
-
- <footer th:replace="~{components/footer :: footer}"></footer>
+  </footer>
 
 </body>
 </html>
