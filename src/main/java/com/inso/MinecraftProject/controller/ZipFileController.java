@@ -1,5 +1,6 @@
 package com.inso.MinecraftProject.controller;
 
+import com.inso.MinecraftProject.dto.DTO;
 import com.inso.MinecraftProject.service.ModpackParsingService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +39,14 @@ public class ZipFileController {
             return ResponseEntity.badRequest().body(Map.of("message", "Only .zip files are supported."));
         }
 
+<<<<<<< ours
+<<<<<<< ours
+        Object parsingStatus = modpackParsingService.parseModpack();
+=======
+        DTO parsingStatus = modpackParsingService.parseModpack();
+>>>>>>> theirs
+        return ResponseEntity.ok(parsingStatus);
+=======
         String parsingStatus = modpackParsingService.parseModpack();
 
         Map<String, Object> response = new LinkedHashMap<>();
@@ -45,5 +54,6 @@ public class ZipFileController {
         response.put("fileName", originalFilename);
         response.put("status", parsingStatus);
         return ResponseEntity.ok(response);
+>>>>>>> theirs
     }
 }

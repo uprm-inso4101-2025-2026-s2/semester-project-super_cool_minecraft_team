@@ -5,29 +5,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>About - Minecraft Dependency Visualizer</title>
-  <link rel="stylesheet" href="../static/CSS_Files/homepage.css" />
+  <link rel="stylesheet" href="/CSS_Files/homepage.css" />
 </head>
 
 <body class="site-background" id="page-about">
-    
-  <header id="site-header">
-  <div class="nav-container">
-      
-         
-    <div class="logo">
-      Minecraft Mod Analyzer
-    </div>
-
-    <nav class="nav-links">
-  <a href="index.html">Home</a>
-  <a href="upload.html">Upload</a>
-  <a href="about.html" id="about-btn">About</a>
-  <a href="https://github.com/uprm-inso4101-2025-2026-s2/semester-project-super_cool_minecraft_team" target="_blank">GitHub</a>
-    </nav>
-  
-  </div>
-
-</header>
+ <header th:replace="~{components/navbar :: navbar}"></header>
   <header id="app-header">
     <div id="header-inner">
       <!-- <h1 id="main-title"></h1>
@@ -84,22 +66,13 @@
     
       <!-- </div> -->
       
-      <a href="index.html" id="about-upload-button">
+      <a href="/" id="about-upload-button">
           Start Uploading Mods Now!
       </a> <!--If the upload function gets a page of its own, change link to there instead of index.html -Reynaldo -->
 
     </section>
   </main>
 
-<footer id="site-footer">
-  <div class="footer-container">
-
-    <p>
-      <!-- TODO (If needed) -->
-    </p>
-
-  </div>
-
-</footer>
+<footer th:replace="~{components/footer :: footer}"></footer>
 </body>
 </html>
