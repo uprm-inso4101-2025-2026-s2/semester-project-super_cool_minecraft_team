@@ -1,5 +1,6 @@
 package com.inso.MinecraftProject.controller;
 
+import com.inso.MinecraftProject.dto.DTO;
 import com.inso.MinecraftProject.service.ModpackParsingService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,21 +24,29 @@ public class ZipFileController {
     }
 
     @PostMapping(
-            path = "/zip",
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
+        path = "/zip",
+        consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+        produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<?> uploadZipFile(@RequestPart("file") MultipartFile file) {
+    public ResponseEntity<DTO> uploadZipFile(@RequestPart("file") MultipartFile file) {
+        
         if (file == null || file.isEmpty()) {
-            return ResponseEntity.badRequest().body(Map.of("message", "No file uploaded or file is empty."));
-        }
+        return ResponseEntity.badRequest().build();
+    }
 
-        String originalFilename = file.getOriginalFilename();
-        if (originalFilename == null || !originalFilename.toLowerCase(Locale.ROOT).endsWith(".zip")) {
-            return ResponseEntity.badRequest().body(Map.of("message", "Only .zip files are supported."));
-        }
+    String originalFilename = file.getOriginalFilename();
 
-        Object parsingStatus = modpackParsingService.parseModpack();
-        return ResponseEntity.ok(parsingStatus);
+    if (originalFilename == null || !originalFilename.toLowerCase(Locale.ROOT).endsWith(".zip")) {
+        return ResponseEntity.status(415).build();
+    }
+
+    try {
+        DTO result = modpackParsingService.parseModpack();
+        return ResponseEntity.ok(result);
+
+    } catch (Exception e) {
+        return ResponseEntity.status(500).build();
     }
 }
+}
+   
