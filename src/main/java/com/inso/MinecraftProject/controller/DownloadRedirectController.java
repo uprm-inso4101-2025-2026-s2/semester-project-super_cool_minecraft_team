@@ -3,6 +3,7 @@ package com.inso.MinecraftProject.controller;
 import com.inso.MinecraftProject.dto.MissingDependencyDto;
 import com.inso.MinecraftProject.dto.ResolvedDependencyDto;
 import com.inso.MinecraftProject.service.DependencyLookupService;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,20 +22,22 @@ public class DownloadRedirectController {
 
     @GetMapping("/{id}/download")
     public ResponseEntity<Void> redirectToDownload(@PathVariable String id) {
-        try {
-            MissingDependencyDto dependency = new MissingDependencyDto(id, null, null, null, null);
-            Optional<ResolvedDependencyDto> resolved = dependencyLookupService.resolveDependency(dependency);
+        if (id == null || id.isBlank()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
 
-            if (resolved.isEmpty()) {
+        try {
+            Optional<ResolvedDependencyDto> resolved = dependencyLookupService.resolveDependencyById(id);
+            if (resolved.isEmpty() || resolved.get().preferred() == null || resolved.get().preferred().isBlank()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
 
-            String downloadUrl = resolved.get().preferred();
-
             return ResponseEntity.status(HttpStatus.FOUND)
-                    .header("Location", downloadUrl)
+                    .header(HttpHeaders.LOCATION, resolved.get().preferred())
                     .build();
 
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
