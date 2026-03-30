@@ -40,35 +40,37 @@ body#page-upload::before {
     z-index: -1;
 }
 
-/* NAVBAR */
-#site-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    padding: 15px 80px;
-    background: rgba(0, 0, 0, 0.05);
-    backdrop-filter: blur(6px);
-    z-index: 1000;
-}
 
-.nav-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1200px;
-    margin: auto;
+
+.nav-container{
+display: flex;
+justify-content: space-between;
+align-items: center;
+max-width: 1200px;
+margin: auto;
 }
 
 .logo{
+color: white;
+font-size: 1.3rem;
+font-weight: 600;
+font-family: 'Monocraft', sans-serif;
+}
 
-color:white;
-font-size:1.3rem;
-font-weight:600;
+.logo-btn{
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    
+}
 
-text-decoration:none;
-
-
+.logo-btn img{
+    height: 40px !important;
 }
 
 .nav-links a {
@@ -314,7 +316,7 @@ line-height:1.5;
 
 .os-instructions-section{
     max-width:900px;
-    margin:120px auto;
+    margin:60px auto;
     padding:40px;
     background:rgba(0,0,0,0.65);
     border-radius:12px;
@@ -426,3 +428,4 @@ html{
     color:#7ff9ff;
     text-align:center;
 }
+
