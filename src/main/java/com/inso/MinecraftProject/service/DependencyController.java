@@ -21,7 +21,12 @@ public class DependencyController {
     }
 
     @GetMapping("/api/dependencies/missing")
-    public ResponseEntity<?> getMissingDependencies(@RequestParam(defaultValue = "ok") String mode) {
+    public ResponseEntity<?> getMissingDependencies(
+            @RequestParam String slug,
+            @RequestParam(required = false) String loader,
+            @RequestParam(required = false) String mcVersion,
+            @RequestParam(defaultValue = "ok") String mode) {
+
         if ("fail429".equalsIgnoreCase(mode)) {
             return ResponseEntity.status(429).body(Map.of("message", "Dependency lookup was rate limited."));
         }
@@ -34,12 +39,8 @@ public class DependencyController {
             return ResponseEntity.status(504).body(Map.of("message", "Dependency lookup timed out."));
         }
 
-        List<MissingDependencyDto> missingDependencies = buildMissingDependencies(mode);
+        List<MissingDependencyDto> missingDependencies = dependencyLookupService.fetchMissingDependencies(slug, loader, mcVersion);
         List<ResolvedDependencyDto> resolvedDependencies = dependencyLookupService.resolveDependencies(missingDependencies);
-
-        if ("partial".equalsIgnoreCase(mode) && resolvedDependencies.size() > 1) {
-            resolvedDependencies = resolvedDependencies.subList(0, 1);
-        }
 
         boolean hasPartialResults = !resolvedDependencies.isEmpty()
                 && resolvedDependencies.size() < missingDependencies.size();
@@ -51,23 +52,5 @@ public class DependencyController {
         );
 
         return ResponseEntity.ok(response);
-    }
-
-    private List<MissingDependencyDto> buildMissingDependencies(String mode) {
-        if ("empty".equalsIgnoreCase(mode)) {
-            return List.of();
-        }
-
-        if ("partial".equalsIgnoreCase(mode)) {
-            return List.of(
-                    new MissingDependencyDto("fabric-api", "Fabric API", "0.100.1", "Fabric", "1.20.1"),
-                    new MissingDependencyDto("cloth-config", "Cloth Config", "11.1.136", "Fabric", "1.20.1")
-            );
-        }
-
-        return List.of(
-                new MissingDependencyDto("fabric-api", "Fabric API", "0.100.1", "Fabric", "1.20.1"),
-                new MissingDependencyDto("modmenu", "Mod Menu", "10.0.0", "Fabric", "1.20.1")
-        );
     }
 }
