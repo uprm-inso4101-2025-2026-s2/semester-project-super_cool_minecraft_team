@@ -1,0 +1,78 @@
+<!-- TODO: Add informational text in the About page -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About - Minecraft Dependency Visualizer</title>
+  <link rel="stylesheet" href="/CSS_Files/homepage.css" />
+</head>
+
+<body class="site-background" id="page-about">
+ <header th:replace="~{components/navbar :: navbar}"></header>
+  <header id="app-header">
+    <div id="header-inner">
+      <!-- <h1 id="main-title"></h1>
+      <p id="main-message">
+        <!- - TODO if needed - ->
+      </p> -->
+    </div>
+  </header>
+
+  <main id="main-content">
+
+    <section id="about-message">
+
+      <div id="about-header">
+        <h1 id="about-main-title">About This Project</h1>
+      </div>
+
+      <div id="about-text-div">
+        <p>
+          Users enjoy changing their vanilla Minecraft experience
+          by including mods or modpacks. These mods include dozens
+          of dependencies and changes to the original game, which
+          could make installing certain mods together unstable.
+          Which could lead to crashes or malfunctioning mods. <br> <br>
+        </p>
+
+        <p>
+          So, the goal of this project is to build a tool that
+          detects these possible incompatibilities, or conflicts,
+          that can cause problems when ran in-game and identify
+          them to the user. All done, just by uploading the
+          mods/modpack files. <br> <br>
+        </p>
+
+        <p>
+          This project, the Minecraft Mod Analyzer tool, is a web
+          application developed as part of the INSO4101 Introduction
+          to Software Engineering course at the University of Puerto
+          Rico - Mayagüez Campus. <br> <br>
+        </p>
+
+        <p>
+          -INSO4101-080 2026, Super Cool Minecraft Team :D
+        </p>
+
+      </div>
+
+      <!-- <div id="about-logo-div"> -->
+
+        <!--
+        include logo like:
+        <img src="LOGO PATH HERE" alt="Minecraft Mod Analyzer Logo">
+        -->
+    
+      <!-- </div> -->
+      
+      <a href="/" id="about-upload-button">
+          Start Uploading Mods Now!
+      </a> <!--If the upload function gets a page of its own, change link to there instead of index.html -Reynaldo -->
+
+    </section>
+  </main>
+
+<footer th:replace="~{components/footer :: footer}"></footer>
+</body>
+</html>

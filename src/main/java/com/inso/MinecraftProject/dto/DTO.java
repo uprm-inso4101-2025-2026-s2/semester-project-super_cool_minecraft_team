@@ -1,4 +1,5 @@
 package com.inso.MinecraftProject.dto;
+import com.inso.MinecraftProject.entity.Mod;
 
 import com.inso.MinecraftProject.entity.Mod;
 import lombok.*;

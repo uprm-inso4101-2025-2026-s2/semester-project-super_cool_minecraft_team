@@ -1,0 +1,158 @@
+{
+  "scenarios": [
+
+    {
+      "id": "single-missing",
+      "description": "Single missing dependency",
+      "data": {
+        "missingDependencies": [
+          {
+            "id": "dep1",
+            "name": "Fabric API",
+            "requiredVersion": "0.76.0"
+          }
+        ],
+        "resolvedDependencies": []
+      }
+    },
+
+    {
+      "id": "multiple-missing",
+      "description": "Multiple missing dependencies",
+      "data": {
+        "missingDependencies": [
+          {
+            "id": "dep1",
+            "name": "Fabric API",
+            "requiredVersion": "0.76.0"
+          },
+          {
+            "id": "dep2",
+            "name": "Cloth Config",
+            "requiredVersion": "9.0.0"
+          }
+        ],
+        "resolvedDependencies": []
+      }
+    },
+
+    {
+      "id": "single-valid-link",
+      "description": "Dependency with one valid link",
+      "data": {
+        "missingDependencies": [],
+        "resolvedDependencies": [
+          {
+            "id": "dep1",
+            "name": "Fabric API",
+            "version": "0.76.0",
+            "downloadLinks": [
+              {
+                "label": "Modrinth",
+                "url": "https://modrinth.com/mod/fabric-api"
+              }
+            ]
+          }
+        ]
+      }
+    },
+
+    {
+      "id": "multiple-links",
+      "description": "Dependency with multiple candidate links",
+      "data": {
+        "missingDependencies": [],
+        "resolvedDependencies": [
+          {
+            "id": "dep1",
+            "name": "Fabric API",
+            "version": "0.76.0",
+            "downloadLinks": [
+              {
+                "label": "Modrinth",
+                "url": "https://modrinth.com/mod/fabric-api"
+              },
+              {
+                "label": "CurseForge",
+                "url": "https://curseforge.com/minecraft/mc-mods/fabric-api"
+              }
+            ]
+          }
+        ]
+      }
+    },
+
+    {
+      "id": "partial-metadata",
+      "description": "Dependency with partial metadata",
+      "data": {
+        "missingDependencies": [
+          {
+            "id": "dep1",
+            "name": "Unknown Mod"
+          }
+        ],
+        "resolvedDependencies": []
+      }
+    },
+
+    {
+      "id": "unresolved",
+      "description": "Unresolved dependency with no link found",
+      "data": {
+        "missingDependencies": [
+          {
+            "id": "dep1",
+            "name": "Some Random Mod",
+            "requiredVersion": "1.0.0"
+          }
+        ],
+        "resolvedDependencies": [
+          {
+            "id": "dep1",
+            "name": "Some Random Mod",
+            "version": "1.0.0",
+            "downloadLinks": []
+          }
+        ]
+      }
+    },
+
+    {
+      "id": "mixed-results",
+      "description": "Mixed success and failure response",
+      "data": {
+        "missingDependencies": [
+          {
+            "id": "dep2",
+            "name": "Cloth Config",
+            "requiredVersion": "9.0.0"
+          }
+        ],
+        "resolvedDependencies": [
+          {
+            "id": "dep1",
+            "name": "Fabric API",
+            "version": "0.76.0",
+            "downloadLinks": [
+              {
+                "label": "Modrinth",
+                "url": "https://modrinth.com/mod/fabric-api"
+              }
+            ]
+          }
+        ]
+      }
+    },
+
+    {
+      "id": "empty-results",
+      "description": "Empty results case with no dependencies",
+      "data": {
+        "missingDependencies": [],
+        "resolvedDependencies": []
+      }
+    }
+
+  ]
+}

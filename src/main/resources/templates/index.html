@@ -4,10 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Minecraft Dependency Visualizer</title>
-  <link rel="stylesheet" href="homepage.css" />
+  <link rel="stylesheet" href="/CSS_Files/homepage.css" />
 </head>
 
-<body id="page-home">
+<body class="site-background" id="page-home">
+
+  <header th:replace="~{components/navbar :: navbar}"></header>
 
   <header id="app-header">
     <div id="header-inner">
@@ -21,17 +23,41 @@
   <main id="main-content">
     <section id="hero-section">
       <div id="hero-inner">
-
         <div id="hero-action">
           <button id="get-mods-btn" type="button">
             Get Started
           </button>
         </div>
-
       </div>
     </section>
   </main>
 
+  <section id="info-section">
+    <div class="info-container">
+      <h2>What is the Minecraft Mod Analyzer?</h2>
+
+      <p>
+        The Minecraft Mod Analyzer is a web-based application designed to help
+        players and modpack creators analyze the relationships between installed
+        Minecraft mods.
+      </p>
+
+      <p>
+        By uploading a compressed modpack file, the system examines mod
+        dependencies and detects potential compatibility conflicts between
+        installed mods.
+      </p>
+
+      <p>
+        This tool simplifies the process of identifying problematic mods and
+        helps users maintain stable and functional Minecraft modpacks.
+      </p>
+    </div>
+  </section>
+
+  <footer th:replace="~{components/footer :: footer}"></footer>
+
+  <script src="/JS_Files/homepage.js"></script>
 
 </body>
 </html>
