@@ -1,18 +1,29 @@
 package com.inso.MinecraftProject.dto;
-import com.inso.MinecraftProject.entity.Mod;
 
 import com.inso.MinecraftProject.entity.Mod;
 import lombok.*;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * DTO class for missing dependency results returned to the frontend
+ * DTO class to transfer dependency graph data to the frontend
  */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class DTO {
-    private @NonNull List<Mod> missingDependencies;
-    private @NonNull List<String> resolvedDependencies;
+
+    @Builder.Default
+    private List<Mod> mods = new ArrayList<>();
+
+    @Builder.Default
+    private List<Edge> edges = new ArrayList<>();
+
+    @Builder.Default
+    private List<Mod> missingDependencies = new ArrayList<>();
+
+    @Builder.Default
+    private List<String> resolvedDependencies = new ArrayList<>();
 }
