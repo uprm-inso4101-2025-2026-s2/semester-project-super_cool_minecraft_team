@@ -47,6 +47,47 @@ public class DependencyLookupService {
         });
     }
 
+    public Optional<ResolvedDependencyDto> resolveDependencyById(String projectId) {
+        if (projectId == null || projectId.isBlank()) {
+            return Optional.empty();
+        }
+
+        try {
+            JsonNode project = modrinthServiceWrapper.getProjectById(projectId);
+
+            if (project == null || project.isMissingNode() || project.isEmpty()) {
+                return Optional.empty();
+            }
+
+            String slug = project.path("slug").asText("");
+            String title = project.path("title").asText("");
+            String projectType = project.path("project_type").asText("");
+
+            if (slug.isBlank()) {
+                return Optional.empty();
+            }
+
+            String baseUrl = switch (projectType.toLowerCase(Locale.ROOT)) {
+                case "mod" -> "https://modrinth.com/mod/";
+                case "modpack" -> "https://modrinth.com/modpack/";
+                case "resourcepack" -> "https://modrinth.com/resourcepack/";
+                case "shader" -> "https://modrinth.com/shader/";
+                default -> "https://modrinth.com/project/";
+            };
+
+            String url = baseUrl + slug;
+
+            return Optional.of(new ResolvedDependencyDto(
+                    projectId,
+                    title.isBlank() ? slug : title,
+                    List.of(url),
+                    url
+            ));
+        } catch (RuntimeException ex) {
+            return Optional.empty();
+        }
+    }
+
     private Optional<ResolvedDependencyDto> fetchFromExternalSource(MissingDependencyDto dependency) {
         String query = firstNonBlank(dependency.id(), dependency.name());
         if (query == null) {
