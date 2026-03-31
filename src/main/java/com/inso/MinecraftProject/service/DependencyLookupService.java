@@ -8,8 +8,10 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -43,6 +45,47 @@ public class DependencyLookupService {
             cache.put(key, result);
             return result;
         });
+    }
+
+    public Optional<ResolvedDependencyDto> resolveDependencyById(String projectId) {
+        if (projectId == null || projectId.isBlank()) {
+            return Optional.empty();
+        }
+
+        try {
+            JsonNode project = modrinthServiceWrapper.getProjectById(projectId);
+
+            if (project == null || project.isMissingNode() || project.isEmpty()) {
+                return Optional.empty();
+            }
+
+            String slug = project.path("slug").asText("");
+            String title = project.path("title").asText("");
+            String projectType = project.path("project_type").asText("");
+
+            if (slug.isBlank()) {
+                return Optional.empty();
+            }
+
+            String baseUrl = switch (projectType.toLowerCase(Locale.ROOT)) {
+                case "mod" -> "https://modrinth.com/mod/";
+                case "modpack" -> "https://modrinth.com/modpack/";
+                case "resourcepack" -> "https://modrinth.com/resourcepack/";
+                case "shader" -> "https://modrinth.com/shader/";
+                default -> "https://modrinth.com/project/";
+            };
+
+            String url = baseUrl + slug;
+
+            return Optional.of(new ResolvedDependencyDto(
+                    projectId,
+                    title.isBlank() ? slug : title,
+                    List.of(url),
+                    url
+            ));
+        } catch (RuntimeException ex) {
+            return Optional.empty();
+        }
     }
 
     private Optional<ResolvedDependencyDto> fetchFromExternalSource(MissingDependencyDto dependency) {
@@ -94,6 +137,33 @@ public class DependencyLookupService {
         } catch (RuntimeException ex) {
             return Optional.empty();
         }
+    }
+
+    public List<MissingDependencyDto> fetchMissingDependencies(String slug, String loader, String mcVersion) {
+        JsonNode deps = modrinthServiceWrapper.getProjectDependencies(slug);
+
+        // Deduplicate required deps by project_id
+        Map<String, String> seen = new LinkedHashMap<>();
+        for (JsonNode dep : deps) {
+            String type = dep.path("dependency_type").asText("");
+            if (!"required".equals(type)) continue;
+            String projectId = dep.path("project_id").asText("");
+            if (projectId.isBlank()) continue;
+            seen.putIfAbsent(projectId, dep.path("version_id").asText(null));
+        }
+
+        List<MissingDependencyDto> result = new ArrayList<>();
+        for (Map.Entry<String, String> entry : seen.entrySet()) {
+            String projectId = entry.getKey();
+            String versionId = entry.getValue();
+            String name = projectId;
+            try {
+                JsonNode project = modrinthServiceWrapper.getProjectById(projectId);
+                name = project.path("title").asText(projectId);
+            } catch (RuntimeException ignored) {}
+            result.add(new MissingDependencyDto(projectId, name, versionId, loader, mcVersion));
+        }
+        return result;
     }
 
     private String buildCacheKey(MissingDependencyDto dependency) {
