@@ -1,73 +1,96 @@
 package com.inso.MinecraftProject.service;
 
-import com.inso.MinecraftProject.dto.MissingDependenciesResponse;
-import com.inso.MinecraftProject.dto.MissingDependencyDto;
-import com.inso.MinecraftProject.dto.ResolvedDependencyDto;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.Map;
+import com.inso.MinecraftProject.dto.DTO;
+import com.inso.MinecraftProject.dto.Edge;
+import com.inso.MinecraftProject.dto.MissingDependencyDto;
+import com.inso.MinecraftProject.dto.ResolvedDependencyDto;
+import com.inso.MinecraftProject.dto.ValidationResponse;
+import com.inso.MinecraftProject.entity.Mod;
 
 @RestController
 public class DependencyController {
 
     private final DependencyLookupService dependencyLookupService;
+    private final DependencyResolverService resolverService;
+    private final ModRepository modRepository;
 
-    public DependencyController(DependencyLookupService dependencyLookupService) {
-        this.dependencyLookupService = dependencyLookupService;
+    public DependencyController(
+            DependencyLookupService lookupService,
+            DependencyResolverService resolverService,
+            ModRepository modRepository
+    ) {
+        this.dependencyLookupService = lookupService;
+        this.resolverService = resolverService;
+        this.modRepository = modRepository;
     }
 
     @GetMapping("/api/dependencies/missing")
-    public ResponseEntity<?> getMissingDependencies(@RequestParam(defaultValue = "ok") String mode) {
-        if ("fail429".equalsIgnoreCase(mode)) {
-            return ResponseEntity.status(429).body(Map.of("message", "Dependency lookup was rate limited."));
+    public ResponseEntity<?> getMissingDependencies(@RequestParam String modId) {
+
+        // Fetch mod from repository
+        Mod mod = modRepository.findById(modId).orElse(null);
+
+        if (mod == null) {
+            return ResponseEntity.notFound().build();
         }
 
-        if ("fail500".equalsIgnoreCase(mode)) {
-            return ResponseEntity.status(500).body(Map.of("message", "Dependency lookup failed on the server."));
+        // Validate dependencies
+        ValidationResponse validation = resolverService.validate(mod);
+
+        // Prepare missing dependency DTOs
+        List<MissingDependencyDto> missingDtos = validation.getMissingDependencies().stream()
+                .map(id -> new MissingDependencyDto(id, id, null, null, null))
+                .toList();
+
+        // Resolve external links
+        List<ResolvedDependencyDto> resolved = dependencyLookupService.resolveDependencies(missingDtos);
+
+        // Convert MissingDependencyDto -> Mod
+        List<Mod> missingMods = missingDtos.stream()
+                .map(dto -> Mod.builder()
+                        .id(dto.id())
+                        .version(dto.requiredVersion() != null ? dto.requiredVersion() : "unknown")
+                        .depends(new ArrayList<>())
+                        .breaks(new ArrayList<>())
+                        .suggests(new ArrayList<>())
+                        .recommends(new ArrayList<>())
+                        .conflicts(new ArrayList<>())
+                        .build())
+                .toList();
+
+        // Convert ResolvedDependencyDto -> String
+        List<String> resolvedLinks = resolved.stream()
+                .map(ResolvedDependencyDto::preferred)
+                .toList();
+
+        // Build edges from current mod dependencies
+        List<Edge> edges = new ArrayList<>();
+        if (mod.getDepends() != null) {
+            for (Mod dep : mod.getDepends()) {
+                edges.add(Edge.builder()
+                        .from(mod)
+                        .to(dep)
+                        .type("depends")
+                        .build());
+            }
         }
 
-        if ("timeout".equalsIgnoreCase(mode)) {
-            return ResponseEntity.status(504).body(Map.of("message", "Dependency lookup timed out."));
-        }
-
-        List<MissingDependencyDto> missingDependencies = buildMissingDependencies(mode);
-        List<ResolvedDependencyDto> resolvedDependencies = dependencyLookupService.resolveDependencies(missingDependencies);
-
-        if ("partial".equalsIgnoreCase(mode) && resolvedDependencies.size() > 1) {
-            resolvedDependencies = resolvedDependencies.subList(0, 1);
-        }
-
-        boolean hasPartialResults = !resolvedDependencies.isEmpty()
-                && resolvedDependencies.size() < missingDependencies.size();
-
-        MissingDependenciesResponse response = new MissingDependenciesResponse(
-                missingDependencies,
-                resolvedDependencies,
-                hasPartialResults
-        );
+        // Build DTO response
+        DTO response = DTO.builder()
+                .mods(List.of(mod))
+                .edges(edges)
+                .missingDependencies(missingMods)
+                .resolvedDependencies(resolvedLinks)
+                .build();
 
         return ResponseEntity.ok(response);
-    }
-
-    private List<MissingDependencyDto> buildMissingDependencies(String mode) {
-        if ("empty".equalsIgnoreCase(mode)) {
-            return List.of();
-        }
-
-        if ("partial".equalsIgnoreCase(mode)) {
-            return List.of(
-                    new MissingDependencyDto("fabric-api", "Fabric API", "0.100.1", "Fabric", "1.20.1"),
-                    new MissingDependencyDto("cloth-config", "Cloth Config", "11.1.136", "Fabric", "1.20.1")
-            );
-        }
-
-        return List.of(
-                new MissingDependencyDto("fabric-api", "Fabric API", "0.100.1", "Fabric", "1.20.1"),
-                new MissingDependencyDto("modmenu", "Mod Menu", "10.0.0", "Fabric", "1.20.1")
-        );
     }
 }
