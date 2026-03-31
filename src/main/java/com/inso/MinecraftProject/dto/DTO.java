@@ -1,21 +1,29 @@
 package com.inso.MinecraftProject.dto;
+
 import com.inso.MinecraftProject.entity.Mod;
-
 import lombok.*;
-import org.jspecify.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * DTO Class to transfer mod data between internal services
+ * DTO class to transfer dependency graph data to the frontend
  */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class DTO {
-    private @NonNull List<Mod> mods;
-    private @NonNull List<Edge> edges;
-    private @Nullable List<Mod> missingDependencies;
-    private @Nullable List<String> resolvedDependencies;
+
+    @Builder.Default
+    private List<Mod> mods = new ArrayList<>();
+
+    @Builder.Default
+    private List<Edge> edges = new ArrayList<>();
+
+    @Builder.Default
+    private List<Mod> missingDependencies = new ArrayList<>();
+
+    @Builder.Default
+    private List<String> resolvedDependencies = new ArrayList<>();
 }

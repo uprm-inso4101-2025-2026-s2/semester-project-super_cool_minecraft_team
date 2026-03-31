@@ -85,11 +85,9 @@ public class DependencyController {
 
         // Build DTO response
         DTO response = DTO.builder()
-                .mods(List.of(mod))
-                .edges(edges)
-                .missingDependencies(missingMods)
-                .resolvedDependencies(resolvedLinks)
-                .build();
+          .missingDependencies(missingMods)
+          .resolvedDependencies(resolvedLinks)
+          .build();
 
         return ResponseEntity.ok(response);
     }
