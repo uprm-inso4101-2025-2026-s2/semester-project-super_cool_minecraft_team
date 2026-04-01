@@ -1,3 +1,4 @@
+/* ===== GRAPH RENDERING LOGIC ===== */
 const nodes = [
     { id: "CoreMod", type: "root", status: "compatible" },
     { id: "JEI", type: "mod", status: "compatible" },
@@ -85,6 +86,8 @@ simulation.on("tick", () => {
 
     node.attr("transform", d => `translate(${d.x},${d.y})`);
 });
+
+
 
 /* ===== PANEL + FADE LOGIC ===== */
 
