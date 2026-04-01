@@ -420,6 +420,13 @@ These definitions apply to both the backend dependency logic and the frontend gr
 
 Goal: Keep the language consistent across documentation and communication.
 
+A key distinction in this terminology is the difference between domain concepts and system concepts.
+Domain concepts refer to phenomena that exist in the Minecraft modding ecosystem independently of the application, such as Mod, Dependency, Incompatibility, Mod pack, and Version Constraint.
+System concepts are introduced by the design and implementation of the project itself, such as Mod Instance, Dependency Graph, Node, Edge, UploadQueue, and ValidationFeedback.
+
+This distinction helps avoid mixing properties of the observed domain with structures that only exist inside the system.
+As a result, the terminology supports clearer requirements, more consistent msodeling, and a better separation between domain understanding and implementation design.
+
 Each term includes:
 
 * Classification (Entity, Relation, Attribute, Event, Behavior)
