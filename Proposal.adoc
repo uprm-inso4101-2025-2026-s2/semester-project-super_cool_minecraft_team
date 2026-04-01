@@ -951,6 +951,18 @@ The system follows a layered client - server architecture composed of four main 
 * Data & Integration Layer: Communicates with external mod repositories such as Modrinth and CurseForge.
   It handles metadata retrieval, caching of previously accessed data, and graceful error handling when external services are unavailable.
 
+==== Team A Dependency Graph Subsystem
+
+Team A is responsible for the dependency graph subsystem, which models mods as nodes and dependency relationships as directed edges.
+
+Its main role is to build and maintain the internal graph structure used for dependency analysis and later visualization.
+This includes preserving node uniqueness, representing dependency relationships consistently, and producing structured graph data for the frontend.
+
+This subsystem is kept separate from upload handling, external API communication, and frontend rendering.
+Such separation improves modularity, maintainability, and testability by isolating graph logic from other system concerns.
+
+Within the overall architecture, the Team A graph subsystem connects dependency resolution results with the frontend visualization layer.
+
 == 3. Analytical
 
 === 3.1 Concept Formation
