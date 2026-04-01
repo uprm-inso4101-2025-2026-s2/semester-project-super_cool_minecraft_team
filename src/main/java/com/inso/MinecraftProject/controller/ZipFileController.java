@@ -42,8 +42,8 @@ public class ZipFileController {
             return ResponseEntity.badRequest().body(Map.of("message", "Only .zip files are supported."));
         }
 
-        DTO parsingStatus = modpackParsingService.parseModpack();
-        session.setAttribute("graphDto", parsingStatus);
+        DTO graphData = modpackParsingService.parseModpack();
+        session.setAttribute("graphDto", graphData);
 
         return ResponseEntity.status(HttpStatus.FOUND)
                 .header(HttpHeaders.LOCATION, URI.create("/graph").toString())
