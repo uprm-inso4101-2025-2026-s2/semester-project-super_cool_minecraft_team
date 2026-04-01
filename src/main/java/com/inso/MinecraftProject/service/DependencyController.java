@@ -2,6 +2,8 @@ package com.inso.MinecraftProject.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,63 +36,67 @@ public class DependencyController {
 
     @GetMapping("/api/dependencies/missing")
     public ResponseEntity<?> getMissingDependencies(@RequestParam String modId) {
-
-        // Fetch mod from repository
-        Mod mod = modRepository.findById(modId).orElse(null);
-
-        if (mod == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        // Validate dependencies
-        ValidationResponse validation = resolverService.validate(mod);
-
-        // Prepare missing dependency DTOs
-        List<MissingDependencyDto> missingDtos = validation.getMissingDependencies().stream()
-                .map(id -> new MissingDependencyDto(id, id, null, null, null))
-                .toList();
-
-        // Resolve external links
-        List<ResolvedDependencyDto> resolved = dependencyLookupService.resolveDependencies(missingDtos);
-
-        // Convert MissingDependencyDto -> Mod
-        List<Mod> missingMods = missingDtos.stream()
-                .map(dto -> Mod.builder()
-                        .id(dto.id())
-                        .version(dto.requiredVersion() != null ? dto.requiredVersion() : "unknown")
-                        .depends(new ArrayList<>())
-                        .breaks(new ArrayList<>())
-                        .suggests(new ArrayList<>())
-                        .recommends(new ArrayList<>())
-                        .conflicts(new ArrayList<>())
-                        .build())
-                .toList();
-
-        // Convert ResolvedDependencyDto -> String
-        List<String> resolvedLinks = resolved.stream()
-                .map(ResolvedDependencyDto::preferred)
-                .toList();
-
-        // Build edges from current mod dependencies
-        List<Edge> edges = new ArrayList<>();
-        if (mod.getDepends() != null) {
-            for (Mod dep : mod.getDepends()) {
-                edges.add(Edge.builder()
-                        .from(mod)
-                        .to(dep)
-                        .type("depends")
-                        .build());
+        try {
+            if (modId == null || modId.isBlank()) {
+                return ResponseEntity.badRequest().body(Map.of("message", "modId cannot be blank."));
             }
+
+            Mod mod = modRepository.findById(modId).orElse(null);
+
+            if (mod == null) {
+                return ResponseEntity.status(404).body(Map.of("message", "Mod not found: " + modId));
+            }
+
+            ValidationResponse validation = resolverService.validate(mod);
+
+            List<MissingDependencyDto> missingDtos = validation.getMissingDependencies().stream()
+                    .map(id -> new MissingDependencyDto(id, id, null, null, null))
+                    .toList();
+
+            List<ResolvedDependencyDto> resolved = dependencyLookupService.resolveDependencies(missingDtos);
+
+            List<Mod> missingMods = missingDtos.stream()
+                    .map(dto -> Mod.builder()
+                            .id(dto.id())
+                            .version(dto.requiredVersion() != null ? dto.requiredVersion() : "unknown")
+                            .depends(new ArrayList<>())
+                            .breaks(new ArrayList<>())
+                            .suggests(new ArrayList<>())
+                            .recommends(new ArrayList<>())
+                            .conflicts(new ArrayList<>())
+                            .build())
+                    .toList();
+
+            List<String> resolvedLinks = resolved.stream()
+                    .map(ResolvedDependencyDto::preferred)
+                    .toList();
+
+            List<Edge> edges = new ArrayList<>();
+            if (mod.getDepends() != null) {
+                for (Mod dep : mod.getDepends()) {
+                    edges.add(Edge.builder()
+                            .from(mod)
+                            .to(dep)
+                            .type("depends")
+                            .build());
+                }
+            }
+
+            DTO response = DTO.builder()
+                    .mods(List.of(mod))
+                    .edges(edges)
+                    .missingDependencies(missingMods)
+                    .resolvedDependencies(resolvedLinks)
+                    .build();
+
+            return ResponseEntity.ok(response);
+
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
+        } catch (NoSuchElementException ex) {
+            return ResponseEntity.status(404).body(Map.of("message", ex.getMessage()));
+        } catch (RuntimeException ex) {
+            return ResponseEntity.status(500).body(Map.of("message", ex.getMessage()));
         }
-
-        // Build DTO response
-        DTO response = DTO.builder()
-                .mods(List.of(mod))
-                .edges(edges)
-                .missingDependencies(missingMods)
-                .resolvedDependencies(resolvedLinks)
-                .build();
-
-        return ResponseEntity.ok(response);
     }
 }
