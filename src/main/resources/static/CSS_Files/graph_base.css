@@ -160,8 +160,14 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 12px;
     text-align: center;
     cursor: pointer;
+}
+
+.btn-process .icon {
+    display: flex;
+    align-items: center;
 }
 
 .btn-process:hover {
@@ -293,6 +299,14 @@ body {
     background: #000;
     border: none;
     border-radius: 0;
+
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 40px;
+    justify-content: center;
+    align-items: center;
+    
 }
 
 /* Filter floating panel */
