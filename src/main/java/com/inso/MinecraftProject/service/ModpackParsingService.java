@@ -1,19 +1,20 @@
 package com.inso.MinecraftProject.service;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Locale;
 import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
+import java.util.jar.JarInputStream;
+import java.util.zip.*;
 
 import org.springframework.stereotype.Service;
 
 import com.inso.MinecraftProject.dto.DTO;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class ModpackParsingService {
@@ -28,9 +29,7 @@ public class ModpackParsingService {
     }
 
     //Function that return a List with 3 Lists inside that have all the data
-    public List<List<String>> ReadJson(JarFile jarFile){
-
-        //Creates List for store results
+    public List<List<String>> ReadJson(JarInputStream jarInputStream) {
         List<String> Depends = new ArrayList<>();
         List<String> Breaks = new ArrayList<>();
         List<String> Conflicts = new ArrayList<>();
@@ -40,19 +39,18 @@ public class ModpackParsingService {
         try {
 
             //Get info in jarFile
-            Enumeration<JarEntry> entries = jarFile.entries();
 
             //Jackson parser for reading JSON
             ObjectMapper mapper = new ObjectMapper();
 
             //Go searching the .Json
-            while (entries.hasMoreElements()) {
-                JarEntry entry = entries.nextElement();
+            JarEntry entry;
+            while ((entry = jarInputStream.getNextJarEntry()) != null) {
 
                 // When .Json is found go into the file
                 if (entry.getName().equals("fabric.mod.json")) {
 
-                    InputStream is = jarFile.getInputStream(entry);
+                    InputStream is = jarInputStream;
                     BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 
                     StringBuilder content = new StringBuilder();
@@ -110,5 +108,29 @@ public class ModpackParsingService {
 
         //Returns the List with all the needed Lists
         return Results;
+    }
+
+    public List<List<List<String>>> readZipFile(MultipartFile file) {
+        List<List<List<String>>> data = new ArrayList<>();
+        try (InputStream is = file.getInputStream(); ZipInputStream zis = new ZipInputStream(is)) {
+            ZipEntry entry;
+            while ((entry = zis.getNextEntry()) != null) {
+                if (entry.getName().toLowerCase(Locale.ROOT).endsWith(".jar")) {
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    byte[] buffer = new byte[4096];
+                    int len;
+                    while ((len = zis.read(buffer)) > 0) {
+                        baos.write(buffer, 0, len);
+                    }
+                    JarInputStream jis = new JarInputStream(
+                            new ByteArrayInputStream(baos.toByteArray())
+                    );
+                    data.add(ReadJson(jis));
+                }
+            }
+        } catch (IOException e) {
+            return data;
+        }
+        return data;
     }
 }
