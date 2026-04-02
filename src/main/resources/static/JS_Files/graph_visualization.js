@@ -168,3 +168,48 @@ function dragended(event, d) {
     d.fx = null;
     d.fy = null;
 }
+
+/* ===== SEARCH LOGIC + NODE MATCHING ===== */
+
+function normalizeSearchValue(value) {
+    return (value || "").trim().toLowerCase();
+}
+
+function getNodeSearchLabel(nodeData) {
+    if (!nodeData) return "";
+    return normalizeSearchValue(nodeData.id);
+}
+
+function findNodeByQuery(nodeList, query) {
+    const normalizedQuery = normalizeSearchValue(query);
+
+    if (!normalizedQuery || !Array.isArray(nodeList)) {
+        return null;
+    }
+
+    const exactMatch = nodeList.find(
+        (nodeData) => getNodeSearchLabel(nodeData) === normalizedQuery
+    );
+
+    if (exactMatch) {
+        return exactMatch;
+    }
+
+    return (
+        nodeList.find((nodeData) =>
+            getNodeSearchLabel(nodeData).includes(normalizedQuery)
+        ) || null
+    );
+}
+
+function getMatchingNodes(nodeList, query) {
+    const normalizedQuery = normalizeSearchValue(query);
+
+    if (!normalizedQuery || !Array.isArray(nodeList)) {
+        return [];
+    }
+
+    return nodeList.filter((nodeData) =>
+        getNodeSearchLabel(nodeData).includes(normalizedQuery)
+    );
+}
