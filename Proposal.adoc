@@ -1024,5 +1024,10 @@ The system will be verified through functional testing and user validation.
 * User Validation: A small group of users will test the application to verify usability, clarity of the visualization, and correctness of the compatibility results.
   Feedback will be used to improve system behavior and interface design.
 * Performance Testing: The system will be evaluated to ensure it processes mod files within the required response time and maintains stability under multiple usage scenarios.
+* Rigorous Reasoning: The Team A backend graph subsystem will also be verified through reasoning about structural invariants and node-related operations. 
+  This includes identifying properties that must always hold in the graph, such as node uniqueness, key consistency, and structural integrity.
+  Operations such as `addNode`, `findNode`, and `removeNode` will be analyzed in terms of whether they preserve these invariants.
+  For example, `addNode` must prevent duplicate node insertion, while `findNode` must return results consistent with the graph's key generation logic.
+  This form of verification complements testing by making explicit which correctness properties the graph structure must preserve.
 
 Verification will be considered successful when all functional requirements are met and no critical defects are present.
