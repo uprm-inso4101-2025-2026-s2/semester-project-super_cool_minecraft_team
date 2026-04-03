@@ -26,20 +26,28 @@ const container = document.getElementById("dependency-graph-canvas");
 const width = container.offsetWidth;
 const height = container.offsetHeight;
 
+/*Reset view logic*/
 const svg = d3.select("#dependency-graph-canvas")
     .append("svg")
     .attr("width", "100%")
     .attr("height", height);
 
 const mainGroup = svg.append("g");
+const zoom = d3.zoom()
+    .scaleExtent([0.2, 5])
+    .on("zoom", (event) => {
+        mainGroup.attr("transform", event.transform);
+    });
+svg.call(zoom);
 
-svg.call(
-    d3.zoom()
-        .scaleExtent([0.2, 5])
-        .on("zoom", (event) => {
-            mainGroup.attr("transform", event.transform);
-        })
-);
+const resetViewBtn = document.getElementById("resetViewBtn");
+resetViewBtn.addEventListener("click", () => {
+    svg.transition()
+        .duration(500)
+        .call(zoom.transform, d3.zoomIdentity);
+});
+
+
 
 const simulation = d3.forceSimulation(nodes)
     .force("link", d3.forceLink(links).id(d => d.id).distance(150))
