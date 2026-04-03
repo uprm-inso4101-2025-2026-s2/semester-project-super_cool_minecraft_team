@@ -34,11 +34,31 @@ public class Mod {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Iterable<Mod> getDepends() {
+    public List<Mod> getConflicts() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public String getId() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public List<Mod> getDepends() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public List<Mod> getBreaks() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public List<Mod> getSuggests() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Object getVersion() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public List<Mod> getRecommends() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }
