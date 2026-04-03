@@ -54,7 +54,7 @@ public class Mod {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Object getVersion() {
+    public String getVersion() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
