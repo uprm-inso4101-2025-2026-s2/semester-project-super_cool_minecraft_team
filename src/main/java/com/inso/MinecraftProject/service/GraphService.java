@@ -34,6 +34,26 @@ public class GraphService implements IGraphService {
     }
 
     @Override
+    public List<LinkDto> mapDependencies(ModNode node) {
+        // Map each dependency into a LinkDto where the source is this node and the target is the dependency.
+        // Relationship type set to "required".
+        if (node == null) {
+            return Collections.emptyList();
+        }
+        Set<String> dependencies = node.getDependencies();
+        if (dependencies == null || dependencies.isEmpty()) {
+            return Collections.emptyList();
+        }
+        
+        List<LinkDto> links = new ArrayList<>();
+        String source = graph.generateKey(node);
+        for (String dependency : dependencies) {
+            links.add(LinkDto.builder().source(source).target(dependency).rel("required").build());
+        }
+        return links;
+    }
+
+    @Override
     public List<LinkDto> mapConflicts(ModNode node) {
         // Map each conflict into a LinkDto where the source is this node
         // and the target is the conflicting node. Relationship type set to "conflicts".
