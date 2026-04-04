@@ -268,22 +268,11 @@ body {
     background: #000;
     border: none;
     border-radius: 0;
-<<<<<<< HEAD
     overflow: hidden;
-=======
 
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    padding: 40px;
-    justify-content: center;
-    align-items: center;
-
-    /* Zoom via scroll settings */
     transform-origin: center;
     transition: transform 0.2s ease;
     cursor: grab;
->>>>>>> origin/main
 }
 
 #dependency-graph-canvas svg {
