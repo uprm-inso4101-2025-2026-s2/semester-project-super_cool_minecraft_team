@@ -6,8 +6,8 @@
     <title>Minecraft DT - Dependency Visualizer</title>
     <link rel="stylesheet" href="/CSS_Files/graph_base.css">
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="/JS_Files/graph_visualization.js"></script>
-   
+    <script src="/JS_Files/graph_visualization.js" defer></script>
+    
 </head>
 <body>
 
@@ -16,13 +16,10 @@
             <h1 class="project-title">Minecraft DT</h1>
             <p class="project-subtitle">Dependency Visualizer</p>
         </div>
-        <div class="header-branding"></div>
-    </header>
+    </header>   
 
     <main class="dashboard-container">
-        
         <aside class="sidebar">
-            
             <section class="sidebar-group">
                 <h3 class="group-label">MODPACK SELECTION</h3>
                 <div class="folder-display">
@@ -88,30 +85,28 @@
         </aside>
 
         <section class="graph-workspace">
-            
             <button class="btn-settings" aria-label="Settings">
                 settings
             </button>
 
-            <div id="dependency-graph-canvas">
-            </div>
+            <div id="dependency-graph-canvas"></div>
 
             <div id="mod-info-panel">
                 <h3 id="mod-title">Mod</h3>
-                
+
                 <div class="mod-detail-section">
                     <label class="detail-label">Status:</label>
                     <p id="mod-conflict-status" class="detail-value">-</p>
                 </div>
-                
+
                 <div class="mod-detail-section">
                     <label class="detail-label">Dependencies:</label>
                     <ul id="mod-deps"></ul>
                 </div>
-                
-                <button onclick="closePanel()" class="btn-close-panel">Close</button>
+
+                <button id="closePanelBtn" class="btn-close-panel">Close</button>
             </div>
-               
+
             <div class="filter-legend">
                 <h4>Filter</h4>
                 <ul class="filter-list">
@@ -124,10 +119,9 @@
             </div>
 
             <nav class="zoom-controls">
-                <button aria-label="Zoom In">+</button>
-                <button aria-label="Zoom Out">-</button>
+                <button id="zoomInBtn" aria-label="Zoom In">+</button>
+                <button id="zoomOutBtn" aria-label="Zoom Out">-</button>
                 <button id="resetViewBtn" aria-label="Reset View">⛶</button>
-
             </nav>
         </section>
     </main>
@@ -135,5 +129,6 @@
     <footer class="app-footer">
         <p>&copy; 2026 Minecraft DT Team</p>
     </footer>
+
 </body>
 </html>
