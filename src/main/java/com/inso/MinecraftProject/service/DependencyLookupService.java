@@ -12,6 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -38,6 +39,8 @@ public class DependencyLookupService {
     }
 
     public Optional<ResolvedDependencyDto> resolveDependency(MissingDependencyDto dependency) {
+        validateDependency(dependency);
+
         String key = buildCacheKey(dependency);
 
         return cache.get(key).orElseGet(() -> {
@@ -49,14 +52,14 @@ public class DependencyLookupService {
 
     public Optional<ResolvedDependencyDto> resolveDependencyById(String projectId) {
         if (projectId == null || projectId.isBlank()) {
-            return Optional.empty();
+            throw new IllegalArgumentException("Project id cannot be blank.");
         }
 
         try {
             JsonNode project = modrinthServiceWrapper.getProjectById(projectId);
 
             if (project == null || project.isMissingNode() || project.isEmpty()) {
-                return Optional.empty();
+                throw new NoSuchElementException("Dependency not found: " + projectId);
             }
 
             String slug = project.path("slug").asText("");
@@ -64,7 +67,7 @@ public class DependencyLookupService {
             String projectType = project.path("project_type").asText("");
 
             if (slug.isBlank()) {
-                return Optional.empty();
+                throw new NoSuchElementException("Dependency not found: " + projectId);
             }
 
             String baseUrl = switch (projectType.toLowerCase(Locale.ROOT)) {
@@ -83,27 +86,67 @@ public class DependencyLookupService {
                     List.of(url),
                     url
             ));
+        } catch (IllegalArgumentException | NoSuchElementException ex) {
+            throw ex;
         } catch (RuntimeException ex) {
-            return Optional.empty();
+            throw new RuntimeException("Failed to resolve dependency by id: " + projectId, ex);
+        }
+    }
+
+    private void validateDependency(MissingDependencyDto dependency) {
+        if (dependency == null) {
+            throw new IllegalArgumentException("Dependency request cannot be null.");
+        }
+
+        String query = firstNonBlank(dependency.name(), dependency.id());
+        if (query == null) {
+            throw new IllegalArgumentException("Dependency must include a valid id or name.");
+        }
+
+        String version = dependency.requiredVersion();
+        if (version != null && version.isBlank()) {
+            throw new IllegalArgumentException("Required version cannot be blank.");
+        }
+
+        if (version != null && !version.matches("^[0-9A-Za-z._\\-+]+$")) {
+            throw new IllegalArgumentException("Invalid dependency version format: " + version);
         }
     }
 
     private Optional<ResolvedDependencyDto> fetchFromExternalSource(MissingDependencyDto dependency) {
-        String query = firstNonBlank(dependency.id(), dependency.name());
+        String query = firstNonBlank(dependency.name(), dependency.id());
         if (query == null) {
-            return Optional.empty();
+            throw new IllegalArgumentException("Dependency must include a valid id or name.");
         }
 
         try {
             JsonNode searchResults = modrinthServiceWrapper.searchProject(query, 5);
             JsonNode hits = searchResults.path("hits");
             if (!hits.isArray() || hits.isEmpty()) {
-                return Optional.empty();
+                throw new NoSuchElementException("Dependency not found: " + query);
             }
 
             List<JsonNode> candidates = new ArrayList<>();
             hits.forEach(candidates::add);
             candidates.sort(Comparator.comparingInt(hit -> scoreCandidate(dependency, hit)));
+
+            JsonNode preferredCandidate = candidates.get(0);
+
+            String candidateSlug = preferredCandidate.path("slug").asText("").toLowerCase(Locale.ROOT);
+            String candidateTitle = preferredCandidate.path("title").asText("").toLowerCase(Locale.ROOT);
+
+            String dependencyId = defaultString(dependency.id()).toLowerCase(Locale.ROOT);
+            String dependencyName = defaultString(dependency.name()).toLowerCase(Locale.ROOT);
+
+            boolean matchesId = !dependencyId.isBlank() &&
+                    (candidateSlug.equals(dependencyId) || candidateTitle.contains(dependencyId));
+
+            boolean matchesName = !dependencyName.isBlank() &&
+                    (candidateTitle.equals(dependencyName) || candidateSlug.contains(dependencyName));
+
+            if (!matchesId && !matchesName) {
+                throw new NoSuchElementException("Dependency not found: " + query);
+            }
 
             LinkedHashSet<String> links = new LinkedHashSet<>();
             for (JsonNode hit : candidates) {
@@ -117,10 +160,9 @@ public class DependencyLookupService {
             }
 
             if (links.isEmpty()) {
-                return Optional.empty();
+                throw new NoSuchElementException("Dependency not found: " + query);
             }
 
-            JsonNode preferredCandidate = candidates.get(0);
             String preferredName = firstNonBlank(
                     dependency.name(),
                     preferredCandidate.path("title").asText(null),
@@ -134,15 +176,16 @@ public class DependencyLookupService {
                     List.copyOf(links),
                     preferred
             ));
+        } catch (IllegalArgumentException | NoSuchElementException ex) {
+            throw ex;
         } catch (RuntimeException ex) {
-            return Optional.empty();
+            throw new RuntimeException("Failed to resolve dependency: " + query, ex);
         }
     }
 
     public List<MissingDependencyDto> fetchMissingDependencies(String slug, String loader, String mcVersion) {
         JsonNode deps = modrinthServiceWrapper.getProjectDependencies(slug);
 
-        // Deduplicate required deps by project_id
         Map<String, String> seen = new LinkedHashMap<>();
         for (JsonNode dep : deps) {
             String type = dep.path("dependency_type").asText("");
@@ -160,7 +203,8 @@ public class DependencyLookupService {
             try {
                 JsonNode project = modrinthServiceWrapper.getProjectById(projectId);
                 name = project.path("title").asText(projectId);
-            } catch (RuntimeException ignored) {}
+            } catch (RuntimeException ignored) {
+            }
             result.add(new MissingDependencyDto(projectId, name, versionId, loader, mcVersion));
         }
         return result;

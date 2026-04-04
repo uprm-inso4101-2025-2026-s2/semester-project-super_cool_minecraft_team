@@ -6,12 +6,9 @@ const nodes = [
     { id: "OldPhysics", type: "mod", status: "incompatible" },
     { id: "Patchouli", type: "mod", status: "compatible" },
     { id: "Botania", type: "mod", status: "compatible" },
-
-
 ];
 
 const links = [
-    
     { source: "CoreMod", target: "JEI", rel: "required" },
     { source: "CoreMod", target: "Optifine", rel: "optional" },
     { source: "CoreMod", target: "OldPhysics", rel: "conflict" },
@@ -36,7 +33,6 @@ function validateGraphData(nodes, links) {
     const errors = [];
     const warnings = [];
 
-    // Validate nodes array
     if (!Array.isArray(nodes)) {
         errors.push("Nodes data is not an array");
         return { isValid: false, errors, warnings, nodeIds: new Set() };
@@ -49,29 +45,24 @@ function validateGraphData(nodes, links) {
 
     const nodeIds = new Set();
 
-    // Validate each node
     nodes.forEach((node, index) => {
         if (!node) {
             errors.push(`Node at index ${index} is null or undefined`);
             return;
         }
-
         if (!node.id) {
             errors.push(`Node at index ${index} is missing required 'id' property`);
         } else {
             nodeIds.add(node.id);
         }
-
         if (!node.type) {
             errors.push(`Node '${node.id || `index ${index}`}' is missing required 'type' property`);
         }
-
         if (!node.status) {
             errors.push(`Node '${node.id || `index ${index}`}' is missing required 'status' property`);
         }
     });
 
-    // Validate links array
     if (!Array.isArray(links)) {
         errors.push("Links data is not an array");
         return { isValid: false, errors, warnings, nodeIds };
@@ -86,21 +77,17 @@ function validateGraphData(nodes, links) {
         });
     }
 
-    // Validate each link
     links.forEach((link, index) => {
         if (!link) {
             errors.push(`Link at index ${index} is null or undefined`);
             return;
         }
-
         if (!link.source) {
             errors.push(`Link at index ${index} is missing required 'source' property`);
         }
-
         if (!link.target) {
             errors.push(`Link at index ${index} is missing required 'target' property`);
         }
-
         if (!link.rel) {
             errors.push(`Link at index ${index} is missing required 'rel' property`);
         } else if (!["required", "optional", "conflict"].includes(link.rel)) {
@@ -109,22 +96,15 @@ function validateGraphData(nodes, links) {
     });
 
     const isValid = errors.length === 0;
-
     return { isValid, errors, warnings, nodeIds, missingDependencies };
 }
 
 function identifyMissingDependencies(links, nodeIds) {
     const missingDependencies = new Set();
-
     links.forEach(link => {
-        if (link.source && !nodeIds.has(link.source)) {
-            missingDependencies.add(link.source);
-        }
-        if (link.target && !nodeIds.has(link.target)) {
-            missingDependencies.add(link.target);
-        }
+        if (link.source && !nodeIds.has(link.source)) missingDependencies.add(link.source);
+        if (link.target && !nodeIds.has(link.target)) missingDependencies.add(link.target);
     });
-
     return missingDependencies;
 }
 
@@ -166,17 +146,12 @@ function showErrorBanner(errors, warnings) {
 }
 
 function addWarningBadges(missingDependencies) {
-    if (!missingDependencies || missingDependencies.size === 0) {
-        return;
-    }
+    if (!missingDependencies || missingDependencies.size === 0) return;
 
     const nodeElements = d3.selectAll(".node");
-
     nodeElements.each(function(d) {
         if (missingDependencies.has(d.id)) {
             const selection = d3.select(this);
-
-            // Add warning badge (yellow warning icon)
             selection.append("text")
                 .attr("class", "warning-badge")
                 .attr("dx", -12)
@@ -201,7 +176,7 @@ function escapeHtml(text) {
 function showCriticalErrorMessage() {
     const container = document.getElementById("dependency-graph-canvas");
     container.innerHTML = "";
-    
+
     const errorDiv = document.createElement("div");
     errorDiv.style.cssText = `
         display: flex;
@@ -213,22 +188,20 @@ function showCriticalErrorMessage() {
         text-align: center;
         color: var(--red);
     `;
-    
+
     errorDiv.innerHTML = `
         <h2 style="font-size: 1.5rem; margin-bottom: 16px; color: var(--red);">⚠ Unable to Render Graph</h2>
         <p style="font-size: 1rem; color: var(--text); margin-bottom: 16px;">Critical errors were found in the graph data. Please fix the errors shown above and reload.</p>
     `;
-    
+
     container.appendChild(errorDiv);
 }
 
 /* ===== GRAPH INITIALIZATION AND RENDERING ===== */
 
-// Validate data before rendering
 const validationResult = validateGraphData(nodes, links);
 
 if (!validationResult.isValid) {
-    // Critical errors - show error banner and message in canvas
     console.error("Graph data validation failed. Cannot render graph.");
     showErrorBanner(validationResult.errors, []);
     showCriticalErrorMessage();
@@ -244,13 +217,19 @@ if (!validationResult.isValid) {
 
     const mainGroup = svg.append("g");
 
-    svg.call(
-        d3.zoom()
-            .scaleExtent([0.2, 5])
-            .on("zoom", (event) => {
-                mainGroup.attr("transform", event.transform);
-            })
-    );
+    const zoom = d3.zoom()
+        .scaleExtent([0.2, 5])
+        .on("zoom", (event) => {
+            mainGroup.attr("transform", event.transform);
+        });
+    svg.call(zoom);
+
+    const resetViewBtn = document.getElementById("resetViewBtn");
+    resetViewBtn.addEventListener("click", () => {
+        svg.transition()
+            .duration(500)
+            .call(zoom.transform, d3.zoomIdentity);
+    });
 
     simulation = d3.forceSimulation(nodes)
         .force("link", d3.forceLink(renderableLinks).id(d => d.id).distance(150))
@@ -288,7 +267,6 @@ if (!validationResult.isValid) {
         .attr("dy", ".35em")
         .text(d => d.id);
 
-    // Add warning badges after nodes are rendered
     if (validationResult.missingDependencies) {
         addWarningBadges(validationResult.missingDependencies);
     }
@@ -303,13 +281,10 @@ if (!validationResult.isValid) {
         node.attr("transform", d => `translate(${d.x},${d.y})`);
     });
 
-    // Show warning banner only if there are warnings
     if (validationResult.warnings.length > 0) {
         showErrorBanner([], validationResult.warnings);
     }
 }
-
-
 
 /* ===== PANEL + FADE LOGIC ===== */
 
@@ -321,17 +296,15 @@ function showPanel(d) {
 
     panel.style.display = "flex";
     title.textContent = d.id;
-    
-    // Set conflict status and color
+
     const statusText = d.status === "incompatible" ? "Conflict" : "Compatible";
     status.textContent = statusText;
     status.classList.remove("status-compatible", "status-incompatible");
     status.classList.add(d.status === "incompatible" ? "status-incompatible" : "status-compatible");
-    
+
     list.innerHTML = "";
 
     const connected = new Set();
-
     links.forEach(l => {
         if (l.source.id === d.id || l.target.id === d.id) {
             connected.add(l.source.id);
@@ -339,35 +312,24 @@ function showPanel(d) {
         }
     });
 
-    // Fade all
     d3.selectAll(".node").classed("faded", true);
     d3.selectAll(".link").classed("faded", true);
 
-    // Highlight connected
-    d3.selectAll(".node")
-        .filter(n => connected.has(n.id))
-        .classed("faded", false);
-
-    d3.selectAll(".link")
-        .filter(l => l.source.id === d.id || l.target.id === d.id)
-        .classed("faded", false);
+    d3.selectAll(".node").filter(n => connected.has(n.id)).classed("faded", false);
+    d3.selectAll(".link").filter(l => l.source.id === d.id || l.target.id === d.id).classed("faded", false);
 
     const connectedLinks = links.filter(l => l.source.id === d.id || l.target.id === d.id);
-
     connectedLinks.forEach(l => {
         const neighbor = l.source.id === d.id ? l.target.id : l.source.id;
-
         const li = document.createElement("li");
         li.textContent = `${l.rel.toUpperCase()}: ${neighbor}`;
         li.classList.add(`dep-${l.rel}`);
-
         list.appendChild(li);
     });
 }
 
 function closePanel() {
     document.getElementById("mod-info-panel").style.display = "none";
-
     d3.selectAll(".node").classed("faded", false);
     d3.selectAll(".link").classed("faded", false);
 }
@@ -375,10 +337,7 @@ function closePanel() {
 /* ===== DRAG ===== */
 
 function dragstarted(event, d) {
-    if (!simulation) {
-        return;
-    }
-
+    if (!simulation) return;
     if (!event.active) simulation.alphaTarget(0.3).restart();
     d.fx = d.x;
     d.fy = d.y;
@@ -390,10 +349,7 @@ function dragged(event, d) {
 }
 
 function dragended(event, d) {
-    if (!simulation) {
-        return;
-    }
-
+    if (!simulation) return;
     if (!event.active) simulation.alphaTarget(0);
     d.fx = null;
     d.fy = null;

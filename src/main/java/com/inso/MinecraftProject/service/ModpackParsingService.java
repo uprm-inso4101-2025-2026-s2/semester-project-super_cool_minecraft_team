@@ -11,14 +11,20 @@ import java.util.jar.JarFile;
 
 import org.springframework.stereotype.Service;
 
+import com.inso.MinecraftProject.dto.DTO;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class ModpackParsingService {
 
-    public String parseModpack() {
-        return "Parsing Modpack";
+    public DTO parseModpack() {
+        return DTO.builder()
+                .mods(List.of())
+                .edges(List.of())
+                .missingDependencies(null)
+                .resolvedDependencies(null)
+                .build();
     }
 
     //Function that return a List with 3 Lists inside that have all the data

@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minecraft DT - Dependency Visualizer</title>
-    <link rel="stylesheet" href="../static/CSS_Files/graph_base.css">
+    <link rel="stylesheet" href="/CSS_Files/graph_base.css">
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="/JS_Files/graph_visualization.js"></script>
+   
 </head>
 <body>
 
@@ -30,7 +32,7 @@
                     <span class="icon" aria-hidden="true">
                         <svg viewBox="0 0 24 24" width="24" height="24" fill="none">
                             <path
-                                d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4.2a1.5 1.5 0 0 1 1.06.44l1.28 1.28c.28.28.66.44 1.06.44H19.5A1.5 1.5 0 0 1 21 9.66v7.84A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5v-10z"
+                                d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4.2a1.5 1.5 0 0 1 1.06.44l1.28 1.28c.28.28.66.44 1.06.44H19.5A1.5 1.5 0 0 1 21 9.66v7.84A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5v-10Z"
                                 stroke="white"
                                 stroke-width="1.8"
                                 stroke-linecap="round"
@@ -134,7 +136,8 @@
             <nav class="zoom-controls">
                 <button aria-label="Zoom In">+</button>
                 <button aria-label="Zoom Out">-</button>
-                <button aria-label="Reset View">⛶</button>
+                <button id="resetViewBtn" aria-label="Reset View">⛶</button>
+
             </nav>
         </section>
     </main>
@@ -142,7 +145,5 @@
     <footer class="app-footer">
         <p>&copy; 2026 Minecraft DT Team</p>
     </footer>
-    
-    <script src="../static/JS_Files/graph_visualization.js"></script>
 </body>
 </html>
