@@ -1,14 +1,13 @@
 package com.inso.MinecraftProject.graph;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import com.inso.MinecraftProject.dto.DTO;
 import com.inso.MinecraftProject.entity.Mod;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 
 /**
  * Graph class responsible for managing all ModNode objects
@@ -56,12 +55,7 @@ public class Graph implements GraphI<ModNode> {
                 }
             }
 
-            ModNode node = new ModNode(
-                    mod.getId(),
-                    mod.getVersion(),
-                    dependencies,
-                    conflicts
-            );
+            ModNode node = new ModNode(mod.getId(),mod.getVersion(),dependencies,conflicts);
 
             String key = mod.getId() + "@" + mod.getVersion();
             nodes.put(key, node);

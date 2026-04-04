@@ -408,7 +408,11 @@ body {
     padding: 40px;
     justify-content: center;
     align-items: center;
-    
+
+    /* Zoom via scroll settings */
+    transform-origin: center;
+    transition: transform 0.2s ease;
+    cursor: grab;
 }
 
 /* Filter floating panel */
