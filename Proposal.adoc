@@ -974,19 +974,25 @@ Within the overall architecture, the Team A graph subsystem connects dependency 
 
 === 3.1 Concept Formation
 
-The Team A domain sketch illustrates the operation of the Mod Dependency Analyzer tool.
+[.red.line-through]#The Team A domain sketch illustrates the operation of the Mod Dependency Analyzer tool.#
+
+[.green]#The domain sketch illustrates the operation of the Mod Dependency Analyzer tool.#
 
 * Based on these observations:
-** Mod: an artifact software uploaded by the user.
-** Dependency: relationship that indicates that one mod requires another.
-** DTO: abstraction used to carry mod and dependency.
-** Dependency Graph: structured network formed by interconnected dependency relationships.
+** Mod: an artifact software uploaded by the user. [.green]#It is the software whose dependencies we wish to display.#
+** Dependency: relationship that indicates that one mod requires another [.green]#in order to function in the game#.
+** DTO: abstraction used to carry mod and dependency data. [.green]#It is responsible for facilitating the necessary information (regarding a mod's dependencies) for graph construction using the D3.js library in the frontend.#
+** Dependency Graph: structured network formed by interconnected dependency relationships [.green]#within the mods uploaded by the user#.
 * Grouping decisions: libraries needed and mods needed for a mod to work are grouped as Dependency because both are prerequisites.
 * Conflicts: dependency refers to both libraries and mods; graph refers to a data structure and not a visual representation.
 
-The Team B analysis focuses on situations where declared dependencies must be located and associated in order to complete a mod configuration.
 
-* Required dependencies are often not included in the initial modpack configuration.
+
+[.red.line-through]#The Team B analysis focuses on situations where declared dependencies must be located and associated in order to complete a mod configuration.#
+
+[.green]#In the analysis for situations where declared dependencies must be located and associated in order to complete a mod configuration:#
+
+* Required dependencies are often not included in the initial modpack configuration, [.green]#which is why we must make use of an external API to give the service the required information#.
 * Missing components must be identified by consulting external mod repositories.
 * Resolving dependency issues involves not only recognizing relationships between mods, but also locating the components that satisfy those relationships.
 * Mod repositories function as reference environments that describe and provide the required mods.
@@ -997,6 +1003,10 @@ From these observations, dependency resolution is understood as a domain process
 * Completing a configuration involves identifying and associating those components with the current modpack.
 * External sources are treated as part of the environment where dependencies are satisfied.
 
+==== Component responsibilities & Interactions:
+
+[.green]#When a mod is uploaded through the frontend layer, this mod's information is passed to the backend. Once the backend receives the mod, its information is parsed and inserted into a mod DTO which contains the attributes modID, modVersion, dependencies, and conflicts (note that the dependencies and conflicts are NULL until the API is called). The modID and modVersion are then passed to the CurseForge API, which returns the dependencies and conflicts of the mod via information acquired from various mod repositories. Once this information is acquired, it is passed through the frontend and a new graph node DTO is created. This DTO is used in the Dependency Graph to display all dependency relationships accordingly.#
+
 === 3.2 Validation
 
 The team validates the requirements and domain understanding through structured scenario-based walkthroughs.
@@ -1004,7 +1014,13 @@ These walkthroughs simulate realistic modpack configurations and are discussed c
 
 The goal of validation is not to obtain approval, but to ensure that the system-to-be correctly reflects the domain relationships and user needs.
 
-==== Scenario 1: Missing Mandatory Dependency
+
+
+[.red.line-through]
+
+--
+
+Scenario 1: Missing Mandatory Dependency
 
 Context: A user uploads a modpack containing Mod A, which declares a mandatory dependency on Mod B.
 Mod B is not included in the uploaded modpack.
@@ -1020,7 +1036,7 @@ Walkthrough Steps:
 Validation Outcome: During walkthrough discussion, the team clarified the distinction between mandatory and optional dependencies.
 The requirement was refined to explicitly differentiate these cases and ensure that only mandatory dependencies trigger critical warnings.
 
-==== Scenario 2: Circular Dependency Case
+Scenario 2: Circular Dependency Case
 
 Context: Mod A depends on Mod B, and Mod B depends on Mod A.
 
@@ -1033,20 +1049,152 @@ Walkthrough Steps:
 Validation Outcome: A new requirement was added to explicitly detect circular dependencies and notify users when a cycle exists.
 The concept of "graph as structural model" was distinguished from "graph as visual representation."
 
+--
+
+
+
+
+
+
+[.green]#Our project employs multiple forms of testing and scenario-based validation to ensure that the Minecraft Dependency Visualizer behaves correctly and aligns with stakeholder expectations.#
+
+==== Testing Approach
+
+
+*When:* [.green]#Testing is performed continuously during development, with scenario walkthroughs conducted after implementing major features.#
+
+*Who:* [.green]#All team members participate, with each subteam validating their respective components.#
+
+*Why:* [.green]#To ensure correctness of dependency handling, usability of the visualization, and handling of edge cases.#
+
+
+
+---
+
+
+==== Scenario 1: Required Dependency Detection
+[.green]
+
+--
+
+
+*Dataset:* Sodium, Fabric API
+
+*Workflow:*  
+
+* User uploads a mod folder containing Sodium, which lists Fabric as an optional dependency in their website unbeknownst to the user.  
+
+* System receives the mods and parses them, sending them to CurseForge and Modrinth to obtain dependency information.
+
+* Dependency data is retrieved from backend and passed to frontend again through the DTO.  
+
+* The Dependency Graph is generated, showing Sodium depends on Fabric API through a line connecting both nodes.
+
+* User infers it is a required dependency rather than an optional dependency.
+
+*Property Being Verified:*  
+The system correctly identifies and displays required dependencies.
+
+*Gap Identified:*  
+Initial implementation did not clearly distinguish between required and optional dependencies in the UI.
+
+*Remedy:*  
+Added visual differentiation (styling and labels) and explicit user notifications. The system now differentiates between conflicting, optional, and required dependencies through different colors within the edges and nodes (red for conflicting, blue for required, yellow for optional).
+
+--
+
+---
+
+
+==== Scenario 2: Mod Incompatibility
+
+[.green]
+
+--
+
+*Dataset:* Indium, Sodium, and Canvas Renderer were chosen as the dataset for this scenario, as they create a conflict. Indium depends on Sodium, but Canvas Renderer conflicts with Sodium. Thus, the user must decide which to keep if the system highlights this correctly.
+
+*Workflow:*  
+
+* User uploads a modpack containing Indium, Sodium, and Canvas Renderer, unaware there is a conflict.  
+
+* System parses and passes the mods in the folder to CurseForge and Modrinth APIs.
+
+* Incompatibility relationship is identified by one of the APIs and passed to frontend.
+
+* Graph displays the 3 mods, with a line in red to indicate conflict coming from Canvas Renderer to Sodium, and a line in blue indicating dependency from Indium to Sodium.
+
+*Property Being Verified:*  
+The system correctly identifies and communicates mod incompatibilities.
+
+*Gap Identified:*  
+Early versions lacked a clear representation of conflicts in the graph, but Scenario 1 led to implementation for a color-coded Dependency Graph. No further remedy is required in this scenario, as the test and remedy done for a previous scenario prepared the system for this data.
+
+--
+
+
+---
+
+
+==== Scenario 3: Unsupported Mod
+
+[.green]
+
+--
+
+*Dataset:* Custom mod not indexed in Modrinth or CurseForge (this dataset was chosen as we must test system behavior with an unknown mod).
+
+*Workflow:*  
+
+* User uploads a folder containing an unknown mod, not registered in CurseForge or Modrinth.  
+
+* API lookup gets information for all other mods in the folder, but fails for the custom mod. Therefore, no information is retrieved for this mod.  
+
+* System attempts to process remaining mods in the folder with available dependency data and passes them to the frontend.
+
+* Dependency Graph is rendered with available data.  
+
+*Property Being Verified:*  
+The system handles incomplete or missing data properly.
+
+*Gap Identified:*  
+Initial implementation failed when encountering unknown mods, stopping the entire process.
+
+*Remedy:*  
+Modified logic to allow partial graph generation and mark unsupported mods with a distinct visual indicator containing an error message.
+
+--
+
+---
+
+==== Validation Through Walkthroughs
+
+
+Scenario walkthroughs were conducted within the team to simulate real user interactions and validate assumptions about system behavior.
+
+These walkthroughs revealed several important insights:
+
+* Users expect clear differentiation between dependency types (required vs optional).  
+
+* Visual feedback is essential for understanding complex relationships such as conflicts and cycles.  
+
+* The system must remain functional even when encountering incomplete or unknown data.  
+
+These findings led to improvements in visualization clarity, error handling, and overall system adequacy.
+
+
+
 === 3.3 Verification
 
 Verification ensures that the Minecraft Mod Dependency Visualizer functions as intended and satisfies the specified requirements.
 The system will be verified through functional testing and user validation.
 
-* Unit Testing: Individual components such as metadata extraction and dependency parsing will be tested independently to ensure they produce correct and consistent results.
-* Functional Testing: The system will be tested to confirm that a user can upload a mod file, generate a dependency graph, and receive accurate compatibility feedback.
-* User Validation: A small group of users will test the application to verify usability, clarity of the visualization, and correctness of the compatibility results.
-  Feedback will be used to improve system behavior and interface design.
-* Performance Testing: The system will be evaluated to ensure it processes mod files within the required response time and maintains stability under multiple usage scenarios.
-* Rigorous Reasoning: The Team A backend graph subsystem will also be verified through reasoning about structural invariants and node-related operations. 
-  This includes identifying properties that must always hold in the graph, such as node uniqueness, key consistency, and structural integrity.
-  Operations such as `addNode`, `findNode`, and `removeNode` will be analyzed in terms of whether they preserve these invariants.
-  For example, `addNode` must prevent duplicate node insertion, while `findNode` must return results consistent with the graph's key generation logic.
-  This form of verification complements testing by making explicit which correctness properties the graph structure must preserve.
+* Unit Testing: Individual components such as metadata extraction and dependency parsing will be tested independently to ensure they produce correct and consistent results. [.green]#This testing will be realized by uploading 3 mods into a folder. Preferably, the dataset would include mods Indium, Sodium, and Canvas Renderer, as this set of mods includes a dependency and a conflict within it. Indium depends on Sodium, but Sodium conflicts with Canvas Renderer. This makes it the perfect dataset for testing, as we can verify that the system is parsing dependencies and conflicts properly. In this test case, the mod folder would be passed to our frontend's mod receiver and we would monitor the backend's behavior when the mod ID is sent to the CurseForge and Modrinth APIs. If correct dependencies are returned in a JSON, this part of the system is working adequately.#
+
+* Functional Testing: The system will be tested to confirm that a user can upload a mod file, generate a dependency graph, and receive accurate compatibility feedback. [.green]#This test involves running the application itself and making sure the frontend receives the mod folder, parses it, and sends it to the backend to receive dependency information from CurseForge and Modrinth. We will confirm the system is functional once the JavaScript file executes the script to display the Dependency Graph, and we observe that all the correct nodes are connected to each other with the right colors as shown in the legend. The Dependency Graph should be fully interactive and all components of the page should display as intended, including the side panel and toggle buttons.#
+
+* User Validation: A small group of users will test the application to verify usability, clarity of the visualization, and correctness of the compatibility results. [.green]#This test will be performed by giving a minimum of 5 people within the domain access to the application, and complete the entire process of accessing the application, navigating from the home page to the upload page (to determine its clarity), uploading a mod folder they would use for their Minecraft game, and interacting with the graph to test all of its features. After the test is realized, we will collect feedback from the users through a written survey allowing comments and suggestions.# Feedback will be used to improve system behavior and interface design.
+  
+* Performance Testing: The system will be evaluated to ensure it processes mod files within the required response time and maintains stability under multiple usage scenarios. [.green]#This test will be performed by adding a timer to different sections within the code (whenever a different action is done). A timer will be started when it receives the uploaded mod folder, and will stop once the information about the dependencies has been received from the APIs in use for mod dependencies. This time will be logged and examined with different mod folders of varying sizes. There will also be a timer for how long it takes to generate the graph after the mod information has been received. This will allow us to measure the response time and stability under different conditions.#
 
 Verification will be considered successful when all functional requirements are met and no critical defects are present.
