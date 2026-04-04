@@ -18,6 +18,20 @@ public class GraphService implements IGraphService {
         this.graph = graph;
     }
 
+    @Override
+    public NodeDto mapToNodeDTO(ModNode node) {
+        if (node == null) {
+            return null;
+        }
+        try {
+            // Create and return NodeDto instance with id generated from the graph and type set to "mod"
+            String id = graph.generateKey(node);
+            String type = "mod";
+            return NodeDto.builder().id(id).type(type).build();
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
 
     @Override
     public List<LinkDto> mapConflicts(ModNode node) {
