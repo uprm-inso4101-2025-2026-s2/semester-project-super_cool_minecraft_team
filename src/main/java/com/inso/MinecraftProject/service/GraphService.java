@@ -2,6 +2,7 @@ package com.inso.MinecraftProject.service;
 
 import java.util.*;
 
+import com.inso.MinecraftProject.dto.DTO;
 import org.springframework.stereotype.Service;
 
 import com.inso.MinecraftProject.dto.GraphResponseDto;
@@ -12,10 +13,9 @@ import com.inso.MinecraftProject.graph.ModNode;
 
 @Service
 public class GraphService implements IGraphService {
-    private final Graph graph;
+    private Graph graph;
 
-    public GraphService(Graph graph) {
-        this.graph = graph;
+    public GraphService() {
     }
 
     @Override
@@ -44,7 +44,7 @@ public class GraphService implements IGraphService {
         if (dependencies == null || dependencies.isEmpty()) {
             return Collections.emptyList();
         }
-        
+
         List<LinkDto> links = new ArrayList<>();
         String source = graph.generateKey(node);
         for (String dependency : dependencies) {
@@ -73,7 +73,12 @@ public class GraphService implements IGraphService {
         }
         return links;
     }
-    
+
+    @Override
+    public void setGraphData(DTO dto) {
+        graph = new Graph(dto);
+    }
+
     @Override
     public GraphResponseDto getGraphData() {
         // Initialize empty lists for nodes and links
