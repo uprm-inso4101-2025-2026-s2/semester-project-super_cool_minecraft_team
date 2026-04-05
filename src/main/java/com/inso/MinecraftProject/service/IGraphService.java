@@ -2,6 +2,7 @@ package com.inso.MinecraftProject.service;
 
 import java.util.List;
 
+import com.inso.MinecraftProject.dto.DTO;
 import com.inso.MinecraftProject.dto.GraphResponseDto;
 import com.inso.MinecraftProject.dto.NodeDto;
 import com.inso.MinecraftProject.dto.LinkDto;
@@ -45,4 +46,13 @@ public interface IGraphService {
      * @return a list of {@link LinkDto} describing conflict links (empty list if none or input is null)
      */
     List<LinkDto> mapConflicts(ModNode node);
+
+
+    /**
+     * Sets the graph data based on the provided DTO. This method is responsible for
+     * initializing the internal graph structure using the data contained in the DTO.
+     *
+     * @param dto the data transfer object containing the information needed to build the graph
+     */
+    public void setGraphData(DTO dto);
 }
