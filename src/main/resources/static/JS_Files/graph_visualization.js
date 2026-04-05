@@ -1,22 +1,26 @@
 console.log("graph_visualization.js cargó");
 
 /* ===== GRAPH DATA ===== */
-const nodes = [
-    { id: "CoreMod", type: "root", status: "compatible" },
-    { id: "JEI", type: "mod", status: "compatible" },
-    { id: "Optifine", type: "mod", status: "compatible" },
-    { id: "OldPhysics", type: "mod", status: "incompatible" },
-    { id: "Patchouli", type: "mod", status: "compatible" },
-    { id: "Botania", type: "mod", status: "compatible" }
-];
+const rawGraphData = window.graphData || { nodes: [], links: [] };
 
-const links = [
-    { source: "CoreMod", target: "JEI", rel: "required" },
-    { source: "CoreMod", target: "Optifine", rel: "optional" },
-    { source: "CoreMod", target: "OldPhysics", rel: "conflict" },
-    { source: "CoreMod", target: "Patchouli", rel: "required" },
-    { source: "Patchouli", target: "Botania", rel: "required" }
-];
+const nodes = (rawGraphData.nodes || []).map(node => ({
+    id: node.id,
+    type: node.type || "mod",
+    status: node.status || "compatible"
+}));
+
+const links = (rawGraphData.links || []).map(link => ({
+    source: link.source,
+    target: link.target,
+    rel: link.rel || "required"
+}));
+
+if (nodes.length === 0) {
+    console.warn("No graph data available");
+}
+if (links.length === 0) {
+    console.warn("No graph links available");
+}
 
 const relColors = {
     required: "var(--blue)",
@@ -53,14 +57,47 @@ const svg = d3.select("#dependency-graph-canvas")
 
 const mainGroup = svg.append("g");
 
+/* ===== PAN BOUNDS CONFIGURATION ===== */
+const PAN_BOUNDS = {
+    maxPanX: 400,  // pixels allowed beyond visible area horizontally
+    maxPanY: 400   // pixels allowed beyond visible area vertically
+};
+
 const zoom = d3.zoom()
     .scaleExtent([0.2, 5])
     .on("zoom", (event) => {
-        mainGroup.attr("transform", event.transform);
+        // Apply pan bounds constraint
+        let transform = event.transform;
+        
+        // Constrain translation (panning)
+        const constrainedX = Math.max(-PAN_BOUNDS.maxPanX, Math.min(PAN_BOUNDS.maxPanX, transform.x));
+        const constrainedY = Math.max(-PAN_BOUNDS.maxPanY, Math.min(PAN_BOUNDS.maxPanY, transform.y));
+        
+        // Create new constrained transform
+        transform = d3.zoomIdentity
+            .translate(constrainedX, constrainedY)
+            .scale(transform.k);
+        
+        mainGroup.attr("transform", transform);
     });
 
-svg.call(zoom);
+// Track pan state for cursor feedback
+let isPanning = false;
 
+svg.on("mousedown", function() {
+    isPanning = true;
+    svg.style("cursor", "grabbing");
+})
+.on("mouseup", function() {
+    isPanning = false;
+    svg.style("cursor", "grab");
+})
+.on("mouseleave", function() {
+    isPanning = false;
+    svg.style("cursor", "grab");
+});
+
+svg.call(zoom);
 function zoomBy(factor) {
     svg.transition()
         .duration(250)
@@ -279,3 +316,201 @@ function getMatchingNodes(nodeList, query) {
         getNodeSearchLabel(nodeData).includes(normalizedQuery)
     );
 }
+
+/* ===== SEARCH AND FOCUS FEATURE ===== */
+const searchInput = document.getElementById('mod-search-input');
+const clearBtn = document.getElementById('search-clear-btn');
+const searchResults = document.getElementById('search-results');
+
+let currentSelectedNodeId = null;
+
+function getNodeList() {
+    return nodes || [];
+}
+
+function updateSearchResults(searchTerm) {
+    if (!searchTerm || searchTerm.trim() === '') {
+        searchResults.classList.remove('show');
+        return;
+    }
+    
+    const matchingNodes = getMatchingNodes(getNodeList(), searchTerm);
+    
+    if (matchingNodes.length === 0) {
+        searchResults.classList.remove('show');
+        return;
+    }
+    
+    searchResults.innerHTML = '';
+    matchingNodes.forEach(node => {
+        const item = document.createElement('div');
+        item.className = 'search-result-item';
+        item.textContent = node.id;
+        item.setAttribute('role', 'option');
+        item.onclick = () => {
+            selectNode(node.id);
+            searchInput.value = node.id;
+            searchResults.classList.remove('show');
+            clearBtn.style.display = 'block';
+        };
+        searchResults.appendChild(item);
+    });
+    
+    searchResults.classList.add('show');
+}
+
+function highlightNode(nodeId) {
+    d3.selectAll('.node').classed('highlighted', false);
+    d3.selectAll('.node')
+        .filter(d => d.id === nodeId)
+        .classed('highlighted', true);
+}
+
+function zoomToNode(nodeId) {
+    const nodeData = getNodeList().find(n => n.id === nodeId);
+    if (!nodeData || nodeData.x === undefined || nodeData.y === undefined) {
+        console.warn(`Node ${nodeId} not found or has no position data`);
+        return;
+    }
+    
+    const containerWidth = container.clientWidth || 800;
+    const containerHeight = container.clientHeight || 650;
+    const targetScale = 1.5;
+    const translateX = containerWidth / 2 - nodeData.x * targetScale;
+    const translateY = containerHeight / 2 - nodeData.y * targetScale;
+    
+    svg.transition()
+        .duration(500)
+        .call(
+            zoom.transform,
+            d3.zoomIdentity
+                .translate(translateX, translateY)
+                .scale(targetScale)
+        );
+}
+
+function dimUnrelatedNodes(selectedNodeId) {
+    if (!selectedNodeId) {
+        d3.selectAll('.node').classed('faded', false);
+        d3.selectAll('.link').classed('faded', false);
+        return;
+    }
+    
+    const connectedNodes = new Set([selectedNodeId]);
+    
+    links.forEach(link => {
+        const sourceId = getNodeId(link.source);
+        const targetId = getNodeId(link.target);
+        
+        if (sourceId === selectedNodeId) connectedNodes.add(targetId);
+        if (targetId === selectedNodeId) connectedNodes.add(sourceId);
+    });
+    
+    d3.selectAll('.node')
+        .filter(d => !connectedNodes.has(d.id))
+        .classed('faded', true);
+    
+    d3.selectAll('.node')
+        .filter(d => d.id === selectedNodeId)
+        .classed('faded', false);
+    
+    d3.selectAll('.link')
+        .filter(link => {
+            const sourceId = getNodeId(link.source);
+            const targetId = getNodeId(link.target);
+            return sourceId !== selectedNodeId && targetId !== selectedNodeId;
+        })
+        .classed('faded', true);
+}
+
+function resetVisuals() {
+    d3.selectAll('.node').classed('highlighted', false);
+    d3.selectAll('.node').classed('faded', false);
+    d3.selectAll('.link').classed('faded', false);
+    currentSelectedNodeId = null;
+    
+    svg.transition()
+        .duration(300)
+        .call(zoom.transform, d3.zoomIdentity);
+}
+
+function selectNode(nodeId) {
+    const nodeExists = getNodeList().some(n => n.id === nodeId);
+    if (!nodeExists) {
+        console.warn(`Node ${nodeId} does not exist`);
+        return;
+    }
+    
+    currentSelectedNodeId = nodeId;
+    highlightNode(nodeId);
+    zoomToNode(nodeId);
+    dimUnrelatedNodes(nodeId);
+}
+
+function clearSearch() {
+    searchInput.value = '';
+    clearBtn.style.display = 'none';
+    searchResults.classList.remove('show');
+    resetVisuals();
+}
+
+function handleSearchInput(e) {
+    const searchTerm = e.target.value;
+    
+    if (!searchTerm || searchTerm.trim() === '') {
+        clearSearch();
+        return;
+    }
+    
+    clearBtn.style.display = 'block';
+    updateSearchResults(searchTerm);
+    
+    const exactMatch = findNodeByQuery(getNodeList(), searchTerm);
+    if (exactMatch) selectNode(exactMatch.id);
+}
+
+function handleSearchKeypress(e) {
+    if (e.key === 'Enter' && searchInput.value.trim()) {
+        const exactMatch = findNodeByQuery(getNodeList(), searchInput.value);
+        if (exactMatch) {
+            selectNode(exactMatch.id);
+            searchResults.classList.remove('show');
+        }
+    }
+}
+
+if (searchInput) {
+    searchInput.addEventListener('input', handleSearchInput);
+    searchInput.addEventListener('keypress', handleSearchKeypress);
+}
+
+if (clearBtn) {
+    clearBtn.addEventListener('click', clearSearch);
+}
+
+document.addEventListener('click', (e) => {
+    if (!searchInput || !searchResults) return;
+    if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+        searchResults.classList.remove('show');
+    }
+});
+
+// Override showPanel to also update search
+const originalShowPanel = showPanel || (() => {});
+window.showPanel = function(d) {
+    originalShowPanel(d);
+    if (searchInput && d && d.id) {
+        searchInput.value = d.id;
+        clearBtn.style.display = 'block';
+        selectNode(d.id);
+    }
+};
+
+// Add click listeners to graph nodes to clear search when clicking directly
+node.on('click', (event, d) => {
+    searchInput.value = '';
+    clearBtn.style.display = 'none';
+    searchResults.classList.remove('show');
+    currentSelectedNodeId = null;
+    event.stopPropagation();
+});

@@ -1,0 +1,39 @@
+package com.inso.MinecraftProject.controller;
+
+import com.inso.MinecraftProject.dto.DTO;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@Controller
+public class MissingDependenciesController {
+
+    @GetMapping("/missing-dependencies")
+    public String missingDependenciesPage(HttpSession session, Model model) {
+        model.addAttribute("loader", "Fabric");
+        return "missing_dependencies";
+    }
+
+    @GetMapping("/api/missing-dependencies")
+    public ResponseEntity<?> missingDependenciesData(HttpSession session) {
+        DTO dto = session.getAttribute("graphDto") instanceof DTO ? (DTO) session.getAttribute("graphDto") : null;
+
+        Map<String, Object> payload = new HashMap<>();
+        if (dto == null) {
+            payload.put("missingDependencies", List.of());
+            payload.put("resolvedDependencies", List.of());
+            payload.put("error", "No analysis result found. Run graph analysis first.");
+            return ResponseEntity.ok(payload);
+        }
+
+        payload.put("missingDependencies", dto.getMissingDependencies() == null ? List.of() : dto.getMissingDependencies());
+        payload.put("resolvedDependencies", dto.getResolvedDependencies() == null ? List.of() : dto.getResolvedDependencies());
+        return ResponseEntity.ok(payload);
+    }
+}

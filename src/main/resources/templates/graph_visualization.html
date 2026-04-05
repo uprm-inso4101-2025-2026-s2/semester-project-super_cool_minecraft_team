@@ -1,15 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minecraft DT - Dependency Visualizer</title>
     <link rel="stylesheet" href="/CSS_Files/graph_base.css">
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="/JS_Files/graph_visualization.js"></script>
-    <script src="/JS_Files/dependency-resolution.js"></script>
     
+    <!-- D3 Library -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    
+    <!-- Graph data (if using Thymeleaf templates) -->
+    <script th:inline="javascript">
+        window.graphData = /*[[${graphData}]]*/ { nodes: [], links: [] };
+    </script>
+    
+    <!-- Custom Scripts -->
+    <script th:src="@{/JS_Files/graph_visualization.js}" defer></script>
+    <script src="/JS_Files/dependency-resolution.js"></script>
 </head>
+
 <body>
 
     <header class="app-header">
@@ -17,7 +27,7 @@
             <h1 class="project-title">Minecraft DT</h1>
             <p class="project-subtitle">Dependency Visualizer</p>
         </div>
-    </header>   
+    </header>
 
     <main class="dashboard-container">
         <aside class="sidebar">
@@ -31,15 +41,14 @@
                         <svg viewBox="0 0 24 24" width="24" height="24" fill="none">
                             <path
                                 d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4.2a1.5 1.5 0 0 1 1.06.44l1.28 1.28c.28.28.66.44 1.06.44H19.5A1.5 1.5 0 0 1 21 9.66v7.84A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5v-10Z"
-                                stroke="white"
-                                stroke-width="1.8"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            />
+                                stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                     </span>
                     <span>Process selected Folder</span>
                 </button>
+                <a href="/missing-dependencies" class="btn-process" style="margin-top: 10px; display: inline-block; text-align:center;">
+                    View Missing Dependencies
+                </a>
             </section>
 
             <section class="sidebar-group">
@@ -90,6 +99,23 @@
                 settings
             </button>
 
+            <div class="search-container">
+                <input 
+                    type="text" 
+                    id="mod-search-input" 
+                    placeholder="Search for a mod..." 
+                    autocomplete="off"
+                    aria-label="Search mods">
+                <button 
+                    id="search-clear-btn" 
+                    class="search-clear-btn" 
+                    style="display: none;"
+                    aria-label="Clear search">
+                    ✕
+                </button>
+                <div id="search-results" class="search-results" role="listbox"></div>
+            </div>
+
             <div id="dependency-graph-canvas"></div>
 
             <div id="mod-info-panel">
@@ -132,4 +158,5 @@
     </footer>
 
 </body>
+
 </html>

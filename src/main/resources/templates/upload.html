@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="/images/textures/textures.css">
   <link rel="stylesheet" href="/CSS_Files/homepage.css">
   <link rel="stylesheet" href="/CSS_Files/upload.css">
+  <link rel="icon" type="image/x-icon" href="/images/logos/Header Icon- Cuadrado.ico">
 </head>
 
 <body id="page-upload">
@@ -155,10 +156,12 @@
 
     <div class="instruction-container">
     <p class="upload-text">⬆ Upload your modpack (.zip)</p>
+    <input type="file" id="file-picker" accept=".zip">
+    <p id="status"></p>
     </div>
     </section>
 
  <footer th:replace="~{components/footer :: footer}"></footer>
-
+ <script src="/JS_Files/upload.js"></script>
 </body>
 </html>
