@@ -1312,4 +1312,6 @@ Verification ensures that the Minecraft Mod Dependency Visualizer functions as i
 
 -Performance Testing: The system will be evaluated to ensure it processes mod files within the required response time and maintains stability under multiple usage scenarios.
 
+-Tracking Analysis: The project’s metrics are only partially reliable because they treat all issues equally, including lecture topic and development tasks, and do not account for urgency and difficulty. This can lead to inaccurate tracking of effort and contribution. A more effective approach would separate task types and incorporate urgency and difficulty into evaluation metrics.
+
 Verification will be considered successful when all functional requirements are met and no critical defects are present.
