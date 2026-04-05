@@ -24,17 +24,19 @@ ICOM4009 | INSO4101 | Introduction to Software Engineering
 * Team A
 ** Zabdiel J. Valentin-Perez
 ** Karilys A. Muñiz-Ramos
+
 * Team B
 ** Gabriel A. Sanchez-Santos
 ** Ricardo Burgos
+
 * Team C
-** Victor M De Jesús
+** Victor M. De Jesús
 ** Javier M. Aguilo Agosto
 
 ==== 1.2.3 Team Members
 
 * Team A
-** Christian J Berberena
+** Christian J. Berberena
 ** Julian A. Laracuente-Matos
 ** Yahir J. Reyes-Padilla
 ** Alondra Soto-Feliciano
@@ -45,6 +47,7 @@ ICOM4009 | INSO4101 | Introduction to Software Engineering
 ** Nathalie M. Castro-Mojica
 ** Merced J. Rivera-Mercado
 ** Isamar Z. Garcia-Rivera
+
 * Team B
 ** Joyson J. Martinez-Andujar
 ** Lorenzo Ramos-Martinez
@@ -55,6 +58,7 @@ ICOM4009 | INSO4101 | Introduction to Software Engineering
 ** Kevin L. Ruiz-Sanchez
 ** Jan E. Ramos-Vazquez
 ** Cheselyn Morales-Santiago
+
 * Team C
 ** Alexander M. Garcia
 ** Edgar Y. Colon-Sanchez
@@ -66,114 +70,117 @@ ICOM4009 | INSO4101 | Introduction to Software Engineering
 
 === 1.3 Current Situation
 
-Minecraft mods rely on other mods, loaders, libraries, and specific Minecraft versions; these are the mod dependencies.
+[.line-through.red]#Minecraft mods rely on other mods, loaders, libraries, and specific Minecraft versions; these are the mod dependencies.
 If these dependencies are not met, the game will crash or fail to launch.
 This leads to user frustration and wasted time.
-These dependencies are not easy to access; while it would be better to have them on the main download page, they are usually provided as plain text in metadata or in dedicated wikis that less-experienced users may not find.
+These dependencies are not easy to access; while it would be better to have them on the main download page, they are usually provided as plain text in metadata or in dedicated wikis that less-experienced users may not find.#
+
+Minecraft mods frequently depend on other mods, libraries, specific mod loaders, and particular Minecraft versions in order to function correctly. These requirements form a set of dependencies that must be satisfied before the game can run successfully.
+
+If these dependencies are missing or incompatible, Minecraft may fail to launch or crash during runtime. This creates frustration for players and often leads to wasted time troubleshooting mod configurations.
+
+One of the primary difficulties is that dependency information is not always presented in an accessible format. In many cases, the required dependencies are only listed in technical metadata files or scattered across community-maintained documentation and wikis. As a result, players who are unfamiliar with modding terminology or metadata structures often struggle to understand which additional mods are required or why conflicts occur.
+
+This lack of clear and centralized dependency information makes modpack configuration unnecessarily complex, particularly for less experienced players.
 
 === 1.4 Needs and Ideas
 
-[.line-through]#We identify that many Minecraft mods rely on other mods, libraries, specific loaders, and specific Minecraft versions in order to function correctly.
+[.line-through.red]#We identify that many Minecraft mods rely on other mods, libraries, specific loaders, and specific Minecraft versions in order to function correctly.
 When dependencies are missing, incompatible, or incorrectly ordered, the game often fails to launch or crashes during runtime.#
 
-[.line-through]#There is a significant lack of accessibility in dependency documentation.
-Currently, users are forced to parse technical plain text, which is particularly exclusionary for younger audiences who make up a large portion of the Minecraft community.
-Furthermore, most mods do not display dependencies or incompatibilities clearly on their main mod pages.
-Users need a way to understand these dependencies and conflicts without technical barriers, so they do not abandon using Minecraft mods due to confusion or frustration.#
+Minecraft mods often depend on other mods, libraries, mod loaders, and specific Minecraft versions in order to function correctly. When these dependencies are missing, incompatible, or loaded in the wrong order, the game may fail to launch or crash during runtime.
 
-[.line-through]#There is, therefore, a need for a mod dependency visualization platform that allows users to explore mods and their dependencies in a clear and intuitive way.
+[.line-through.red]#There is a significant lack of accessibility in dependency documentation.
+Currently, users are forced to parse technical plain text, which is particularly exclusionary for younger audiences who make up a large portion of the Minecraft community.#
+
+Dependency information is frequently presented as technical metadata or documentation that many players cannot easily interpret. This creates barriers for younger or less technically experienced players who form a large portion of the Minecraft community.
+
+[.line-through.red]#Furthermore, most mods do not display dependencies or incompatibilities clearly on their main mod pages.
+Players need a way to understand these dependencies and conflicts without technical barriers, so they do not abandon using Minecraft mods due to confusion or frustration.#
+
+Additionally, many mod pages do not clearly present dependency relationships or incompatibilities. Players often struggle to understand why a mod fails to work or which additional mods are required.
+
+
+[.line-through.red]#There is, therefore, a need for a mod dependency visualization platform that allows users to explore mods and their dependencies in a clear and intuitive way.
 Users need to see which mods depend on a selected mod and understand why each dependency is required.
 The team will develop a comprehensive web-based platform designed to transform the way Minecraft players interact with mod configurations.
 The approach is to move away from text-heavy logs and provide a Dynamic Dependency Graph.
 This will make conflict detection visual and easy to manage for all users.#
 
+A platform is therefore needed that allows players to visualize mod dependencies and understand relationships between mods more easily.
+
+
 ==== 1.4.1 Needs
-Based on the current situation, several needs arise for users interacting with Minecraft mods:
+Based on the current situation, several needs arise for players interacting with Minecraft mods:
 
-* Users need clear and understandable information about mod dependencies so they can determine which additional components are required for a mod to function correctly.
+* Players need clear and understandable information about mod dependencies so they can determine which additional components are required for a mod to function correctly.
 
-* Users need accessible explanations of compatibility relationships between mods, including which versions, loaders, or libraries are required, without relying on technical logs or developer-oriented documentation.
+* Players need accessible explanations of compatibility relationships between mods, including which versions, loaders, or libraries are required, without relying on technical logs or developer-oriented documentation.
 
-* Users need an intuitive way to explore relationships between mods, including understanding which mods depend on others and how these dependencies affect the overall configuration.
+* Players need an intuitive way to explore relationships between mods, including understanding which mods depend on others and how these dependencies affect the overall configuration.
 
-* Users need support in identifying potential conflicts or missing components before launching the game, so they can resolve problems earlier in the installation process.
+* Players need support in identifying potential conflicts or missing components before launching the game, so they can resolve problems earlier in the installation process.
 
-* Users also need a more approachable way to understand mod configurations, particularly for less technical users who may struggle with interpreting technical error messages or documentation.
+* Players also need a more approachable way to understand mod configurations, particularly for less technical players who may struggle with interpreting technical error messages or documentation.
 
 ==== 1.4.2 Ideas
-To help satisfy these needs, the team proposes the development of a platform that assists users in exploring and understanding mod relationships.
+To help satisfy these needs, the team proposes the development of a platform that assists players in exploring and understanding mod relationships.
 
-* One idea is to provide visual representations of mod dependencies, allowing users to see how mods connect to each other rather than reading long lists of requirements. A graphical representation could make these relationships easier to understand.
+* One idea is to provide visual representations of mod dependencies, allowing players to see how mods connect to each other rather than reading long lists of requirements. A graphical representation could make these relationships easier to understand.
 
-* Another idea is to allow users to select a mod and view its dependency structure, including which additional mods are required and which other mods depend on it. This would help users better understand the role of each mod in their configuration.
+* Another idea is to allow players to select a mod and view its dependency structure, including which additional mods are required and which other mods depend on it. This would help players better understand the role of each mod in their configuration.
 
-* The system could also highlight missing dependencies or potential incompatibilities, helping users identify issues before attempting to run the game.
+* The system could also highlight missing dependencies or potential incompatibilities, helping players identify issues before attempting to run the game.
 
 * Additionally, the platform could provide simplified explanations of dependency relationships, making technical information easier to interpret for a broader audience.
 
 Overall, these ideas aim to improve how players interact with mod configurations by presenting dependency information in a clearer, more intuitive format.
 
-=== 1.5 Concepts
+=== 1.5 Scope and Span
 
-* Concept 1: Mod (Entity) +
-  A packaged software extension for Minecraft that adds or changes gameplay functionality and declares metadata such as version, supported Minecraft and Mod Loader versions, and dependency constraints.
-* Concept 2: Modpack (Entity) +
-  A selected set of Mods intended to run together under a specific Minecraft version and Mod Loader, whose correctness depends on satisfying all declared constraints.
-* Concept 3: Dependency (Relation) +
-  A directed requirement from one Mod to another Mod or library indicating that the target must be present and satisfy any stated Version Constraint for the source Mod to operate correctly within a Modpack.
-* Concept 4: Incompatibility (Relation) +
-  A declared constraint between two Mods or specific versions stating they must not coexist in the same Modpack due to functional or version conflicts.
-* Concept 5: Version Constraint (Attribute) +
-  A rule attached to a Dependency or Incompatibility declaration that specifies which versions of a target Mod are acceptable.
-* Concept 6: Dependency Resolution (Behavior) +
-  The process of determining whether a Modpack satisfies all required Dependencies, including transitive ones, and does not violate declared Incompatibilities or Version Constraints.
-
-=== 1.6 Scope and Span
-
-==== 1.6.1 Project Scope
+==== 1.5.1 Project Scope
 
 * This project operates within the domain of gaming software tooling, specifically targeting the Minecraft Java Edition modding ecosystem.
 * Minecraft modding involves the integration of community-developed modifications that extend or alter gameplay, requiring understanding of complex dependency relationships between mod files, mod loaders, and game versions.
-* The project addresses the broader challenge of dependency management and mod compatibility analysis, areas where existing tooling is either too technical for general users or entirely absent.
+* The project addresses the broader challenge of dependency management and mod compatibility analysis, areas where existing tooling is either too technical for general players or entirely absent.
 * The scope encompasses domain engineering, requirements engineering, software architecture, and the design and development of a web-based dependency visualization platform that makes mod management more accessible and understandable for a non-technical audience.
 
-==== 1.6.2 Project Span
+==== 1.5.2 Project Span
 
-* The platform will target users of Minecraft Java Edition using either the Fabric or Forge mod loaders, the two most widely adopted modding frameworks for the game.
+* The platform will target players of Minecraft Java Edition using either the Fabric or Forge mod loaders, the two most widely adopted modding frameworks for the game.
 * It will support the analysis of individual mod files and medium-sized modpacks, defined as collections typically ranging from a handful of mods up to roughly one hundred.
 * Mod metadata will be sourced from CurseForge and Modrinth, the two primary mod distribution repositories for Minecraft.
 * The platform will classify mods by runtime context, distinguishing between client-side, host-side, and client-host-sided mods.
 * Dependencies will be resolved transitively and classified as required, optional, or incompatible.
-* Where metadata is available, the platform will surface known version incompatibilities and link users to the relevant CurseForge or Modrinth pages for missing or outdated dependencies.
+* Where metadata is available, the platform will surface known version incompatibilities and link players to the relevant CurseForge or Modrinth pages for missing or outdated dependencies.
 * The platform will function strictly as a decision-support tool and will not modify the user's game installation or launch the game.
 
-===== 1.6.2.1 Inclusions
+===== 1.5.2.1 Inclusions
 
 The project will focus on the design, development, and evaluation of a web-based proof-of-concept platform for visualizing Minecraft mod dependencies.
-The core activities included in the project span:
+The core activities included in the project span are:
 
 * Platform Development: Create an interactive, browser-based prototype that visualizes mods as nodes and their dependencies as directed edges in a graph data structure.
   The platform will be designed to support a curated dataset of mods, rather than attempting to index the entire CurseForge and Modrinth repositories.
 * Metadata Parsing and Normalization: Develop scripts to programmatically parse dependency metadata from a preselected set of mods sourced from CurseForge and Modrinth.
   This includes identifying required dependencies, optional dependencies, and incompatible mod versions.
   The project will handle all mod metadata in accordance with ethical data handling principles, ensuring that any data acquisition, storage, and processing respects the terms of use and privacy expectations established by the source repositories.
-  The data will then be normalized into a unified internal schema to manage inconsistencies between the two source platforms.
+  The data will then be normalized into a unified internal schema to manage differences between the two source platforms.
 * Visual Highlighting of Critical Information: Implement visual cues within the graph interface to draw user attention to key issues.
   This will include distinct highlighting for missing dependencies, version incompatibilities, and optional relationships.
-* Decision-Support Features: Enable users to interact with the graph and access relevant information.
+* Decision-Support Features: Enable players to interact with the graph and access relevant information.
   Upon selecting a specific mod node, the platform will display:
 ** Its direct and transitive dependents (i.e., which other mods rely on it).
 ** A plain-language explanation of its dependency requirements (e.g., "Required for game launch on the client-side").
 ** A simulation of the potential impact, highlighting which other mods would be affected if the selected mod were removed or updated.
 * Evaluation with Sample Modpacks: Conduct a formal evaluation of the prototype's effectiveness using sample modpacks.
 
-===== 1.6.2.2 Exclusions
+===== 1.5.2.2 Exclusions
 
 To maintain a realistic scope and focus on the core problem of visualization and understanding, the following activities are explicitly excluded from the project span:
 
 * Automated Installation or Management: The platform will function solely as a decision-support tool.
   It will not download, install, update, remove, or modify a user's Minecraft instance.
-* Visual Highlighting of Critical Information: Implement visual cues within the graph interface to draw user attention to key launcher, MultiMC, Prism Launcher).
 * Exhaustive Mod Indexing: The project will not attempt to index or visualize all mods available on CurseForge and Modrinth.
   The focus will be on a curated, representative dataset sufficient to demonstrate the platform's functionality and core features.
 * Generalization to Other Games: Potential for future generalization is acknowledged (Section 6), but the development and testing of the prototype will be strictly confined to the Minecraft modding ecosystem.
@@ -181,7 +188,7 @@ To maintain a realistic scope and focus on the core problem of visualization and
   Its purpose is preventative and analytical, focusing on understanding dependencies before launching the game.
 * Commercial Deployment: The final deliverable will be a functional prototype for academic evaluation, not a production-ready, publicly hosted service.
 
-===== 1.6.2.3 Key Focus Areas and Methodology
+===== 1.5.2.3 Key Focus Areas and Methodology
 
 The project will be executed using an agile-inspired methodology suitable for a student team.
 Work will be organized into iterative sprints, each focusing on a key deliverable.
@@ -192,7 +199,7 @@ The primary focus areas are:
 * User Interface & Interaction: Designing and building the user interface components for displaying mod information, search, and selection, ensuring clarity and ease of use.
 * Evaluation & Analysis: Defining success metrics, designing user test cases, conducting the evaluation, and analyzing the results to determine the project's success against the criteria outlined in Section 5.
 
-===== 1.6.2.4 Timeline
+===== 1.5.2.4 Timeline
 
 The project milestones and key dates are as follows:
 
@@ -208,41 +215,93 @@ The project milestones and key dates are as follows:
 These dates define the structured time frame within which all planning, development, evaluation, and reporting activities will be conducted.
 All deliverables and presentations will be completed in accordance with this timeline to ensure timely progress and academic review.
 
-=== 1.7 Synopsis
+=== 1.6 Synopsis
 
-Minecraft modding has become a common way for players to expand and personalize the game experience, but it also introduces a recurring challenge: many mods rely on other mods, libraries, specific loaders, and specific Minecraft versions in order to function correctly.
-When these dependencies are missing, incompatible, or incorrectly ordered, Minecraft may fail to launch or crash during runtime.
-This situation is often made worse by the lack of accessibility in dependency documentation, since users are frequently forced to interpret technical plain text and logs, and many mods do not clearly display their dependencies or incompatibilities on their main pages.
-As a result, many users become frustrated and abandon the idea of using mods because they cannot easily understand what is going wrong.
+[.line-through.red]#Minecraft modding has become a common way for players to expand and personalize the game experience, but it also introduces a recurring challenge: many mods rely on other mods, libraries, specific loaders, and specific Minecraft versions in order to function correctly.
+When these dependencies are missing, incompatible, or incorrectly ordered, Minecraft may fail to launch or crash during runtime.#
 
-To help diminish the effects of this problem, the team proposes the Minecraft Dependency Visualizer, a web-based platform intended to make dependency management more understandable and approachable.
-The platform will represent mods as nodes and dependencies as directed connections, forming a Dynamic Dependency Graph that users can explore.
-Users will be able to select a mod and view which mods depend on it, as well as why it is required within a configuration.
-In addition, the platform will support identifying and signaling conflicts through incompatibility information, helping users recognize when certain mods cannot coexist in the same mod configuration.
+Minecraft mods often depend on other mods, libraries, mod loaders, and specific Minecraft versions. When these dependencies are missing or incompatible, the game may fail to launch or crash.
+
+[.line-through.red]#This situation is often made worse by the lack of accessibility in dependency documentation, since players are frequently forced to interpret technical plain text and logs, and many mods do not clearly display their dependencies or incompatibilities on their main pages.
+As a result, many players become frustrated and abandon the idea of using mods because they cannot easily understand what is going wrong.#
+
+Players frequently struggle to understand these relationships because dependency information is usually presented as technical metadata or logs.
+
+[.line-through.red]#To help diminish the effects of this problem, the team proposes the Minecraft Dependency Visualizer, a web-based platform intended to make dependency management more understandable and approachable.#
+
+The Minecraft Dependency Visualizer is a web-based platform designed to make mod dependency relationships easier to understand.
+
+[.line-through.red]#The platform will represent mods as nodes and dependencies as directed connections, forming a Dynamic Dependency Graph that users can explore.#
+
+The system will analyze mod relationships and represent them as a dynamic dependency graph that players can explore interactively.
+
+Players will be able to select a mod and view which mods depend on it, as well as why it is required within a configuration.
+
+In addition, the platform will support identifying and signaling conflicts through incompatibility information, helping players recognize when certain mods cannot coexist in the same mod configuration.
 
 At the core of the platform is the ability to analyze a user's selected mod collection (modpack) and validate it through dependency resolution and conflict analysis.
 Dependencies will be classified into exactly one type—required, optional, or incompatible—and the platform will represent dependencies transitively, ensuring that dependencies of dependencies are also included.
-By shifting the experience away from text-heavy troubleshooting and toward a clear visual representation, the Minecraft Dependency Visualizer aims to reduce confusion, improve accessibility for all users, and make modpack setup and maintenance significantly easier.
+[.line-through.red]#By shifting the experience away from text-heavy troubleshooting and toward a clear visual representation, the Minecraft Dependency Visualizer aims to reduce confusion, improve accessibility for all players, and make modpack setup and maintenance significantly easier.#
+
+=== 1.7 Concepts
+
+* *Concept 1: Mod (Entity)* +
+  A packaged software extension for Minecraft that adds or changes gameplay functionality and declares metadata such as version, supported Minecraft and Mod Loader versions, and dependency constraints.
+* *Concept 2: Modpack (Entity)* +
+  A selected set of Mods intended to run together under a specific Minecraft version and Mod Loader, whose correctness depends on satisfying all declared constraints.
+* *Concept 3: Dependency (Relation)* +
+  A directed requirement from one Mod to another Mod or library indicating that the target must be present and satisfy any stated Version Constraint for the source Mod to operate correctly within a Modpack.
+* *Concept 4: Incompatibility (Relation)* +
+  A declared constraint between two Mods or specific versions stating they must not coexist in the same Modpack due to functional or version conflicts.
+* *Concept 5: Version Constraint (Attribute)* +
+  A rule attached to a Dependency or Incompatibility declaration that specifies which versions of a target Mod are acceptable.
+* *Concept 6: Dependency Resolution (Behavior)* +
+  The process of determining whether a Modpack satisfies all required Dependencies, including transitive ones, and does not violate declared Incompatibilities or Version Constraints.
 
 === 1.8 Assumptions and Dependencies
 
-* Assumption A: Reliable access to Minecraft mod metadata sources is available during development. +
+[.line-through.red]#* Assumption A: Reliable access to Minecraft mod metadata sources is available during development. +
   Dependency: The project depends on these sources to design and test dependency parsing and resolution logic. +
-  Risk: If metadata access is disrupted or formats change, development may be delayed while adapting the tool.
+  Risk: If metadata access is disrupted or formats change, development may be delayed while adapting the tool.#
 
-* Assumption B: The project's requirements and scope will stay consistent during the development phase. +
+*Assumption A: Reliable access to Minecraft mod metadata sources*
+
+- *Dependency:* The project depends on access to metadata from mod repositories in order to design and test dependency parsing and resolution logic.
+- *Risk:* If metadata access is disrupted or formats change, development may be delayed while the system adapts to new formats.
+
+[.line-through.red]#* Assumption B: The project's requirements and scope will stay consistent during the development phase. +
   Dependency: Design choices and implementation plans depend on stable requirements to minimize the need for rework. +
-  Risk: Major changes may affect the schedule and necessitate adjustments to key components.
+  Risk: Major changes may affect the schedule and necessitate adjustments to key components.#
 
-* Assumption C: The necessary development tools, environments, and test data are accessible and correctly set up. +
+*Assumption B: Project requirements and scope remain stable*
+
+- *Dependency:* System design and implementation depend on stable requirements to avoid major redesigns.
+- *Risk:* Significant changes in scope may introduce delays or require architectural adjustments.
+
+[.line-through.red]#* Assumption C: The necessary development tools, environments, and test data are accessible and correctly set up. +
   Dependency: The team depends on these resources to develop and test the dependency tool. +
-  Risk: If these resources are unavailable or improperly configured, progress may be delayed and errors could be introduced.
+  Risk: If these resources are unavailable or improperly configured, progress may be delayed and errors could be introduced.#
 
+*Assumption C: Development tools and environments are available*
+
+- *Dependency:* The team depends on access to development environments, testing tools, and datasets.
+- *Risk:* Misconfigured or unavailable tools may slow development or introduce implementation errors.
 === 1.9 Implicit and Derived Goals
 
-* Goal 1: Simplify and automate the management of Minecraft mods and libraries to ensure all dependencies are correctly installed and compatible, reducing errors and manual configuration for users.
-* Goal 2: Provide a reliable system for detecting version conflicts and missing dependencies, enabling mod developers and players to maintain stable modpacks without technical troubleshooting.
-* Goal 3: Offer optional features such as dependency visualization and compatibility suggestions to enhance user experience and improve modpack maintenance efficiency.
+[.line-through.red]#* Goal 1: Simplify and automate the management of Minecraft mods and libraries to ensure all dependencies are correctly installed and compatible, reducing errors and manual configuration for users.#
+
+* Goal 1: Enhance the technical literacy of the Minecraft community by providing an educational tool that explains the logic behind mod requirements.
+
+[.line-through.red]#* Goal 2: Provide a reliable system for detecting version conflicts and missing dependencies, enabling mod developers and players to maintain stable modpacks without technical troubleshooting.#
+
+* Goal 2: Establish a standardized internal schema for mod metadata that could potentially be adapted for other game modding ecosystems in the future.
+
+[.line-through.red]#* Goal 3: Offer optional features such as dependency visualization and compatibility suggestions to enhance user experience and improve modpack maintenance efficiency.#
+
+* Goal 3: Provide the development team with practical experience in implementing graph-based data structures and interactive web visualizations within an agile framework.
+
+Through visual exploration of mod dependencies and incompatibilities, the project aims to reduce confusion and make modpack configuration easier for players.
+
 
 == 2. Descriptive
 
