@@ -46,7 +46,7 @@ body {
 body {
     display: flex;
     flex-direction: column;
-    overflow-x: hidden;
+    overflow: hidden;
 }
 
 /* Header */
@@ -279,6 +279,48 @@ body {
     display: block;
     width: 100%;
     height: 100%;
+}
+/* Pan/Drag Canvas Interaction Feedback */
+#dependency-graph-canvas {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    touch-action: none;
+}
+
+#dependency-graph-canvas svg {
+    cursor: grab;
+    transition: cursor 0.1s ease;
+}
+
+#dependency-graph-canvas svg:active {
+    cursor: grabbing !important;
+}
+
+/* Prevent text selection during pan */
+#dependency-graph-canvas g,
+#dependency-graph-canvas line,
+#dependency-graph-canvas circle,
+#dependency-graph-canvas text {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    pointer-events: auto;
+}
+
+/* Smooth cursor transition for better UX */
+svg {
+    cursor: grab;
+}
+
+svg:hover {
+    cursor: grab;
+}
+
+svg:active {
+    cursor: grabbing;
 }
 
 /* Graph styling */
