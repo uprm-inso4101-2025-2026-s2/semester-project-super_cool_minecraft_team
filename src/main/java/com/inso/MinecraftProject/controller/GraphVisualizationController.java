@@ -20,6 +20,12 @@ public class GraphVisualizationController {
     @GetMapping("/graph")
     public String showGraph(Model model, HttpSession session) {
         DTO dto = session.getAttribute("graphDto") instanceof DTO ? ((DTO) session.getAttribute("graphDto")) : null;
+        boolean hasMissing = false;
+        
+        if (dto != null && dto.getMissingDependencies() != null && !dto.getMissingDependencies().isEmpty()) {
+            hasMissing = true;
+        }
+        model.addAttribute("hasMissing", hasMissing);
 
         if (dto != null) {
             graphService.setGraphData(dto);
