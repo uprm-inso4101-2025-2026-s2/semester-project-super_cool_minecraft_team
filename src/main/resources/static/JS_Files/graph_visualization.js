@@ -53,14 +53,47 @@ const svg = d3.select("#dependency-graph-canvas")
 
 const mainGroup = svg.append("g");
 
+/* ===== PAN BOUNDS CONFIGURATION ===== */
+const PAN_BOUNDS = {
+    maxPanX: 400,  // pixels allowed beyond visible area horizontally
+    maxPanY: 400   // pixels allowed beyond visible area vertically
+};
+
 const zoom = d3.zoom()
     .scaleExtent([0.2, 5])
     .on("zoom", (event) => {
-        mainGroup.attr("transform", event.transform);
+        // Apply pan bounds constraint
+        let transform = event.transform;
+        
+        // Constrain translation (panning)
+        const constrainedX = Math.max(-PAN_BOUNDS.maxPanX, Math.min(PAN_BOUNDS.maxPanX, transform.x));
+        const constrainedY = Math.max(-PAN_BOUNDS.maxPanY, Math.min(PAN_BOUNDS.maxPanY, transform.y));
+        
+        // Create new constrained transform
+        transform = d3.zoomIdentity
+            .translate(constrainedX, constrainedY)
+            .scale(transform.k);
+        
+        mainGroup.attr("transform", transform);
     });
 
-svg.call(zoom);
+// Track pan state for cursor feedback
+let isPanning = false;
 
+svg.on("mousedown", function() {
+    isPanning = true;
+    svg.style("cursor", "grabbing");
+})
+.on("mouseup", function() {
+    isPanning = false;
+    svg.style("cursor", "grab");
+})
+.on("mouseleave", function() {
+    isPanning = false;
+    svg.style("cursor", "grab");
+});
+
+svg.call(zoom);
 function zoomBy(factor) {
     svg.transition()
         .duration(250)
