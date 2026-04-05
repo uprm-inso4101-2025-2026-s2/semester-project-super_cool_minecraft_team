@@ -258,21 +258,11 @@ By shifting the experience away from text-heavy troubleshooting and toward a cle
 * Implicit Guides: Existing tutorials are not explicit enough; they assume the user already has technical knowledge.
 * Abandonment: Potential players stop trying to mod the game because the installation process is too complex and frustrating.
 
-=== 2.2 Narrative
+== 2.2 Narrative
 
-++++
-<div style="color: red; text-decoration: line-through;">
-Within the mod ecosystem of Minecraft, users construct gameplay configurations by combining independently developed modifications, each of which declares structural constraints through metadata.
-A mod specifies its identity, supported versions, required dependencies, optional dependencies, and declared incompatibilities.
-When multiple mods are grouped into a modpack, they form a configuration whose validity depends on the collective satisfaction of all declared requirements and constraints.
-Adding or removing a mod triggers domain behaviors such as dependency expansion through transitive requirements, compatibility evaluation, and conflict detection.
-A configuration is considered structurally valid only if every required dependency is present in a compatible version and no declared incompatibilities exist among included mods.
-These relationships can be abstracted as a dependency network in which mods participate in directed requirement relations and constraint relations.
-</div>
-++++
-Within the mod ecosystem of Minecraft, users construct gameplay configurations by combining independently developed modifications, each of which declares structural constraints through metadata. A mod specifies its identity, supported versions, required dependencies, optional dependencies, and declared incompatibilities.
-When multiple mods are grouped into a modpack, they form a configuration whose validity depends on the collective satisfaction of all declared requirements and constraints. Adding or removing a mod triggers domain behaviors such as dependency expansion through transitive requirements, compatibility evaluation, and conflict detection.
-A configuration is considered structurally valid only if every required dependency is present in a compatible version and no declared incompatibilities exist among the included mods. These relationships can be abstracted as a dependency network in which mods participate in directed requirement and constraint relations.
+[.line-through]#Within the mod ecosystem of Minecraft, users construct gameplay configurations by combining independently developed modifications, each of which declares structural constraints through metadata. A mod specifies its identity, supported versions, required dependencies, optional dependencies, and declared incompatibilities. When multiple mods are grouped into a modpack, they form a configuration whose validity depends on the collective satisfaction of all declared requirements and constraints. Adding or removing a mod triggers domain behaviours such as dependency expansion through transitive requirements, compatibility evaluation, and conflict detection. A configuration is considered structurally valid only if every required dependency is present in a compatible version and no declared incompatibilities exist among the included mods. These relationships can be abstracted as a dependency network in which mods participate in directed requirement and constraint relations.#
+
+Within the mod ecosystem of Minecraft, [.line-through]#users# players construct gameplay configurations by combining independently developed modifications, each of which declares structural constraints through metadata. A mod specifies its identity, supported versions, required dependencies, optional dependencies, and declared incompatibilities.When multiple mods are grouped into a modpack, they form a configuration whose validity depends on the collective satisfaction of all declared requirements and constraints. Adding or removing a mod triggers domain behaviours such as dependency expansion through transitive requirements, compatibility evaluation, and conflict detection.A configuration is considered structurally valid only if every required dependency is present in a compatible version and no declared incompatibilities exist among included mods. These relationships can be abstracted as a dependency network in which mods participate in directed requirement relations and constraint relations.When these constraints are not satisfied, players may experience issues such as game crashes during startup, loading failures, missing content, or unstable gameplay behavior.In real scenarios, a player may attempt to launch the game after adding several mods and encounter immediate crashes, error messages, or incomplete loading of features. These situations often require trial-and-error actions, such as removing mods, changing versions, or searching for missing dependencies, highlighting the complexity of maintaining a valid mod configuration.
 
 === 2.3 Requirements
 
@@ -361,7 +351,7 @@ Why this persona matters: Sam justifies features like automatic download fetchin
 
 Profile:
 
-* 22–30 years old
+* 22-30 years old
 * Runs small multiplayer servers
 * Manages shared modpacks for a group
 * Needs consistency across players
