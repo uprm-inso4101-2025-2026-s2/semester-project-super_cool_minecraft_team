@@ -1,4 +1,6 @@
-/* ===== GRAPH RENDERING LOGIC ===== */
+console.log("graph_visualization.js cargó");
+
+/* ===== GRAPH DATA ===== */
 const nodes = [
     { id: "CoreMod", type: "root", status: "compatible" },
     { id: "JEI", type: "mod", status: "compatible" },
@@ -22,9 +24,25 @@ const relColors = {
     conflict: "var(--red)"
 };
 
+/* ===== DOM REFERENCES ===== */
 const container = document.getElementById("dependency-graph-canvas");
-const width = container.offsetWidth;
-const height = container.offsetHeight;
+const panel = document.getElementById("mod-info-panel");
+const title = document.getElementById("mod-title");
+const status = document.getElementById("mod-conflict-status");
+const list = document.getElementById("mod-deps");
+
+const closePanelBtn = document.getElementById("closePanelBtn");
+const zoomInBtn = document.getElementById("zoomInBtn");
+const zoomOutBtn = document.getElementById("zoomOutBtn");
+const resetViewBtn = document.getElementById("resetViewBtn");
+
+if (!container) {
+    throw new Error('No se encontró el elemento #dependency-graph-canvas');
+}
+
+/* ===== DIMENSIONS ===== */
+const width = container.clientWidth || 800;
+const height = container.clientHeight || 650;
 let simulation = null;
 
 /* ===== JSON VALIDATION LOGIC ===== */
@@ -212,8 +230,9 @@ if (!validationResult.isValid) {
 
     const svg = d3.select("#dependency-graph-canvas")
         .append("svg")
-        .attr("width", "100%")
-        .attr("height", height);
+        .attr("width", width)
+        .attr("height", height)
+        .attr("viewBox", `0 0 ${width} ${height}`);
 
     const mainGroup = svg.append("g");
 
@@ -224,12 +243,17 @@ if (!validationResult.isValid) {
         });
     svg.call(zoom);
 
-    const resetViewBtn = document.getElementById("resetViewBtn");
-    resetViewBtn.addEventListener("click", () => {
+    function zoomBy(factor) {
+        svg.transition()
+            .duration(250)
+            .call(zoom.scaleBy, factor);
+    }
+
+    function resetView() {
         svg.transition()
             .duration(500)
             .call(zoom.transform, d3.zoomIdentity);
-    });
+    }
 
     simulation = d3.forceSimulation(nodes)
         .force("link", d3.forceLink(renderableLinks).id(d => d.id).distance(150))
@@ -242,7 +266,7 @@ if (!validationResult.isValid) {
         .enter()
         .append("line")
         .attr("class", "link")
-        .attr("stroke", d => relColors[d.rel]);
+        .attr("stroke", d => relColors[d.rel] || "white");
 
     const node = mainGroup.append("g")
         .selectAll(".node")
@@ -284,15 +308,20 @@ if (!validationResult.isValid) {
     if (validationResult.warnings.length > 0) {
         showErrorBanner([], validationResult.warnings);
     }
+
+    if (zoomInBtn) zoomInBtn.addEventListener("click", () => zoomBy(1.2));
+    if (zoomOutBtn) zoomOutBtn.addEventListener("click", () => zoomBy(0.8));
+    if (resetViewBtn) resetViewBtn.addEventListener("click", resetView);
+}
+
+/* ===== HELPERS ===== */
+function getNodeId(endpoint) {
+    return typeof endpoint === "object" ? endpoint.id : endpoint;
 }
 
 /* ===== PANEL + FADE LOGIC ===== */
-
 function showPanel(d) {
-    const panel = document.getElementById("mod-info-panel");
-    const title = document.getElementById("mod-title");
-    const status = document.getElementById("mod-conflict-status");
-    const list = document.getElementById("mod-deps");
+    if (!panel || !title || !status || !list) return;
 
     panel.style.display = "flex";
     title.textContent = d.id;
@@ -300,27 +329,50 @@ function showPanel(d) {
     const statusText = d.status === "incompatible" ? "Conflict" : "Compatible";
     status.textContent = statusText;
     status.classList.remove("status-compatible", "status-incompatible");
-    status.classList.add(d.status === "incompatible" ? "status-incompatible" : "status-compatible");
+    status.classList.add(
+        d.status === "incompatible" ? "status-incompatible" : "status-compatible"
+    );
 
     list.innerHTML = "";
 
     const connected = new Set();
-    links.forEach(l => {
-        if (l.source.id === d.id || l.target.id === d.id) {
-            connected.add(l.source.id);
-            connected.add(l.target.id);
+
+    links.forEach((l) => {
+        const sourceId = getNodeId(l.source);
+        const targetId = getNodeId(l.target);
+
+        if (sourceId === d.id || targetId === d.id) {
+            connected.add(sourceId);
+            connected.add(targetId);
         }
     });
 
     d3.selectAll(".node").classed("faded", true);
     d3.selectAll(".link").classed("faded", true);
 
-    d3.selectAll(".node").filter(n => connected.has(n.id)).classed("faded", false);
-    d3.selectAll(".link").filter(l => l.source.id === d.id || l.target.id === d.id).classed("faded", false);
+    d3.selectAll(".node")
+        .filter((n) => connected.has(n.id))
+        .classed("faded", false);
 
-    const connectedLinks = links.filter(l => l.source.id === d.id || l.target.id === d.id);
-    connectedLinks.forEach(l => {
-        const neighbor = l.source.id === d.id ? l.target.id : l.source.id;
+    d3.selectAll(".link")
+        .filter((l) => {
+            const sourceId = getNodeId(l.source);
+            const targetId = getNodeId(l.target);
+            return sourceId === d.id || targetId === d.id;
+        })
+        .classed("faded", false);
+
+    const connectedLinks = links.filter((l) => {
+        const sourceId = getNodeId(l.source);
+        const targetId = getNodeId(l.target);
+        return sourceId === d.id || targetId === d.id;
+    });
+
+    connectedLinks.forEach((l) => {
+        const sourceId = getNodeId(l.source);
+        const targetId = getNodeId(l.target);
+        const neighbor = sourceId === d.id ? targetId : sourceId;
+
         const li = document.createElement("li");
         li.textContent = `${l.rel.toUpperCase()}: ${neighbor}`;
         li.classList.add(`dep-${l.rel}`);
@@ -329,13 +381,21 @@ function showPanel(d) {
 }
 
 function closePanel() {
-    document.getElementById("mod-info-panel").style.display = "none";
+    if (panel) {
+        panel.style.display = "none";
+    }
     d3.selectAll(".node").classed("faded", false);
     d3.selectAll(".link").classed("faded", false);
 }
 
-/* ===== DRAG ===== */
+window.closePanel = closePanel;
 
+/* ===== BUTTON EVENTS ===== */
+if (closePanelBtn) {
+    closePanelBtn.addEventListener("click", closePanel);
+}
+
+/* ===== DRAG ===== */
 function dragstarted(event, d) {
     if (!simulation) return;
     if (!event.active) simulation.alphaTarget(0.3).restart();
@@ -353,4 +413,49 @@ function dragended(event, d) {
     if (!event.active) simulation.alphaTarget(0);
     d.fx = null;
     d.fy = null;
+}
+
+/* ===== SEARCH LOGIC + NODE MATCHING ===== */
+
+function normalizeSearchValue(value) {
+    return (value || "").trim().toLowerCase();
+}
+
+function getNodeSearchLabel(nodeData) {
+    if (!nodeData) return "";
+    return normalizeSearchValue(nodeData.id);
+}
+
+function findNodeByQuery(nodeList, query) {
+    const normalizedQuery = normalizeSearchValue(query);
+
+    if (!normalizedQuery || !Array.isArray(nodeList)) {
+        return null;
+    }
+
+    const exactMatch = nodeList.find(
+        (nodeData) => getNodeSearchLabel(nodeData) === normalizedQuery
+    );
+
+    if (exactMatch) {
+        return exactMatch;
+    }
+
+    return (
+        nodeList.find((nodeData) =>
+            getNodeSearchLabel(nodeData).includes(normalizedQuery)
+        ) || null
+    );
+}
+
+function getMatchingNodes(nodeList, query) {
+    const normalizedQuery = normalizeSearchValue(query);
+
+    if (!normalizedQuery || !Array.isArray(nodeList)) {
+        return [];
+    }
+
+    return nodeList.filter((nodeData) =>
+        getNodeSearchLabel(nodeData).includes(normalizedQuery)
+    );
 }
