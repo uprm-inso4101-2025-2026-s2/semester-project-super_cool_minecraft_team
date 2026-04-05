@@ -551,3 +551,123 @@ body {
         height: 500px;
     }
 }
+
+/* Node States Style */
+
+/* Normal state */
+.node.normal circle {
+    opacity: 1;
+    stroke-width: 1.5px;
+    stroke: rgba(255, 255, 255, 0.3);
+}
+
+.node.normal text {
+    opacity: 1;
+}
+
+/* Selected state */
+.node.selected circle {
+    opacity: 1;
+    stroke-width: 3px;
+    stroke: rgba(255, 255, 255, 0.8);
+    r: 14px;
+    filter: drop-shadow(0 0 8px rgba(12, 86, 200, 0.6));
+}
+
+.node.selected text {
+    opacity: 1;
+    font-weight: 700;
+    fill: #ffffff;
+}
+
+/* Dependency state */
+.node.dependency circle {
+    opacity: 0.9;
+    stroke-width: 2px;
+    stroke: rgba(212, 171, 29, 0.6);
+    r: 11px;
+}
+
+.node.dependency text {
+    opacity: 1;
+    fill: #d6ab1d;
+}
+
+/* Dependent state */
+.node.dependent circle {
+    opacity: 0.85;
+    stroke-width: 2px;
+    stroke: rgba(74, 153, 61, 0.6);
+    r: 11px;
+}
+
+.node.dependent text {
+    opacity: 1;
+    fill: #4a993d;
+}
+
+/* Dimmed state */
+.node.dimmed circle {
+    opacity: 0.25;
+    stroke-width: 1px;
+    stroke: rgba(255, 255, 255, 0.1);
+    filter: grayscale(60%);
+}
+
+.node.dimmed text {
+    opacity: 0.3;
+    fill: rgba(255, 255, 255, 0.3);
+}
+
+/* Link States Style */
+
+/* Normal state */
+.link.normal {
+    opacity: 1;
+    stroke-width: 1.5px;
+}
+
+/* Highlighted state */
+.link.highlighted {
+    opacity: 0.9;
+    stroke-width: 2px;
+    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.2));
+}
+
+/* Dimmed state */
+.link.dimmed {
+    opacity: 0.1;
+    stroke-width: 1px;
+}
+
+/* Animations */
+
+/* Pulse animation for selected node */
+@keyframes nodePulse {
+    0%, 100% {
+        filter: drop-shadow(0 0 4px rgba(12, 86, 200, 0.4));
+    }
+    50% {
+        filter: drop-shadow(0 0 12px rgba(12, 86, 200, 0.8));
+    }
+}
+
+.node-circle.pulse {
+    animation: nodePulse 1.5s ease-in-out infinite;
+}
+
+/* Smooth transitions for state changes */
+.node,
+.node circle,
+.node text,
+.link {
+    transition: opacity 0.3s ease, stroke-width 0.3s ease, 
+                r 0.3s ease, fill 0.3s ease, stroke 0.3s ease,
+                filter 0.3s ease;
+}
+
+/* Legacy faded class (backward compatibility) */
+.node.faded circle,
+.link.faded {
+    opacity: 0.1;
+}
