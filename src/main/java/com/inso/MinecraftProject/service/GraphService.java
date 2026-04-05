@@ -73,4 +73,34 @@ public class GraphService implements IGraphService {
         }
         return links;
     }
+    
+    @Override
+    public GraphResponseDto getGraphData() {
+        // Initialize empty lists for nodes and links
+        List<NodeDto> nodes = new ArrayList<>();
+        List<LinkDto> links = new ArrayList<>();
+        
+        // Iterate through all ModNode objects in the graph using the iterator
+        for (ModNode node : graph) {
+            // Convert each ModNode to a NodeDto and add to nodes list
+            NodeDto nodeDto = mapToNodeDTO(node);
+            if (nodeDto != null) {
+                nodes.add(nodeDto);
+            }
+            
+            // Map all dependencies for this node and add to links list
+            List<LinkDto> dependencyLinks = mapDependencies(node);
+            links.addAll(dependencyLinks);
+            
+            // Map all conflicts for this node and add to links list
+            List<LinkDto> conflictLinks = mapConflicts(node);
+            links.addAll(conflictLinks);
+        }
+        
+        // Combine all nodes and links into a GraphResponseDto and return
+        return GraphResponseDto.builder()
+                .nodes(nodes)
+                .links(links)
+                .build();
+    }
 }
