@@ -7,7 +7,7 @@ const nodes = [
     { id: "Optifine", type: "mod", status: "compatible" },
     { id: "OldPhysics", type: "mod", status: "incompatible" },
     { id: "Patchouli", type: "mod", status: "compatible" },
-    { id: "Botania", type: "mod", status: "compatible" }
+    { id: "Botania", type: "mod", status: "compatible" },
 ];
 
 const links = [
@@ -15,7 +15,7 @@ const links = [
     { source: "CoreMod", target: "Optifine", rel: "optional" },
     { source: "CoreMod", target: "OldPhysics", rel: "conflict" },
     { source: "CoreMod", target: "Patchouli", rel: "required" },
-    { source: "Patchouli", target: "Botania", rel: "required" }
+    { source: "Patchouli", target: "Botania", rel: "required" },
 ];
 
 const relColors = {
@@ -43,92 +43,283 @@ if (!container) {
 /* ===== DIMENSIONS ===== */
 const width = container.clientWidth || 800;
 const height = container.clientHeight || 650;
+let simulation = null;
 
-/* ===== SVG + ZOOM ===== */
-const svg = d3.select("#dependency-graph-canvas")
-    .append("svg")
-    .attr("width", width)
-    .attr("height", height)
-    .attr("viewBox", `0 0 ${width} ${height}`);
+/* ===== JSON VALIDATION LOGIC ===== */
 
-const mainGroup = svg.append("g");
+function validateGraphData(nodes, links) {
+    const errors = [];
+    const warnings = [];
 
-const zoom = d3.zoom()
-    .scaleExtent([0.2, 5])
-    .on("zoom", (event) => {
-        mainGroup.attr("transform", event.transform);
+    if (!Array.isArray(nodes)) {
+        errors.push("Nodes data is not an array");
+        return { isValid: false, errors, warnings, nodeIds: new Set() };
+    }
+
+    if (nodes.length === 0) {
+        errors.push("No nodes found in graph data");
+        return { isValid: false, errors, warnings, nodeIds: new Set() };
+    }
+
+    const nodeIds = new Set();
+
+    nodes.forEach((node, index) => {
+        if (!node) {
+            errors.push(`Node at index ${index} is null or undefined`);
+            return;
+        }
+        if (!node.id) {
+            errors.push(`Node at index ${index} is missing required 'id' property`);
+        } else {
+            nodeIds.add(node.id);
+        }
+        if (!node.type) {
+            errors.push(`Node '${node.id || `index ${index}`}' is missing required 'type' property`);
+        }
+        if (!node.status) {
+            errors.push(`Node '${node.id || `index ${index}`}' is missing required 'status' property`);
+        }
     });
 
-svg.call(zoom);
+    if (!Array.isArray(links)) {
+        errors.push("Links data is not an array");
+        return { isValid: false, errors, warnings, nodeIds };
+    }
 
-function zoomBy(factor) {
-    svg.transition()
-        .duration(250)
-        .call(zoom.scaleBy, factor);
+    const missingDependencies = identifyMissingDependencies(links, nodeIds);
+
+    if (missingDependencies.size > 0) {
+        missingDependencies.forEach(depId => {
+            warnings.push(`Missing dependency detected: '${depId}' is referenced but not found in nodes`);
+            console.warn(`Missing dependency: '${depId}'`);
+        });
+    }
+
+    links.forEach((link, index) => {
+        if (!link) {
+            errors.push(`Link at index ${index} is null or undefined`);
+            return;
+        }
+        if (!link.source) {
+            errors.push(`Link at index ${index} is missing required 'source' property`);
+        }
+        if (!link.target) {
+            errors.push(`Link at index ${index} is missing required 'target' property`);
+        }
+        if (!link.rel) {
+            errors.push(`Link at index ${index} is missing required 'rel' property`);
+        } else if (!["required", "optional", "conflict"].includes(link.rel)) {
+            errors.push(`Link at index ${index} has invalid 'rel' value: '${link.rel}'`);
+        }
+    });
+
+    const isValid = errors.length === 0;
+    return { isValid, errors, warnings, nodeIds, missingDependencies };
 }
 
-function resetView() {
-    svg.transition()
-        .duration(500)
-        .call(zoom.transform, d3.zoomIdentity);
+function identifyMissingDependencies(links, nodeIds) {
+    const missingDependencies = new Set();
+    links.forEach(link => {
+        if (link.source && !nodeIds.has(link.source)) missingDependencies.add(link.source);
+        if (link.target && !nodeIds.has(link.target)) missingDependencies.add(link.target);
+    });
+    return missingDependencies;
 }
 
-/* ===== FORCE SIMULATION ===== */
-const simulation = d3.forceSimulation(nodes)
-    .force("link", d3.forceLink(links).id((d) => d.id).distance(150))
-    .force("charge", d3.forceManyBody().strength(-500))
-    .force("center", d3.forceCenter(width / 2, height / 2));
+function showErrorBanner(errors, warnings) {
+    const banner = document.getElementById("error-warning-banner");
+    const errorContent = document.getElementById("error-banner-content");
+    const closeButton = document.getElementById("error-banner-close");
 
-/* ===== LINKS ===== */
-const link = mainGroup.append("g")
-    .selectAll("line")
-    .data(links)
-    .enter()
-    .append("line")
-    .attr("class", "link")
-    .attr("stroke", (d) => relColors[d.rel] || "white");
+    if (!banner || !errorContent) {
+        console.error("Error banner elements not found in DOM");
+        return;
+    }
 
-/* ===== NODES ===== */
-const node = mainGroup.append("g")
-    .selectAll(".node")
-    .data(nodes)
-    .enter()
-    .append("g")
-    .attr("class", "node")
-    .on("click", (event, d) => showPanel(d))
-    .call(
-        d3.drag()
-            .on("start", dragstarted)
-            .on("drag", dragged)
-            .on("end", dragended)
-    );
+    let bannerHTML = "";
 
-node.append("circle")
-    .attr("r", 10)
-    .attr("fill", (d) => d.type === "root" ? "var(--blue)" : "var(--panel)");
+    if (errors.length > 0) {
+        bannerHTML += "<strong style='color: var(--red);'>⚠ Errors:</strong><ul>";
+        errors.forEach(error => {
+            bannerHTML += `<li>${escapeHtml(error)}</li>`;
+            console.error(`Validation error: ${error}`);
+        });
+        bannerHTML += "</ul>";
+    }
 
-node.append("text")
-    .attr("dx", 14)
-    .attr("dy", ".35em")
-    .text((d) => d.id);
+    if (warnings.length > 0) {
+        bannerHTML += "<strong style='color: var(--yellow);'>⚠ Warnings:</strong><ul>";
+        warnings.forEach(warning => {
+            bannerHTML += `<li>${escapeHtml(warning)}</li>`;
+        });
+        bannerHTML += "</ul>";
+    }
 
-/* ===== TICK ===== */
-simulation.on("tick", () => {
-    link
-        .attr("x1", (d) => d.source.x)
-        .attr("y1", (d) => d.source.y)
-        .attr("x2", (d) => d.target.x)
-        .attr("y2", (d) => d.target.y);
+    errorContent.innerHTML = bannerHTML;
+    banner.style.display = "flex";
 
-    node.attr("transform", (d) => `translate(${d.x},${d.y})`);
-});
+    closeButton.addEventListener("click", () => {
+        banner.style.display = "none";
+    });
+}
+
+function addWarningBadges(missingDependencies) {
+    if (!missingDependencies || missingDependencies.size === 0) return;
+
+    const nodeElements = d3.selectAll(".node");
+    nodeElements.each(function(d) {
+        if (missingDependencies.has(d.id)) {
+            const selection = d3.select(this);
+            selection.append("text")
+                .attr("class", "warning-badge")
+                .attr("dx", -12)
+                .attr("dy", -12)
+                .attr("text-anchor", "middle")
+                .attr("font-size", "14")
+                .attr("fill", "var(--yellow)")
+                .attr("font-weight", "bold")
+                .text("⚠")
+                .style("pointer-events", "none")
+                .style("animation", "pulse-warning 1.5s infinite");
+        }
+    });
+}
+
+function escapeHtml(text) {
+    const div = document.createElement("div");
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function showCriticalErrorMessage() {
+    const container = document.getElementById("dependency-graph-canvas");
+    container.innerHTML = "";
+
+    const errorDiv = document.createElement("div");
+    errorDiv.style.cssText = `
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        padding: 40px;
+        text-align: center;
+        color: var(--red);
+    `;
+
+    errorDiv.innerHTML = `
+        <h2 style="font-size: 1.5rem; margin-bottom: 16px; color: var(--red);">⚠ Unable to Render Graph</h2>
+        <p style="font-size: 1rem; color: var(--text); margin-bottom: 16px;">Critical errors were found in the graph data. Please fix the errors shown above and reload.</p>
+    `;
+
+    container.appendChild(errorDiv);
+}
+
+/* ===== GRAPH INITIALIZATION AND RENDERING ===== */
+
+const validationResult = validateGraphData(nodes, links);
+
+if (!validationResult.isValid) {
+    console.error("Graph data validation failed. Cannot render graph.");
+    showErrorBanner(validationResult.errors, []);
+    showCriticalErrorMessage();
+} else {
+    const renderableLinks = links.filter(link => {
+        return validationResult.nodeIds.has(link.source) && validationResult.nodeIds.has(link.target);
+    });
+
+    const svg = d3.select("#dependency-graph-canvas")
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("viewBox", `0 0 ${width} ${height}`);
+
+    const mainGroup = svg.append("g");
+
+    const zoom = d3.zoom()
+        .scaleExtent([0.2, 5])
+        .on("zoom", (event) => {
+            mainGroup.attr("transform", event.transform);
+        });
+    svg.call(zoom);
+
+    function zoomBy(factor) {
+        svg.transition()
+            .duration(250)
+            .call(zoom.scaleBy, factor);
+    }
+
+    function resetView() {
+        svg.transition()
+            .duration(500)
+            .call(zoom.transform, d3.zoomIdentity);
+    }
+
+    simulation = d3.forceSimulation(nodes)
+        .force("link", d3.forceLink(renderableLinks).id(d => d.id).distance(150))
+        .force("charge", d3.forceManyBody().strength(-500))
+        .force("center", d3.forceCenter(width / 2, height / 2));
+
+    const link = mainGroup.append("g")
+        .selectAll("line")
+        .data(renderableLinks)
+        .enter()
+        .append("line")
+        .attr("class", "link")
+        .attr("stroke", d => relColors[d.rel] || "white");
+
+    const node = mainGroup.append("g")
+        .selectAll(".node")
+        .data(nodes)
+        .enter()
+        .append("g")
+        .attr("class", "node")
+        .on("click", (event, d) => showPanel(d))
+        .call(
+            d3.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended)
+        );
+
+    node.append("circle")
+        .attr("r", 10)
+        .attr("fill", d => d.type === "root" ? "var(--blue)" : "var(--panel)");
+
+    node.append("text")
+        .attr("dx", 14)
+        .attr("dy", ".35em")
+        .text(d => d.id);
+
+    if (validationResult.missingDependencies) {
+        addWarningBadges(validationResult.missingDependencies);
+    }
+
+    simulation.on("tick", () => {
+        link
+            .attr("x1", d => d.source.x)
+            .attr("y1", d => d.source.y)
+            .attr("x2", d => d.target.x)
+            .attr("y2", d => d.target.y);
+
+        node.attr("transform", d => `translate(${d.x},${d.y})`);
+    });
+
+    if (validationResult.warnings.length > 0) {
+        showErrorBanner([], validationResult.warnings);
+    }
+
+    if (zoomInBtn) zoomInBtn.addEventListener("click", () => zoomBy(1.2));
+    if (zoomOutBtn) zoomOutBtn.addEventListener("click", () => zoomBy(0.8));
+    if (resetViewBtn) resetViewBtn.addEventListener("click", resetView);
+}
 
 /* ===== HELPERS ===== */
 function getNodeId(endpoint) {
     return typeof endpoint === "object" ? endpoint.id : endpoint;
 }
 
-/* ===== PANEL LOGIC ===== */
+/* ===== PANEL + FADE LOGIC ===== */
 function showPanel(d) {
     if (!panel || !title || !status || !list) return;
 
@@ -193,7 +384,6 @@ function closePanel() {
     if (panel) {
         panel.style.display = "none";
     }
-
     d3.selectAll(".node").classed("faded", false);
     d3.selectAll(".link").classed("faded", false);
 }
@@ -205,20 +395,9 @@ if (closePanelBtn) {
     closePanelBtn.addEventListener("click", closePanel);
 }
 
-if (zoomInBtn) {
-    zoomInBtn.addEventListener("click", () => zoomBy(1.2));
-}
-
-if (zoomOutBtn) {
-    zoomOutBtn.addEventListener("click", () => zoomBy(0.8));
-}
-
-if (resetViewBtn) {
-    resetViewBtn.addEventListener("click", resetView);
-}
-
 /* ===== DRAG ===== */
 function dragstarted(event, d) {
+    if (!simulation) return;
     if (!event.active) simulation.alphaTarget(0.3).restart();
     d.fx = d.x;
     d.fy = d.y;
@@ -230,6 +409,7 @@ function dragged(event, d) {
 }
 
 function dragended(event, d) {
+    if (!simulation) return;
     if (!event.active) simulation.alphaTarget(0);
     d.fx = null;
     d.fy = null;

@@ -255,6 +255,108 @@ body {
     overflow: hidden;
 }
 
+/* Error & Warning Banner */
+.error-warning-banner {
+    display: none;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding: 16px;
+    background: #2a1515;
+    border: 1.5px solid var(--red);
+    border-radius: var(--radius-md);
+    animation: slideDown 0.3s ease-out;
+}
+
+.error-warning-banner.hidden {
+    display: none;
+}
+
+.banner-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.banner-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--red);
+}
+
+.banner-close-btn {
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+
+.banner-close-btn:hover {
+    color: var(--red);
+}
+
+#error-banner-content {
+    font-size: 0.75rem;
+    line-height: 1.6;
+    color: #e8cccc;
+}
+
+#error-banner-content strong {
+    display: block;
+    margin-top: 8px;
+    margin-bottom: 4px;
+}
+
+#error-banner-content ul {
+    list-style: none;
+    padding-left: 16px;
+}
+
+#error-banner-content li {
+    margin: 4px 0;
+    padding-left: 12px;
+    position: relative;
+}
+
+#error-banner-content li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+}
+
+/* Warning badge animation */
+@keyframes pulse-warning {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.6;
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.warning-badge {
+    animation: pulse-warning 1.5s infinite;
+}
+
 .btn-settings {
     display: none;
 }
@@ -331,6 +433,13 @@ body {
     gap: 4px;
     padding-bottom: 8px;
     border-bottom: 1px solid var(--line-soft);
+}
+
+.top-view-controls {
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+    margin-bottom: 14px;
 }
 
 .detail-label {
@@ -549,5 +658,12 @@ body {
 
     #dependency-graph-canvas {
         height: 500px;
+    }
+
+    .error-warning-banner {
+        margin-left: -14px;
+        margin-right: -14px;
+        margin-top: -16px;
+        border-radius: 0;
     }
 }
