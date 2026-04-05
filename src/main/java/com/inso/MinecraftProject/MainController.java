@@ -11,7 +11,7 @@ public class MainController {
     public String home() {
         return "index";
     }
-
+    
     @GetMapping("/upload")
     public String upload() {
         return "upload";
