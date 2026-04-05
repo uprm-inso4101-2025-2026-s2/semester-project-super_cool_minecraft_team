@@ -1,22 +1,25 @@
 console.log("graph_visualization.js cargó");
 
 /* ===== GRAPH DATA ===== */
-const nodes = [
-    { id: "CoreMod", type: "root", status: "compatible" },
-    { id: "JEI", type: "mod", status: "compatible" },
-    { id: "Optifine", type: "mod", status: "compatible" },
-    { id: "OldPhysics", type: "mod", status: "incompatible" },
-    { id: "Patchouli", type: "mod", status: "compatible" },
-    { id: "Botania", type: "mod", status: "compatible" },
-];
+const rawGraphData = window.graphData || { nodes: [], links: [] };
+const nodes = (rawGraphData.nodes || []).map(node => ({
+    id: node.id,
+    type: node.type || "mod",
+    status: node.status || "compatible"
+}));
 
-const links = [
-    { source: "CoreMod", target: "JEI", rel: "required" },
-    { source: "CoreMod", target: "Optifine", rel: "optional" },
-    { source: "CoreMod", target: "OldPhysics", rel: "conflict" },
-    { source: "CoreMod", target: "Patchouli", rel: "required" },
-    { source: "Patchouli", target: "Botania", rel: "required" },
-];
+const links = (rawGraphData.links || []).map(link => ({
+    source: link.source,
+    target: link.target,
+    rel: link.rel || "required"
+}));
+
+if (nodes.length === 0) {
+    console.warn("No graph data available");
+}
+if (links.length === 0) {
+    console.warn("No graph links available");
+}
 
 const relColors = {
     required: "var(--blue)",
