@@ -89,6 +89,23 @@
                 settings
             </button>
 
+            <div class="search-container">
+                <input 
+                    type="text" 
+                    id="mod-search-input" 
+                    placeholder="Search for a mod..." 
+                    autocomplete="off"
+                    aria-label="Search mods">
+                <button 
+                    id="search-clear-btn" 
+                    class="search-clear-btn" 
+                    style="display: none;"
+                    aria-label="Clear search">
+                    ✕
+                </button>
+                <div id="search-results" class="search-results" role="listbox"></div>
+            </div>
+
             <div id="dependency-graph-canvas"></div>
 
             <div id="mod-info-panel">

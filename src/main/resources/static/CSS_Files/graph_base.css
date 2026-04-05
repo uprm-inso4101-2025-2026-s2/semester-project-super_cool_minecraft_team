@@ -551,3 +551,135 @@ body {
         height: 500px;
     }
 }
+
+/* Search Container */
+.search-container {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 100;
+    width: 300px;
+}
+
+#mod-search-input {
+    width: 100%;
+    padding: 10px 30px 10px 15px;
+    font-size: 14px;
+    border: 2px solid var(--input-border);
+    border-radius: 8px;
+    background: var(--input-bg);
+    color: var(--text);
+    transition: all 0.2s ease;
+}
+
+#mod-search-input:focus {
+    outline: none;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 2px rgba(12, 86, 200, 0.2);
+}
+
+#mod-search-input::placeholder {
+    color: var(--muted);
+}
+
+.search-clear-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0 5px;
+    transition: color 0.2s ease;
+}
+
+.search-clear-btn:hover {
+    color: var(--red);
+}
+
+.search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--panel);
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    margin-top: 5px;
+    max-height: 300px;
+    overflow-y: auto;
+    display: none;
+    z-index: 101;
+}
+
+.search-results.show {
+    display: block;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.search-result-item {
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background 0.1s ease;
+    border-bottom: 1px solid var(--line-soft);
+    font-size: 14px;
+}
+
+.search-result-item:hover,
+.search-result-item:focus {
+    background: var(--input-bg);
+    outline: none;
+}
+
+.search-result-item:last-child {
+    border-bottom: none;
+}
+
+/* Node Highlight Styles */
+.node.highlighted:not(.faded) circle {
+    stroke: var(--blue);
+    stroke-width: 4px;
+    filter: drop-shadow(0 0 8px var(--blue));
+}
+
+.node.highlighted:not(.faded) text {
+    font-weight: bold;
+    fill: var(--blue);
+}
+
+/* Dim Unrelated Nodes Styles */
+.node.faded circle {
+    opacity: 0.3;
+}
+
+.node.faded text {
+    opacity: 0.3;
+}
+
+.link.faded {
+    opacity: 0.1;
+}
+
+/* Smooth transitions */
+.node circle,
+.node text,
+.link {
+    transition: opacity 0.3s ease, stroke-width 0.2s ease, filter 0.2s ease;
+}
+
+/* Responsive */
+@media (max-width: 700px) {
+    .search-container {
+        top: 10px;
+        right: 10px;
+        width: calc(100% - 20px);
+        max-width: 250px;
+    }
+
+    .search-results {
+        max-height: 200px;
+    }
+}
