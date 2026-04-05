@@ -3,30 +3,35 @@
 const filePicker = document.getElementById("file-picker");
 const statusText = document.getElementById("status");
 
-
-// if (!filePicker || !statusText)
-// {
-//     console.error("Required elements not found");
-//     // return; // Is this return ok? Maybe change logic to flow better if needed
-//     // Since without the return, this should lead to an error where filePicker or statusText is null and isn't handled
-// }
-if(filePicker && statusText)
+if (filePicker && statusText)
 {
     filePicker.addEventListener("change", function(event)
     {
-        const files = event.target.files[0];
+        const files = event.target.files;
 
-        if(files.length == 0)
+        if (!files || files.length === 0)
         {
             statusText.textContent = "No files selected";
             return;
         }
 
-        statusText.textContent = 'Uploading ${files.length} file(s)...';
+        const file = files[0];
+
+        // Optional
+        if (!file.name.endsWith(".zip")) {
+            statusText.textContent = "Please upload a .zip file.";
+            return;
+        }
+
+        statusText.textContent = `Uploading ${files.length} file(s)...`;
         filePicker.disabled = true;
 
-        uploadFile(files)
-            .then(() => {statusText.textContent = "Upload successful!";})
+        uploadFile(file)
+            .then(() => 
+            {
+                statusText.textContent = "Upload successful!";
+                window.location.href = "/graph";
+            })
             .catch(() => {statusText.textContent = "Upload failed.";})
             .finally(() => {filePicker.disabled = false;});
     });
@@ -34,27 +39,26 @@ if(filePicker && statusText)
 else
     console.error("Error: Required elements not found.");
 
-async function uploadFile(files)
+async function uploadFile(file)
 {
-    const baseUrl = "http://localhost:8080/upload"; //TEMPORARY
+    const baseUrl = "http://localhost:8080/api/modpack/zip";
 
     try
     {
         const fData = new FormData();
 
-        for(let i = 0; i < files.length; i++)
-            fData.append("files", files[i]);
+        fData.append("file", file);
 
-        const resp = await fetch(baseUrl,{method: "POST", body: fData});
+        const resp = await fetch(baseUrl, {method: "POST", body: fData});
 
-        if(!resp.ok)
+        if (!resp.ok)
             throw new Error("Upload failed");
 
-        console.log("Server response: ", await resp.json());
+        console.log("Server response:", await resp.text());
     }
-    catch(errorC)
+    catch (errorC)
     {
-        console.error("Upload error: ", errorC);
+        console.error("Upload error:", errorC);
         throw errorC;
     }
 }
