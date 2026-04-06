@@ -46,7 +46,7 @@ body {
 body {
     display: flex;
     flex-direction: column;
-    overflow-x: hidden;
+    overflow: hidden;
 }
 
 /* Header */
@@ -255,6 +255,108 @@ body {
     overflow: hidden;
 }
 
+/* Error & Warning Banner */
+.error-warning-banner {
+    display: none;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding: 16px;
+    background: #2a1515;
+    border: 1.5px solid var(--red);
+    border-radius: var(--radius-md);
+    animation: slideDown 0.3s ease-out;
+}
+
+.error-warning-banner.hidden {
+    display: none;
+}
+
+.banner-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.banner-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--red);
+}
+
+.banner-close-btn {
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+
+.banner-close-btn:hover {
+    color: var(--red);
+}
+
+#error-banner-content {
+    font-size: 0.75rem;
+    line-height: 1.6;
+    color: #e8cccc;
+}
+
+#error-banner-content strong {
+    display: block;
+    margin-top: 8px;
+    margin-bottom: 4px;
+}
+
+#error-banner-content ul {
+    list-style: none;
+    padding-left: 16px;
+}
+
+#error-banner-content li {
+    margin: 4px 0;
+    padding-left: 12px;
+    position: relative;
+}
+
+#error-banner-content li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+}
+
+/* Warning badge animation */
+@keyframes pulse-warning {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.6;
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.warning-badge {
+    animation: pulse-warning 1.5s infinite;
+}
+
 .btn-settings {
     display: none;
 }
@@ -279,6 +381,48 @@ body {
     display: block;
     width: 100%;
     height: 100%;
+}
+/* Pan/Drag Canvas Interaction Feedback */
+#dependency-graph-canvas {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    touch-action: none;
+}
+
+#dependency-graph-canvas svg {
+    cursor: grab;
+    transition: cursor 0.1s ease;
+}
+
+#dependency-graph-canvas svg:active {
+    cursor: grabbing !important;
+}
+
+/* Prevent text selection during pan */
+#dependency-graph-canvas g,
+#dependency-graph-canvas line,
+#dependency-graph-canvas circle,
+#dependency-graph-canvas text {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    pointer-events: auto;
+}
+
+/* Smooth cursor transition for better UX */
+svg {
+    cursor: grab;
+}
+
+svg:hover {
+    cursor: grab;
+}
+
+svg:active {
+    cursor: grabbing;
 }
 
 /* Graph styling */
@@ -331,6 +475,13 @@ body {
     gap: 4px;
     padding-bottom: 8px;
     border-bottom: 1px solid var(--line-soft);
+}
+
+.top-view-controls {
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+    margin-bottom: 14px;
 }
 
 .detail-label {
@@ -550,9 +701,148 @@ body {
     #dependency-graph-canvas {
         height: 500px;
     }
+
+    .error-warning-banner {
+        margin-left: -14px;
+        margin-right: -14px;
+        margin-top: -16px;
+        border-radius: 0;
+    }
 }
 
-/* Node States Style */
+/* Search Container */
+.search-container {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 100;
+    width: 300px;
+}
+
+#mod-search-input {
+    width: 100%;
+    padding: 10px 30px 10px 15px;
+    font-size: 14px;
+    border: 2px solid var(--input-border);
+    border-radius: 8px;
+    background: var(--input-bg);
+    color: var(--text);
+    transition: all 0.2s ease;
+}
+
+#mod-search-input:focus {
+    outline: none;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 2px rgba(12, 86, 200, 0.2);
+}
+
+#mod-search-input::placeholder {
+    color: var(--muted);
+}
+
+.search-clear-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0 5px;
+    transition: color 0.2s ease;
+}
+
+.search-clear-btn:hover {
+    color: var(--red);
+}
+
+.search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--panel);
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    margin-top: 5px;
+    max-height: 300px;
+    overflow-y: auto;
+    display: none;
+    z-index: 101;
+}
+
+.search-results.show {
+    display: block;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.search-result-item {
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background 0.1s ease;
+    border-bottom: 1px solid var(--line-soft);
+    font-size: 14px;
+}
+
+.search-result-item:hover,
+.search-result-item:focus {
+    background: var(--input-bg);
+    outline: none;
+}
+
+.search-result-item:last-child {
+    border-bottom: none;
+}
+
+/* Node Highlight Styles */
+.node.highlighted:not(.faded) circle {
+    stroke: var(--blue);
+    stroke-width: 4px;
+    filter: drop-shadow(0 0 8px var(--blue));
+}
+
+.node.highlighted:not(.faded) text {
+    font-weight: bold;
+    fill: var(--blue);
+}
+
+/* Dim Unrelated Nodes Styles */
+.node.faded circle {
+    opacity: 0.3;
+}
+
+.node.faded text {
+    opacity: 0.3;
+}
+
+.link.faded {
+    opacity: 0.1;
+}
+
+/* Smooth transitions */
+.node circle,
+.node text,
+.link {
+    transition: opacity 0.3s ease, stroke-width 0.2s ease, filter 0.2s ease;
+}
+
+/* Responsive */
+@media (max-width: 700px) {
+    .search-container {
+        top: 10px;
+        right: 10px;
+        width: calc(100% - 20px);
+        max-width: 250px;
+    }
+
+    .search-results {
+        max-height: 200px;
+    }
+}
+
+/* Node state styles */
 
 /* Normal state */
 .node.normal circle {
@@ -619,7 +909,7 @@ body {
     fill: rgba(255, 255, 255, 0.3);
 }
 
-/* Link States Style */
+/* Link state styles */
 
 /* Normal state */
 .link.normal {
@@ -664,10 +954,4 @@ body {
     transition: opacity 0.3s ease, stroke-width 0.3s ease, 
                 r 0.3s ease, fill 0.3s ease, stroke 0.3s ease,
                 filter 0.3s ease;
-}
-
-/* Legacy faded class (backward compatibility) */
-.node.faded circle,
-.link.faded {
-    opacity: 0.1;
 }
