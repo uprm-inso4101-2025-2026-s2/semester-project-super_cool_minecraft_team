@@ -260,54 +260,97 @@ By shifting the experience away from text-heavy troubleshooting and toward a cle
 
 == 2.2 Narrative
 
-[.line-through]#Within the mod ecosystem of Minecraft, users construct gameplay configurations by combining independently developed modifications, each of which declares structural constraints through metadata. A mod specifies its identity, supported versions, required dependencies, optional dependencies, and declared incompatibilities. When multiple mods are grouped into a modpack, they form a configuration whose validity depends on the collective satisfaction of all declared requirements and constraints. Adding or removing a mod triggers domain behaviours such as dependency expansion through transitive requirements, compatibility evaluation, and conflict detection. A configuration is considered structurally valid only if every required dependency is present in a compatible version and no declared incompatibilities exist among the included mods. These relationships can be abstracted as a dependency network in which mods participate in directed requirement and constraint relations.#
+[.line-through.red]#Within the mod ecosystem of Minecraft, users construct gameplay configurations by combining independently developed modifications, each of which declares structural constraints through metadata. A mod specifies its identity, supported versions, required dependencies, optional dependencies, and declared incompatibilities. When multiple mods are grouped into a modpack, they form a configuration whose validity depends on the collective satisfaction of all declared requirements and constraints. Adding or removing a mod triggers domain behaviours such as dependency expansion through transitive requirements, compatibility evaluation, and conflict detection. A configuration is considered structurally valid only if every required dependency is present in a compatible version and no declared incompatibilities exist among the included mods. These relationships can be abstracted as a dependency network in which mods participate in directed requirement and constraint relations.#
 
-Within the mod ecosystem of Minecraft, [.line-through]#users# players construct gameplay configurations by combining independently developed modifications, each of which declares structural constraints through metadata. A mod specifies its identity, supported versions, required dependencies, optional dependencies, and declared incompatibilities.When multiple mods are grouped into a modpack, they form a configuration whose validity depends on the collective satisfaction of all declared requirements and constraints. Adding or removing a mod triggers domain behaviours such as dependency expansion through transitive requirements, compatibility evaluation, and conflict detection.A configuration is considered structurally valid only if every required dependency is present in a compatible version and no declared incompatibilities exist among included mods. These relationships can be abstracted as a dependency network in which mods participate in directed requirement relations and constraint relations.When these constraints are not satisfied, players may experience issues such as game crashes during startup, loading failures, missing content, or unstable gameplay behavior.In real scenarios, a player may attempt to launch the game after adding several mods and encounter immediate crashes, error messages, or incomplete loading of features. These situations often require trial-and-error actions, such as removing mods, changing versions, or searching for missing dependencies, highlighting the complexity of maintaining a valid mod configuration.
+Within the mod ecosystem of Minecraft, [.line-through.red]#users# players construct gameplay configurations by combining independently developed modifications, each of which declares structural constraints through metadata. A mod specifies its identity, supported versions, required dependencies, optional dependencies, and declared incompatibilities.When multiple mods are grouped into a modpack, they form a configuration whose validity depends on the collective satisfaction of all declared requirements and constraints. Adding or removing a mod triggers domain behaviours such as dependency expansion through transitive requirements, compatibility evaluation, and conflict detection.A configuration is considered structurally valid only if every required dependency is present in a compatible version and no declared incompatibilities exist among included mods. These relationships can be abstracted as a dependency network in which mods participate in directed requirement relations and constraint relations.When these constraints are not satisfied, players may experience issues such as game crashes during startup, loading failures, missing content, or unstable gameplay behavior.In real scenarios, a player may attempt to launch the game after adding several mods and encounter immediate crashes, error messages, or incomplete loading of features. These situations often require trial-and-error actions, such as removing mods, changing versions, or searching for missing dependencies, highlighting the complexity of maintaining a valid mod configuration.
 
 === 2.3 Requirements
 
-==== Team C - Frontend (Mod Uploading) Requirements
+* [.line-through.red]#The system shall provide a user interface that allows the user to upload a modpack file or a supported mods folder.#
+  The system shall provide a mechanism to upload a modpack file or a supported mods folder.
 
-* The system shall provide a user interface that allows the user to upload a modpack file or a supported mods folder.
-* The system shall validate that the uploaded file is not empty and is in a supported format before processing.
-* The system shall display real-time feedback during upload (idle, uploading, processing, success, error).
-* The system shall prevent submission if validation fails and display a clear, user-friendly error message.
-* The system shall allow the user to retry the upload process without restarting the application.
-* The UI shall provide clear instructions describing how users can compress their modpack into a .zip file before uploading.
+* [.line-through.red]#The system shall validate that the uploaded file is not empty and is in a supported format before processing.#
+  The system shall validate that the uploaded file is not empty and conforms to a supported format before processing.
+
+* [.line-through.red]#The system shall display real-time feedback during upload (idle, uploading, processing, success, error).#
+  The system shall provide real-time feedback during the upload process, including states such as idle, uploading, processing, success, and error.
+
+* [.line-through.red]#The system shall prevent submission if validation fails and display a clear, user-friendly error message.#
+  The system shall reject any upload that fails validation and provide a clear error message describing the issue.
+
+* [.line-through.red]#The system shall allow the user to retry the upload process without restarting the application.#
+  The system shall enable retry of the upload process without requiring application restart.
+
+* [.line-through.red]#The UI shall provide clear instructions describing how users can compress their modpack into a .zip file before uploading.#
+  The system shall provide instructions describing how to compress a modpack into a .zip file prior to upload.
 
 ==== 2.3.1 Domain Requirements
 
 This section derives requirements from observed properties of the Minecraft modding domain.
 Each requirement is grounded in the domain narrative and domain events.
 
-* DR-1 — Mod Identity: The system shall represent each Mod with an identifier and a version such that two Mods are distinguishable by (identifier, version).
-* DR-2 — Declared Dependency Relationships: The system shall represent declared dependency relationships as directed relations from a source Mod to a target Mod.
-* DR-3 — Dependency Type Exclusivity: The system shall classify each declared relationship between two Mods into exactly one of the following types: required, optional, or incompatible.
-* DR-4 — Version Constraints: The system shall associate a version constraint to a dependency or incompatibility relation when such a constraint is declared.
-* DR-5 — Structural Validity: The system shall determine whether a Modpack is structurally valid by verifying that:
+* [.line-through.red]#DR-1 — Mod Identity: The system shall represent each Mod with an identifier and a version such that two Mods are distinguishable by (identifier, version).#
+  DR-1 — Mod Identity: The system shall represent each Mod using a unique identifier and a version, such that any two Mods are distinguishable by the pair (identifier, version).
+
+* [.line-through.red]#DR-2 — Declared Dependency Relationships: The system shall represent declared dependency relationships as directed relations from a source Mod to a target Mod.#
+  DR-2 — Declared Dependency Relationships: The system shall represent dependency relationships between Mods as directed relationships from a source Mod to a target Mod.
+
+* [.line-through.red]#DR-3 — Dependency Type Exclusivity: The system shall classify each declared relationship between two Mods into exactly one of the following types: required, optional, or incompatible.#
+  DR-3 — Dependency Type Exclusivity: The system shall classify each relationship between two Mods into exactly one of the following types: required, optional, or incompatible.
+
+* [.line-through.red]#DR-4 — Version Constraints: The system shall associate a version constraint to a dependency or incompatibility relation when such a constraint is declared.#
+  DR-4 — Version Constraints: The system shall associate version constraints with dependency or incompatibility relationships when such constraints are declared.
+
+* [.line-through.red]#DR-5 — Structural Validity: The system shall determine whether a Modpack is structurally valid by verifying that:#
+  DR-5 — Structural Validity: The system shall determine whether a Modpack is structurally valid by verifying that:
 ** (a) all required dependencies are present,
 ** (b) no declared incompatibilities are violated,
 ** (c) all version constraints are satisfied.
-* DR-6 — Transitive Dependency Closure: The system shall compute the transitive closure of required dependencies.
-* DR-7 — Missing Dependency Identification: The system shall identify each missing required dependency in a Modpack.
-* DR-8 — Incompatibility Detection: The system shall detect incompatibility violations in a Modpack.
-* DR-9 — Circular Dependency Detection: The system shall detect circular dependency structures in the dependency network.
-* DR-10 — Resolution Result: The system shall produce a resolution result identifying satisfied dependencies, missing dependencies, incompatibilities, version violations, and cycles.
+
+* [.line-through.red]#DR-6 — Transitive Dependency Closure: The system shall compute the transitive closure of required dependencies.#
+  DR-6 — Transitive Dependency Closure: The system shall compute all transitive required dependencies derived from direct dependency relationships.
+
+* [.line-through.red]#DR-7 — Missing Dependency Identification: The system shall identify each missing required dependency in a Modpack.#
+  DR-7 — Missing Dependency Identification: The system shall identify all required dependencies that are not present in a given Modpack.
+
+* [.line-through.red]#DR-8 — Incompatibility Detection: The system shall detect incompatibility violations in a Modpack.#
+  DR-8 — Incompatibility Detection: The system shall detect all incompatibility violations between Mods in a Modpack.
+
+* [.line-through.red]#DR-9 — Circular Dependency Detection: The system shall detect circular dependency structures in the dependency network.#
+  DR-9 — Circular Dependency Detection: The system shall detect cycles within the dependency network of a Modpack.
+
+* [.line-through.red]#DR-10 — Resolution Result: The system shall produce a resolution result identifying satisfied dependencies, missing dependencies, incompatibilities, version violations, and cycles.#
+  DR-10 — Resolution Result: The system shall produce a resolution result that explicitly identifies:
+** (a) satisfied dependencies,
+** (b) missing dependencies,
+** (c) incompatibilities,
+** (d) version constraint violations,
+** (e) circular dependencies.
 
 ==== 2.3.2 Personas
 
-The following personas represent typical stakeholders who would use the mod dependency analyzer web application.
-They justify the previously defined epics and user stories.
+[.line-through.red]#The following personas represent typical stakeholders who would use the mod dependency analyzer web application.#
+[.line-through.red]#They justify the previously defined epics and user stories.#
+The following personas represent realistic players within the Minecraft modding ecosystem.
+Each persona reflects real-world behaviors, motivations, and challenges observed in the domain.
 
-===== Persona 1 — "the Modpack Builder"
+[.line-through.red]#===== Persona 1 — "the Modpack Builder"#
+
+===== Persona 1 — Alex Rivera, the Modpack Builder
 
 Profile:
 
-* 20 - 25 years old
+* [.line-through.red]#20 - 25 years old#
+  22 years old
 * Experienced Minecraft player
 * Builds custom modpacks for personal use or friends
 * Familiar with Fabric and mod loaders
 * Comfortable with technical tools but values automation
+
+Background:
+
+* Alex is a university student who enjoys experimenting with different modpacks and sharing them with friends.
+* He often combines multiple mods to create new gameplay experiences and expects them to work reliably.
 
 Goals:
 
@@ -321,17 +364,30 @@ Frustrations:
 * Manually tracking dependencies
 * Broken modpacks due to missing or incompatible versions
 * Searching multiple websites for correct download links
+* Difficulty identifying which mod is causing a failure
 
-Why this persona matters: Alex justifies features such as automatic dependency detection, graph visualization, conflict resolution, and modpack re-packaging.
+[.line-through.red]#Why this persona matters: Alex justifies features such as automatic dependency detection, graph visualization, conflict resolution, and modpack re-packaging.#
+Why this persona matters:
+Alex highlights the need for automated dependency analysis, conflict detection, and clear visualization of mod relationships.
 
-===== Persona 2 — "the Casual Player"
+---
+
+[.line-through.red]#===== Persona 2 — "the Casual Player"#
+
+===== Persona 2 — Sam Torres, the Casual Player
 
 Profile:
 
-* 16 - 22 years old
+* [.line-through.red]#16 - 22 years old#
+  18 years old
 * Limited technical knowledge of mod loaders
 * Downloads modpacks from friends or online communities
 * Wants simple, reliable setup
+
+Background:
+
+* Sam is a casual player who prefers a plug-and-play experience and avoids technical configurations whenever possible.
+* When something goes wrong, he struggles to understand how to fix it.
 
 Goals:
 
@@ -344,17 +400,30 @@ Frustrations:
 * Game crashes due to missing mods
 * Confusing download pages
 * Not knowing which dependency version is correct
+* Feeling overwhelmed by technical details
 
-Why this persona matters: Sam justifies features like automatic download fetching, clear dependency previews, and guided fixes for missing mods.
+[.line-through.red]#Why this persona matters: Sam justifies features like automatic download fetching, clear dependency previews, and guided fixes for missing mods.#
+Why this persona matters:
+Sam emphasizes the importance of clear guidance, simplified workflows, and understandable error feedback for non-technical players.
 
-===== Persona 3 — "the Server Organizer"
+---
+
+[.line-through.red]#===== Persona 3 — "the Server Organizer"#
+
+===== Persona 3 — Daniel Morales, the Server Organizer
 
 Profile:
 
-* 22-30 years old
+* [.line-through.red]#22-30 years old#
+  27 years old
 * Runs small multiplayer servers
 * Manages shared modpacks for a group
 * Needs consistency across players
+
+Background:
+
+* Daniel manages a shared modpack used by multiple players and is responsible for keeping all versions consistent.
+* Even small errors can affect the entire group, so he values reliability and control.
 
 Goals:
 
@@ -367,41 +436,124 @@ Frustrations:
 * Version mismatches between players
 * Manual updates for every change
 * Lack of visibility into dependency chains
+* Difficulty ensuring consistency across multiple systems
+
+Why this persona matters:
+Daniel highlights the need for version control, dependency tracking, and reliable validation across shared environments.
 
 ==== 2.3.3 Interface Requirements
 
-* The subsystem must be capable of receiving dependency metadata from the Mod Uploading subsystem, including mod identifiers, version information, and declared dependencies.
-* Queries to the Modrinth API (or similar repositories) should allow the system to locate required mods using dependency identifiers.
-* Download URLs for compatible dependency versions must be retrieved and made available for installation.
-* Structured results of the dependency resolution process are returned to the Visualization subsystem, including resolved dependencies, version matches, and any unresolved items.
-* Notifications are provided whenever a required dependency cannot be resolved, ensuring the system or user is aware of the issue.
-* Failed API requests should trigger automatic retries up to a configurable limit to maintain reliability.
-* All interactions with external APIs are logged for debugging, verification, and auditing purposes.
+===== External System Interfaces
+
+* [.line-through.red]#The subsystem must be capable of receiving dependency metadata from the Mod Uploading subsystem, including mod identifiers, version information, and declared dependencies.#
+  IR-1 — Metadata Reception: The subsystem shall receive dependency metadata from the Mod Uploading subsystem, including mod identifiers, version information, and declared dependency relationships.
+
+* [.line-through.red]#Queries to the Modrinth API (or similar repositories) should allow the system to locate required mods using dependency identifiers.#
+  IR-2 — External Repository Querying: The subsystem shall query external repositories (e.g., Modrinth API) using dependency identifiers to locate required Mods and retrieve associated metadata.
+
+* [.line-through.red]#Download URLs for compatible dependency versions must be retrieved and made available for installation.#
+  IR-3 — Download URL Retrieval: The subsystem shall retrieve download URLs for compatible dependency versions from external repositories and provide them to the corresponding subsystem for installation.
+
+* [.line-through.red]#Structured results of the dependency resolution process are returned to the Visualization subsystem, including resolved dependencies, version matches, and any unresolved items.#
+  IR-4 — Resolution Result Transfer: The subsystem shall return structured dependency resolution results to the Visualization subsystem, including resolved dependencies, version matches, unresolved dependencies, incompatibilities, and version constraint violations.
+
+* [.line-through.red]#Notifications are provided whenever a required dependency cannot be resolved, ensuring the system or user is aware of the issue.#
+  IR-5 — Unresolved Dependency Notification: The subsystem shall generate a notification whenever a required dependency cannot be resolved.
+
+* [.line-through.red]#Failed API requests should trigger automatic retries up to a configurable limit to maintain reliability.#
+  IR-6 — API Retry Handling: The subsystem shall retry failed external API requests up to a configurable maximum number of attempts.
+
+* [.line-through.red]#All interactions with external APIs are logged for debugging, verification, and auditing purposes.#
+  IR-7 — External Interaction Logging: The subsystem shall log all interactions with external repositories, including requests, responses, and failures.
+
+---
+
+===== User Interface Requirements
+
+* [.line-through.red]#Allow users to upload mod files or submit mod metadata for processing.#
+  UI-1 — The system shall provide means for users to upload mod files or submit mod metadata for processing.
+
+* [.line-through.red]#Validate uploaded metadata and report errors for missing or malformed entries.#
+  UI-2 — The system shall validate uploaded metadata and report errors for missing or malformed entries.
+
+* [.line-through.red]#Provide client-side feedback and visual indicators during file upload.#
+  UI-3 — The interface shall provide visual feedback and progress indicators during file upload operations.
+
+* [.line-through.red]#Implement responsive UI behavior to ensure usability across screen sizes.#
+  UI-4 — The interface shall implement responsive behavior to support usability across different screen sizes.
+
+* [.line-through.red]#Allow users to visually explore mod dependency relationships through an interactive dependency graph.#
+  UI-5 — The system shall provide an interactive dependency graph to visualize mod dependency relationships.
+
+* [.line-through.red]#Allow users to select a mod and view its required, optional, and incompatible dependencies.#
+  UI-6 — The interface shall allow users to select a mod and view its required, optional, and incompatible dependencies.
+
+* [.line-through.red]#Provide a search interface to locate mods by name or identifier.#
+  UI-7 — The system shall provide a search interface to locate Mods by name or identifier.
+
+* [.line-through.red]#Display clear visual indicators to distinguish between satisfied, missing, and incompatible dependencies.#
+  UI-8 — The interface shall display visual indicators distinguishing satisfied, missing, and incompatible dependencies.
+
+* [.line-through.red]#Provide a detailed view panel showing information about the selected mod and its dependency relationships.#
+  UI-9 — The interface shall display a detailed view panel containing information about the selected Mod and its dependency relationships.
+
+* [.line-through.red]#Allow users to navigate between related mods directly from the dependency visualization.#
+  UI-10 — The interface shall allow navigation between related Mods through the dependency visualization.
+
+* [.line-through.red]#Provide clear feedback messages when dependency data cannot be loaded or is incomplete.#
+  UI-11 — The system shall provide feedback messages when dependency data cannot be loaded or is incomplete.
+
+* [.line-through.red]#Maintain consistent layout and labeling to ensure ease of understanding for non-technical users.#
+  UI-12 — The interface shall maintain consistent layout and labeling for ease of understanding by non-technical users.
 
 ==== 2.3.4 Machine Requirements
 
 Performance:
 
-* The subsystem shall process dependency resolution requests efficiently, ensuring reasonable response times under typical user workloads.
-* The system shall support multiple simultaneous requests without significant performance degradation or instability.
-* Retrieval of dependency metadata and download links shall be performed in a timely manner to maintain smooth workflow execution.
-* The subsystem shall efficiently read and analyze modpack contents, including individual mod files, to detect dependencies and incompatibilities.
+* [.line-through.red]#The subsystem shall process dependency resolution requests efficiently, ensuring reasonable response times under typical user workloads.#
+  MR-1 — The subsystem shall process dependency resolution requests within 2 seconds for modpacks containing up to 100 Mods.
+
+* [.line-through.red]#The system shall support multiple simultaneous requests without significant performance degradation or instability.#
+  MR-2 — The system shall support at least 50 concurrent dependency resolution requests without failure.
+
+* [.line-through.red]#Retrieval of dependency metadata and download links shall be performed in a timely manner to maintain smooth workflow execution.#
+  MR-3 — The system shall retrieve dependency metadata and download links within 1 second per external request.
+
+* [.line-through.red]#The subsystem shall efficiently read and analyze modpack contents, including individual mod files, to detect dependencies and incompatibilities.#
+  MR-4 — The subsystem shall analyze modpack contents and detect dependencies and incompatibilities within 2 seconds for modpacks containing up to 100 Mods.
+
+---
 
 Reliability:
 
-* The subsystem shall maintain stable operation during normal usage, with minimal downtime.
-* External API failures shall be handled gracefully, ensuring partial failures do not crash the system or corrupt stored data.
-* Errors and exceptions shall be logged to support debugging, testing, and verification activities.
+* [.line-through.red]#The subsystem shall maintain stable operation during normal usage, with minimal downtime.#
+  MR-5 — The subsystem shall maintain at least 99% uptime under normal operating conditions.
+
+* [.line-through.red]#External API failures shall be handled gracefully, ensuring partial failures do not crash the system or corrupt stored data.#
+  MR-6 — The system shall handle external API failures without crashing and shall preserve all previously processed data.
+
+* [.line-through.red]#Errors and exceptions shall be logged to support debugging, testing, and verification activities.#
+  MR-7 — The system shall log all errors and exceptions, including timestamps and error details.
+
+---
 
 Resource and Stability:
 
-* The subsystem shall operate within reasonable CPU and memory limits to avoid negatively impacting other system components.
-* The system shall ensure consistent behavior during extended processing tasks such as large modpack analysis.
+* [.line-through.red]#The subsystem shall operate within reasonable CPU and memory limits to avoid negatively impacting other system components.#
+  MR-8 — The subsystem shall not exceed 70% CPU utilization and 512 MB of memory under normal workload conditions.
+
+* [.line-through.red]#The system shall ensure consistent behavior during extended processing tasks such as large modpack analysis.#
+  MR-9 — The system shall maintain stable operation during analysis of modpacks containing up to 500 Mods without failure.
+
+---
 
 Scalability:
 
-* The system shall support growth in mod volume, dependency complexity, and user activity without requiring architectural redesign.
-* The subsystem architecture shall allow integration of additional mod sources or APIs in future iterations.
+* [.line-through.red]#The system shall support growth in mod volume, dependency complexity, and user activity without requiring architectural redesign.#
+  MR-10 — The system shall support scaling to modpacks containing up to 500 Mods without degradation in functionality.
+
+* [.line-through.red]#The subsystem architecture shall allow integration of additional mod sources or APIs in future iterations.#
+  MR-11 — The subsystem shall support integration of at least one additional external mod repository without requiring major architectural changes.
 
 === 2.4 Terminology
 
@@ -831,43 +983,6 @@ Each term includes:
   Outcome: The system confirms the structural integrity of the modpack and allows it to proceed to validation or deployment stages. +
   State Change: The modpack configuration transitions from "inconsistent or under validation" to "consistent configuration state."
 
-=== 2.8 Interface Requirements
-
-* Allow users to upload mod files or submit mod metadata for processing.
-* Validate uploaded metadata and report errors for missing or malformed entries.
-* Provide client-side feedback and visual indicators during file upload.
-* Implement responsive UI behavior to ensure usability across screen sizes.
-* Allow users to visually explore mod dependency relationships through an interactive dependency graph.
-* Allow users to select a mod and view its required, optional, and incompatible dependencies.
-* Provide a search interface to locate mods by name or identifier.
-* Display clear visual indicators to distinguish between satisfied, missing, and incompatible dependencies.
-* Provide a detailed view panel showing information about the selected mod and its dependency relationships.
-* Allow users to navigate between related mods directly from the dependency visualization.
-* Provide clear feedback messages when dependency data cannot be loaded or is incomplete.
-* Maintain consistent layout and labeling to ensure ease of understanding for non-technical users.
-
-The system shall provide a user-friendly and responsive interface that supports the visualization and management of mod dependencies.
-The interface must ensure clarity, accessibility, and usability for both technical and non-technical users.
-
-.A. File Submission and Validation
-. The system shall allow users to upload mod files or submit mod metadata for processing.
-. The system shall validate uploaded metadata and report errors for missing or malformed entries.
-. The interface shall provide visual feedback and progress indicators during file upload operations.
-
-.B. Dependency Visualization
-. The system shall provide an interactive dependency graph to visually explore mod relationships.
-. Users shall be able to select a mod and view its required, optional, and incompatible dependencies.
-. The interface shall display clear visual indicators distinguishing satisfied, missing, and incompatible dependencies.
-. Users shall be able to navigate between related mods directly from the dependency visualization.
-
-.C. Search and Information Display
-. The system shall provide a search interface to locate mods by name or identifier.
-. The interface shall display a detailed view panel containing information about the selected mod and its dependency relationships.
-
-.D. Usability and Responsiveness
-. The interface shall implement responsive behavior to ensure usability across different screen sizes.
-. The system shall provide clear feedback messages when dependency data cannot be loaded or is incomplete.
-. The layout and labeling shall remain consistent to ensure ease of understanding for non-technical users.
 
 === 2.9 Operational Requirements
 
