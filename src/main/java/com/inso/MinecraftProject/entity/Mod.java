@@ -26,39 +26,38 @@ public class Mod {
     private @NonNull List<Mod> conflicts;
 
     public boolean isMandatory() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isMandatory'");
+        return depends != null && !depends.isEmpty();
     }
 
     public boolean isMandatory1() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return isMandatory();
     }
 
     public List<Mod> getConflicts() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return conflicts;
     }
 
     public String getId() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return id;
     }
 
     public List<Mod> getDepends() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return depends;
     }
 
     public List<Mod> getBreaks() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return breaks;
     }
 
     public List<Mod> getSuggests() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return suggests;
     }
 
     public String getVersion() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return version;
     }
 
     public List<Mod> getRecommends() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return recommends;
     }
 }

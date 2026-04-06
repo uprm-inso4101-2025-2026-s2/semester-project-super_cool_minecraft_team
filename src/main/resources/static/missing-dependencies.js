@@ -16,6 +16,13 @@ async function missingDependenciesPage() {
 
     try {
         const data = await getMissingDependencies();
+
+        if (data.error) {
+            errorState.textContent = data.error;
+            errorState.hidden = false;
+            return;
+        }
+        
         const missingDependencies = Array.isArray(data.missingDependencies) ? data.missingDependencies : [];
         const resolvedById = new Map(
             (Array.isArray(data.resolvedDependencies) ? data.resolvedDependencies : [])
@@ -94,12 +101,8 @@ function createDependencyCard(dependency, resolvedDependency) {
 }
 
 async function getMissingDependencies() {
-    const params = new URLSearchParams(window.location.search);
-    const mode = params.get("mode");
-    const endpoint = mode
-        ? `/api/dependencies/missing?mode=${encodeURIComponent(mode)}`
-        : "/api/dependencies/missing";
-
+    const endpoint = "/api/missing-dependencies";
+    
     const response = await fetch(endpoint, {
         headers: {
             Accept: "application/json"

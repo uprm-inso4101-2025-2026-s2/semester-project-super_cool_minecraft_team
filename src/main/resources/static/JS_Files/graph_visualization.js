@@ -532,12 +532,6 @@ if (closePanelBtn) {
     closePanelBtn.addEventListener("click", closePanel);
 }
 
-/**
- * Handles node click events with toggle functionality
- * Clicking the same node twice will toggle highlighting on/off
- * @param {Event} event - Click event
- * @param {Object} d - Node data
- */
 function handleNodeClick(event, d) {
     event.stopPropagation();
     
