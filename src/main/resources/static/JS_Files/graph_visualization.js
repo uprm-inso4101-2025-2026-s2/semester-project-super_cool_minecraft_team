@@ -388,12 +388,6 @@ function getNodeId(endpoint) {
     return typeof endpoint === "object" ? endpoint.id : endpoint;
 }
 
-/**
- * Builds a comprehensive highlight state including selected, related, and unrelated nodes
- * Uses getDependencies() and getDependents() from dependency-resolution.js
- * @param {string} selectedId - The ID of the selected node
- * @returns {Object} Highlight state object
- */
 function buildHighlightState(selectedId) {
     // Call the functions from dependency-resolution.js
     const dependencies = new Set(getDependencies(selectedId));
@@ -410,12 +404,6 @@ function buildHighlightState(selectedId) {
     };
 }
 
-/**
- * Determines the styling class for a node based on highlight state
- * @param {Object} nodeData - The node data object
- * @param {Object} state - Current highlight state
- * @returns {string} CSS class name for styling
- */
 function getNodeStateClass(nodeData, state) {
     if (!state.selectedNode) return "normal";
     
@@ -434,12 +422,6 @@ function getNodeStateClass(nodeData, state) {
     return "dimmed";
 }
 
-/**
- * Determines the styling class for a link based on highlight state
- * @param {Object} linkData - The link data object
- * @param {Object} state - Current highlight state
- * @returns {string} CSS class name for styling
- */
 function getLinkStateClass(linkData, state) {
     if (!state.selectedNode) return "normal";
     
