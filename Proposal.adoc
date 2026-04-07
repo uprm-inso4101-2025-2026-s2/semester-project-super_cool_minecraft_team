@@ -1042,112 +1042,107 @@ Each term includes:
   Outcome: The system confirms the structural integrity of the modpack and allows it to proceed to validation or deployment stages. +
   State Change: The modpack configuration transitions from "inconsistent or under validation" to "consistent configuration state."
 
-=== 2.8 Interface Requirements
-
-* Allow users to upload mod files or submit mod metadata for processing.
-* Validate uploaded metadata and report errors for missing or malformed entries.
-* Provide client-side feedback and visual indicators during file upload.
-* Implement responsive UI behavior to ensure usability across screen sizes.
-* Allow users to visually explore mod dependency relationships through an interactive dependency graph.
-* Allow users to select a mod and view its required, optional, and incompatible dependencies.
-* Provide a search interface to locate mods by name or identifier.
-* Display clear visual indicators to distinguish between satisfied, missing, and incompatible dependencies.
-* Provide a detailed view panel showing information about the selected mod and its dependency relationships.
-* Allow users to navigate between related mods directly from the dependency visualization.
-* Provide clear feedback messages when dependency data cannot be loaded or is incomplete.
-* Maintain consistent layout and labeling to ensure ease of understanding for non-technical users.
-
-The system shall provide a user-friendly and responsive interface that supports the visualization and management of mod dependencies.
-The interface must ensure clarity, accessibility, and usability for both technical and non-technical users.
-
-.A. File Submission and Validation
-. The system shall allow users to upload mod files or submit mod metadata for processing.
-. The system shall validate uploaded metadata and report errors for missing or malformed entries.
-. The interface shall provide visual feedback and progress indicators during file upload operations.
-
-.B. Dependency Visualization
-. The system shall provide an interactive dependency graph to visually explore mod relationships.
-. Users shall be able to select a mod and view its required, optional, and incompatible dependencies.
-. The interface shall display clear visual indicators distinguishing satisfied, missing, and incompatible dependencies.
-. Users shall be able to navigate between related mods directly from the dependency visualization.
-
-.C. Search and Information Display
-. The system shall provide a search interface to locate mods by name or identifier.
-. The interface shall display a detailed view panel containing information about the selected mod and its dependency relationships.
-
-.D. Usability and Responsiveness
-. The interface shall implement responsive behavior to ensure usability across different screen sizes.
-. The system shall provide clear feedback messages when dependency data cannot be loaded or is incomplete.
-. The layout and labeling shall remain consistent to ensure ease of understanding for non-technical users.
-
-=== 2.9 Operational Requirements
-
+=== 2.8 Operational Requirements
+ 
 This section defines measurable criteria based on the Machine Requirements stated in Section 2.3.4.
 While Section 2.3.4 explains how the system is expected to behave, this section specifies concrete limits and thresholds used to evaluate performance, reliability, and scalability during testing.
-
+ 
 ==== Performance Requirements
-
+ 
 * The system must respond to a mod metadata lookup request (via external API such as Modrinth) within 3 seconds under normal load (≤ 20 simultaneous users performing lookup operations).
 * The system must update and re-render the dependency graph within 2 seconds after a mod is added, removed, or modified, for modpacks containing up to 150 mods.
 * The system must download and append a mod file (≤ 20MB) to the modpack archive within 10 seconds, excluding external network delays beyond the system's control.
-
+ 
+[.line-through.red]#Graph Processing Performance: The system must generate a dependency graph for modpacks containing between 30 and 100 mods under typical conditions in less than 5 seconds.
+For larger modpacks containing up to 200 mods, the system must generate the dependency graph in less than 10 seconds.
+For extreme cases containing between 200 and 500 mods, the system may require between 30 seconds and 2 minutes depending on graph complexity but must complete the process in a stable and predictable manner without system failure.#
+ 
+NOTE: Graph processing performance thresholds are now consolidated under Performance Requirements above and in Section 2.3.4 (MR-1, MR-4, MR-9).
+ 
 ==== Concurrency Requirements
-
+ 
 * The system must support at least 20 simultaneous active users, each performing metadata lookups and graph updates, without service interruption.
 * If the number of simultaneous active users exceeds 20, the system must continue operating and may queue additional requests with a maximum delay of 10 seconds.
 * The system must not crash when handling concurrent download and graph update operations.
-
+ 
+[.line-through.red]#Concurrent Requests: The backend must be designed to support multiple concurrent users performing dependency analysis and graph generation.
+Since the expected number of concurrent users depends on the final scope of the application, the system must maintain stable performance and predictable response times under moderate and peak usage scenarios.#
+ 
+NOTE: Consolidated into Concurrency Requirements above. Vague phrasing ("moderate and peak") replaced with measurable thresholds.
+ 
 ==== Reliability Requirements
-
+ 
 * The system must maintain 95% uptime during scheduled operational hours.
 * If an external API (e.g., Modrinth) fails or becomes unreachable, the system must:
-* Return a clear error message to the user within *5 seconds, and
-** Allow the user to retry the operation.
+** Return a clear error message to the player within 5 seconds, and
+** Allow the player to retry the operation.
 * The failure of an external API must not cause the entire application to terminate.
-
+* When external services are unavailable, the system must use cached or previously processed data when available and display a meaningful status message to the player.
+ 
+[.line-through.red]#Reliability and Availability: The system must maintain high availability during active usage.
+Automatic recovery mechanisms must handle network failures, API interruptions, and temporary service outages.
+The backend must prevent corruption of dependency and modpack data and ensure consistent graph construction results.#
+ 
+[.line-through.red]#External Metadata Handling: The system must retrieve dependency and incompatibility data from external platforms such as CurseForge and Modrinth.
+The backend must handle rate limits, temporary service failures, incomplete responses, and data inconsistencies.
+When external services are unavailable, the system must use cached or previously processed data when possible and provide meaningful feedback to the user.#
+ 
+NOTE: Both blocks consolidated and rewritten as measurable bullet points above.
+ 
 ==== Integrity Requirements
-
+ 
 * The system must validate that a downloaded mod file is successfully retrieved before appending it to the modpack archive.
 * The system must ensure that the modpack archive remains structurally valid after file modifications.
-* The system must prevent duplicate mod files with identical identifiers from being appended without user confirmation.
-
-==== Degradation & Limits
-
+* The system must prevent duplicate mod files with identical identifiers from being appended without player confirmation.
+* Dependency data must be validated and normalized before graph construction.
+* The system must ensure accurate representation of required, optional, and incompatible dependencies, as well as version constraints.
+ 
+[.line-through.red]#Data Integrity and Validation: Dependency data must be validated and normalized before graph construction.
+The system must ensure accurate representation of required, optional, and incompatible dependencies, as well as version constraints.#
+ 
+NOTE: Consolidated into Integrity Requirements above.
+ 
+==== Scalability Requirements
+ 
+* The system architecture must support horizontal scaling to accommodate increases in modpack size, graph complexity, and player demand.
+* The backend must be modular to allow improvements and extensions without redesigning core components.
+* Criteria for scalability beyond 30 simultaneous users remain to be researched and defined.
+ 
+[.line-through.red]#Scalability: The architecture must support horizontal scaling to accommodate future increases in modpack size, graph complexity, and user demand.
+The backend must be modular to allow improvements and extensions without redesigning core components.#
+ 
+NOTE: Rewritten as bullet points and updated "user" → "player" where referring to domain context.
+ 
+==== Resource Usage Requirements
+ 
+* Memory and CPU usage must remain within acceptable limits during graph construction and metadata processing, as specified in Section 2.3.4 (MR-8).
+* Monitoring and logging must be implemented to detect performance bottlenecks and abnormal resource consumption.
+ 
+[.line-through.red]#Resource Usage: Memory and CPU usage must remain within acceptable limits during graph construction and metadata processing.
+Monitoring and logging must be implemented to detect performance bottlenecks and abnormal resource consumption.#
+ 
+NOTE: Rewritten as bullet points and cross-referenced with MR-8.
+ 
+==== Degradation Requirements
+ 
 * Under heavy load, the system may:
-* Increase response time up to *8 seconds for metadata lookups, and
+** Increase response time up to 8 seconds for metadata lookups, and
 ** Queue download operations.
 * The system must not terminate unexpectedly under heavy load conditions.
-* Criteria for long-term scalability beyond 30 simultaneous users remain to be researched and defined.
+* Under overload conditions or limited resources, the system must degrade gracefully by:
+** Prioritizing essential operations,
+** Applying request throttling, and
+** Avoiding system crashes.
+ 
+[.line-through.red]#Stability and Graceful Degradation: Under overload conditions or limited resources, the system must degrade gracefully by prioritizing essential operations, applying request throttling, and avoiding system crashes.#
+ 
+NOTE: Merged into Degradation Requirements above and rewritten as measurable bullet points.
+ 
+[.line-through.red]#The backend system must meet measurable and realistic machine requirements to ensure efficient dependency graph construction, scalability, and reliability when processing Minecraft mod metadata.#
+ 
+NOTE: This introductory paragraph was redundant; content is covered by the structured requirements above and in Section 2.3.4.
 
-The backend system must meet measurable and realistic machine requirements to ensure efficient dependency graph construction, scalability, and reliability when processing Minecraft mod metadata.
-
-Graph Processing Performance: The system must generate a dependency graph for modpacks containing between 30 and 100 mods under typical conditions in less than 5 seconds.
-For larger modpacks containing up to 200 mods, the system must generate the dependency graph in less than 10 seconds.
-For extreme cases containing between 200 and 500 mods, the system may require between 30 seconds and 2 minutes depending on graph complexity but must complete the process in a stable and predictable manner without system failure.
-
-Concurrent Requests: The backend must be designed to support multiple concurrent users performing dependency analysis and graph generation.
-Since the expected number of concurrent users depends on the final scope of the application, the system must maintain stable performance and predictable response times under moderate and peak usage scenarios.
-
-External Metadata Handling: The system must retrieve dependency and incompatibility data from external platforms such as CurseForge and Modrinth.
-The backend must handle rate limits, temporary service failures, incomplete responses, and data inconsistencies.
-When external services are unavailable, the system must use cached or previously processed data when possible and provide meaningful feedback to the user.
-
-Reliability and Availability: The system must maintain high availability during active usage.
-Automatic recovery mechanisms must handle network failures, API interruptions, and temporary service outages.
-The backend must prevent corruption of dependency and modpack data and ensure consistent graph construction results.
-
-Scalability: The architecture must support horizontal scaling to accommodate future increases in modpack size, graph complexity, and user demand.
-The backend must be modular to allow improvements and extensions without redesigning core components.
-
-Resource Usage: Memory and CPU usage must remain within acceptable limits during graph construction and metadata processing.
-Monitoring and logging must be implemented to detect performance bottlenecks and abnormal resource consumption.
-
-Stability and Graceful Degradation: Under overload conditions or limited resources, the system must degrade gracefully by prioritizing essential operations, applying request throttling, and avoiding system crashes.
-
-Data Integrity and Validation: Dependency data must be validated and normalized before graph construction.
-The system must ensure accurate representation of required, optional, and incompatible dependencies, as well as version constraints.
-
-=== 2.10 Software Architecture Design
+=== 2.9 Software Architecture Design
 
 The system follows a layered client - server architecture composed of four main components:
 
