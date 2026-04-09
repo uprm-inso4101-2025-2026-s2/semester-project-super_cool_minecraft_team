@@ -1,4 +1,4 @@
-import { getMissingDependencies } from './backend-missingDependencies.js';
+import { getMissingDependencies } from './backend-missing-dependencies.js';
 
 document.addEventListener("DOMContentLoaded", () => {
     missingDependenciesPage();
