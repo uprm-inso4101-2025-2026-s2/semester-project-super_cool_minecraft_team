@@ -1,0 +1,699 @@
+= Refactoring missing-dependencies.js Towards Layered Architecture
+Author: Jordan O. De Leon Orama
+:toc:
+:sectnums: 
+== Refactoring Justification
+
+Before the refactor, the missing dependencies feature was implemented in a single file that combined multiple responsibilities, including user interface handling, application logic, and backend communication. This design violated the principles of layered architecture, as it did not clearly separate the User Interface, Application, and Infrastructure layers.
+
+== Original Implementation (Before Refactor)
+
+[source,js]
+----
+document.addEventListener("DOMContentLoaded", () => {
+    missingDependenciesPage();
+});
+
+async function missingDependenciesPage() {
+    const dependencyList = document.getElementById("dependency-list");
+    const loadingState = document.getElementById("loading-state");
+    const emptyState = document.getElementById("empty-state");
+    const errorState = document.getElementById("error-state");
+    const partialResultsBanner = document.getElementById("partial-results-banner");
+
+    // UI State Management (User Interface Layer)
+    dependencyList.innerHTML = "";
+    emptyState.hidden = true;
+    errorState.hidden = true;
+    partialResultsBanner.hidden = true;
+
+    try {
+        // Calls function that performs backend request (Infrastructure concern)
+        const data = await getMissingDependencies();
+
+        if (data.error) {
+            errorState.textContent = data.error;
+            errorState.hidden = false;
+            return;
+        }
+        
+        // Application Logic (data processing mixed with UI)
+        const missingDependencies = Array.isArray(data.missingDependencies) ? data.missingDependencies : [];
+        const resolvedById = new Map(
+            (Array.isArray(data.resolvedDependencies) ? data.resolvedDependencies : [])
+                .filter((dependency) => dependency && dependency.id)
+                .map((dependency) => [dependency.id, dependency])
+        );
+
+        if (data.analysisHasPartialResults) {
+            partialResultsBanner.hidden = false;
+        }
+
+        if (missingDependencies.length === 0) {
+            emptyState.hidden = false;
+            return;
+        }
+
+        // UI Rendering mixed with business logic
+        for (const dependency of missingDependencies) {
+            const resolvedDependency = resolvedById.get(dependency.id);
+            dependencyList.appendChild(createDependencyCard(dependency, resolvedDependency));
+        }
+
+    } catch (error) {
+        // Error handling for backend request mixed into UI logic
+        errorState.textContent = error.message || "Unable to load missing dependencies.";
+        errorState.hidden = false;
+    } finally {
+        loadingState.hidden = true;
+    }
+}
+
+function createDependencyCard(dependency, resolvedDependency) {
+    const dependencyCard = document.createElement("div");
+    dependencyCard.className = "dependency-item";
+
+    const dependencyMain = document.createElement("div");
+    dependencyMain.className = "dependency-main";
+
+    const title = document.createElement("h3");
+    title.textContent = dependency.name || dependency.id || "Unknown dependency";
+
+    const details = document.createElement("p");
+    details.className = "dependency-meta";
+    details.textContent = [
+        `Version: ${dependency.requiredVersion || "Unknown"}`,
+        `Loader: ${dependency.loader || "Unknown"}`,
+        `Minecraft: ${dependency.mcVersion || "Unknown"}`
+    ].join(" | ");
+
+    dependencyMain.appendChild(title);
+    dependencyMain.appendChild(details);
+
+    const dependencyActions = document.createElement("div");
+    dependencyActions.className = "dependency-actions";
+
+    const statusBadge = document.createElement("span");
+    statusBadge.className = `status-badge ${resolvedDependency ? "status-resolved" : "status-unresolved"}`;
+    statusBadge.textContent = resolvedDependency ? "Resolved" : "Not found";
+    dependencyActions.appendChild(statusBadge);
+
+    if (resolvedDependency && resolvedDependency.preferred) {
+        const link = document.createElement("a");
+        link.className = "download-btn";
+        link.href = `/r?u=${encodeURIComponent(resolvedDependency.preferred)}`;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.textContent = "View Download Link";
+        dependencyActions.appendChild(link);
+    } else {
+        const unresolvedMessage = document.createElement("p");
+        unresolvedMessage.className = "status-message";
+        unresolvedMessage.textContent = "No download link could be resolved for this dependency.";
+        dependencyActions.appendChild(unresolvedMessage);
+    }
+
+    dependencyCard.appendChild(dependencyMain);
+    dependencyCard.appendChild(dependencyActions);
+    return dependencyCard;
+}
+
+// Backend communication defined in the same file
+async function getMissingDependencies() {
+    const endpoint = "/api/missing-dependencies";
+    
+    const response = await fetch(endpoint, {
+        headers: {
+            Accept: "application/json"
+        }
+    });
+
+    if (!response.ok) {
+        let errorMessage = "Unable to load missing dependencies.";
+        try {
+            const errorPayload = await response.json();
+            if (errorPayload && errorPayload.message) {
+                errorMessage = errorPayload.message;
+            }
+        } catch (error) {
+            errorMessage = `Request failed with status ${response.status}.`;
+        }
+        throw new Error(errorMessage);
+    }
+
+    return response.json();
+}
+----
+
+== Issues in the Original Design
+
+The original implementation presents several design issues:
+
+*Violation of Layered Architecture:* The same file contains logic belonging to the User Interface, Application, and Infrastructure layers.
+
+*Mixed Responsibilities:* UI rendering, data processing, and backend communication are tightly coupled.
+
+*Reduced Maintainability:* Any change to API communication requires modifying the same file that handles UI logic.
+
+*Limited Reusability:* The data-fetching function cannot be easily reused by other modules.
+
+*Low Separation of Concerns:* The system does not clearly distinguish between presentation logic and data access logic.
+
+== Refactoring Approach
+
+To address these issues, the codebase was refactored by separating responsibilities into distinct modules located within the following directory:
+
+`src\main\resources\static\MissingDependencies`
+
+Within this directory, the implementation was divided into two files:
+
+- `frontend-missingDependencies.js`: responsible for UI handling, user interaction, and DOM updates
+- `backend-missingDependencies.js`: responsible for communicating with the backend API and retrieving data
+
+This separation ensures that each file has a single, well-defined responsibility. The frontend module focuses on presentation and state management, while the service module handles infrastructure concerns related to API communication.
+
+This refactor aligns the implementation with a layered architecture:
+
+- *User Interface Layer:* Managed by `frontend-missingDependencies.js`
+- *Application Layer:* Coordinates data flow between modules
+- *Infrastructure Layer:* Accessed through `backend-missingDependencies.js`
+
+By organizing the system in this way, the design improves modularity, readability, and maintainability, while making the interaction between frontend and backend more explicit and structured.
+
+== Benefits of the Refactor
+
+The refactored design provides:
+
+* Clear separation of concerns between layers
+* Improved modularity and readability
+* Easier maintenance and future scalability
+* Reusable backend communication logic
+* Better alignment between system design and implementation
+
+Overall, the refactor transforms a tightly coupled design into a more structured and maintainable architecture.
+
+
+
+== Example of Change
+
+A key improvement introduced by the refactor was the separation of backend communication from UI logic.
+
+Before the refactor, the API call was defined in the same file as the UI logic:
+
+[source,js]
+
+----
+
+async function missingDependenciesPage() {
+    const data = await getMissingDependencies(); // Mixed UI + backend call
+}
+
+async function getMissingDependencies() {
+    return fetch("/api/missing-dependencies"); // Defined in same file
+}
+----
+
+After the refactor, the backend call was moved to a dedicated service module and imported into the frontend file:
+
+[source,js]
+----
+// Service module
+export async function getMissingDependencies() {
+    return fetch("/api/missing-dependencies");
+}
+
+// Frontend module
+import { getMissingDependencies } from './backend-missingDependencies.js';
+
+async function missingDependenciesPage() {
+    const data = await getMissingDependencies(); // Clean separation
+}
+----
+
+This change isolates infrastructure concerns from UI logic, improving modularity and aligning the implementation with layered architecture principles.
+= Refactoring missing-dependencies.js Towards Layered Architecture
+Author: Jordan O. De Leon Orama
+:toc:
+:sectnums: 
+== Refactoring Justification
+
+Before the refactor, the missing dependencies feature was implemented in a single file that combined multiple responsibilities, including user interface handling, application logic, and backend communication. This design violated the principles of layered architecture, as it did not clearly separate the User Interface, Application, and Infrastructure layers.
+
+== Original Implementation (Before Refactor)
+
+[source,js]
+----
+document.addEventListener("DOMContentLoaded", () => {
+    missingDependenciesPage();
+});
+
+async function missingDependenciesPage() {
+    const dependencyList = document.getElementById("dependency-list");
+    const loadingState = document.getElementById("loading-state");
+    const emptyState = document.getElementById("empty-state");
+    const errorState = document.getElementById("error-state");
+    const partialResultsBanner = document.getElementById("partial-results-banner");
+
+    // UI State Management (User Interface Layer)
+    dependencyList.innerHTML = "";
+    emptyState.hidden = true;
+    errorState.hidden = true;
+    partialResultsBanner.hidden = true;
+
+    try {
+        // Calls function that performs backend request (Infrastructure concern)
+        const data = await getMissingDependencies();
+
+        if (data.error) {
+            errorState.textContent = data.error;
+            errorState.hidden = false;
+            return;
+        }
+        
+        // Application Logic (data processing mixed with UI)
+        const missingDependencies = Array.isArray(data.missingDependencies) ? data.missingDependencies : [];
+        const resolvedById = new Map(
+            (Array.isArray(data.resolvedDependencies) ? data.resolvedDependencies : [])
+                .filter((dependency) => dependency && dependency.id)
+                .map((dependency) => [dependency.id, dependency])
+        );
+
+        if (data.analysisHasPartialResults) {
+            partialResultsBanner.hidden = false;
+        }
+
+        if (missingDependencies.length === 0) {
+            emptyState.hidden = false;
+            return;
+        }
+
+        // UI Rendering mixed with business logic
+        for (const dependency of missingDependencies) {
+            const resolvedDependency = resolvedById.get(dependency.id);
+            dependencyList.appendChild(createDependencyCard(dependency, resolvedDependency));
+        }
+
+    } catch (error) {
+        // Error handling for backend request mixed into UI logic
+        errorState.textContent = error.message || "Unable to load missing dependencies.";
+        errorState.hidden = false;
+    } finally {
+        loadingState.hidden = true;
+    }
+}
+
+function createDependencyCard(dependency, resolvedDependency) {
+    const dependencyCard = document.createElement("div");
+    dependencyCard.className = "dependency-item";
+
+    const dependencyMain = document.createElement("div");
+    dependencyMain.className = "dependency-main";
+
+    const title = document.createElement("h3");
+    title.textContent = dependency.name || dependency.id || "Unknown dependency";
+
+    const details = document.createElement("p");
+    details.className = "dependency-meta";
+    details.textContent = [
+        `Version: ${dependency.requiredVersion || "Unknown"}`,
+        `Loader: ${dependency.loader || "Unknown"}`,
+        `Minecraft: ${dependency.mcVersion || "Unknown"}`
+    ].join(" | ");
+
+    dependencyMain.appendChild(title);
+    dependencyMain.appendChild(details);
+
+    const dependencyActions = document.createElement("div");
+    dependencyActions.className = "dependency-actions";
+
+    const statusBadge = document.createElement("span");
+    statusBadge.className = `status-badge ${resolvedDependency ? "status-resolved" : "status-unresolved"}`;
+    statusBadge.textContent = resolvedDependency ? "Resolved" : "Not found";
+    dependencyActions.appendChild(statusBadge);
+
+    if (resolvedDependency && resolvedDependency.preferred) {
+        const link = document.createElement("a");
+        link.className = "download-btn";
+        link.href = `/r?u=${encodeURIComponent(resolvedDependency.preferred)}`;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.textContent = "View Download Link";
+        dependencyActions.appendChild(link);
+    } else {
+        const unresolvedMessage = document.createElement("p");
+        unresolvedMessage.className = "status-message";
+        unresolvedMessage.textContent = "No download link could be resolved for this dependency.";
+        dependencyActions.appendChild(unresolvedMessage);
+    }
+
+    dependencyCard.appendChild(dependencyMain);
+    dependencyCard.appendChild(dependencyActions);
+    return dependencyCard;
+}
+
+// Backend communication defined in the same file
+async function getMissingDependencies() {
+    const endpoint = "/api/missing-dependencies";
+    
+    const response = await fetch(endpoint, {
+        headers: {
+            Accept: "application/json"
+        }
+    });
+
+    if (!response.ok) {
+        let errorMessage = "Unable to load missing dependencies.";
+        try {
+            const errorPayload = await response.json();
+            if (errorPayload && errorPayload.message) {
+                errorMessage = errorPayload.message;
+            }
+        } catch (error) {
+            errorMessage = `Request failed with status ${response.status}.`;
+        }
+        throw new Error(errorMessage);
+    }
+
+    return response.json();
+}
+----
+
+== Issues in the Original Design
+
+The original implementation presents several design issues:
+
+*Violation of Layered Architecture:* The same file contains logic belonging to the User Interface, Application, and Infrastructure layers.
+
+*Mixed Responsibilities:* UI rendering, data processing, and backend communication are tightly coupled.
+
+*Reduced Maintainability:* Any change to API communication requires modifying the same file that handles UI logic.
+
+*Limited Reusability:* The data-fetching function cannot be easily reused by other modules.
+
+*Low Separation of Concerns:* The system does not clearly distinguish between presentation logic and data access logic.
+
+== Refactoring Approach
+
+To address these issues, the codebase was refactored by separating responsibilities into distinct modules located within the following directory:
+
+`src\main\resources\static\MissingDependencies`
+
+Within this directory, the implementation was divided into two files:
+
+- `frontend-missingDependencies.js`: responsible for UI handling, user interaction, and DOM updates
+- `backend-missingDependencies.js`: responsible for communicating with the backend API and retrieving data
+
+This separation ensures that each file has a single, well-defined responsibility. The frontend module focuses on presentation and state management, while the service module handles infrastructure concerns related to API communication.
+
+This refactor aligns the implementation with a layered architecture:
+
+- *User Interface Layer:* Managed by `frontend-missingDependencies.js`
+- *Application Layer:* Coordinates data flow between modules
+- *Infrastructure Layer:* Accessed through `backend-missingDependencies.js`
+
+By organizing the system in this way, the design improves modularity, readability, and maintainability, while making the interaction between frontend and backend more explicit and structured.
+
+== Benefits of the Refactor
+
+The refactored design provides:
+
+* Clear separation of concerns between layers
+* Improved modularity and readability
+* Easier maintenance and future scalability
+* Reusable backend communication logic
+* Better alignment between system design and implementation
+
+Overall, the refactor transforms a tightly coupled design into a more structured and maintainable architecture.
+
+
+
+== Example of Change
+
+A key improvement introduced by the refactor was the separation of backend communication from UI logic.
+
+Before the refactor, the API call was defined in the same file as the UI logic:
+
+[source,js]
+
+----
+
+async function missingDependenciesPage() {
+    const data = await getMissingDependencies(); // Mixed UI + backend call
+}
+
+async function getMissingDependencies() {
+    return fetch("/api/missing-dependencies"); // Defined in same file
+}
+----
+
+After the refactor, the backend call was moved to a dedicated service module and imported into the frontend file:
+
+[source,js]
+----
+// Service module
+export async function getMissingDependencies() {
+    return fetch("/api/missing-dependencies");
+}
+
+// Frontend module
+import { getMissingDependencies } from './backend-missingDependencies.js';
+
+async function missingDependenciesPage() {
+    const data = await getMissingDependencies(); // Clean separation
+}
+----
+
+This change isolates infrastructure concerns from UI logic, improving modularity and aligning the implementation with layered architecture principles.
+= Refactoring missing-dependencies.js Towards Layered Architecture
+Author: Jordan O. De Leon Orama
+:toc:
+:sectnums: 
+== Refactoring Justification
+
+Before the refactor, the missing dependencies feature was implemented in a single file that combined multiple responsibilities, including user interface handling, application logic, and backend communication. This design violated the principles of layered architecture, as it did not clearly separate the User Interface, Application, and Infrastructure layers.
+
+== Original Implementation (Before Refactor)
+
+[source,js]
+----
+document.addEventListener("DOMContentLoaded", () => {
+    missingDependenciesPage();
+});
+
+async function missingDependenciesPage() {
+    const dependencyList = document.getElementById("dependency-list");
+    const loadingState = document.getElementById("loading-state");
+    const emptyState = document.getElementById("empty-state");
+    const errorState = document.getElementById("error-state");
+    const partialResultsBanner = document.getElementById("partial-results-banner");
+
+    // UI State Management (User Interface Layer)
+    dependencyList.innerHTML = "";
+    emptyState.hidden = true;
+    errorState.hidden = true;
+    partialResultsBanner.hidden = true;
+
+    try {
+        // Calls function that performs backend request (Infrastructure concern)
+        const data = await getMissingDependencies();
+
+        if (data.error) {
+            errorState.textContent = data.error;
+            errorState.hidden = false;
+            return;
+        }
+        
+        // Application Logic (data processing mixed with UI)
+        const missingDependencies = Array.isArray(data.missingDependencies) ? data.missingDependencies : [];
+        const resolvedById = new Map(
+            (Array.isArray(data.resolvedDependencies) ? data.resolvedDependencies : [])
+                .filter((dependency) => dependency && dependency.id)
+                .map((dependency) => [dependency.id, dependency])
+        );
+
+        if (data.analysisHasPartialResults) {
+            partialResultsBanner.hidden = false;
+        }
+
+        if (missingDependencies.length === 0) {
+            emptyState.hidden = false;
+            return;
+        }
+
+        // UI Rendering mixed with business logic
+        for (const dependency of missingDependencies) {
+            const resolvedDependency = resolvedById.get(dependency.id);
+            dependencyList.appendChild(createDependencyCard(dependency, resolvedDependency));
+        }
+
+    } catch (error) {
+        // Error handling for backend request mixed into UI logic
+        errorState.textContent = error.message || "Unable to load missing dependencies.";
+        errorState.hidden = false;
+    } finally {
+        loadingState.hidden = true;
+    }
+}
+
+function createDependencyCard(dependency, resolvedDependency) {
+    const dependencyCard = document.createElement("div");
+    dependencyCard.className = "dependency-item";
+
+    const dependencyMain = document.createElement("div");
+    dependencyMain.className = "dependency-main";
+
+    const title = document.createElement("h3");
+    title.textContent = dependency.name || dependency.id || "Unknown dependency";
+
+    const details = document.createElement("p");
+    details.className = "dependency-meta";
+    details.textContent = [
+        `Version: ${dependency.requiredVersion || "Unknown"}`,
+        `Loader: ${dependency.loader || "Unknown"}`,
+        `Minecraft: ${dependency.mcVersion || "Unknown"}`
+    ].join(" | ");
+
+    dependencyMain.appendChild(title);
+    dependencyMain.appendChild(details);
+
+    const dependencyActions = document.createElement("div");
+    dependencyActions.className = "dependency-actions";
+
+    const statusBadge = document.createElement("span");
+    statusBadge.className = `status-badge ${resolvedDependency ? "status-resolved" : "status-unresolved"}`;
+    statusBadge.textContent = resolvedDependency ? "Resolved" : "Not found";
+    dependencyActions.appendChild(statusBadge);
+
+    if (resolvedDependency && resolvedDependency.preferred) {
+        const link = document.createElement("a");
+        link.className = "download-btn";
+        link.href = `/r?u=${encodeURIComponent(resolvedDependency.preferred)}`;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.textContent = "View Download Link";
+        dependencyActions.appendChild(link);
+    } else {
+        const unresolvedMessage = document.createElement("p");
+        unresolvedMessage.className = "status-message";
+        unresolvedMessage.textContent = "No download link could be resolved for this dependency.";
+        dependencyActions.appendChild(unresolvedMessage);
+    }
+
+    dependencyCard.appendChild(dependencyMain);
+    dependencyCard.appendChild(dependencyActions);
+    return dependencyCard;
+}
+
+// Backend communication defined in the same file
+async function getMissingDependencies() {
+    const endpoint = "/api/missing-dependencies";
+    
+    const response = await fetch(endpoint, {
+        headers: {
+            Accept: "application/json"
+        }
+    });
+
+    if (!response.ok) {
+        let errorMessage = "Unable to load missing dependencies.";
+        try {
+            const errorPayload = await response.json();
+            if (errorPayload && errorPayload.message) {
+                errorMessage = errorPayload.message;
+            }
+        } catch (error) {
+            errorMessage = `Request failed with status ${response.status}.`;
+        }
+        throw new Error(errorMessage);
+    }
+
+    return response.json();
+}
+----
+
+== Issues in the Original Design
+
+The original implementation presents several design issues:
+
+*Violation of Layered Architecture:* The same file contains logic belonging to the User Interface, Application, and Infrastructure layers.
+
+*Mixed Responsibilities:* UI rendering, data processing, and backend communication are tightly coupled.
+
+*Reduced Maintainability:* Any change to API communication requires modifying the same file that handles UI logic.
+
+*Limited Reusability:* The data-fetching function cannot be easily reused by other modules.
+
+*Low Separation of Concerns:* The system does not clearly distinguish between presentation logic and data access logic.
+
+== Refactoring Approach
+
+To address these issues, the codebase was refactored by separating responsibilities into distinct modules located within the following directory:
+
+`src\main\resources\static\MissingDependencies`
+
+Within this directory, the implementation was divided into two files:
+
+- `frontend-missingDependencies.js`: responsible for UI handling, user interaction, and DOM updates
+- `backend-missingDependencies.js`: responsible for communicating with the backend API and retrieving data
+
+This separation ensures that each file has a single, well-defined responsibility. The frontend module focuses on presentation and state management, while the service module handles infrastructure concerns related to API communication.
+
+This refactor aligns the implementation with a layered architecture:
+
+- *User Interface Layer:* Managed by `frontend-missingDependencies.js`
+- *Application Layer:* Coordinates data flow between modules
+- *Infrastructure Layer:* Accessed through `backend-missingDependencies.js`
+
+By organizing the system in this way, the design improves modularity, readability, and maintainability, while making the interaction between frontend and backend more explicit and structured.
+
+== Benefits of the Refactor
+
+The refactored design provides:
+
+* Clear separation of concerns between layers
+* Improved modularity and readability
+* Easier maintenance and future scalability
+* Reusable backend communication logic
+* Better alignment between system design and implementation
+
+Overall, the refactor transforms a tightly coupled design into a more structured and maintainable architecture.
+
+
+
+== Example of Change
+
+A key improvement introduced by the refactor was the separation of backend communication from UI logic.
+
+Before the refactor, the API call was defined in the same file as the UI logic:
+
+[source,js]
+
+----
+
+async function missingDependenciesPage() {
+    const data = await getMissingDependencies(); // Mixed UI + backend call
+}
+
+async function getMissingDependencies() {
+    return fetch("/api/missing-dependencies"); // Defined in same file
+}
+----
+
+After the refactor, the backend call was moved to a dedicated service module and imported into the frontend file:
+
+[source,js]
+----
+// Service module
+export async function getMissingDependencies() {
+    return fetch("/api/missing-dependencies");
+}
+
+// Frontend module
+import { getMissingDependencies } from './backend-missingDependencies.js';
+
+async function missingDependenciesPage() {
+    const data = await getMissingDependencies(); // Clean separation
+}
+----
+
+This change isolates infrastructure concerns from UI logic, improving modularity and aligning the implementation with layered architecture principles.
