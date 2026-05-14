@@ -42,6 +42,8 @@
 
     /* BACKGROUND IMAGE */
     background-image: url("../images/minecraft-background.png");
+    background-color: var(--color-bg);
+    color: var(--color-text);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -122,9 +124,9 @@ body#page-about::before {
 
 /* Button */
 #get-mods-btn {
-    background-color: #3ebe45;
+    background-color: var(--color-green);
+    color: var(--color-text);
     border: none;
-    color: white;
     font-size: 2.5rem;
     font-weight: 600; 
     padding: 22px 80px;
@@ -138,7 +140,7 @@ body#page-about::before {
 }
 
 #get-mods-btn:hover {
-    background-color: #4acf52;
+    background-color: var(--color-green-hover);
     transform: translateY(-3px);
     box-shadow: 0 15px 0 #267326, 0 22px 28px rgba(0,0,0,0.4);
 }
@@ -406,9 +408,9 @@ font-family: 'Monocraft', sans-serif;
     text-align: center;
     text-decoration: none;
 
-    background-color: #3ebe45;
+    background-color: var(--color-green);
+    color: var(--color-text);
     border: none;
-    color: white;
 
     font-size: 1.6rem;
     font-weight: 600;
@@ -424,7 +426,7 @@ font-family: 'Monocraft', sans-serif;
 }
 
 #about-upload-button:hover{
-    background-color: #4acf52;
+    background-color: var(--color-green-hover);
     transform: translateY(-3px);
     box-shadow: 0 15px 0 #267326, 0 22px 28px rgba(0,0,0,0.4);
 }

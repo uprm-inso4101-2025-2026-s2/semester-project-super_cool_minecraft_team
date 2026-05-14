@@ -30,6 +30,9 @@ body#page-upload {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-main);
 }
 
 body#page-upload::before {
