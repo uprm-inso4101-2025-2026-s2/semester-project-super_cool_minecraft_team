@@ -41,9 +41,20 @@ async function missingDependenciesPage() {
             return;
         }
 
-        for (const dependency of missingDependencies) {
-            const resolvedDependency = resolvedById.get(dependency.id);
-            dependencyList.appendChild(createDependencyCard(dependency, resolvedDependency));
+        // for (const dependency of missingDependencies) {
+        //     const resolvedDependency = resolvedById.get(dependency.id);
+        //     dependencyList.appendChild(createDependencyCard(dependency, resolvedDependency));
+        // }
+        for (const dependency of missingDependencies) 
+        {
+            // If dependency is a string ID, use it directly; otherwise fallback to an object property
+            const depId = typeof dependency === 'string' ? dependency : dependency.id;
+            const resolvedDependency = resolvedById.get(depId);
+            
+            // Normalize dependency structure for the card creator
+            const dependencyObj = typeof dependency === 'string' ? { id: dependency } : dependency;
+            
+            dependencyList.appendChild(createDependencyCard(dependencyObj, resolvedDependency));
         }
     } catch (error) {
         errorState.textContent = error.message || "Unable to load missing dependencies.";
