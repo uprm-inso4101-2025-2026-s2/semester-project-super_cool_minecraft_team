@@ -27,6 +27,22 @@ const relColors = {
     conflict: "var(--red)"
 };
 
+/* ===== INITIALIZE GRAPH DATA ===== */
+// Load the data into the global graphData object from dependency-resolution.js
+loadGraphData({
+    nodes: nodes,
+    links: links
+});
+
+/* ===== STATE TRACKING ===== */
+let selectedNodeId = null;
+let highlightState = {
+    selectedNode: null,
+    directDependencies: new Set(),
+    directDependents: new Set(),
+    allRelated: new Set()
+};
+
 /* ===== DOM REFERENCES ===== */
 const container = document.getElementById("dependency-graph-canvas");
 const panel = document.getElementById("mod-info-panel");
@@ -308,7 +324,7 @@ if (!validationResult.isValid) {
         .enter()
         .append("g")
         .attr("class", "node")
-        .on("click", (event, d) => showPanel(d))
+        .on("click", (event, d) => handleNodeClick(event, d))
         .call(
             d3.drag()
                 .on("start", dragstarted)
@@ -318,11 +334,13 @@ if (!validationResult.isValid) {
 
     node.append("circle")
         .attr("r", 10)
-        .attr("fill", d => d.type === "root" ? "var(--blue)" : "var(--panel)");
+        .attr("fill", d => d.type === "root" ? "var(--blue)" : "var(--panel)")
+        .attr("class", "node-circle");
 
     node.append("text")
         .attr("dx", 14)
         .attr("dy", ".35em")
+        .attr("class", "node-text")
         .text(d => d.id);
 
     if (validationResult.missingDependencies) {
@@ -354,6 +372,15 @@ if (!validationResult.isValid) {
         currentSelectedNodeId = null;
         event.stopPropagation();
     });
+
+    /* ===== RESET ON CANVAS CLICK ===== */
+    // Clicking empty canvas (outside nodes) resets highlighting
+    svg.on("click", function(event) {
+        // Only reset if clicking on the SVG background, not on a node
+        if (event.target === this) {
+            closePanel();
+        }
+    });
 }
 
 /* ===== HELPERS ===== */
@@ -361,9 +388,59 @@ function getNodeId(endpoint) {
     return typeof endpoint === "object" ? endpoint.id : endpoint;
 }
 
+function buildHighlightState(selectedId) {
+    // Call the functions from dependency-resolution.js
+    const dependencies = new Set(getDependencies(selectedId));
+    const dependents = new Set(getDependents(selectedId));
+    
+    // All related nodes: selected + direct dependencies + dependents
+    const allRelated = new Set([selectedId, ...dependencies, ...dependents]);
+    
+    return {
+        selectedNode: selectedId,
+        directDependencies: dependencies,
+        directDependents: dependents,
+        allRelated: allRelated
+    };
+}
+
+function getNodeStateClass(nodeData, state) {
+    if (!state.selectedNode) return "normal";
+    
+    if (nodeData.id === state.selectedNode) {
+        return "selected";
+    }
+    
+    if (state.directDependencies.has(nodeData.id)) {
+        return "dependency";
+    }
+    
+    if (state.directDependents.has(nodeData.id)) {
+        return "dependent";
+    }
+    
+    return "dimmed";
+}
+
+function getLinkStateClass(linkData, state) {
+    if (!state.selectedNode) return "normal";
+    
+    const sourceId = getNodeId(linkData.source);
+    const targetId = getNodeId(linkData.target);
+    
+    // Link is related if it connects to any related node
+    const isRelated = state.allRelated.has(sourceId) && state.allRelated.has(targetId);
+    
+    return isRelated ? "highlighted" : "dimmed";
+}
+
 /* ===== PANEL + FADE LOGIC ===== */
 function showPanel(d) {
     if (!panel || !title || !status || !list) return;
+
+    // Update highlight state - uses getDependencies/getDependents from dependency-resolution.js
+    highlightState = buildHighlightState(d.id);
+    selectedNodeId = d.id;
 
     panel.style.display = "flex";
     title.textContent = d.id;
@@ -389,20 +466,20 @@ function showPanel(d) {
         }
     });
 
-    d3.selectAll(".node").classed("faded", true);
-    d3.selectAll(".link").classed("faded", true);
+    // Apply dynamic styling to nodes
+    d3.selectAll(".node").each(function(nodeData) {
+        const stateClass = getNodeStateClass(nodeData, highlightState);
+        d3.select(this).attr("class", `node ${stateClass}`);
+    });
 
-    d3.selectAll(".node")
-        .filter((n) => connected.has(n.id))
-        .classed("faded", false);
+    // Apply dynamic styling to links
+    d3.selectAll(".link").each(function(linkData) {
+        const stateClass = getLinkStateClass(linkData, highlightState);
+        d3.select(this).attr("class", `link ${stateClass}`);
+    });
 
-    d3.selectAll(".link")
-        .filter((l) => {
-            const sourceId = getNodeId(l.source);
-            const targetId = getNodeId(l.target);
-            return sourceId === d.id || targetId === d.id;
-        })
-        .classed("faded", false);
+    // Apply animation to selected node
+    d3.selectAll(".node-circle").filter((n) => n.id === d.id).classed("pulse", true);
 
     const connectedLinks = links.filter((l) => {
         const sourceId = getNodeId(l.source);
@@ -414,9 +491,10 @@ function showPanel(d) {
         const sourceId = getNodeId(l.source);
         const targetId = getNodeId(l.target);
         const neighbor = sourceId === d.id ? targetId : sourceId;
+        const direction = sourceId === d.id ? "DEPENDENCY" : "DEPENDENT";
 
         const li = document.createElement("li");
-        li.textContent = `${l.rel.toUpperCase()}: ${neighbor}`;
+        li.textContent = `${direction}: ${neighbor}`;
         li.classList.add(`dep-${l.rel}`);
         list.appendChild(li);
     });
@@ -426,8 +504,25 @@ function closePanel() {
     if (panel) {
         panel.style.display = "none";
     }
+
+    // Reset state
+    selectedNodeId = null;
+    highlightState = {
+        selectedNode: null,
+        directDependencies: new Set(),
+        directDependents: new Set(),
+        allRelated: new Set()
+    };
+
     d3.selectAll(".node").classed("faded", false);
     d3.selectAll(".link").classed("faded", false);
+
+    // Reset node styling
+    d3.selectAll(".node").attr("class", "node normal");
+    d3.selectAll(".node-circle").classed("pulse", false);
+
+    // Reset link styling
+    d3.selectAll(".link").attr("class", "link normal");
 }
 
 window.closePanel = closePanel;
@@ -435,6 +530,19 @@ window.closePanel = closePanel;
 /* ===== BUTTON EVENTS ===== */
 if (closePanelBtn) {
     closePanelBtn.addEventListener("click", closePanel);
+}
+
+function handleNodeClick(event, d) {
+    event.stopPropagation();
+    
+    // Toggle: clicking same node twice clears selection
+    if (selectedNodeId === d.id) {
+        closePanel();
+        return;
+    }
+    
+    selectedNodeId = d.id;
+    showPanel(d);
 }
 
 /* ===== DRAG ===== */
