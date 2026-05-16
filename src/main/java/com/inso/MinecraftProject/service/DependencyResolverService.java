@@ -21,12 +21,11 @@ import com.inso.MinecraftProject.entity.Mod;
 public class DependencyResolverService {
 
     private final ModRepository modRepository;
-    private final RestTemplate restTemplate;
+    private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper;
 
-    public DependencyResolverService(ModRepository modRepository, RestTemplate restTemplate) {
+    public DependencyResolverService(ModRepository modRepository) {
         this.modRepository = modRepository;
-        this.restTemplate = restTemplate;
         this.objectMapper = new ObjectMapper();
     }
 
