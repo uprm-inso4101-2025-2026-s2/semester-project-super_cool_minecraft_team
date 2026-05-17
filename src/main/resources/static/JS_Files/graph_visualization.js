@@ -797,3 +797,111 @@ window.showPanel = function(d) {
         selectNode(d.id);
     }
 };
+
+/* ===== SCREENSHOT BUTTON LOGIC =====*/
+document.addEventListener("DOMContentLoaded", () => {
+    const screenshotBtn = document.getElementById("topRightScreenshotBtn");
+
+    if (screenshotBtn) {
+        screenshotBtn.addEventListener("click", () => {
+            // Target the SVG generated inside the canvas wrapper
+            exportGraphToPNG("#dependency-graph-canvas svg", "minecraft-mod-graph.png");
+            console.log("screenshot button pressed.");
+        });
+    }
+});
+
+function exportGraphToPNG(svgSelector, fileName) {
+    const svgElement = document.querySelector(svgSelector);
+    if (!svgElement) {
+        console.log("no svg element detected. screenshot failed");
+        return;
+    } 
+        
+    console.log("svg element detected. taking screenshot.");
+    const serializer = new XMLSerializer();
+    let svgString = serializer.serializeToString(svgElement);
+
+    const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(svgBlob);
+    const image = new Image();
+
+    image.onload = function() {
+        const canvas = document.createElement('canvas');
+        canvas.width = svgElement.clientWidth || 800;
+        canvas.height = svgElement.clientHeight || 650; 
+        
+        const context = canvas.getContext('2d');
+        
+        context.fillStyle = "#ffffff";
+        context.fillRect(0, 0, canvas.width, canvas.height);
+
+        const canvasColors = {
+            required: "#2563eb",  // var(--blue)
+            optional: "#eab308",  // var(--yellow)
+            conflict: "#dc2626",  // var(--red)
+            default:  "#ffffff"   // white fallback stroke
+        };
+
+        // Draw colored lines using 'renderableLinks' list
+        // Alternately defaults back to 'links' if called prior to validation slicing
+        const targetLinks = (typeof renderableLinks !== 'undefined') ? renderableLinks : links;
+
+        if (targetLinks && targetLinks.length > 0) {
+            console.log(`Manually rendering ${targetLinks.length} custom colored link vectors.`);
+            
+            context.lineWidth = 2;            
+            context.globalAlpha = 0.8;        
+            
+            targetLinks.forEach(link => {
+                // Read connection type straight out of d.rel mapping
+                const relationType = link.rel;
+                context.strokeStyle = canvasColors[relationType] || canvasColors.default;
+
+                // Read properties from active force simulation mutation tracker
+                const sourceX = link.source.x !== undefined ? link.source.x : link.source;
+                const sourceY = link.source.y !== undefined ? link.source.y : link.source;
+                const targetX = link.target.x !== undefined ? link.target.x : link.target;
+                const targetY = link.target.y !== undefined ? link.target.y : link.target;
+
+                if (sourceX !== undefined && sourceY !== undefined && targetX !== undefined && targetY !== undefined) {
+                    context.beginPath();
+                    context.moveTo(sourceX, sourceY);
+                    context.lineTo(targetX, targetY);
+                    context.stroke();
+                }
+            });
+            
+            context.globalAlpha = 1.0; // Reset tracking layer alpha bounds
+        }
+
+        context.drawImage(image, 0, 0);
+
+        canvas.toBlob((pngBlob) => {
+            if (!pngBlob) {
+                console.error("Canvas to Blob conversion failed.");
+                return;
+            }
+
+            const pngDownloadUrl = URL.createObjectURL(pngBlob);
+            const downloadLink = document.createElement('a');
+            downloadLink.href = pngDownloadUrl;
+            downloadLink.download = fileName;
+            
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+
+            URL.revokeObjectURL(pngDownloadUrl);
+            URL.revokeObjectURL(url);
+            
+            console.log("Screenshot successfully downloaded via secure Blob stream.");
+        }, 'image/png');
+    };
+
+    image.onerror = function(err) {
+        console.error("Error loading SVG string into Image layer:", err);
+    };
+
+    image.src = url;
+}
