@@ -1,4 +1,4 @@
-package com.inso.MinecraftProject.service;
+package com.inso.MinecraftProject.controller;
 
 import com.inso.MinecraftProject.dto.MissingDependenciesResponse;
 import com.inso.MinecraftProject.dto.MissingDependencyDto;
@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
+import com.inso.MinecraftProject.service.DependencyLookupService;
 import java.util.List;
 import java.util.Map;
 
