@@ -1,3 +1,93 @@
+/* === SEARCH BAR & RESULTS === */
+.search-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    position: relative;
+    max-width: 420px;
+    width: 100%;
+}
+
+#mod-search-input {
+    background: var(--input-bg, #222);
+    color: var(--text, #fff);
+    border: 1.5px solid var(--input-border, #8a8ea2);
+    border-radius: var(--radius-sm, 8px);
+    padding: 0.5em 2.5em 0.5em 0.75em;
+    font-size: 1rem;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.2s;
+}
+#mod-search-input:focus {
+    border-color: var(--blue, #0c56c8);
+    box-shadow: 0 0 0 2px var(--blue, #0c56c8, 0.2);
+}
+
+#search-clear-btn {
+    position: absolute;
+    right: 0.5em;
+    background: transparent;
+    border: none;
+    color: var(--muted, #aaa);
+    font-size: 1.2em;
+    cursor: pointer;
+    padding: 0.2em 0.5em;
+    border-radius: 50%;
+    transition: background 0.2s;
+    z-index: 2;
+}
+#search-clear-btn:focus, #search-clear-btn:hover {
+    background: var(--input-border, #8a8ea2);
+    color: var(--text, #fff);
+}
+
+.search-results {
+    position: absolute;
+    top: 110%;
+    left: 0;
+    width: 100%;
+    background: var(--panel, #222);
+    border: 1px solid var(--input-border, #8a8ea2);
+    border-radius: var(--radius-sm, 8px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+    z-index: 10;
+    display: none;
+    max-height: 220px;
+    overflow-y: auto;
+}
+.search-results.show {
+    display: block;
+}
+.search-result-item {
+    padding: 0.5em 0.75em;
+    cursor: pointer;
+    color: var(--text, #fff);
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    outline: none;
+    transition: background 0.15s, color 0.15s;
+}
+.search-result-item.active,
+.search-result-item:focus,
+.search-result-item:hover {
+    background: var(--blue, #0c56c8);
+    color: #fff;
+}
+
+@media (max-width: 600px) {
+    .search-container {
+        max-width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .search-results {
+        font-size: 0.95rem;
+    }
+}
 /* Global variables */
 :root {
     --bg: #000000;

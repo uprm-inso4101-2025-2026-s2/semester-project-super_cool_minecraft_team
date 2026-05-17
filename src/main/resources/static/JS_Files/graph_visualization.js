@@ -616,6 +616,8 @@ const clearBtn = document.getElementById('search-clear-btn');
 const searchResults = document.getElementById('search-results');
 
 let currentSelectedNodeId = null;
+let searchResultIndex = -1;
+let lastMatchingNodes = [];
 
 function getNodeList() {
     return nodes || [];
@@ -624,10 +626,14 @@ function getNodeList() {
 function updateSearchResults(searchTerm) {
     if (!searchTerm || searchTerm.trim() === '') {
         searchResults.classList.remove('show');
+        lastMatchingNodes = [];
+        searchResultIndex = -1;
         return;
     }
 
     const matchingNodes = getMatchingNodes(getNodeList(), searchTerm);
+    lastMatchingNodes = matchingNodes;
+    searchResultIndex = -1;
 
     if (matchingNodes.length === 0) {
         searchResults.classList.remove('show');
@@ -635,16 +641,20 @@ function updateSearchResults(searchTerm) {
     }
 
     searchResults.innerHTML = '';
-    matchingNodes.forEach(node => {
+    matchingNodes.forEach((node, idx) => {
         const item = document.createElement('div');
         item.className = 'search-result-item';
         item.textContent = node.id;
         item.setAttribute('role', 'option');
+        item.setAttribute('tabindex', '-1');
+        item.setAttribute('data-index', idx);
+        item.title = node.id;
         item.onclick = () => {
             selectNode(node.id);
             searchInput.value = node.id;
             searchResults.classList.remove('show');
             clearBtn.style.display = 'block';
+            searchInput.focus();
         };
         searchResults.appendChild(item);
     });
@@ -744,7 +754,10 @@ function clearSearch() {
     searchInput.value = '';
     clearBtn.style.display = 'none';
     searchResults.classList.remove('show');
+    lastMatchingNodes = [];
+    searchResultIndex = -1;
     resetVisuals();
+    searchInput.focus();
 }
 
 function handleSearchInput(e) {
@@ -763,23 +776,57 @@ function handleSearchInput(e) {
 }
 
 function handleSearchKeypress(e) {
-    if (e.key === 'Enter' && searchInput.value.trim()) {
-        const exactMatch = findNodeByQuery(getNodeList(), searchInput.value);
-        if (exactMatch) {
-            selectNode(exactMatch.id);
+    const items = searchResults.querySelectorAll('.search-result-item');
+    if (e.key === 'ArrowDown' && lastMatchingNodes.length > 0) {
+        e.preventDefault();
+        searchResultIndex = (searchResultIndex + 1) % lastMatchingNodes.length;
+        items.forEach((el, idx) => {
+            el.classList.toggle('active', idx === searchResultIndex);
+            if (idx === searchResultIndex) el.focus();
+        });
+    } else if (e.key === 'ArrowUp' && lastMatchingNodes.length > 0) {
+        e.preventDefault();
+        searchResultIndex = (searchResultIndex - 1 + lastMatchingNodes.length) % lastMatchingNodes.length;
+        items.forEach((el, idx) => {
+            el.classList.toggle('active', idx === searchResultIndex);
+            if (idx === searchResultIndex) el.focus();
+        });
+    } else if (e.key === 'Enter') {
+        if (searchResultIndex >= 0 && lastMatchingNodes[searchResultIndex]) {
+            selectNode(lastMatchingNodes[searchResultIndex].id);
+            searchInput.value = lastMatchingNodes[searchResultIndex].id;
             searchResults.classList.remove('show');
+            clearBtn.style.display = 'block';
+        } else if (searchInput.value.trim()) {
+            const exactMatch = findNodeByQuery(getNodeList(), searchInput.value);
+            if (exactMatch) {
+                selectNode(exactMatch.id);
+                searchResults.classList.remove('show');
+            }
         }
+    } else if (e.key === 'Escape') {
+        clearSearch();
     }
 }
 
+
 if (searchInput) {
     searchInput.addEventListener('input', handleSearchInput);
-    searchInput.addEventListener('keypress', handleSearchKeypress);
+    searchInput.addEventListener('keydown', handleSearchKeypress);
+    searchInput.setAttribute('aria-autocomplete', 'list');
+    searchInput.setAttribute('aria-controls', 'search-results');
+    searchInput.setAttribute('role', 'combobox');
 }
 
 if (clearBtn) {
     clearBtn.addEventListener('click', clearSearch);
+    clearBtn.tabIndex = 0;
 }
+
+searchResults.addEventListener('mousedown', e => {
+    // Prevent input blur when clicking result
+    e.preventDefault();
+});
 
 document.addEventListener('click', (e) => {
     if (!searchInput || !searchResults) return;
