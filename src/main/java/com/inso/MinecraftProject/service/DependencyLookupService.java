@@ -4,7 +4,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.inso.MinecraftProject.dto.MissingDependencyDto;
 import com.inso.MinecraftProject.dto.ResolvedDependencyDto;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 
+
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
@@ -21,9 +25,13 @@ public class DependencyLookupService {
     private final DependencyLookupCache<Optional<ResolvedDependencyDto>> cache;
     private final ModrinthServiceWrapper modrinthServiceWrapper;
 
-    public DependencyLookupService(ModrinthServiceWrapper modrinthServiceWrapper) {
-        this.cache = new DependencyLookupCache<>();
+    public DependencyLookupService(
+            ModrinthServiceWrapper modrinthServiceWrapper,
+            @Value("${cache.dependency.ttl-minutes:10}")long ttlMinutes) {
+        this.cache = new DependencyLookupCache<>(Duration.ofMinutes(ttlMinutes));
         this.modrinthServiceWrapper = modrinthServiceWrapper;
+            
+
     }
 
     public List<ResolvedDependencyDto> resolveDependencies(List<MissingDependencyDto> dependencies) {
@@ -247,5 +255,10 @@ public class DependencyLookupService {
 
     private String defaultString(String value) {
         return value == null ? "" : value;
+    }
+
+    @Scheduled(fixedRateString = "${cache.dependency.cleanup-interval-ms:60000}")
+    public void evictExpiredCacheEntries() {
+        cache.evictExpired();
     }
 }

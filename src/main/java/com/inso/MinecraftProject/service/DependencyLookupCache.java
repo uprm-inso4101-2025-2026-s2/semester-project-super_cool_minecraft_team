@@ -39,6 +39,10 @@ public class DependencyLookupCache<T> {
         cache.put(key, new CacheEntry<>(value, expiresAt));
     }
 
+    public void evictExpired(){
+        long now = System.currentTimeMillis();
+        cache.entrySet().removeIf(entry -> now > entry.getValue().expiresAt);
+    }
     private static class CacheEntry<T> {
         T value;
         long expiresAt;
