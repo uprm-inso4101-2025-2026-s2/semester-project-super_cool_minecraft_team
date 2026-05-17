@@ -1,3 +1,5 @@
+import { getMissingDependencies } from './backend-missing-dependencies.js';
+
 document.addEventListener("DOMContentLoaded", () => {
     missingDependenciesPage();
 });
@@ -16,6 +18,13 @@ async function missingDependenciesPage() {
 
     try {
         const data = await getMissingDependencies();
+
+        if (data.error) {
+            errorState.textContent = data.error;
+            errorState.hidden = false;
+            return;
+        }
+        
         const missingDependencies = Array.isArray(data.missingDependencies) ? data.missingDependencies : [];
         const resolvedById = new Map(
             (Array.isArray(data.resolvedDependencies) ? data.resolvedDependencies : [])
@@ -32,9 +41,20 @@ async function missingDependenciesPage() {
             return;
         }
 
-        for (const dependency of missingDependencies) {
-            const resolvedDependency = resolvedById.get(dependency.id);
-            dependencyList.appendChild(createDependencyCard(dependency, resolvedDependency));
+        // for (const dependency of missingDependencies) {
+        //     const resolvedDependency = resolvedById.get(dependency.id);
+        //     dependencyList.appendChild(createDependencyCard(dependency, resolvedDependency));
+        // }
+        for (const dependency of missingDependencies) 
+        {
+            // If dependency is a string ID, use it directly; otherwise fallback to an object property
+            const depId = typeof dependency === 'string' ? dependency : dependency.id;
+            const resolvedDependency = resolvedById.get(depId);
+            
+            // Normalize dependency structure for the card creator
+            const dependencyObj = typeof dependency === 'string' ? { id: dependency } : dependency;
+            
+            dependencyList.appendChild(createDependencyCard(dependencyObj, resolvedDependency));
         }
     } catch (error) {
         errorState.textContent = error.message || "Unable to load missing dependencies.";
@@ -93,31 +113,6 @@ function createDependencyCard(dependency, resolvedDependency) {
     return dependencyCard;
 }
 
-async function getMissingDependencies() {
-    const params = new URLSearchParams(window.location.search);
-    const mode = params.get("mode");
-    const endpoint = mode
-        ? `/api/dependencies/missing?mode=${encodeURIComponent(mode)}`
-        : "/api/dependencies/missing";
 
-    const response = await fetch(endpoint, {
-        headers: {
-            Accept: "application/json"
-        }
-    });
 
-    if (!response.ok) {
-        let errorMessage = "Unable to load missing dependencies.";
-        try {
-            const errorPayload = await response.json();
-            if (errorPayload && errorPayload.message) {
-                errorMessage = errorPayload.message;
-            }
-        } catch (error) {
-            errorMessage = `Request failed with status ${response.status}.`;
-        }
-        throw new Error(errorMessage);
-    }
 
-    return response.json();
-}

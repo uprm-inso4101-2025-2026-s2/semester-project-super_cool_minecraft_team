@@ -1,95 +1,118 @@
 # Graph Consistency and Conflict Validation
 
-## Relation to Lecture Topic
+## Overview
 
-This document applies Requirements Engineering concepts such as inconsistencies, conflicts, and satisfiability to the mod dependency graph.
+This document defines the conceptual rules for ensuring consistency and identifying conflicts in a mod dependency graph. The goal is to determine when a modpack configuration becomes invalid due to contradictions, incompatibilities, or unsatisfiable constraints.
 
-## Relation to Domain Facet Analysis
-
-This document extends the graph domain definition by introducing validation rules that determine when a dependency graph becomes inconsistent or invalid.
+This analysis is based on Requirements Evaluation concepts such as consistency, conflict detection, and satisfiability.
 
 ---
 
-## Introduction
+## Key Concepts
 
-The mod dependency graph represents relationships between mods, including dependencies and incompatibilities.
+### Consistency
+A dependency graph is considered consistent when no contradictions exist between its nodes and relationships.
 
-This document defines the conditions under which a graph is considered valid or invalid.
+### Conflict
+A conflict occurs when two or more relationships cannot be satisfied simultaneously.
 
----
-
-## Consistency Rules
-
-A dependency graph is consistent when:
-
-### 1. Dependency Satisfaction
-Every required dependency must exist in the graph.
-
-### 2. Version Compatibility
-All version constraints must be satisfiable.
-
-### 3. Non-Contradictory Relationships
-A mod cannot both depend on and conflict with the same mod.
+### Satisfiability
+A configuration is satisfiable if all dependency constraints can be fulfilled without violating any rules.
 
 ---
 
 ## Conflict Scenarios
 
-### 1. Dependency vs Conflict
-Mod A depends on Mod B, but also declares Mod B as incompatible.
+### 1. Dependency vs Incompatibility Conflict
+A mod declares a dependency on another mod that it is also incompatible with.
 
-→ This creates a logical contradiction.
+**Example:**
+- Mod A depends on Mod B  
+- Mod A is incompatible with Mod B  
 
----
-
-### 2. Mutual Incompatibility
-Mod A conflicts with Mod B, and Mod B conflicts with Mod A.
-
-→ They cannot coexist in the same configuration.
+This creates a direct contradiction.
 
 ---
 
-### 3. Unsatisfiable Versions
-Different mods require incompatible versions of the same dependency.
+### 2. Mutual Incompatibility in Required Mods
+Two required mods are incompatible with each other.
 
-→ No valid configuration exists.
+**Example:**
+- Mod A depends on Mod B  
+- Mod A depends on Mod C  
+- Mod B is incompatible with Mod C  
 
----
-
-### 4. Missing Dependency
-A required dependency is not present.
-
-→ The configuration is incomplete.
+Both cannot coexist, making the configuration invalid.
 
 ---
 
-## Invalid Configurations
+### 3. Version Constraint Conflict
+Dependency version requirements cannot be satisfied simultaneously.
 
-A configuration is invalid if:
+**Example:**
+- Mod A requires Mod B version ≥ 2.0  
+- Mod C requires Mod B version ≤ 1.5  
 
-- A required dependency is missing
-- A dependency conflicts with an incompatibility rule
-- Version constraints cannot be satisfied
-- Required mods cannot coexist
+No valid version satisfies both constraints.
+
+---
+
+### 4. Missing Required Dependency
+A required dependency is not present in the configuration.
+
+**Example:**
+- Mod A depends on Mod B  
+- Mod B is not included  
+
+This results in an incomplete configuration.
+
+---
+
+## Consistency Rules
+
+### Rule 1: No Contradictory Relationships
+A mod cannot simultaneously depend on and be incompatible with the same mod.
+
+---
+
+### Rule 2: All Dependencies Must Be Satisfied
+Every declared dependency must exist in the graph.
+
+---
+
+### Rule 3: Version Constraints Must Be Compatible
+All version requirements for a given mod must overlap.
+
+---
+
+### Rule 4: Required Mods Must Be Compatible
+All required dependencies must not conflict with each other.
+
+---
+
+## Conditions for Invalid Configurations
+
+A mod dependency graph is considered invalid if any of the following conditions are met:
+
+- A dependency is declared but not satisfied  
+- A mod has conflicting relationships with another mod  
+- Version constraints are unsatisfiable  
+- Required dependencies are mutually incompatible  
 
 ---
 
 ## Role of Consistency
 
-Consistency ensures that the graph represents a valid modpack.
+Consistency ensures that the dependency graph represents a valid and executable configuration. Without consistency:
 
-Without consistency:
-- dependency resolution fails
-- conflicts occur
-- the system becomes unreliable
+- The system may fail to resolve dependencies  
+- The modpack may not load correctly  
+- Conflicts may cause runtime errors or instability  
+
+Maintaining consistency allows for predictable and reliable behavior of the system.
 
 ---
 
-## Summary
+## Conclusion
 
-This document defines:
-- consistency rules
-- conflict scenarios
-- invalid configuration conditions
-
-These rules provide a conceptual foundation for validating mod dependency graphs.
+By defining conflict scenarios, consistency rules, and invalid conditions, we establish a clear conceptual framework for evaluating mod dependency graphs. This ensures that configurations are logically sound and aligned with requirements evaluation principles.

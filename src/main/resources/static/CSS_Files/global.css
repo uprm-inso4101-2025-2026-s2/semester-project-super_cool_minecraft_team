@@ -1,0 +1,36 @@
+/* 
+   GLOBAL VARIABLES (USED BY ALL TEAMS)
+ */
+
+:root {
+
+  /* COLORS */
+  --color-bg: #000000;
+  --color-header: #3a3b49;
+  --color-panel: #3b3c4b;
+  --color-panel-dark: #000000;
+
+  --color-text: #ffffff;
+  --color-muted: #6b7280;
+
+  --color-green: #3ebe45;
+  --color-green-hover: #4acf52;
+
+  --color-red: #ff3b30;
+  --color-yellow: #d6ab1d;
+  --color-blue: #0c56c8;
+
+  /* BORDERS / UI */
+  --color-border: #8a8ea2;
+
+  /* RADIUS */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+
+  /* FONT */
+  --font-main: 'Monocraft', sans-serif;
+
+  /* TRANSITIONS */
+  --transition: 0.2s ease;
+}

@@ -1,5 +1,9 @@
 # Frontend Architecture Overview - Team A
 
+## Additional Documentation
+
+- [Dependency Resolution and Download Flow](docs/integration-dependency-download-flow.md)
+
 ## Introduction
 
 This README documents the frontend architecture for the dependency-graph UI. It is a living document: update it as new attributes and features are added. The goal is to make it easy for frontend contributors to understand how data flows, how the graph is built and updated, and where to edit code.

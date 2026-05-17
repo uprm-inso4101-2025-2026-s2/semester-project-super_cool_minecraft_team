@@ -1,9 +1,5 @@
 package com.inso.MinecraftProject.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.stereotype.Component;
-
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
@@ -12,6 +8,13 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 
+import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import com.inso.MinecraftProject.exception.ApiException;
+import org.springframework.http.HttpStatus;
 @Component
 public class ModrinthServiceWrapper {
     public static final String Base_URL = "https://api.modrinth.com/v2";
@@ -40,24 +43,24 @@ public class ModrinthServiceWrapper {
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (Exception e) {
-            throw new RuntimeException("Failed to send request to Modrinth API: " + e.getMessage(), e);
+            throw new ApiException("Failed to send request to Modrinth API: " + e.getMessage(), e);
         }
 
         switch (response.statusCode()) {
             case 200 -> {
             }
-            case 401 -> throw new RuntimeException("Unauthorized access to Modrinth API at " + url);
-            case 404 -> throw new RuntimeException("Resource not found at endpoint: " + url);
-            case 429 -> throw new RuntimeException("Rate limited by Modrinth API at " + url);
-            case 500 -> throw new RuntimeException("Server issues with Modrinth API at " + url);
-            case 503 -> throw new RuntimeException("Service unavailable at Modrinth API at " + url);
-            default -> throw new RuntimeException("Unexpected response code " + response.statusCode() + " from Modrinth API at " + url);
+            case 401 -> throw new ApiException("Unauthorized access to Modrinth API at " + url);
+            case 404 -> throw new ApiException("Resource not found at endpoint: " + url);
+            case 429 -> throw new ApiException("Rate limited by Modrinth API at " + url);
+            case 500 -> throw new ApiException("Server issues with Modrinth API at " + url);
+            case 503 -> throw new ApiException("Service unavailable at Modrinth API at " + url);
+            default -> throw new ApiException("Unexpected response code " + response.statusCode() + " from Modrinth API at " + url);
         }
 
         try {
             return mapper.readTree(response.body());
         } catch (Exception e) {
-            throw new RuntimeException("Failed to parse JSON response from Modrinth API at " + url + ": " + e.getMessage(), e);
+            throw new ApiException("Invalid response from Modrinth API", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
