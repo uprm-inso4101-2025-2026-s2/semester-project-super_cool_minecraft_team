@@ -13,4 +13,6 @@ public class ValidationResponse {
 
     private List<String> circularDependencies;
 
+
+    private List<ResolvedDependencyDto> resolvedDependencies;
 }
