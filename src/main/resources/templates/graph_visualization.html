@@ -14,7 +14,16 @@
     <script th:inline="javascript">
         window.graphData = /*[[${graphData}]]*/ { nodes: [], links: [] };
     </script>
-    
+
+    <!-- Test data for development -->
+    <th:block th:if="${@environment.acceptsProfiles('dev')}">
+        <script th:inline="javascript">
+            // The available test modes are 'cycle', 'simple', and 'medium'
+             window.TEST_MODE = 'medium';
+        </script>
+    </th:block>
+    <script th:src="@{/JS_Files/test_graph_data.js}"></script>
+
     <!-- Custom Scripts -->
     <script th:src="@{/JS_Files/graph_visualization.js}" defer></script>
     <script src="/JS_Files/dependency-resolution.js"></script>
