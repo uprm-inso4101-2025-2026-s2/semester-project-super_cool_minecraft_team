@@ -60,9 +60,14 @@ if (!container) {
 }
 
 /* ===== DIMENSIONS ===== */
-const width = container.clientWidth || 800;
-const height = container.clientHeight || 650;
+let width = container.clientWidth || 800;
+let height = container.clientHeight || 650;
+
 let simulation = null;
+let svg = null;
+let mainGroup = null;
+let zoom = null;
+let graphLayoutUpdateTimeout = null;
 
 /* ===== JSON VALIDATION LOGIC ===== */
 
@@ -247,13 +252,13 @@ if (!validationResult.isValid) {
         return validationResult.nodeIds.has(link.source) && validationResult.nodeIds.has(link.target);
     });
 
-    const svg = d3.select("#dependency-graph-canvas")
+    svg = d3.select("#dependency-graph-canvas")
         .append("svg")
         .attr("width", width)
         .attr("height", height)
         .attr("viewBox", `0 0 ${width} ${height}`);
 
-    const mainGroup = svg.append("g");
+    mainGroup = svg.append("g");
 
     /* ===== PAN BOUNDS CONFIGURATION ===== */
     const PAN_BOUNDS = {
@@ -261,7 +266,7 @@ if (!validationResult.isValid) {
         maxPanY: 400
     };
 
-    const zoom = d3.zoom()
+    zoom = d3.zoom()
         .scaleExtent([0.2, 5])
         .on("zoom", (event) => {
             let transform = event.transform;
@@ -303,6 +308,33 @@ if (!validationResult.isValid) {
         svg.transition()
             .duration(500)
             .call(zoom.transform, d3.zoomIdentity);
+    }
+
+    function updateGraphLayout() {
+        if (!container || !svg || !simulation) return;
+
+        width = container.clientWidth || 800;
+        height = container.clientHeight || 650;
+
+        svg
+            .attr("width", width)
+            .attr("height", height)
+            .attr("viewBox", `0 0 ${width} ${height}`);
+
+        simulation.force("center", d3.forceCenter(width / 2, height / 2));
+        simulation.alpha(0.3).restart();
+    }
+
+    function scheduleGraphLayoutUpdate() {
+        if (graphLayoutUpdateTimeout) {
+            clearTimeout(graphLayoutUpdateTimeout);
+        }
+
+        requestAnimationFrame(updateGraphLayout);
+
+        graphLayoutUpdateTimeout = setTimeout(() => {
+            updateGraphLayout();
+        }, 300);
     }
 
     simulation = d3.forceSimulation(nodes)
@@ -364,6 +396,15 @@ if (!validationResult.isValid) {
     if (zoomInBtn) zoomInBtn.addEventListener("click", () => zoomBy(1.2));
     if (zoomOutBtn) zoomOutBtn.addEventListener("click", () => zoomBy(0.8));
     if (resetViewBtn) resetViewBtn.addEventListener("click", resetView);
+
+    window.addEventListener("resize", scheduleGraphLayoutUpdate);
+
+    document.addEventListener("sidebar-toggle", scheduleGraphLayoutUpdate);
+
+    const sidebarToggleBtn = document.getElementById("sidebarToggleBtn");
+    if (sidebarToggleBtn) {
+        sidebarToggleBtn.addEventListener("click", scheduleGraphLayoutUpdate);
+    }
 
     node.on('click', (event, d) => {
         if (searchInput) searchInput.value = '';
