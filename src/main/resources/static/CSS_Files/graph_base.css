@@ -1128,3 +1128,27 @@ svg:active {
     opacity: 0;
     pointer-events: none;
 }
+/* reopen animation */
+.sidebar-reopen-btn {
+    position: absolute;
+    top: 22px;
+    left: 16px;
+    z-index: 60;
+    width: 42px;
+    height: 42px;
+    border: none;
+    border-radius: 8px;
+    background-color: #1f2937;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    display: none;
+}
+
+.sidebar-reopen-btn:hover {
+    background-color: #374151;
+}
+
+.dashboard-container.sidebar-collapsed .sidebar-reopen-btn {
+    display: block;
+}
