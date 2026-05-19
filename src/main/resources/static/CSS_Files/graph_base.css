@@ -1094,17 +1094,20 @@ svg:active {
     transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
-.dashboard-container.sidebar-collapsed .sidebar {
-    transform: translateX(-100%);
-    opacity: 0;
-    pointer-events: none;
+.sidebar-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
 }
 
+.sidebar-title-row .group-label {
+    margin-bottom: 0;
+}
+
+
 .sidebar-toggle-btn {
-    position: absolute;
-    top: 16px;
-    left: 16px;
-    z-index: 50;
     width: 42px;
     height: 42px;
     border: none;
@@ -1113,8 +1116,15 @@ svg:active {
     color: white;
     font-size: 20px;
     cursor: pointer;
+    flex-shrink: 0;
 }
 
-.dashboard-container.sidebar-collapsed .sidebar-toggle-btn {
-    left: 16px;
+.sidebar-toggle-btn:hover {
+    background-color: #374151;
+}
+
+.dashboard-container.sidebar-collapsed .sidebar {
+    transform: translateX(-100%);
+    opacity: 0;
+    pointer-events: none;
 }
