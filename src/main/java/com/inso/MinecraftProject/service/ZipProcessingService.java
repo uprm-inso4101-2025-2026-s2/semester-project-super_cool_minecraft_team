@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import org.springframework.stereotype.Service;
@@ -50,6 +51,12 @@ public class ZipProcessingService {
                     discoveredMods,
                     edges,
                     resolvedDependencies
+            );
+        }
+
+        if (discoveredMods.isEmpty()) {
+            throw new IOException(
+                    "No Fabric mods found. Use a .zip whose root contains mods/*.jar with fabric.mod.json inside each jar."
             );
         }
 
@@ -100,12 +107,11 @@ public class ZipProcessingService {
     public List<Path> iterateThroughEachModAndExtract(Path modpackExtractedDir) throws IOException {
         List<Path> modArchives = new ArrayList<>();
 
+        boolean hasModsFolder = Files.isDirectory(modpackExtractedDir.resolve("mods"));
+
         try (var paths = Files.walk(modpackExtractedDir)) {
             paths.filter(Files::isRegularFile)
-                    .filter(path -> {
-                        String fileName = path.getFileName().toString().toLowerCase();
-                        return fileName.endsWith(".jar") || fileName.endsWith(".zip");
-                    })
+                    .filter(path -> isModArchiveCandidate(path, modpackExtractedDir, hasModsFolder))
                     .forEach(modArchives::add);
         }
 
@@ -124,14 +130,10 @@ public class ZipProcessingService {
             Set<String> resolvedDependencies
     ) throws IOException {
 
-        Path extractedModDir = extractArchive(modArchivePath);
-        Path fabricJsonPath = findFabricModJson(extractedModDir);
-
-        if (fabricJsonPath == null) {
+        JsonNode root = readFabricModJsonFromArchive(modArchivePath);
+        if (root == null) {
             return;
         }
-
-        JsonNode root = objectMapper.readTree(fabricJsonPath.toFile());
 
         String modId = getTextOrDefault(root, "id", stripExtension(modArchivePath.getFileName().toString()));
         String version = getTextOrDefault(root, "version", "unknown");
@@ -158,45 +160,55 @@ public class ZipProcessingService {
     }
 
     /**
-     * Extract a mod archive (.jar or .zip) into a temporary folder.
+     * Reads {@code fabric.mod.json} directly from a mod jar/zip without full extraction.
+     * Skips invalid archives (e.g. macOS {@code ._*} resource-fork files).
      */
-    private Path extractArchive(Path archivePath) throws IOException {
-        Path tempDir = Files.createTempDirectory("single-mod-extracted-");
-
+    private JsonNode readFabricModJsonFromArchive(Path archivePath) throws IOException {
         try (ZipFile zipFile = new ZipFile(archivePath.toFile())) {
-            Enumeration<? extends ZipEntry> entries = zipFile.entries();
-
-            while (entries.hasMoreElements()) {
-                ZipEntry entry = entries.nextElement();
-                Path outputPath = tempDir.resolve(entry.getName()).normalize();
-
-                if (!outputPath.startsWith(tempDir)) {
-                    throw new IOException("Invalid archive entry path: " + entry.getName());
-                }
-
-                if (entry.isDirectory()) {
-                    Files.createDirectories(outputPath);
-                } else {
-                    Files.createDirectories(outputPath.getParent());
-                    try (InputStream inputStream = zipFile.getInputStream(entry)) {
-                        Files.copy(inputStream, outputPath, StandardCopyOption.REPLACE_EXISTING);
+            ZipEntry entry = zipFile.getEntry(FABRIC_MOD_JSON);
+            if (entry == null) {
+                Enumeration<? extends ZipEntry> entries = zipFile.entries();
+                while (entries.hasMoreElements()) {
+                    ZipEntry candidate = entries.nextElement();
+                    if (FABRIC_MOD_JSON.equalsIgnoreCase(candidate.getName())
+                            || candidate.getName().endsWith("/" + FABRIC_MOD_JSON)) {
+                        entry = candidate;
+                        break;
                     }
                 }
             }
+            if (entry == null) {
+                return null;
+            }
+            try (InputStream inputStream = zipFile.getInputStream(entry)) {
+                return objectMapper.readTree(inputStream);
+            }
+        } catch (ZipException ex) {
+            return null;
         }
-
-        return tempDir;
     }
 
-    /**
-     * Find fabric.mod.json somewhere inside the extracted mod archive.
-     */
-    private Path findFabricModJson(Path extractedModDir) throws IOException {
-        try (var paths = Files.walk(extractedModDir)) {
-            return paths.filter(Files::isRegularFile)
-                    .filter(path -> path.getFileName().toString().equalsIgnoreCase(FABRIC_MOD_JSON))
-                    .findFirst()
-                    .orElse(null);
+    private boolean isModArchiveCandidate(Path path, Path modpackRoot, boolean hasModsFolder) {
+        String fileName = path.getFileName().toString();
+        String lowerName = fileName.toLowerCase();
+        if (!lowerName.endsWith(".jar") && !lowerName.endsWith(".zip")) {
+            return false;
+        }
+        if (fileName.startsWith(".")) {
+            return false;
+        }
+
+        String relative = modpackRoot.relativize(path).toString().replace('\\', '/');
+        if (relative.contains("__MACOSX") || relative.contains("/._")) {
+            return false;
+        }
+        if (hasModsFolder && !relative.startsWith("mods/")) {
+            return false;
+        }
+        try {
+            return Files.size(path) > 0;
+        } catch (IOException ex) {
+            return false;
         }
     }
 
