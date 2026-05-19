@@ -993,3 +993,18 @@ function exportGraphToPNG(svgSelector, fileName) {
 
     image.src = url;
 }
+/* SIDEBAR TOGGLE LOGIC */
+document.addEventListener("DOMContentLoaded", () => {
+    const dashboard = document.querySelector(".dashboard-container");
+    const toggleBtn = document.getElementById("sidebarToggleBtn");
+
+    if (!dashboard || !toggleBtn) return;
+
+    toggleBtn.addEventListener("click", () => {
+        dashboard.classList.toggle("sidebar-collapsed");
+
+        setTimeout(() => {
+            window.dispatchEvent(new Event("resize"));
+        }, 300);
+    });
+});

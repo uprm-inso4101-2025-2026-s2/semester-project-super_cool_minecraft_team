@@ -1077,3 +1077,44 @@ svg:active {
                 r 0.3s ease, fill 0.3s ease, stroke 0.3s ease,
                 filter 0.3s ease;
 }
+
+
+/* Sliding left control panel animation */
+.dashboard-container {
+    position: relative;
+    transition: grid-template-columns 0.3s ease;
+}
+
+.dashboard-container.sidebar-collapsed {
+    grid-template-columns: 0 1fr;
+}
+
+.sidebar {
+    overflow: hidden;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.dashboard-container.sidebar-collapsed .sidebar {
+    transform: translateX(-100%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.sidebar-toggle-btn {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    z-index: 50;
+    width: 42px;
+    height: 42px;
+    border: none;
+    border-radius: 8px;
+    background-color: #1f2937;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.dashboard-container.sidebar-collapsed .sidebar-toggle-btn {
+    left: 16px;
+}

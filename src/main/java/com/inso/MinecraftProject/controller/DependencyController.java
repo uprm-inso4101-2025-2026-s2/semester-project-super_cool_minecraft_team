@@ -17,7 +17,7 @@ import com.inso.MinecraftProject.dto.MissingDependencyDto;
 import com.inso.MinecraftProject.dto.ResolvedDependencyDto;
 import com.inso.MinecraftProject.dto.ValidationResponse;
 import com.inso.MinecraftProject.entity.Mod;
-import com.inso.MinecraftProject.repository.ModRepository;
+import com.inso.MinecraftProject.service.ModRepository;
 import com.inso.MinecraftProject.service.DependencyResolverService;
 
 @RestController
