@@ -1001,3 +1001,31 @@ function exportGraphToPNG(svgSelector, fileName) {
 
     image.src = url;
 }
+/* SIDEBAR TOGGLE LOGIC */
+document.addEventListener("DOMContentLoaded", () => {
+    const dashboard = document.querySelector(".dashboard-container");
+    const closeBtn = document.getElementById("sidebarToggleBtn");
+    const reopenBtn = document.getElementById("sidebarReopenBtn");
+
+    if (!dashboard) return;
+
+    const resizeGraphAfterAnimation = () => {
+        setTimeout(() => {
+            window.dispatchEvent(new Event("resize"));
+        }, 300);
+    };
+
+    if (closeBtn) {
+        closeBtn.addEventListener("click", () => {
+            dashboard.classList.add("sidebar-collapsed");
+            resizeGraphAfterAnimation();
+        });
+    }
+
+    if (reopenBtn) {
+        reopenBtn.addEventListener("click", () => {
+            dashboard.classList.remove("sidebar-collapsed");
+            resizeGraphAfterAnimation();
+        });
+    }
+});
