@@ -665,6 +665,8 @@ function getNodeList() {
 }
 
 function updateSearchResults(searchTerm) {
+    if (!searchResults) return;
+
     if (!searchTerm || searchTerm.trim() === '') {
         searchResults.classList.remove('show');
         lastMatchingNodes = [];
@@ -711,6 +713,8 @@ function highlightNode(nodeId) {
 }
 
 function zoomToNode(nodeId) {
+    if (!svg || !zoom) return;
+
     const nodeData = getNodeList().find(n => n.id === nodeId);
     if (!nodeData || nodeData.x === undefined || nodeData.y === undefined) {
         console.warn(`Node ${nodeId} not found or has no position data`);
@@ -772,6 +776,8 @@ function resetVisuals() {
     d3.selectAll('.node').classed('faded', false);
     d3.selectAll('.link').classed('faded', false);
     currentSelectedNodeId = null;
+
+    if (!svg || !zoom) return;
 
     svg.transition()
         .duration(300)
@@ -864,10 +870,12 @@ if (clearBtn) {
     clearBtn.tabIndex = 0;
 }
 
-searchResults.addEventListener('mousedown', e => {
-    // Prevent input blur when clicking result
-    e.preventDefault();
-});
+if (searchResults) {
+    searchResults.addEventListener('mousedown', e => {
+        // Prevent input blur when clicking result
+        e.preventDefault();
+    });
+}
 
 document.addEventListener('click', (e) => {
     if (!searchInput || !searchResults) return;
