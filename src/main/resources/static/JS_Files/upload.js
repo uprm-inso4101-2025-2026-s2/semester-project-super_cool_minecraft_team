@@ -54,7 +54,13 @@ async function uploadFile(file)
         if (!resp.ok)
             throw new Error("Upload failed");
 
-        console.log("Server response:", await resp.text());
+        let payload = {};
+        try {payload = bodyText ? JSON.parse(bodyText) : {};} 
+        catch (_) {/* non-JSON success body: still treat as success if status was 2xx */}
+        
+        console.log("Server response:", bodyText);
+        const nextUrl = typeof payload.redirect === "string" ? payload.redirect : "/graph";
+        window.location.assign(nextUrl);
     }
     catch (errorC)
     {
