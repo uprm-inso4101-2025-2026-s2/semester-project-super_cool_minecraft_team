@@ -18,7 +18,8 @@ if (filePicker && statusText)
         const file = files[0];
 
         // Optional
-        if (!file.name.endsWith(".zip")) {
+        if (!file.name.toLowerCase().endsWith(".zip"))
+        {
             statusText.textContent = "Please upload a .zip file.";
             return;
         }
@@ -27,11 +28,7 @@ if (filePicker && statusText)
         filePicker.disabled = true;
 
         uploadFile(file)
-            .then(() => 
-            {
-                statusText.textContent = "Upload successful!";
-                window.location.href = "/graph";
-            })
+            .then(() => {statusText.textContent = "Upload successful!";})
             .catch(() => {statusText.textContent = "Upload failed.";})
             .finally(() => {filePicker.disabled = false;});
     });
@@ -41,7 +38,7 @@ else
 
 async function uploadFile(file)
 {
-    const baseUrl = "http://localhost:8080/api/modpack/zip";
+    const baseUrl = "/api/modpack/zip";
 
     try
     {
@@ -50,6 +47,7 @@ async function uploadFile(file)
         fData.append("file", file);
 
         const resp = await fetch(baseUrl, {method: "POST", body: fData});
+        const bodyText = await resp.text();
 
         if (!resp.ok)
             throw new Error("Upload failed");
