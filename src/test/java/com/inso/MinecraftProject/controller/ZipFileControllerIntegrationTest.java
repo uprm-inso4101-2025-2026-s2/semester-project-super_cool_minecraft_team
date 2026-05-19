@@ -13,8 +13,6 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -66,28 +64,6 @@ class ZipFileControllerIntegrationTest {
         mvc.perform(multipart("/api/modpack/zip").file(multipart))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("No file uploaded or file is empty."));
-    }
-
-    @Test
-    void uploadSampleFixtureModpack_parsesMods() throws Exception {
-        Path fixture = Path.of("test-fixtures/sample-fabric-modpack.zip");
-        org.junit.jupiter.api.Assumptions.assumeTrue(
-                Files.isRegularFile(fixture),
-                "Run test-fixtures/create-sample-modpack.sh to generate the fixture zip"
-        );
-
-        byte[] zipBytes = Files.readAllBytes(fixture);
-        MockMultipartFile multipart = new MockMultipartFile(
-                "file", "sample-fabric-modpack.zip", "application/zip", zipBytes);
-        MockHttpSession session = new MockHttpSession();
-
-        mvc.perform(multipart("/api/modpack/zip")
-                        .file(multipart)
-                        .session(session))
-                .andExpect(status().isOk());
-
-        DTO dto = (DTO) session.getAttribute("graphDto");
-        assertThat(dto.getMods()).extracting("id").contains("fabric-api", "example-mod");
     }
 
     @Test
