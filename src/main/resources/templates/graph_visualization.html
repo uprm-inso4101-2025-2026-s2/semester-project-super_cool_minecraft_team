@@ -19,7 +19,7 @@
     <th:block th:if="${@environment.acceptsProfiles('dev')}">
         <script th:inline="javascript">
             // The available test modes are 'cycle', 'simple', and 'medium'
-             window.TEST_MODE = 'medium';
+            window.TEST_MODE = 'medium';
         </script>
     </th:block>
     <script th:src="@{/JS_Files/test_graph_data.js}"></script>
@@ -59,10 +59,19 @@
         </div>
     </header>
 
-    <main class="dashboard-container">
-        <aside class="sidebar">
-            <section class="sidebar-group">
-                <h3 class="group-label">MODPACK SELECTION</h3>
+        <main class="dashboard-container">
+            <button id="sidebarReopenBtn" class="sidebar-reopen-btn" aria-label="Reopen sidebar">
+                ☰
+            </button>
+            <aside class="sidebar">
+                <section class="sidebar-group">
+                <div class="sidebar-title-row">
+                    <h3 class="group-label">MODPACK SELECTION</h3>
+
+                    <button id="sidebarToggleBtn" class="sidebar-toggle-btn" aria-label="Toggle sidebar">
+                        ☰
+                    </button>
+                </div>
                 <div class="folder-display">
                     <code>/home/user/Projects/ModpackG</code>
                 </div>

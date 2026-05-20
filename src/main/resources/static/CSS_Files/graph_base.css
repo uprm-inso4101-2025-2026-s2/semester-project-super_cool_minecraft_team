@@ -1103,3 +1103,77 @@ svg:active {
 .mc-button:hover {
     background: #555;
 }
+
+/* Sliding left control panel animation */
+.dashboard-container {
+    position: relative;
+    transition: grid-template-columns 0.3s ease;
+}
+
+.dashboard-container.sidebar-collapsed {
+    grid-template-columns: 0 1fr;
+}
+
+.sidebar {
+    overflow: hidden;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.sidebar-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.sidebar-title-row .group-label {
+    margin-bottom: 0;
+}
+
+
+.sidebar-toggle-btn {
+    width: 42px;
+    height: 42px;
+    border: none;
+    border-radius: 8px;
+    background-color: #1f2937;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.sidebar-toggle-btn:hover {
+    background-color: #374151;
+}
+
+.dashboard-container.sidebar-collapsed .sidebar {
+    transform: translateX(-100%);
+    opacity: 0;
+    pointer-events: none;
+}
+/* reopen animation */
+.sidebar-reopen-btn {
+    position: absolute;
+    top: 22px;
+    left: 16px;
+    z-index: 60;
+    width: 42px;
+    height: 42px;
+    border: none;
+    border-radius: 8px;
+    background-color: #1f2937;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    display: none;
+}
+
+.sidebar-reopen-btn:hover {
+    background-color: #374151;
+}
+
+.dashboard-container.sidebar-collapsed .sidebar-reopen-btn {
+    display: block;
+}
