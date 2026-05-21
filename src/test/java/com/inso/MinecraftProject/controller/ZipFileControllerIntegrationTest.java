@@ -62,7 +62,18 @@ class ZipFileControllerIntegrationTest {
                 "file", "empty.zip", "application/zip", new byte[0]);
 
         mvc.perform(multipart("/api/modpack/zip").file(multipart))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("No file uploaded or file is empty."));
+    }
+
+    @Test
+    void uploadNonZipFile_returnsBadRequest() throws Exception {
+        MockMultipartFile multipart = new MockMultipartFile(
+                "file", "mods.txt", "text/plain", "not a zip".getBytes(StandardCharsets.UTF_8));
+
+        mvc.perform(multipart("/api/modpack/zip").file(multipart))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Only .zip files are supported."));
     }
 
     private static byte[] minimalFabricModpackZip(String modId, String version) throws Exception {
