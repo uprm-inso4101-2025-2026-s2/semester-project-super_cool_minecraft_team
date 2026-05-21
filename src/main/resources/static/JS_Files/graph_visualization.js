@@ -1029,3 +1029,29 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
+/* ===== THEME TOGGLE LOGIC ===== */
+document.addEventListener("DOMContentLoaded", () => {
+    const themeToggle = document.getElementById("themeToggle");
+    const savedTheme = localStorage.getItem("theme");
+
+    if (savedTheme === "light") {
+        document.body.classList.add("light-theme");
+        if (themeToggle) themeToggle.checked = true;
+    }
+
+    if (!themeToggle) return;
+
+    themeToggle.addEventListener("change", () => {
+        if (themeToggle.checked) {
+            document.body.classList.add("light-theme");
+            localStorage.setItem("theme", "light");
+        } else {
+            document.body.classList.remove("light-theme");
+            localStorage.setItem("theme", "dark");
+        }
+
+        setTimeout(() => {
+            window.dispatchEvent(new Event("resize"));
+        }, 200);
+    });
+});

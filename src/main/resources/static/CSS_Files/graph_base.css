@@ -181,7 +181,7 @@ body {
 
 /* Sidebar */
 .sidebar {
-    background: #000;
+    background: var(--bg);
     padding: 22px 14px 14px;
     display: flex;
     flex-direction: column;
@@ -271,7 +271,7 @@ body {
 .control-row span {
     font-size: 0.72rem;
     font-weight: 600;
-    color: #fff;
+    color: var(--text);
 }
 
 /* Switch */
@@ -339,7 +339,7 @@ body {
 /* Graph workspace */
 .graph-workspace {
     position: relative;
-    background: #000;
+    background: var(--bg);
     min-height: calc(100vh - 78px);
     padding: 16px 22px 22px;
     overflow: hidden;
@@ -457,7 +457,7 @@ body {
     width: 100%;
     min-height: 650px;
     height: 650px;
-    background: #000;
+    background: var(--bg);
     border: none;
     border-radius: 0;
     overflow: hidden;
@@ -649,7 +649,7 @@ svg:active {
     right: 20px;
     width: 170px;
     background: var(--panel);
-    border: 1.5px solid rgba(255, 255, 255, 0.25);
+    border: 1.5px solid var(--input-border);
     border-radius: 16px;
     padding: 16px 18px;
     z-index: 10;
@@ -659,6 +659,7 @@ svg:active {
     font-size: 1.1rem;
     font-weight: 700;
     margin-bottom: 12px;
+    color: var(--text);
 }
 
 .filter-list {
@@ -674,7 +675,7 @@ svg:active {
     gap: 12px;
     font-size: 0.85rem;
     font-weight: 600;
-    color: #fff;
+    color: var(--text);
 }
 
 .filter-item::before {
@@ -1176,4 +1177,20 @@ svg:active {
 
 .dashboard-container.sidebar-collapsed .sidebar-reopen-btn {
     display: block;
+}
+
+/* Light theme variables */
+body.light-theme {
+    --bg: #f5f7fb;
+    --header: #e5e7eb;
+    --panel: #ffffff;
+    --panel-dark: #f3f4f6;
+    --input-bg: #ffffff;
+    --input-border: #9ca3af;
+
+    --text: #111827;
+    --muted: #4b5563;
+
+    --line: rgba(0, 0, 0, 0.16);
+    --line-soft: rgba(0, 0, 0, 0.08);
 }
