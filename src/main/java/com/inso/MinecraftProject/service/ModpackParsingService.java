@@ -1,6 +1,7 @@
 package com.inso.MinecraftProject.service;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -8,16 +9,26 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.zip.ZipFile;
 
 import org.springframework.stereotype.Service;
 
-import com.inso.MinecraftProject.dto.DTO;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.inso.MinecraftProject.dto.DTO;
 
 @Service
 public class ModpackParsingService {
 
+    private final ZipProcessingService zipProcessingService;
+
+    public ModpackParsingService(ZipProcessingService zipProcessingService) {
+        this.zipProcessingService = zipProcessingService;
+    }
+
+    /**
+     * Empty graph placeholder (no uploaded modpack).
+     */
     public DTO parseModpack() {
         return DTO.builder()
                 .mods(List.of())
@@ -27,88 +38,58 @@ public class ModpackParsingService {
                 .build();
     }
 
-    //Function that return a List with 3 Lists inside that have all the data
-    public List<List<String>> ReadJson(JarFile jarFile){
+    /**
+     * Parses a Fabric modpack zip and builds the dependency graph DTO for the visualizer.
+     */
+    public DTO parseModpack(ZipFile modpackZip) throws IOException {
+        return zipProcessingService.processModpackZip(modpackZip);
+    }
 
-        //Creates List for store results
-        List<String> Depends = new ArrayList<>();
-        List<String> Breaks = new ArrayList<>();
-        List<String> Conflicts = new ArrayList<>();
-        List<List<String>> Results = new ArrayList<>();
+    /**
+     * Reads dependency metadata from a mod jar's {@code fabric.mod.json}.
+     */
+    public List<List<String>> ReadJson(JarFile jarFile) {
+        List<String> depends = new ArrayList<>();
+        List<String> breaks = new ArrayList<>();
+        List<String> conflicts = new ArrayList<>();
 
-        //Try and Catch to go around Null errors
         try {
-
-            //Get info in jarFile
             Enumeration<JarEntry> entries = jarFile.entries();
-
-            //Jackson parser for reading JSON
             ObjectMapper mapper = new ObjectMapper();
 
-            //Go searching the .Json
             while (entries.hasMoreElements()) {
                 JarEntry entry = entries.nextElement();
+                if (!"fabric.mod.json".equals(entry.getName())) {
+                    continue;
+                }
 
-                // When .Json is found go into the file
-                if (entry.getName().equals("fabric.mod.json")) {
-
-                    InputStream is = jarFile.getInputStream(entry);
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-
+                try (InputStream is = jarFile.getInputStream(entry);
+                     BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
                     StringBuilder content = new StringBuilder();
                     String line;
-
                     while ((line = reader.readLine()) != null) {
                         content.append(line);
                     }
 
-                    reader.close();
-
-                    try {
-                        //Parse JSON using Jackson
-                        JsonNode json = mapper.readTree(content.toString());
-
-                        //Extract "breaks" and add them to Breaks List
-                        if (json.has("breaks")) {
-                            JsonNode breaksNode = json.get("breaks");
-                            breaksNode.fieldNames().forEachRemaining(Breaks::add);
-                        }
-
-                        //Extract "conflicts" and add them to Conflict List
-                        if (json.has("conflicts")) {
-                            JsonNode conflictsNode = json.get("conflicts");
-                            conflictsNode.fieldNames().forEachRemaining(Conflicts::add);
-                        }
-
-                        //Extract "depends" and add them to Depends List
-                        if (json.has("depends")) {
-                            JsonNode dependsNode = json.get("depends");
-                            dependsNode.fieldNames().forEachRemaining(Depends::add);
-                        }
-
-                    } catch (Exception e) {
-                        // Not all JSON files are mod metadata, ignore this part
+                    JsonNode json = mapper.readTree(content.toString());
+                    if (json.has("breaks")) {
+                        json.get("breaks").fieldNames().forEachRemaining(breaks::add);
                     }
-
-                    //Stop after finding metadata file
-                    break;
+                    if (json.has("conflicts")) {
+                        json.get("conflicts").fieldNames().forEachRemaining(conflicts::add);
+                    }
+                    if (json.has("depends")) {
+                        json.get("depends").fieldNames().forEachRemaining(depends::add);
+                    }
+                } catch (Exception ignored) {
+                    // Not all JSON files are mod metadata.
                 }
+                break;
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        //Add the Lists to Result
-        System.out.println(Depends);
-        System.out.println(Conflicts);
-        System.out.println(Breaks);
-
-        Results.add(Depends);
-        Results.add(Conflicts);
-        Results.add(Breaks);
-
-        //Returns the List with all the needed Lists
-        return Results;
+        return List.of(depends, conflicts, breaks);
     }
 }

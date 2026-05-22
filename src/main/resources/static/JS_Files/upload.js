@@ -30,7 +30,6 @@ if (filePicker && statusText)
             .then(() => 
             {
                 statusText.textContent = "Upload successful!";
-                window.location.href = "/graph";
             })
             .catch(() => {statusText.textContent = "Upload failed.";})
             .finally(() => {filePicker.disabled = false;});
@@ -41,7 +40,7 @@ else
 
 async function uploadFile(file)
 {
-    const baseUrl = "http://localhost:8080/api/modpack/zip";
+    const uploadURl = "/api/modpack/zip"
 
     try
     {
@@ -49,12 +48,24 @@ async function uploadFile(file)
 
         fData.append("file", file);
 
-        const resp = await fetch(baseUrl, {method: "POST", body: fData});
+        const resp = await fetch(uploadURl,{method:"POST",body: fData});
+        const bodyText = await resp.text();
 
         if (!resp.ok)
             throw new Error("Upload failed");
 
         console.log("Server response:", await resp.text());
+        let payload = {};
+        try {
+            payload = bodyText ? JSON.parse(bodyText) : {};
+        }catch (_) {
+            /* non-JSON success body: still treat as success if status was 2xx */
+        }
+
+        console.log("Server response:",bodyText);
+
+        const nextURL = typeof payload.redirect === "string" ? payload.redirect : "/graph";
+        window.location.assign(nextURL);
     }
     catch (errorC)
     {
