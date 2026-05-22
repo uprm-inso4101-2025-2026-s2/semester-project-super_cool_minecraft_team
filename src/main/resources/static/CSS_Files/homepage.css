@@ -41,7 +41,7 @@
 .site-background {
 
     /* BACKGROUND IMAGE */
-    background-image: url("../images/minecraft-background.png");
+    background-image: url("../images/Background1.png");
     background-color: var(--color-bg);
     color: var(--color-text);
     background-size: cover;
