@@ -259,3 +259,25 @@ code {
     transform: translateY(-2px);
     opacity: 0.95;
 }
+
+
+.dependency-search {
+    width: 100%;
+    padding: 14px 16px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.06);
+    color: white;
+    font-family: 'Monocraft', sans-serif;
+    font-size: 0.95rem;
+}
+
+.dependency-search::placeholder {
+    color: #cfcfcf;
+}
+
+.dependency-search:focus {
+    outline: none;
+    border-color: #3ebe45;
+}

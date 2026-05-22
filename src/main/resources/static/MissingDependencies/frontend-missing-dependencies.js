@@ -56,6 +56,7 @@ async function missingDependenciesPage() {
             
             dependencyList.appendChild(createDependencyCard(dependencyObj, resolvedDependency));
         }
+        setupDependencySearch();
     } catch (error) {
         errorState.textContent = error.message || "Unable to load missing dependencies.";
         errorState.hidden = false;
@@ -111,6 +112,30 @@ function createDependencyCard(dependency, resolvedDependency) {
     dependencyCard.appendChild(dependencyMain);
     dependencyCard.appendChild(dependencyActions);
     return dependencyCard;
+}
+
+function setupDependencySearch() {
+    const searchInput = document.getElementById("dependency-search");
+    const dependencyList = document.getElementById("dependency-list");
+
+    if (!searchInput || !dependencyList) {
+        return;
+    }
+
+    searchInput.addEventListener("input", () => {
+        const searchValue = searchInput.value.toLowerCase();
+        const dependencyCards = dependencyList.querySelectorAll(".dependency-item");
+
+        dependencyCards.forEach((card) => {
+            const dependencyText = card.textContent.toLowerCase();
+
+            if (dependencyText.includes(searchValue)) {
+                card.style.display = "flex";
+            } else {
+                card.style.display = "none";
+            }
+        });
+    });
 }
 
 
