@@ -29,35 +29,27 @@
     <script src="/JS_Files/dependency-resolution.js"></script>
 </head>
 
+
 <body>
-<body>
 
-    <header class="mc-navbar">
+   <header class="mc-navbar">
+    <div class="header-content">
+        <h1 class="project-title">Minecraft DT</h1>
+        <p class="project-subtitle">Dependency Visualizer</p>
+    </div>
 
-        <nav class="mc-nav">
-
-            <button class="mc-button" onclick="location.href='index.html'">
-                Home
-            </button>
-
-            <button class="mc-button" onclick="location.href='settings.html'">
-                Settings
-            </button>
-
-            <button class="mc-button" onclick="location.href='about.html'">
-                About
-            </button>
-
-        </nav>
-
-    </header>
-
-    <header class="app-header">
-        <div class="header-content">
-            <h1 class="project-title">Minecraft DT</h1>
-            <p class="project-subtitle">Dependency Visualizer</p>
-        </div>
-    </header>
+    <nav class="mc-nav">
+        <button class="mc-button" onclick="location.href='index.html'">
+            Home
+        </button>
+        <button class="mc-button" onclick="location.href='settings.html'">
+            Settings
+        </button>
+        <button class="mc-button" onclick="location.href='about.html'">
+            About
+        </button>
+    </nav>
+</header>
 
         <main class="dashboard-container">
             <button id="sidebarReopenBtn" class="sidebar-reopen-btn" aria-label="Reopen sidebar">
@@ -96,13 +88,6 @@
                     <span>Show mod icons</span>
                     <label class="switch">
                         <input type="checkbox" checked>
-                        <span class="slider"></span>
-                    </label>
-                </div>
-                <div class="control-row">
-                    <span>Light mode</span>
-                    <label class="switch">
-                        <input type="checkbox" id="themeToggle">
                         <span class="slider"></span>
                     </label>
                 </div>

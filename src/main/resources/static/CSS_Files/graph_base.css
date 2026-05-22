@@ -1079,31 +1079,66 @@ svg:active {
                 filter 0.3s ease;
 }
 
+/* ==========================================================================
+   Unified HEADER Top Navbar Layout
+   ========================================================================== */
+
 .mc-navbar {
-    background: #2b2b2b;
+    background: #000000; 
     display: flex;
-    justify-content: center;
-    padding: 12px;
-    border-bottom: 3px solid #555;
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 16px 32px;
+    border-bottom: 1px solid #222222; 
 }
 
+/* Brand Text Grouping */
+.header-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.project-title {
+    font-family: 'Monocraft', monospace;
+    font-size: 1.5rem;
+    color: #ffffff;
+    margin: 0;
+}
+
+.project-subtitle {
+    font-family: 'Monocraft', monospace;
+    font-size: 0.8rem;
+    color: #888888;
+    margin: 0;
+}
+
+/* Navigation Element Wrapper */
 .mc-nav {
     display: flex;
-    gap: 16px;
+    gap: 12px;
 }
 
+/* Custom Buttons Styled as Modern Navbar Links */
 .mc-button {
-    padding: 10px 20px;
-    background: #3d3d3d;
-    border: 2px solid #666;
-    border-radius: 5px;
-    color: white;
+    font-family: 'Monocraft', monospace;
+    padding: 8px 16px;
+    background: transparent;
+    border: none;
+    border-radius: 4px;
+    color: #aaaaaa;
     cursor: pointer;
+    font-size: 0.95rem;
+    transition: color 0.2s ease, background-color 0.2s ease;
 }
 
 .mc-button:hover {
-    background: #555;
+    color: #ffffff;
+    background: rgb(74, 162, 63); 
 }
+
+
+/*HEADER IMPLEMENTATION END */
 
 /* Sliding left control panel animation */
 .dashboard-container {
