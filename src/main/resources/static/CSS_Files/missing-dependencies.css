@@ -104,6 +104,43 @@ body#page-missing-dependencies {
     margin-bottom: 16px;
 }
 
+.panel-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.panel-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.guide-icon {
+    background: rgba(62, 190, 69, 0.18);
+    border: 1px solid rgba(62, 190, 69, 0.55);
+    color: #bff7c4;
+}
+
+.warning-icon {
+    background: rgba(255, 190, 80, 0.18);
+    border: 1px solid rgba(255, 190, 80, 0.55);
+    color: #ffe0a3;
+}
+
+.troubleshooting-icon {
+    background: rgba(111, 171, 255, 0.18);
+    border: 1px solid rgba(111, 171, 255, 0.55);
+    color: #cfe3ff;
+}
+
 .info-banner {
     background: rgba(62, 190, 69, 0.15);
     border: 1px solid rgba(62, 190, 69, 0.45);
