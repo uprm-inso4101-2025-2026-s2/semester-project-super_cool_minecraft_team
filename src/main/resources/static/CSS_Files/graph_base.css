@@ -230,16 +230,11 @@ body {
 .btn-settings,
 .btn-close-panel {
     font: inherit;
-    transition: var(--transition);
+    transition: transform 0.1s ease, filter 0.1s ease, box-shadow 0.1s ease;
 }
 
 .btn-process {
     width: 100%;
-    border: none;
-    border-radius: 12px;
-    background: var(--green);
-    color: #fff;
-    font-weight: 700;
     font-size: 0.72rem;
     line-height: 1.45;
     min-height: 78px;
@@ -248,16 +243,12 @@ body {
     justify-content: center;
     gap: 12px;
     text-align: center;
-    cursor: pointer;
+    padding: 14px 18px;
 }
 
 .btn-process .icon {
     display: flex;
     align-items: center;
-}
-
-.btn-process:hover {
-    background: var(--green-hover);
 }
 
 .control-row {
@@ -375,18 +366,14 @@ body {
 }
 
 .banner-close-btn {
-    background: transparent;
-    border: none;
     color: var(--text);
-    font-size: 1.2rem;
-    cursor: pointer;
+    font-size: 0.85rem;
     padding: 0;
     width: 24px;
     height: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: var(--transition);
 }
 
 .banner-close-btn:hover {
@@ -630,16 +617,6 @@ svg:active {
     margin-top: 8px;
     padding: 8px;
     font-size: 0.65rem;
-    font-weight: 600;
-    border: none;
-    background: var(--green);
-    color: var(--text);
-    border-radius: 6px;
-    cursor: pointer;
-}
-
-.btn-close-panel:hover {
-    background: var(--green-hover);
 }
 
 /* Filter legend */
@@ -707,39 +684,21 @@ svg:active {
     display: none;
 }
 
+.btn-reset-filters {
+    display: inline-flex;
+    margin-top: 14px;
+}
+
 .btn-export-top {
     position: absolute;
     left: 20px;
     top: 20px;
-    z-index: 10; /* Ensures it sits above the D3 canvas */
-    
-    background-color: #2c3e50; 
-    color: #ffffff;
-    border: 1px solid #34495e;
-    padding: 10px 16px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    border-radius: 6px;
-    cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 10;
     display: flex;
     align-items: center;
     gap: 8px;
-    transition: all 0.2s ease-in-out;
 }
 
-/* Hover & Interactive States */
-.btn-export-top:hover {
-    background-color: #34495e;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-    transform: translateY(-1px);
-}
-
-.btn-export-top:active {
-    transform: translateY(1px);
-}
-
-/* Zoom controls */
 .zoom-controls {
     position: absolute;
     right: 12px;
@@ -752,17 +711,12 @@ svg:active {
 .zoom-controls button {
     width: 34px;
     height: 34px;
-    border-radius: 50%;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    background: #2f3140;
-    color: #fff;
-    cursor: pointer;
     font-size: 0.9rem;
     font-weight: 700;
 }
 
 .zoom-controls button:hover {
-    background: #444759;
+    filter: brightness(1.08);
 }
 
 /* Footer */
@@ -1157,9 +1111,9 @@ svg:active {
 
 .sidebar-title-row {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
     margin-bottom: 12px;
 }
 
@@ -1171,17 +1125,13 @@ svg:active {
 .sidebar-toggle-btn {
     width: 42px;
     height: 42px;
-    border: none;
-    border-radius: 8px;
-    background-color: #1f2937;
-    color: white;
     font-size: 20px;
-    cursor: pointer;
     flex-shrink: 0;
+    align-self: flex-start;
 }
 
 .sidebar-toggle-btn:hover {
-    background-color: #374151;
+    filter: brightness(1.08);
 }
 
 .dashboard-container.sidebar-collapsed .sidebar {
@@ -1192,26 +1142,25 @@ svg:active {
 /* reopen animation */
 .sidebar-reopen-btn {
     position: absolute;
-    top: 22px;
+    top: 76px;
     left: 16px;
     z-index: 60;
     width: 42px;
     height: 42px;
-    border: none;
-    border-radius: 8px;
-    background-color: #1f2937;
-    color: white;
     font-size: 20px;
-    cursor: pointer;
     display: none;
 }
 
+.dashboard-container:not(.sidebar-collapsed) .sidebar-reopen-btn {
+    display: none !important;
+}
+
 .sidebar-reopen-btn:hover {
-    background-color: #374151;
+    filter: brightness(1.08);
 }
 
 .dashboard-container.sidebar-collapsed .sidebar-reopen-btn {
-    display: block;
+    display: inline-flex !important;
 }
 
 /* Light theme variables */

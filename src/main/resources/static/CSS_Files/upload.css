@@ -192,103 +192,71 @@ line-height:1.5;
 
 /* DETALLES BUTTONS - ESTILO BASE */
 .details-btn {
-    border: 3px solid #333;
-    color: white;
-    padding: 10px 20px;
-    cursor: pointer;
-    font-family: 'Monocraft', sans-serif;
-    text-transform: uppercase;
-    letter-spacing:1px;
-    transition: all .1s ease;
     position: relative;
     background-size: 200px;
     background-repeat: repeat;
+    background-position: right;
     image-rendering: pixelated;
-    font-size: 14px;
+    font-size: 0.78rem;
     line-height: 1.2;
 }
 
 /* WINDOWS - DIAMOND */
 .windows .details-btn {
+    --mc-btn-face: var(--texture-diamond);
+    --mc-btn-highlight: #7ff9ff;
+    --mc-btn-shadow: #0a5c66;
+    --mc-btn-text-shadow: #0a5c66;
     background: var(--texture-diamond);
     background-size: 200px;
-    background-position: right;
-    border-top-color: #7ff9ff;
-    border-left-color: #7ff9ff;
-    border-bottom-color: #0a5c66;
-    border-right-color: #0a5c66;
-    box-shadow: 0 5px 0 #0a5c66;
-    text-shadow: 2px 2px 0 #0a5c66;  
-    transition: all .1s ease;
 }
 
 .windows .details-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 7px 0 #0a5c66;
     filter: brightness(1.2);
     background-size: 180px;
 }
 
 .windows .details-btn:active {
-    transform: translateY(4px);
-    box-shadow: 0 2px 0 #0a5c66;
     filter: brightness(0.9);
 }
 
 /* MAC - STONE */
 .mac .details-btn {
+    --mc-btn-face: var(--texture-stone);
+    --mc-btn-highlight: #d0d0d0;
+    --mc-btn-shadow: #3a3a3a;
+    --mc-btn-text-shadow: #2a2a2a;
     background: var(--texture-stone);
     background-size: 200px;
     background-repeat: repeat;
-    background-position: right;
-    border-top-color: #d0d0d0;
-    border-left-color: #d0d0d0;
-    border-bottom-color: #3a3a3a;
-    border-right-color: #3a3a3a;
-    box-shadow: 0 5px 0 #3a3a3a;
-    text-shadow: 2px 2px 0 #2a2a2a;  
-    transition: all .1s ease;
 }
 
 .mac .details-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 7px 0 #2a2a2a;
     filter: brightness(1.1);
     background-size: 180px;
 }
 
 .mac .details-btn:active {
-    transform: translateY(4px);
-    box-shadow: 0 2px 0 #2a2a2a;
     filter: brightness(0.9);
 }
 
 /* LINUX - WOOD */
 .linux .details-btn {
+    --mc-btn-face: var(--texture-wood);
+    --mc-btn-highlight: #c89a6b;
+    --mc-btn-shadow: #3a2410;
+    --mc-btn-text-shadow: #3a2410;
     background: var(--texture-wood);
     background-size: 200px;
     background-repeat: repeat;
-    background-position: right;
-    border: 3px solid #5a3a1a;
-    border-top-color: #c89a6b;
-    border-left-color: #c89a6b;
-    border-bottom-color: #3a2410;
-    border-right-color: #3a2410;
-    box-shadow: 0 5px 0 #3a2410;
-    text-shadow: 2px 2px 0 #3a2410;  
-    transition: all .1s ease;
 }
 
 .linux .details-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 7px 0 #3a2410;
     filter: brightness(1.1);
     background-size: 180px;
 }
 
 .linux .details-btn:active {
-    transform: translateY(4px);
-    box-shadow: 0 2px 0 #3a2410;
     filter: brightness(0.9);
 }
 

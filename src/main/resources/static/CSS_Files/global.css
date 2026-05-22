@@ -2,6 +2,22 @@
    GLOBAL VARIABLES (USED BY ALL TEAMS)
  */
 
+@font-face {
+  font-family: 'Monocraft';
+  src: url('../fonts/Monocraft-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Monocraft';
+  src: url('../fonts/Monocraft-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
 
   /* COLORS */
@@ -33,4 +49,163 @@
 
   /* TRANSITIONS */
   --transition: 0.2s ease;
+
+  /* TEAM C BUTTON SYSTEM */
+  --btn-face: linear-gradient(180deg, #4e5f72 0%, #2d3a4a 100%);
+  --btn-highlight: #93acc4;
+  --btn-shadow: #162232;
+  --btn-frame: #0c1218;
+  --btn-text: #ffffff;
+  --btn-text-shadow: #162435;
+  --btn-depth: 4px;
+  --btn-height-sm: 36px;
+  --btn-height-md: 44px;
+  --btn-height-lg: 56px;
+
+  --btn-emerald-face: linear-gradient(180deg, #56c760 0%, #2f9338 100%);
+  --btn-emerald-highlight: #98f2a0;
+  --btn-emerald-shadow: #1f6126;
+  --btn-emerald-text-shadow: #16491c;
+
+  --btn-stone-face: linear-gradient(180deg, #7c8592 0%, #59616d 100%);
+  --btn-stone-highlight: #c7cfda;
+  --btn-stone-shadow: #363c47;
+  --btn-stone-text-shadow: #2a3039;
+
+  --btn-danger-face: linear-gradient(180deg, #d86767 0%, #aa4343 100%);
+  --btn-danger-highlight: #f4a9a9;
+  --btn-danger-shadow: #762f2f;
+  --btn-danger-text-shadow: #5d2525;
+
+  --btn-warning-face: linear-gradient(180deg, #eec85f 0%, #bb8920 100%);
+  --btn-warning-highlight: #ffe4a3;
+  --btn-warning-shadow: #7e5b12;
+  --btn-warning-text-shadow: #644810;
+}
+
+.mc-btn,
+a.mc-btn,
+button.mc-btn,
+.download-btn {
+  --mc-btn-face: var(--btn-face);
+  --mc-btn-highlight: var(--btn-highlight);
+  --mc-btn-shadow: var(--btn-shadow);
+  --mc-btn-frame: var(--btn-frame);
+  --mc-btn-text: var(--btn-text);
+  --mc-btn-text-shadow: var(--btn-text-shadow);
+  --mc-btn-height: var(--btn-height-md);
+  --mc-btn-offset: 0;
+
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: var(--mc-btn-height);
+  padding: 10px 18px;
+  border: 3px solid var(--mc-btn-frame);
+  border-top-color: var(--mc-btn-highlight);
+  border-left-color: var(--mc-btn-highlight);
+  border-right-color: var(--mc-btn-shadow);
+  border-bottom-color: var(--mc-btn-shadow);
+  border-radius: 0;
+  background: var(--mc-btn-face);
+  color: var(--mc-btn-text);
+  font-family: var(--font-main);
+  font-weight: 600;
+  font-size: 0.9rem;
+  line-height: 1.1;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-align: center;
+  text-decoration: none;
+  text-shadow: 1px 1px 0 var(--mc-btn-text-shadow);
+  box-shadow: 0 var(--btn-depth) 0 var(--mc-btn-shadow), 0 7px 14px rgba(0, 0, 0, 0.3);
+  transform: translateY(var(--mc-btn-offset));
+  cursor: pointer;
+  transition: transform 0.1s ease, filter 0.1s ease, box-shadow 0.1s ease;
+}
+
+.mc-btn:hover,
+a.mc-btn:hover,
+button.mc-btn:hover,
+.download-btn:hover {
+  --mc-btn-offset: -1px;
+  filter: brightness(1.08);
+  box-shadow: 0 calc(var(--btn-depth) + 1px) 0 var(--mc-btn-shadow), 0 10px 16px rgba(0, 0, 0, 0.32);
+}
+
+.mc-btn:active,
+a.mc-btn:active,
+button.mc-btn:active,
+.download-btn:active {
+  --mc-btn-offset: 3px;
+  filter: brightness(0.95);
+  box-shadow: 0 1px 0 var(--mc-btn-shadow), 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.mc-btn:focus-visible,
+a.mc-btn:focus-visible,
+button.mc-btn:focus-visible,
+.download-btn:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: 2px;
+}
+
+.mc-btn[disabled],
+.mc-btn[aria-disabled="true"],
+.download-btn[aria-disabled="true"] {
+  opacity: 0.65;
+  filter: grayscale(25%);
+  cursor: not-allowed;
+}
+
+.mc-btn--emerald {
+  --mc-btn-face: var(--btn-emerald-face);
+  --mc-btn-highlight: var(--btn-emerald-highlight);
+  --mc-btn-shadow: var(--btn-emerald-shadow);
+  --mc-btn-text-shadow: var(--btn-emerald-text-shadow);
+}
+
+.mc-btn--stone {
+  --mc-btn-face: var(--btn-stone-face);
+  --mc-btn-highlight: var(--btn-stone-highlight);
+  --mc-btn-shadow: var(--btn-stone-shadow);
+  --mc-btn-text-shadow: var(--btn-stone-text-shadow);
+}
+
+.mc-btn--danger {
+  --mc-btn-face: var(--btn-danger-face);
+  --mc-btn-highlight: var(--btn-danger-highlight);
+  --mc-btn-shadow: var(--btn-danger-shadow);
+  --mc-btn-text-shadow: var(--btn-danger-text-shadow);
+}
+
+.mc-btn--warning {
+  --mc-btn-face: var(--btn-warning-face);
+  --mc-btn-highlight: var(--btn-warning-highlight);
+  --mc-btn-shadow: var(--btn-warning-shadow);
+  --mc-btn-text-shadow: var(--btn-warning-text-shadow);
+}
+
+.mc-btn--sm {
+  --mc-btn-height: var(--btn-height-sm);
+  padding: 8px 12px;
+  font-size: 0.72rem;
+}
+
+.mc-btn--lg {
+  --mc-btn-height: var(--btn-height-lg);
+  padding: 14px 28px;
+  font-size: 1rem;
+}
+
+.mc-btn--block {
+  width: 100%;
+}
+
+.mc-btn--icon {
+  min-width: var(--mc-btn-height);
+  width: var(--mc-btn-height);
+  padding: 0;
 }

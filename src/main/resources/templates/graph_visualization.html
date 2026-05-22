@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minecraft DT - Dependency Visualizer</title>
+    <link rel="stylesheet" href="/CSS_Files/global.css">
     <link rel="stylesheet" href="/CSS_Files/graph_base.css">
     
     <!-- D3 Library -->
@@ -52,7 +53,7 @@
 </header>
 
         <main class="dashboard-container">
-            <button id="sidebarReopenBtn" class="sidebar-reopen-btn" aria-label="Reopen sidebar">
+            <button id="sidebarReopenBtn" class="sidebar-reopen-btn mc-btn mc-btn--stone mc-btn--icon" aria-label="Reopen sidebar">
                 ☰
             </button>
             <aside class="sidebar">
@@ -60,14 +61,14 @@
                 <div class="sidebar-title-row">
                     <h3 class="group-label">MODPACK SELECTION</h3>
 
-                    <button id="sidebarToggleBtn" class="sidebar-toggle-btn" aria-label="Toggle sidebar">
+                    <button id="sidebarToggleBtn" class="sidebar-toggle-btn mc-btn mc-btn--stone mc-btn--icon" aria-label="Toggle sidebar">
                         ☰
                     </button>
                 </div>
                 <div class="folder-display">
                     <code>/home/user/Projects/ModpackG</code>
                 </div>
-                <button type="button" class="btn-process">
+                <button type="button" class="btn-process mc-btn mc-btn--emerald mc-btn--block">
                     <span class="icon" aria-hidden="true">
                         <svg viewBox="0 0 24 24" width="24" height="24" fill="none">
                             <path
@@ -77,7 +78,7 @@
                     </span>
                     <span>Process selected Folder</span>
                 </button>
-                <a href="/missing-dependencies" class="btn-process" style="margin-top: 10px; display: inline-block; text-align:center;">
+                <a href="/missing-dependencies" class="btn-process mc-btn mc-btn--emerald mc-btn--block" style="margin-top: 10px; text-align:center;">
                     View Missing Dependencies
                 </a>
             </section>
@@ -126,23 +127,19 @@
         </aside>
 
         <section class="graph-workspace">
-            <button id="topRightScreenshotBtn" class="btn-export-top" title="Export as PNG" aria-label="Export Screenshot">
+            <button id="topRightScreenshotBtn" class="btn-export-top mc-btn mc-btn--stone" title="Export as PNG" aria-label="Export Screenshot">
         📸 Export Graph
     </button>
 
             <div id="error-warning-banner" class="error-warning-banner">
                 <div class="banner-header">
                     <span class="banner-title">Data Issues Detected</span>
-                    <button id="error-banner-close" class="banner-close-btn" aria-label="Close banner">
+                    <button id="error-banner-close" class="banner-close-btn mc-btn mc-btn--danger mc-btn--sm mc-btn--icon" aria-label="Close banner">
                         ✕
                     </button>
                 </div>
                 <div id="error-banner-content" class="banner-content"></div>
             </div>
-
-            <button class="btn-settings" aria-label="Settings">
-                settings
-            </button>
 
             <div class="search-container">
                 <input 
@@ -176,7 +173,7 @@
                     <ul id="mod-deps"></ul>
                 </div>
 
-                <button id="closePanelBtn" class="btn-close-panel">Close</button>
+                <button id="closePanelBtn" class="btn-close-panel mc-btn mc-btn--emerald mc-btn--block">Close</button>
             </div>
 
             <div class="filter-legend">
@@ -187,13 +184,13 @@
                     <li class="filter-item required">Required <span class="count">2</span></li>
                     <li class="filter-item installed">Installed <span class="count">1</span></li>
                 </ul>
-                <button class="btn-reset-filters">RESET FILTERS</button>
+                <button class="btn-reset-filters mc-btn mc-btn--warning mc-btn--sm mc-btn--block">RESET FILTERS</button>
             </div>
 
             <nav class="zoom-controls">
-                <button id="zoomInBtn" aria-label="Zoom In">+</button>
-                <button id="zoomOutBtn" aria-label="Zoom Out">-</button>
-                <button id="resetViewBtn" aria-label="Reset View">⛶</button>
+                <button id="zoomInBtn" class="mc-btn mc-btn--stone mc-btn--icon" aria-label="Zoom In">+</button>
+                <button id="zoomOutBtn" class="mc-btn mc-btn--stone mc-btn--icon" aria-label="Zoom Out">-</button>
+                <button id="resetViewBtn" class="mc-btn mc-btn--stone mc-btn--icon" aria-label="Reset View">⛶</button>
             </nav>
         </section>
     </main>
