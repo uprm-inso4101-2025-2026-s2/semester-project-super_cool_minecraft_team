@@ -29,7 +29,9 @@ if (filePicker && statusText)
 
         uploadFile(file)
             .then(() => {statusText.textContent = "Upload successful!";})
-            .catch((err) => {statusText.textContent = err && err.message ? err.message : "Upload failed.";})
+            .catch((err) => {
+                statusText.textContent = err && err.message ? err.message : "Upload failed.";
+            })
             .finally(() => {filePicker.disabled = false;});
     });
 }
@@ -52,7 +54,7 @@ async function uploadFile(file)
         let payload = {};
 
         try {payload = bodyText ? JSON.parse(bodyText) : {};} 
-        catch (_) {/* non-JSON success body: still treat as success if status was 2xx */}
+        catch (_) {/* non-JSON success body*/}
         
         if(!resp.ok)
         {
