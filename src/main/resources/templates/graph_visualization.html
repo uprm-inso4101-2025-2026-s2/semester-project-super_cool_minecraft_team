@@ -53,7 +53,7 @@
 </header>
 
         <main class="dashboard-container">
-            <button id="sidebarReopenBtn" class="sidebar-reopen-btn mc-btn mc-btn--stone mc-btn--icon" aria-label="Reopen sidebar">
+            <button id="sidebarReopenBtn" class="sidebar-reopen-btn mc-btn mc-btn--icon mc-btn--graph-green" aria-label="Reopen sidebar">
                 ☰
             </button>
             <aside class="sidebar">
@@ -61,14 +61,14 @@
                 <div class="sidebar-title-row">
                     <h3 class="group-label">MODPACK SELECTION</h3>
 
-                    <button id="sidebarToggleBtn" class="sidebar-toggle-btn mc-btn mc-btn--stone mc-btn--icon" aria-label="Toggle sidebar">
+                    <button id="sidebarToggleBtn" class="sidebar-toggle-btn mc-btn mc-btn--icon mc-btn--graph-green" aria-label="Toggle sidebar">
                         ☰
                     </button>
                 </div>
                 <div class="folder-display">
                     <code>/home/user/Projects/ModpackG</code>
                 </div>
-                <button type="button" class="btn-process mc-btn mc-btn--emerald mc-btn--block">
+                <button type="button" class="btn-process mc-btn mc-btn--block mc-btn--graph-green">
                     <span class="icon" aria-hidden="true">
                         <svg viewBox="0 0 24 24" width="24" height="24" fill="none">
                             <path
@@ -78,7 +78,7 @@
                     </span>
                     <span>Process selected Folder</span>
                 </button>
-                <a href="/missing-dependencies" class="btn-process mc-btn mc-btn--emerald mc-btn--block" style="margin-top: 10px; text-align:center;">
+                <a href="/missing-dependencies" class="btn-process mc-btn mc-btn--block mc-btn--graph-green" style="margin-top: 10px; text-align:center;">
                     View Missing Dependencies
                 </a>
             </section>
@@ -127,7 +127,7 @@
         </aside>
 
         <section class="graph-workspace">
-            <button id="topRightScreenshotBtn" class="btn-export-top mc-btn mc-btn--stone" title="Export as PNG" aria-label="Export Screenshot">
+            <button id="topRightScreenshotBtn" class="btn-export-top mc-btn mc-btn--graph-green" title="Export as PNG" aria-label="Export Screenshot">
         📸 Export Graph
     </button>
 
@@ -150,7 +150,7 @@
                     aria-label="Search mods">
                 <button 
                     id="search-clear-btn" 
-                    class="search-clear-btn" 
+                    class="search-clear-btn mc-btn mc-btn--stone mc-btn--icon" 
                     style="display: none;"
                     aria-label="Clear search">
                     ✕
@@ -173,7 +173,7 @@
                     <ul id="mod-deps"></ul>
                 </div>
 
-                <button id="closePanelBtn" class="btn-close-panel mc-btn mc-btn--emerald mc-btn--block">Close</button>
+                <button id="closePanelBtn" class="btn-close-panel mc-btn mc-btn--block mc-btn--graph-green">Close</button>
             </div>
 
             <div class="filter-legend">
@@ -184,7 +184,6 @@
                     <li class="filter-item required">Required <span class="count">2</span></li>
                     <li class="filter-item installed">Installed <span class="count">1</span></li>
                 </ul>
-                <button class="btn-reset-filters mc-btn mc-btn--warning mc-btn--sm mc-btn--block">RESET FILTERS</button>
             </div>
 
             <nav class="zoom-controls">
