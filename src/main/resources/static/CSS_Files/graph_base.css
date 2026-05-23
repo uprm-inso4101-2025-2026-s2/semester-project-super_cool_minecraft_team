@@ -1229,3 +1229,17 @@ body.light-theme {
     --line: rgba(0, 0, 0, 0.16);
     --line-soft: rgba(0, 0, 0, 0.08);
 }
+body#page-graph {
+  background-image: url("/images/Background1.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+.dashboard-container,
+.graph-workspace,
+#dependency-graph-canvas,
+svg {
+  background: transparent;
+}
