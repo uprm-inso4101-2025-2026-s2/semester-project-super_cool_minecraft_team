@@ -1,7 +1,12 @@
 package com.inso.MinecraftProject.controller;
 
-import com.inso.MinecraftProject.dto.DTO;
-import com.inso.MinecraftProject.service.ModpackParsingService;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Locale;
+import java.util.Map;
+import java.util.zip.ZipFile;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -11,13 +16,10 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.inso.MinecraftProject.dto.DTO;
+import com.inso.MinecraftProject.service.ModpackParsingService;
+
 import jakarta.servlet.http.HttpSession;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Locale;
-import java.util.Map;
-import java.util.zip.ZipFile;
 
 @RestController
 @RequestMapping("/api/modpack")
@@ -50,7 +52,7 @@ public class ZipFileController {
             file.transferTo(tempFile);
 
             try (ZipFile zipFile = new ZipFile(tempFile.toFile())) {
-                DTO graphData = modpackParsingService.parseModpack(zipFile);
+                DTO graphData = (modpackParsingService.parseModpack(zipFile));
                 session.setAttribute("graphDto", graphData);
             }
 
