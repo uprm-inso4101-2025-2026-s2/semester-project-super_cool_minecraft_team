@@ -369,6 +369,26 @@ if (!validationResult.isValid) {
         .attr("fill", d => d.type === "root" ? "var(--blue)" : "var(--panel)")
         .attr("class", "node-circle");
 
+    // Add mod icon image
+    node.append("image")
+        .attr("class", "mod-icon-img")
+        .attr("xlink:href", "/images/logos/Header Icon- Cuadrado.png")   // path to your icon
+        .attr("width", 20)
+        .attr("height", 20)
+        .attr("x", -10)
+        .attr("y", -10);
+        const iconToggle = document.getElementById("showModIconsToggle");
+
+    function updateModIconVisibility() {
+        const showIcons = iconToggle.checked;
+        d3.selectAll('.mod-icon-img').style("display", showIcons ? null : "none");
+    }
+
+    updateModIconVisibility();
+
+    
+    iconToggle.addEventListener('change', updateModIconVisibility);
+
     node.append("text")
         .attr("dx", 14)
         .attr("dy", ".35em")
