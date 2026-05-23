@@ -1203,7 +1203,98 @@ From these observations, dependency resolution is understood as a domain process
 
 [.green]#When a mod is uploaded through the frontend layer, this mod's information is passed to the backend. Once the backend receives the mod, its information is parsed and inserted into a mod DTO which contains the attributes modID, modVersion, dependencies, and conflicts (note that the dependencies and conflicts are NULL until the API is called). The modID and modVersion are then passed to the CurseForge API, which returns the dependencies and conflicts of the mod via information acquired from various mod repositories. Once this information is acquired, it is passed through the frontend and a new graph node DTO is created. This DTO is used in the Dependency Graph to display all dependency relationships accordingly.#
 
-=== 3.2 Validation
+=== 3.2 Validation and Verification
+
+
+
+=== Scenario 1: 
+==== Safe External URL Redirection and Input Validation (RedirectControllerTest.java)
+
+[.green]
+
+--
+Dataset: Allowed URL ([https://modrinth.com/mod/sodium](https://modrinth.com/mod/sodium)), Unallowed URL ([https://evil.com/phish](https://evil.com/phish)), Malformed URL (http://), Empty Request
+
+*Workflow:*
+
+- User clicks a link within the application meant to redirect them to an external mod provider page (/r).
+
+- System receives the redirection request along with the destination URL parameter.
+
+- The system validates the destination URL against an internal whitelist of safe domains (e.g., Modrinth) and checks for proper URL formatting.
+
+- If valid, the system securely redirects the user's browser to the external site.
+
+- If the domain is unrecognized, malformed, or missing, the system intercepts the request and blocks it.
+
+*Property Being Verified:* The application securely handles outbound navigation, ensuring users are only redirected to approved third-party platforms while explicitly rejecting open-redirect vulnerabilities, bad inputs, or missing parameters.
+
+*Gap Identified:* Initial implementation acted as an open redirector, meaning malicious actors could potentially pass arbitrary URLs to the endpoint to trick users into visiting phishing sites via a trusted application link.
+
+*Remedy:* In the RedirectController.java file, we implemented an internal list with allowed domains titled ALLOWLIST. The service now verifies the domain, and if unauthorized, it will trigger a Forbidden response message. Malformed URLs return a Bad Request message, and only pre-approved domains receive a 302 Found redirect status.
+
+This implementation was later tested using the RedirectControllerTest.java unit test, which checks that the application rejects unauthorized domains, empty & malformed URLs, and redirects allowed domains with the dataset above. The tests were all passed, and the application safely handles URL redirection now. This was done using MockMvc for verification.
+
+--
+
+=== Scenario 2: 
+==== Application Context and Startup Verification (MinecraftProjectApplicationTests.java)
+
+[.green]
+
+--
+
+*Dataset:* Core Spring Boot Configuration and Application Context 
+
+*Workflow:*
+
+- The development team triggers the application build process.
+
+- The Spring Boot framework attempts to bootstrap the entire application environment, initializing all underlying configurations, dependency injections, and property files.
+
+- The system verifies that every internal component can be discovered and instantiated without structural conflicts.
+
+- The application context successfully loads, signaling a healthy baseline state ready to accept traffic.
+
+*Property Being Verified:* The application configuration is free from critical wiring errors, broken dependency chains, or missing environmental variables that would cause a runtime crash on startup. All Spring Boot configurations are adequate.
+
+*Gap Identified:* Initial application had conflicts with Spring Boot, Gradle and Java configuration, and sometimes developers had trouble finding the reason why the application wouldn't run on their IDE. 
+
+*Remedy:* Implemented a Spring Boot test file that boots up the whole framework to verify the configuration's state and that Spring Boot is working adequately. This test was made in the file called MinecraftProjectApplicationTests.java inside the project, for debugging purposes, since it is important to be able to identify if the issue is Gradle, Spring Boot, or a developer's Java version configurations messing with the project startup. The result this test returns varies depending on whether or not whoever is running it has their configurations properly set. If their configurations are inadequate, the test will fail and will point to it being a Spring Boot error. It is a very simple test that has been useful for checking what is working and what is not with the current configuration.
+
+--
+
+=== Scenario 3: API Handling of Multi-Mode Dependency Queries and Network Resilience (DependencyControllerTest.java)
+
+[.green]
+
+--
+
+*Dataset:* Mocked DependencyLookupService outputs, API query modes (default, ok, partial, empty, fail429, fail500, timeout), mock DTOs (fabric-api, modmenu, cloth-config).
+
+*Workflow:*
+
+- The client application initiates an asynchronous background request to /api/dependencies/missing to resolve a list of required mods.
+
+- The API backend processes the query strings to determine how it should evaluate or mock the lookup data.
+
+- The backend communicates with registry services, mapping the results into structured JSON arrays containing mod IDs, preferred links, and version definitions.
+
+- In the event of downstream network strain, rate-limiting, or server outages, the API layer catches the failure internally.
+
+- The backend delivers a JSON error envelope along with a matching HTTP error status code to prevent the client frontend from freezing.
+
+*Property Being Verified:* The REST API layer correctly translates service data into structural JSON payloads across multiple state variations and safely transforms backend exceptions into standard web error responses.
+
+*Gap Identified:* The application frontend would crash or hang indefinitely if the external mod registries became slow, rate-limited the application, or returned incomplete data structures.
+
+*Remedy:* Built an extensive REST test suite using MockitoBean to isolate the controller. This was implemented in the DependencyControllerTest.java file, which does comprehensive unit testing for the /api/dependencies/missing REST API endpoint by mocking the DependencyLookupService to validate correct JSON responses and HTTP status codes across different scenarios, including successful queries, varying response structures (default, ok, partial, empty), and error-handling simulations for rate limits (429), server errors (500), and timeouts (504). The application was tested after we implemented exception handling in the DependencyController.java file, and these tests verified the implementations were working correctly. The file now has several try-catches for such events.
+
+--
+
+[.red.line-through]
+
+--
 
 The team validates the requirements and domain understanding through structured scenario-based walkthroughs.
 These walkthroughs simulate realistic modpack configurations and are discussed collectively to identify ambiguities, missing edge cases, or incorrect assumptions about domain concepts such as Mod, Dependency, Incompatibility, and Modpack.
@@ -1212,9 +1303,7 @@ The goal of validation is not to obtain approval, but to ensure that the system-
 
 
 
-[.red.line-through]
 
---
 
 Scenario 1: Missing Mandatory Dependency
 
@@ -1252,26 +1341,28 @@ The concept of "graph as structural model" was distinguished from "graph as visu
 
 
 
-[.green]#Our project employs multiple forms of testing and scenario-based validation to ensure that the Minecraft Dependency Visualizer behaves correctly and aligns with stakeholder expectations.#
-
-==== Testing Approach
+[.red.line-through]#Our project employs multiple forms of testing and scenario-based validation to ensure that the Minecraft Dependency Visualizer behaves correctly and aligns with stakeholder expectations.#
 
 
-*When:* [.green]#Testing is performed continuously during development, with scenario walkthroughs conducted after implementing major features.#
+[.red.line-through]
+--
+Testing Approach
 
-*Who:* [.green]#All team members participate, with each subteam validating their respective components.#
+*When:* Testing is performed continuously during development, with scenario walkthroughs conducted after implementing major features.
 
-*Why:* [.green]#To ensure correctness of dependency handling, usability of the visualization, and handling of edge cases.#
+*Who:* All team members participate, with each subteam validating their respective components.
 
+*Why:* To ensure correctness of dependency handling, usability of the visualization, and handling of edge cases.
 
+--
 
 ---
 
-
-==== Scenario 1: Required Dependency Detection
-[.green]
+[.red.line-through]
 
 --
+Scenario 1: Required Dependency Detection
+
 
 
 *Dataset:* Sodium, Fabric API
@@ -1297,16 +1388,10 @@ Initial implementation did not clearly distinguish between required and optional
 *Remedy:*  
 Added visual differentiation (styling and labels) and explicit user notifications. The system now differentiates between conflicting, optional, and required dependencies through different colors within the edges and nodes (red for conflicting, blue for required, yellow for optional).
 
---
-
----
 
 
-==== Scenario 2: Mod Incompatibility
+Scenario 2: Mod Incompatibility
 
-[.green]
-
---
 
 *Dataset:* Indium, Sodium, and Canvas Renderer were chosen as the dataset for this scenario, as they create a conflict. Indium depends on Sodium, but Canvas Renderer conflicts with Sodium. Thus, the user must decide which to keep if the system highlights this correctly.
 
@@ -1326,17 +1411,11 @@ The system correctly identifies and communicates mod incompatibilities.
 *Gap Identified:*  
 Early versions lacked a clear representation of conflicts in the graph, but Scenario 1 led to implementation for a color-coded Dependency Graph. No further remedy is required in this scenario, as the test and remedy done for a previous scenario prepared the system for this data.
 
---
 
 
----
+Scenario 3: Unsupported Mod
 
 
-==== Scenario 3: Unsupported Mod
-
-[.green]
-
---
 
 *Dataset:* Custom mod not indexed in Modrinth or CurseForge (this dataset was chosen as we must test system behavior with an unknown mod).
 
@@ -1359,11 +1438,9 @@ Initial implementation failed when encountering unknown mods, stopping the entir
 *Remedy:*  
 Modified logic to allow partial graph generation and mark unsupported mods with a distinct visual indicator containing an error message.
 
---
 
----
 
-==== Validation Through Walkthroughs
+Validation Through Walkthroughs
 
 
 Scenario walkthroughs were conducted within the team to simulate real user interactions and validate assumptions about system behavior.
@@ -1378,19 +1455,24 @@ These walkthroughs revealed several important insights:
 
 These findings led to improvements in visualization clarity, error handling, and overall system adequacy.
 
+--
 
 
-=== 3.3 Verification
+[.red.line-through]
+
+--
 
 Verification ensures that the Minecraft Mod Dependency Visualizer functions as intended and satisfies the specified requirements.
 The system will be verified through functional testing and user validation.
 
-* Unit Testing: Individual components such as metadata extraction and dependency parsing will be tested independently to ensure they produce correct and consistent results. [.green]#This testing will be realized by uploading 3 mods into a folder. Preferably, the dataset would include mods Indium, Sodium, and Canvas Renderer, as this set of mods includes a dependency and a conflict within it. Indium depends on Sodium, but Sodium conflicts with Canvas Renderer. This makes it the perfect dataset for testing, as we can verify that the system is parsing dependencies and conflicts properly. In this test case, the mod folder would be passed to our frontend's mod receiver and we would monitor the backend's behavior when the mod ID is sent to the CurseForge and Modrinth APIs. If correct dependencies are returned in a JSON, this part of the system is working adequately.#
+* Unit Testing: Individual components such as metadata extraction and dependency parsing will be tested independently to ensure they produce correct and consistent results. This testing will be realized by uploading 3 mods into a folder. Preferably, the dataset would include mods Indium, Sodium, and Canvas Renderer, as this set of mods includes a dependency and a conflict within it. Indium depends on Sodium, but Sodium conflicts with Canvas Renderer. This makes it the perfect dataset for testing, as we can verify that the system is parsing dependencies and conflicts properly. In this test case, the mod folder would be passed to our frontend's mod receiver and we would monitor the backend's behavior when the mod ID is sent to the CurseForge and Modrinth APIs. If correct dependencies are returned in a JSON, this part of the system is working adequately.
 
-* Functional Testing: The system will be tested to confirm that a user can upload a mod file, generate a dependency graph, and receive accurate compatibility feedback. [.green]#This test involves running the application itself and making sure the frontend receives the mod folder, parses it, and sends it to the backend to receive dependency information from CurseForge and Modrinth. We will confirm the system is functional once the JavaScript file executes the script to display the Dependency Graph, and we observe that all the correct nodes are connected to each other with the right colors as shown in the legend. The Dependency Graph should be fully interactive and all components of the page should display as intended, including the side panel and toggle buttons.#
+* Functional Testing: The system will be tested to confirm that a user can upload a mod file, generate a dependency graph, and receive accurate compatibility feedback.This test involves running the application itself and making sure the frontend receives the mod folder, parses it, and sends it to the backend to receive dependency information from CurseForge and Modrinth. We will confirm the system is functional once the JavaScript file executes the script to display the Dependency Graph, and we observe that all the correct nodes are connected to each other with the right colors as shown in the legend. The Dependency Graph should be fully interactive and all components of the page should display as intended, including the side panel and toggle buttons.
 
-* User Validation: A small group of users will test the application to verify usability, clarity of the visualization, and correctness of the compatibility results. [.green]#This test will be performed by giving a minimum of 5 people within the domain access to the application, and complete the entire process of accessing the application, navigating from the home page to the upload page (to determine its clarity), uploading a mod folder they would use for their Minecraft game, and interacting with the graph to test all of its features. After the test is realized, we will collect feedback from the users through a written survey allowing comments and suggestions.# Feedback will be used to improve system behavior and interface design.
+* User Validation: A small group of users will test the application to verify usability, clarity of the visualization, and correctness of the compatibility results.This test will be performed by giving a minimum of 5 people within the domain access to the application, and complete the entire process of accessing the application, navigating from the home page to the upload page (to determine its clarity), uploading a mod folder they would use for their Minecraft game, and interacting with the graph to test all of its features. After the test is realized, we will collect feedback from the users through a written survey allowing comments and suggestions. Feedback will be used to improve system behavior and interface design.
   
-* Performance Testing: The system will be evaluated to ensure it processes mod files within the required response time and maintains stability under multiple usage scenarios. [.green]#This test will be performed by adding a timer to different sections within the code (whenever a different action is done). A timer will be started when it receives the uploaded mod folder, and will stop once the information about the dependencies has been received from the APIs in use for mod dependencies. This time will be logged and examined with different mod folders of varying sizes. There will also be a timer for how long it takes to generate the graph after the mod information has been received. This will allow us to measure the response time and stability under different conditions.#
+* Performance Testing: The system will be evaluated to ensure it processes mod files within the required response time and maintains stability under multiple usage scenarios.This test will be performed by adding a timer to different sections within the code (whenever a different action is done). A timer will be started when it receives the uploaded mod folder, and will stop once the information about the dependencies has been received from the APIs in use for mod dependencies. This time will be logged and examined with different mod folders of varying sizes. There will also be a timer for how long it takes to generate the graph after the mod information has been received. This will allow us to measure the response time and stability under different conditions.
 
 Verification will be considered successful when all functional requirements are met and no critical defects are present.
+
+--
