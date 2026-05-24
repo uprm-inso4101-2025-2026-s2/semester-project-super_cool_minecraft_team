@@ -33,6 +33,8 @@ body#page-upload {
     background-color: var(--color-bg);
     color: var(--color-text);
     font-family: var(--font-main);
+    position: relative;
+    overflow-x: hidden;
 }
 
 body#page-upload::before {
@@ -339,9 +341,17 @@ font-family: 'Monocraft', sans-serif;
 
 /* FOOTER */
 #site-footer {
-    margin-top: auto;
+    position: relative;
+
+    margin-top: 80px;
+
+    width: 100%;
+
     background: rgba(0, 0, 0, 0.7);
+
     padding: 20px 80px;
+
+    z-index: 5;
 }
 
 .footer-container {
