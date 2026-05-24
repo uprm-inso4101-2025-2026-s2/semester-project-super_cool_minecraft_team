@@ -340,28 +340,43 @@ font-family: 'Monocraft', sans-serif;
 }
 
 /* FOOTER */
-#site-footer {
+#site-footer{
+background: rgba(0,0,0,0.7);
+color: white;
+padding: 10px 80px;
+margin-top: 100px;
+}
+
+.footer-container{
+max-width: 900px;
+margin: auto;
+text-align: center;
+display: flex;
+flex-direction: column;
+justify-content: center;
+flex-wrap: wrap;
+gap: 10px;
+}
+
+.footer-links a{
+    color: white;
+    align-items: center;
+    text-decoration: none;
+    font-size: 1rem;
+    font-family: 'Monocraft', sans-serif;
+    transition: opacity 0.2s;
     position: relative;
+    margin-left: 25px;
+    }
+    
+    .footer-links a:hover{
+    opacity: 0.7;
+    }
 
-    margin-top: 80px;
-
-    width: 100%;
-
-    background: rgba(0, 0, 0, 0.7);
-
-    padding: 20px 80px;
-
-    z-index: 5;
-}
-
-.footer-container {
-    max-width: 900px;
-    margin: auto;
-    text-align: center;
-}
-
-.footer-container p {
-    margin-bottom: 10px;
+.footer-container p{
+margin-bottom: 10px;
+line-height: 1.6;
+font-family: 'Monocraft', sans-serif;
 }
 
 .upload-instructions{
