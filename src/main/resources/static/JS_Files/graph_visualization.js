@@ -5,11 +5,12 @@ const rawGraphData = window.graphData || { nodes: [], links: [] };
 const nodes = (rawGraphData.nodes || []).map(node => ({
     id: node.id,
     type: node.type || "mod",
-    status: node.status || "compatible"
+    status: node.status || "compatible",
+    installed: node.installed || false  
 }));
 
 const links = (rawGraphData.links || []).map(link => ({
-    source: link.source,
+    source: link.source,    
     target: link.target,
     rel: link.rel || "required"
 }));
@@ -1074,4 +1075,41 @@ document.addEventListener("DOMContentLoaded", () => {
             window.dispatchEvent(new Event("resize"));
         }, 200);
     });
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    const installedToggle = document.getElementById("showInstalledModsToggle");
+    if (!installedToggle) return;
+
+    // This will run every time the toggle is changed
+    function filterInstalledMods() {
+        const showInstalled = installedToggle.checked;
+
+        // Hide/show .node for installed mods
+        d3.selectAll(".node").style("display", function(d) {
+            // d.installed (true OR string "true") expected!
+            const isInstalled = d.installed === true || d.installed === "true";
+            // If toggle is ON, show everything. If OFF, hide installed.
+            if (showInstalled) return null;
+            return isInstalled ? "none" : null;
+        });
+
+        // Hide/show .link if connected to any hidden node
+        d3.selectAll(".link").style("display", function(l) {
+            // .link's l.source/l.target could be an object or string id
+            const getInstalled = n => {
+                if (typeof n === "object" && n.installed !== undefined)
+                    return n.installed === true || n.installed === "true";
+                return false;
+            };
+            if (showInstalled) return null;
+            // Hide if either side is an installed mod
+            return (getInstalled(l.source) || getInstalled(l.target)) ? "none" : null;
+        });
+    }
+
+    installedToggle.addEventListener("change", filterInstalledMods);
+
+
+    setTimeout(filterInstalledMods, 0);
 });
