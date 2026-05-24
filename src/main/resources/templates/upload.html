@@ -29,7 +29,7 @@
   <section class="os-section">
 
     <div class="os-card windows">
-      <img src="/images/logos/windows-logo-square.png" class="os-icon" alt="Operating system icon">
+      <img src="/images/logos/board_window.png" class="os-icon" alt="Operating system icon">
 
       <h2>For Windows</h2>
 
@@ -41,7 +41,7 @@
     </div>
 
     <div class="os-card mac">
-      <img src="/images/logos/Mac-C.png" class="os-icon" alt="Operating system icon">
+      <img src="/images/logos/board_macOS.png" class="os-icon" alt="Operating system icon">
 
       <h2>For macOS</h2>
 
@@ -53,7 +53,7 @@
     </div>
 
     <div class="os-card linux">
-      <img src="/images/logos/linux-logo-square.png" class="os-icon" alt="Operating system icon">
+      <img src="/images/logos/Board_linux.png" class="os-icon" alt="Operating system icon">
 
       <h2>For Linux</h2>
 
@@ -150,17 +150,21 @@
     </div>
 
 
-    </section>
+<div class="instruction-container" onclick="document.getElementById('file-picker').click()">
 
-    <section class="upload-final">
-    <p class="upload-limit">Maximum file size: 1GB</p>
+    <p class="upload-text">
+        ↑ Upload your modpack (.zip)
+    </p>
 
-    <div class="instruction-container">
-    <p class="upload-text">⬆ Upload your modpack (.zip)</p>
-    <input type="file" id="file-picker" accept=".zip">
+    <input 
+        type="file" 
+        id="file-picker" 
+        accept=".zip"
+    >
+
     <p id="status"></p>
-    </div>
-    </section>
+
+</div>
 
  <footer th:replace="~{components/footer :: footer}"></footer>
  <script src="/JS_Files/upload.js"></script>
