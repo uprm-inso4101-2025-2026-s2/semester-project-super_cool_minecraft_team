@@ -324,3 +324,25 @@ code {
     outline: none;
     border-color: #3ebe45;
 }
+
+/* ── Side Panel Title Colors ── */
+.install-title {
+    color: #3ebe45;
+}
+
+.warning-title {
+    color: #f5c542;
+}
+
+.unresolved-title {
+    color: #7db7ff;
+}
+
+@media (max-width: 768px) {
+    .install-title,
+    .warning-title,
+    .unresolved-title {
+        font-size: 1rem;
+        word-break: break-word;
+    }
+}
