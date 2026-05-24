@@ -22,7 +22,13 @@
 
 body#page-missing-dependencies {
     font-family: 'Monocraft', sans-serif;
-    background: linear-gradient(180deg, #10151c 0%, #17212b 100%);
+    background:
+        linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.75)),
+        url("/images/Background1.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
     color: #f5f5f5;
     min-height: 100vh;
     padding: 40px 24px;
@@ -92,11 +98,11 @@ body#page-missing-dependencies {
 }
 
 .card {
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    background: rgba(0, 0, 0, 0.65);
+    border: none;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
 .card h2 {
