@@ -1,11 +1,11 @@
 package com.inso.MinecraftProject.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.time.Duration;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DependencyLookupCache<T> {
 
@@ -83,10 +83,6 @@ public class DependencyLookupCache<T> {
         return cache.size();
     }
 
-    public void evictExpired(){
-        long now = System.currentTimeMillis();
-        cache.entrySet().removeIf(entry -> now > entry.getValue().expiresAt);
-    }
     private static class CacheEntry<T> {
         T value;
         long expiresAt;
