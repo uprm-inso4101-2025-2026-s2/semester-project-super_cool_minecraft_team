@@ -21,15 +21,16 @@ ICOM4009 | INSO4101 | Introduction to Software Engineering
 
 ==== 1.2.2 Team Leaders
 
-* Team A
+* Team A - responsible for the dependency graph subsystem, including building the internal graph structure, implementing cycle detection and transitive dependency resolution, and producing structured graph data for frontend visualization.
+
 ** Zabdiel J. Valentin-Perez
 ** Karilys A. Muñiz-Ramos
 
-* Team B
+* Team B -  responsible for the external API integration and dependency resolution subsystem, including querying the Modrinth API, detecting missing and circular dependencies, and returning structured resolution results to the frontend.
 ** Gabriel A. Sanchez-Santos
 ** Ricardo Burgos
 
-* Team C
+* Team C - responsible for the frontend web application, including handling modpack uploads, transmitting mod data to the backend, and rendering the dependency graph and resolution results for the player.
 ** Victor M. De Jesús
 ** Javier M. Aguilo Agosto
 
@@ -505,25 +506,39 @@ Daniel highlights the need for version control, dependency tracking, and reliabl
 ===== External System Interfaces
 
 * [.line-through.red]#The subsystem must be capable of receiving dependency metadata from the Mod Uploading subsystem, including mod identifiers, version information, and declared dependencies.#
-  IR-1 — Metadata Reception: The subsystem shall receive dependency metadata from the Mod Uploading subsystem, including mod identifiers, version information, and declared dependency relationships.
+* [.line-through.red]#IR-1 — Metadata Reception: The subsystem shall receive dependency metadata from the Mod Uploading subsystem, including mod identifiers, version information, and declared dependency relationships.#
+
+  IR-1 MetaData reception: The Dependency Resolution subsystem accepts dependency metadata from the Mod Upload subsystem in the form of a structured list of mod entries, where each entry contains a Modrinth project identifier and a version string, from which declared dependency relationships will be extracted and processed.
 
 * [.line-through.red]#Queries to the Modrinth API (or similar repositories) should allow the system to locate required mods using dependency identifiers.#
-  IR-2 — External Repository Querying: The subsystem shall query external repositories (e.g., Modrinth API) using dependency identifiers to locate required Mods and retrieve associated metadata.
+* [.line-through.red]#IR-2 — External Repository Querying: The subsystem shall query external repositories (e.g., Modrinth API) using dependency identifiers to locate required Mods and retrieve associated metadata.#
+
+  IR-2 External Repository Querying: The Dependency Resolution subsystem shall querie the Modrinth API in sequence using the received project slug: first retrieving the project ID, then retrieving the available project versions, and finally retrieving the declared dependencies associated with those versions. Each one of these returned dependencies have their own project slug and version string, which will be used to recursively query the API until all transitive dependencies are resolved or identified as missing." 
 
 * [.line-through.red]#Download URLs for compatible dependency versions must be retrieved and made available for installation.#
-  IR-3 — Download URL Retrieval: The subsystem shall retrieve download URLs for compatible dependency versions from external repositories and provide them to the corresponding subsystem for installation.
+* [.line-through.red]#IR-3 — Download URL Retrieval: The subsystem shall retrieve download URLs for compatible dependency versions from external repositories and provide them to the corresponding subsystem for installation.#
+
+  IR-3 Url Retrieval: The Dependency Resolution subsystem shall retrieve version metadata for resolved dependencies from the Modrinth API, which includes file download URLs within the returned version data, and makes those URLs available to the frontend for player reference only. The subsystem does not perform any download or installation operations just returns the URL from which it can be downloaded.
 
 * [.line-through.red]#Structured results of the dependency resolution process are returned to the Visualization subsystem, including resolved dependencies, version matches, and any unresolved items.#
-  IR-4 — Resolution Result Transfer: The subsystem shall return structured dependency resolution results to the Visualization subsystem, including resolved dependencies, version matches, unresolved dependencies, incompatibilities, and version constraint violations.
+* [.line-through.red]#IR-4 — Resolution Result Transfer: The subsystem returns structured dependency resolution results to the Visualization subsystem, including resolved dependencies, version matches, unresolved dependencies, incompatibilities, and version constraint violations.#
+
+  IR-4 Resolution Result Transfer: The Dependency Resolution subsystem shall return a structured ValidationResponse to the frontend containing: a list of missing required dependency identifiers, a list of mod identifiers involved in circular dependency chains, and a list of resolved dependency entries each containing the dependency identifier, a preferred download URL filtered by loader and Minecraft version compatibility, and a fallback Modrinth page URL when no compatible version is found.
 
 * [.line-through.red]#Notifications are provided whenever a required dependency cannot be resolved, ensuring the system or user is aware of the issue.#
-  IR-5 — Unresolved Dependency Notification: The subsystem shall generate a notification whenever a required dependency cannot be resolved.
+* [.line-through.red]#IR-5 — Unresolved Dependency Notification: The subsystem shall generate a notification whenever a required dependency cannot be resolved.#
+
+  IR-5 Unresolved Dependency Reporting: The Dependency Resolution subsystem shall populate the missing dependencies list within the ValidationResponse for each required dependency that cannot be satisfied. The frontend renders each unresolved dependency as a card displaying the dependency identifier, required version, loader, and Minecraft version, with a status badge indicating whether a download URL was resolved or not. When no compatible version can be located, the frontend displays an explicit message stating that no download link could be resolved for that dependency.
 
 * [.line-through.red]#Failed API requests should trigger automatic retries up to a configurable limit to maintain reliability.#
-  IR-6 — API Retry Handling: The subsystem shall retry failed external API requests up to a configurable maximum number of attempts.
+* [.line-through.red]#IR-6 — API Retry Handling: The subsystem shall retry failed external API requests up to a configurable maximum number of attempts.#
+
+  IR-6 External API Timeout and Error Handling: The Dependency Resolution subsystem shall handle failed external API requests by throwing a descriptive ApiException that identifies the failure type, including unauthorized access (401), resource not found (404), rate limiting (429), server error (500), and service unavailability (503). All requests to the Modrinth API is subject to a 10 second connection and response timeout, after which the request will be considered failed and an appropriate exception will be raised.
 
 * [.line-through.red]#All interactions with external APIs are logged for debugging, verification, and auditing purposes.#
-  IR-7 — External Interaction Logging: The subsystem shall log all interactions with external repositories, including requests, responses, and failures.
+* [.line-through.red]#IR-7 — External Interaction Logging: The subsystem shall log all interactions with external repositories, including requests, responses, and failures.#
+
+  IR-7 Resolution and Error Logging: The Dependency Resolution subsystem shall log successful dependency URL resolutions including the dependency identifier and resolved URL, and logs parsing errors encountered during external API responses including the dependency identifier and error message. Logs will be written to standard output for successful resolutions and standard error for failures.
 
 ---
 
@@ -545,7 +560,9 @@ Daniel highlights the need for version control, dependency tracking, and reliabl
   UI-5 — The system shall provide an interactive dependency graph to visualize mod dependency relationships.
 
 * [.line-through.red]#Allow users to select a mod and view its required, optional, and incompatible dependencies.#
-  UI-6 — The interface shall allow users to select a mod and view its required, optional, and incompatible dependencies.
+* [.line-through,red]#UI-6 — The interface shall allow users to select a mod and view its required, optional, and incompatible dependencies.#
+
+  UI-6 - The interface shall enable players to select a mod and display its required, optional, and incompatible dependencies.
 
 * [.line-through.red]#Provide a search interface to locate mods by name or identifier.#
   UI-7 — The system shall provide a search interface to locate Mods by name or identifier.
@@ -557,7 +574,9 @@ Daniel highlights the need for version control, dependency tracking, and reliabl
   UI-9 — The interface shall display a detailed view panel containing information about the selected Mod and its dependency relationships.
 
 * [.line-through.red]#Allow users to navigate between related mods directly from the dependency visualization.#
-  UI-10 — The interface shall allow navigation between related Mods through the dependency visualization.
+* [.line-through.red]#UI-10 — The interface shall allow navigation between related Mods through the dependency visualization.#
+
+  UI-10 - The interface shall provide navigation between related mods through the dependency visualization.
 
 * [.line-through.red]#Provide clear feedback messages when dependency data cannot be loaded or is incomplete.#
   UI-11 — The system shall provide feedback messages when dependency data cannot be loaded or is incomplete.
@@ -1165,6 +1184,25 @@ This subsystem is kept separate from upload handling, external API communication
 Such separation improves modularity, maintainability, and testability by isolating graph logic from other system concerns.
 
 Within the overall architecture, the Team A graph subsystem connects dependency resolution results with the frontend visualization layer.
+
+==== Team B External API integration and Dependency Resolution Subsystem
+
+Team B is responsible for the external API integration and dependency resolution subsystem. Its main role is to communicate with the Modrinth API to retrieve mod metadata, resolve declared dependencies, and detect missing or circular dependencies given a modpack configuration.
+
+The subsystem recieves a Modrinth project slug as its entry point and executes a sequence of API calls to retrieve the project ID, available versions, and declared dependencies. For each missing required dependency, the subsystem quieres the Modrinth API filtered by mod loader and Minecraft version to find a compatible version and extract its downloaded URL.
+
+Results are packaged into a structured ValidationResponse containing missing dependencies, circular dependency chains, and resolved dependency entries with download URL's. 
+
+This subsystem is kept separate from the graph and frontend visualization rendering, communicating with the rest of the system through well defined DTO's. Such seperation impoves modularity and makes the external API behaviour testable. 
+
+=== Team C Frontend Web App and Visualization: 
+
+  Team C is responsible for the frontend web application layer. This includes accepting mod/modpack uploads in .zip format from players through a file picker interface and transmitting the uploaded uploaded file to the backend via a POST requst to the /api/modpack/zip endpoint. 
+  
+  Upon recieving the processed dependency data from the backend, the frontend renders the dependency graph and displays resolved and unresolved dependencies to the player. 
+  
+  Team C also implements client-side dependency resolution logic, including functions for retrieving direct dependencies and reverse dependents from the graph data structure, and maintains the graph state used by the visualization layer. The subsystem validates uploaded file formats before transmission and provides real-time status feedback to the player during the upload process.
+
 
 == 3. Analytical
 
