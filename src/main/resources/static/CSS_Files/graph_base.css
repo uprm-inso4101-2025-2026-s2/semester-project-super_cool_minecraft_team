@@ -1237,12 +1237,19 @@ body.light-theme {
     --line-soft: rgba(0, 0, 0, 0.08);
 }
 body#page-graph {
-  background-image: url("/images/Background1.png");
+  background:
+    linear-gradient(
+      rgba(0, 0, 0, 0.55),
+      rgba(0, 0, 0, 0.55)
+    ),
+    url("../images/Background1.png");
+
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
 }
+
 
 .dashboard-container,
 .graph-workspace,
@@ -1250,3 +1257,5 @@ body#page-graph {
 svg {
   background: transparent;
 }
+
+
