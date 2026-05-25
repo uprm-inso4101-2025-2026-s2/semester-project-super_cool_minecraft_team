@@ -1250,3 +1250,7 @@ body#page-graph {
 svg {
   background: transparent;
 }
+
+#dependency-graph-canvas .optional-hidden {
+    display: none !important;
+}

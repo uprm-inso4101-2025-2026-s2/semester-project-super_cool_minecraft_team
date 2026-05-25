@@ -68,6 +68,69 @@ let svg = null;
 let mainGroup = null;
 let zoom = null;
 let graphLayoutUpdateTimeout = null;
+let showOptionalMods = true;
+let optionalModsToggle = null;
+
+function loadOptionalModsSetting() {
+    try {
+        const saved = window.localStorage.getItem("show-optional-mods");
+        if (saved === null) {
+            return true;
+        }
+        return saved === "true";
+    } catch (error) {
+        return true;
+    }
+}
+
+function saveOptionalModsSetting(value) {
+    try {
+        window.localStorage.setItem("show-optional-mods", String(value));
+    } catch (error) {
+        // Ignore storage failures in private browsing / restricted environments.
+    }
+}
+
+function updateOptionalModsVisibility() {
+    const shouldShow = showOptionalMods;
+
+    d3.selectAll(".link")
+        .classed("optional-hidden", function(d) {
+            return d && d.rel === "optional" && !shouldShow;
+        });
+
+    d3.selectAll(".node")
+        .classed("optional-hidden", function(d) {
+            if (!d) return false;
+            if (d.type === "root") return false;
+
+            const connectedLinks = links.filter(link => {
+                const sourceId = getNodeId(link.source);
+                const targetId = getNodeId(link.target);
+                return sourceId === d.id || targetId === d.id;
+            });
+
+            if (connectedLinks.length === 0) {
+                return false;
+            }
+
+            const hasVisibleRequiredOrConflict = connectedLinks.some(link => {
+                if (link.rel !== "optional") {
+                    return true;
+                }
+
+                return shouldShow;
+            });
+
+            return !hasVisibleRequiredOrConflict;
+        });
+}
+
+function setShowOptionalMods(value) {
+    showOptionalMods = Boolean(value);
+    saveOptionalModsSetting(showOptionalMods);
+    updateOptionalModsVisibility();
+}
 
 /* ===== JSON VALIDATION LOGIC ===== */
 
@@ -405,6 +468,18 @@ if (!validationResult.isValid) {
     if (sidebarToggleBtn) {
         sidebarToggleBtn.addEventListener("click", scheduleGraphLayoutUpdate);
     }
+
+    optionalModsToggle = document.getElementById("show-optional-mods-toggle");
+    showOptionalMods = loadOptionalModsSetting();
+
+    if (optionalModsToggle) {
+        optionalModsToggle.checked = showOptionalMods;
+        optionalModsToggle.addEventListener("change", () => {
+            setShowOptionalMods(optionalModsToggle.checked);
+        });
+    }
+
+    updateOptionalModsVisibility();
 
     node.on('click', (event, d) => {
         if (searchInput) searchInput.value = '';
@@ -1055,3 +1130,4 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 200);
     });
 });
+
