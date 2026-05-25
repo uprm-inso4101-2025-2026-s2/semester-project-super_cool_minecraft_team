@@ -326,68 +326,7 @@ Within the mod ecosystem of Minecraft, [.line-through.red]#users# players constr
 
 === 2.3 Requirements
 
-* [.line-through.red]#The system shall provide a user interface that allows the user to upload a modpack file or a supported mods folder.#
-  The system shall provide a mechanism to upload a modpack file or a supported mods folder.
-
-* [.line-through.red]#The system shall validate that the uploaded file is not empty and is in a supported format before processing.#
-  The system shall validate that the uploaded file is not empty and conforms to a supported format before processing.
-
-* [.line-through.red]#The system shall display real-time feedback during upload (idle, uploading, processing, success, error).#
-  The system shall provide real-time feedback during the upload process, including states such as idle, uploading, processing, success, and error.
-
-* [.line-through.red]#The system shall prevent submission if validation fails and display a clear, user-friendly error message.#
-  The system shall reject any upload that fails validation and provide a clear error message describing the issue.
-
-* [.line-through.red]#The system shall allow the user to retry the upload process without restarting the application.#
-  The system shall enable retry of the upload process without requiring application restart.
-
-* [.line-through.red]#The UI shall provide clear instructions describing how users can compress their modpack into a .zip file before uploading.#
-  The system shall provide instructions describing how to compress a modpack into a .zip file prior to upload.
-
-==== 2.3.1 Domain Requirements
-
-This section derives requirements from observed properties of the Minecraft modding domain.
-Each requirement is grounded in the domain narrative and domain events.
-
-* [.line-through.red]#DR-1 — Mod Identity: The system shall represent each Mod with an identifier and a version such that two Mods are distinguishable by (identifier, version).#
-  DR-1 — Mod Identity: The system shall represent each Mod using a unique identifier and a version, such that any two Mods are distinguishable by the pair (identifier, version).
-
-* [.line-through.red]#DR-2 — Declared Dependency Relationships: The system shall represent declared dependency relationships as directed relations from a source Mod to a target Mod.#
-  DR-2 — Declared Dependency Relationships: The system shall represent dependency relationships between Mods as directed relationships from a source Mod to a target Mod.
-
-* [.line-through.red]#DR-3 — Dependency Type Exclusivity: The system shall classify each declared relationship between two Mods into exactly one of the following types: required, optional, or incompatible.#
-  DR-3 — Dependency Type Exclusivity: The system shall classify each relationship between two Mods into exactly one of the following types: required, optional, or incompatible.
-
-* [.line-through.red]#DR-4 — Version Constraints: The system shall associate a version constraint to a dependency or incompatibility relation when such a constraint is declared.#
-  DR-4 — Version Constraints: The system shall associate version constraints with dependency or incompatibility relationships when such constraints are declared.
-
-* [.line-through.red]#DR-5 — Structural Validity: The system shall determine whether a Modpack is structurally valid by verifying that:#
-  DR-5 — Structural Validity: The system shall determine whether a Modpack is structurally valid by verifying that:
-** (a) all required dependencies are present,
-** (b) no declared incompatibilities are violated,
-** (c) all version constraints are satisfied.
-
-* [.line-through.red]#DR-6 — Transitive Dependency Closure: The system shall compute the transitive closure of required dependencies.#
-  DR-6 — Transitive Dependency Closure: The system shall compute all transitive required dependencies derived from direct dependency relationships.
-
-* [.line-through.red]#DR-7 — Missing Dependency Identification: The system shall identify each missing required dependency in a Modpack.#
-  DR-7 — Missing Dependency Identification: The system shall identify all required dependencies that are not present in a given Modpack.
-
-* [.line-through.red]#DR-8 — Incompatibility Detection: The system shall detect incompatibility violations in a Modpack.#
-  DR-8 — Incompatibility Detection: The system shall detect all incompatibility violations between Mods in a Modpack.
-
-* [.line-through.red]#DR-9 — Circular Dependency Detection: The system shall detect circular dependency structures in the dependency network.#
-  DR-9 — Circular Dependency Detection: The system shall detect cycles within the dependency network of a Modpack.
-
-* [.line-through.red]#DR-10 — Resolution Result: The system shall produce a resolution result identifying satisfied dependencies, missing dependencies, incompatibilities, version violations, and cycles.#
-  DR-10 — Resolution Result: The system shall produce a resolution result that explicitly identifies:
-** (a) satisfied dependencies,
-** (b) missing dependencies,
-** (c) incompatibilities,
-** (d) version constraint violations,
-** (e) circular dependencies.
-
-==== 2.3.2 Personas
+=== 2.3.1 Personas
 
 [.line-through.red]#The following personas represent typical stakeholders who would use the mod dependency analyzer web application.#
 [.line-through.red]#They justify the previously defined epics and user stories.#
@@ -396,21 +335,23 @@ Each persona reflects real-world behaviors, motivations, and challenges observed
 
 [.line-through.red]#===== Persona 1 — "the Modpack Builder"#
 
-===== Persona 1 — Alex Rivera, the Modpack Builder
+==== Persona 1 — Alex Rivera, the Modpack Builder
 
-Profile:
+[.line-through.red]#Profile:#
 
-* [.line-through.red]#20 - 25 years old#
-  22 years old
-* Experienced Minecraft player
-* Builds custom modpacks for personal use or friends
-* Familiar with Fabric and mod loaders
-* Comfortable with technical tools but values automation
+[.line-through.red]#* 20 - 25 years old#
+[.line-through.red]#22 years old#
+[.line-through.red]#* Experienced Minecraft player#
+[.line-through.red]#* Builds custom modpacks for personal use or friends#
+[.line-through.red]#* Familiar with Fabric and mod loaders#
+[.line-through.red]#* Comfortable with technical tools but values automation#
 
 Background:
 
-* Alex is a university student who enjoys experimenting with different modpacks and sharing them with friends.
-* He often combines multiple mods to create new gameplay experiences and expects them to work reliably.
+[.line-through.red]#* Alex is a university student who enjoys experimenting with different modpacks and sharing them with friends.#
+[.line-through.red]#* He often combines multiple mods to create new gameplay experiences and expects them to work reliably.#
+
+Alex is a 22-year-old Computer Science student at the University of Puerto Rico at Mayagüez. He is slim, almost always wearing a gray or black hoodie, and his hair is slightly long and never quite combed. His room has three mechanical keyboards, two of which he never uses, and a collection of coffee mugs he never washes on time. He enjoys 80s science fiction films, has strong opinions about Vim vs VSCode, and spends his weekends either hiking or watching three-hour YouTube videos about game engine internals. He has been playing Minecraft since he was 12, starting in vanilla and gradually going deeper into modding as his programming skills grew. He is experienced with Fabric and mod loaders, comfortable with technical tools, and builds custom modpacks for himself and his friends, sharing them over Discord. He gets frustrated every time one of them messages him saying the game will not open.
 
 Goals:
 
@@ -434,20 +375,22 @@ Alex highlights the need for automated dependency analysis, conflict detection, 
 
 [.line-through.red]#===== Persona 2 — "the Casual Player"#
 
-===== Persona 2 — Sam Torres, the Casual Player
+==== Persona 2 — Sam Torres, the Casual Player
 
-Profile:
+[.line-through.red]#Profile:#
 
-* [.line-through.red]#16 - 22 years old#
-  18 years old
-* Limited technical knowledge of mod loaders
-* Downloads modpacks from friends or online communities
-* Wants simple, reliable setup
+[.line-through.red]#* 16 - 22 years old#
+[.line-through.red]#18 years old#
+[.line-through.red]#* Limited technical knowledge of mod loaders#
+[.line-through.red]#* Downloads modpacks from friends or online communities#
+[.line-through.red]#* Wants simple, reliable setup#
 
 Background:
 
-* Sam is a casual player who prefers a plug-and-play experience and avoids technical configurations whenever possible.
-* When something goes wrong, he struggles to understand how to fix it.
+[.line-through.red]#* Sam is a casual player who prefers a plug-and-play experience and avoids technical configurations whenever possible.#
+[.line-through.red]#* When something goes wrong, he struggles to understand how to fix it.#
+
+Sam is an 18-year-old in his last year of high school in Bayamón. He is tall for his age, always wearing a backwards cap and headphones around his neck even when he is not listening to anything. He loves his grandmother's arroz con pollo, plays basketball on Saturday afternoons at the neighborhood court, and plays electric guitar badly but enthusiastically. He has limited technical knowledge of mod loaders and downloads modpacks from friends or online communities, always preferring the simplest possible setup. He started playing Minecraft because his friend group already had a server and he did not want to be left out. He was never interested in modding itself — he just wants to press Play and appear in the world where his friends are. When the game does not open, he tries twice more and then sends a screenshot to Alex.
 
 Goals:
 
@@ -470,20 +413,22 @@ Sam emphasizes the importance of clear guidance, simplified workflows, and under
 
 [.line-through.red]#===== Persona 3 — "the Server Organizer"#
 
-===== Persona 3 — Daniel Morales, the Server Organizer
+==== Persona 3 — Daniel Morales, the Server Organizer
 
-Profile:
+[.line-through.red]#Profile:#
 
-* [.line-through.red]#22-30 years old#
-  27 years old
-* Runs small multiplayer servers
-* Manages shared modpacks for a group
-* Needs consistency across players
+[.line-through.red]#* 22-30 years old#
+[.line-through.red]#27 years old#
+[.line-through.red]#* Runs small multiplayer servers#
+[.line-through.red]#* Manages shared modpacks for a group#
+[.line-through.red]#* Needs consistency across players#
 
 Background:
 
-* Daniel manages a shared modpack used by multiple players and is responsible for keeping all versions consistent.
-* Even small errors can affect the entire group, so he values reliability and control.
+[.line-through.red]#* Daniel manages a shared modpack used by multiple players and is responsible for keeping all versions consistent.#
+[.line-through.red]#* Even small errors can affect the entire group, so he values reliability and control.#
+
+Daniel is a 27-year-old IT support worker at a company in San Juan. He lives with two roommates, both of whom are part of the server he manages. He is of medium height, always clean-shaven, and has a habit of arriving ten minutes early to everything. He collects mechanical watches — he has five, none costing less than two hundred dollars — and is the person everyone in his circle calls when something technological stops working. He runs small multiplayer servers and manages shared modpacks for his group, valuing consistency and reliability above all else. The server started two years ago with four friends and now has twelve regular players, some of them in the United States. Daniel keeps a changelog, schedules update windows on Sunday nights, and tests new mods on a separate instance before pushing them to the group. He has a cat named Kernel.
 
 Goals:
 
@@ -500,6 +445,67 @@ Frustrations:
 
 Why this persona matters:
 Daniel highlights the need for version control, dependency tracking, and reliable validation across shared environments.
+
+==== 2.3.2 Domain Requirements
+
+This section derives requirements from observed properties of the Minecraft modding domain.
+Each requirement is grounded in the domain narrative and domain events.
+
+* [.line-through.red]#The system shall provide a user interface that allows the user to upload a modpack file or a supported mods folder.
+  The system shall provide a mechanism to upload a modpack file or a supported mods folder.#
+
+* [.line-through.red]#The system shall validate that the uploaded file is not empty and is in a supported format before processing.
+  The system shall validate that the uploaded file is not empty and conforms to a supported format before processing.#
+
+* [.line-through.red]#The system shall display real-time feedback during upload (idle, uploading, processing, success, error). The system shall provide real-time feedback during the upload process, including states such as idle, uploading, processing, success, and error.#
+
+* [.line-through.red]#The system shall prevent submission if validation fails and display a clear, user-friendly error message.The system shall reject any upload that fails validation and provide a clear error message describing the issue.#
+
+* [.line-through.red]#The system shall allow the user to retry the upload process without restarting the application.
+  The system shall enable retry of the upload process without requiring application restart.#
+
+* [.line-through.red]#The UI shall provide clear instructions describing how users can compress their modpack into a .zip file before uploading.
+  The system shall provide instructions describing how to compress a modpack into a .zip file prior to upload.#
+
+* [.line-through.red]#DR-1 — Mod Identity: The system shall represent each Mod with an identifier and a version such that two Mods are distinguishable by (identifier, version). The system shall represent each Mod using a unique identifier and a version, such that any two Mods are distinguishable by the pair (identifier, version).#
+  DR-1 — Mod Identity: The system must use each Mod's identifier and version as declared in its Modrinth metadata or its `fabric.mod.json` file, such that any two Mods are distinguishable by the pair (identifier, version).
+
+* [.line-through.red]#DR-2 — Declared Dependency Relationships: The system shall represent declared dependency relationships as directed relations from a source Mod to a target Mod. The system shall represent dependency relationships between Mods as directed relationships from a source Mod to a target Mod.#
+  DR-2 — Dependency: The system must represent each declared dependency as an entity that connects a source Mod to a target Mod, where the source Mod requires the target Mod to be present in order to function correctly.
+
+* [.line-through.red]#DR-3 — Dependency Type Exclusivity: The system shall classify each declared relationship between two Mods into exactly one of the following types: required, optional, or incompatible. The system shall classify each relationship between two Mods into exactly one of the following types: required, optional, or incompatible.#
+  DR-3 — Dependency Type Exclusivity: The system must assign each dependency entity exactly one type as declared in the Mod's metadata: required, optional, or incompatible.
+
+* [.line-through.red]#DR-4 — Version Constraints: The system shall associate a version constraint to a dependency or incompatibility relation when such a constraint is declared. The system shall associate version constraints with dependency or incompatibility relationships when such constraints are declared.#
+  DR-4 — Version Constraints: The system must associate each dependency entity with the version constraint declared in the source Mod's metadata, specifying the range of acceptable versions of the target Mod.
+
+* [.line-through.red]#DR-5 — Structural Validity: The system shall determine whether a Modpack is structurally valid by verifying that: The system shall determine whether a Modpack is structurally valid by verifying that:#
+  DR-5 — Structural Validity: The system must evaluate a Modpack's structural validity by verifying that:
+** all required dependencies, including the Minecraft base game treated as a Mod with its own identifier and version, are present,
+** no declared incompatibilities are violated,
+** all version constraints are satisfied,
+** and must produce a validation result explicitly stating whether the Modpack is valid or invalid.
+
+* [.line-through.red]#DR-6 — Transitive Dependency Closure: The system shall compute the transitive closure of required dependencies. The system shall compute all transitive required dependencies derived from direct dependency relationships.#
+  DR-6 — Transitive Dependency Closure: The system must compute the complete set of transitive required dependencies for a given Modpack by following each dependency entity's connection chain, and must include all discovered transitive dependencies in the validation and resolution process.
+
+* [.line-through.red]#DR-7 — Missing Dependency Identification: The system shall identify each missing required dependency in a Modpack. The system shall identify all required dependencies that are not present in a given Modpack.#
+  DR-7 — Missing Dependency Identification: The system must identify all required dependencies that are not present in a given Modpack, including transitive dependencies, and must report each missing dependency by its identifier and version constraint as declared in the source Mod's metadata.
+
+* [.line-through.red]#DR-8 — Incompatibility Detection: The system shall detect incompatibility violations in a Modpack. The system shall detect all incompatibility violations between Mods in a Modpack.#
+  DR-8 — Incompatibility Detection: The system must detect all incompatibility violations in a given Modpack by identifying pairs of Mods whose declared dependency type is incompatible, and must report each violation by naming both Mods and their respective identifiers and versions as declared in their metadata.
+
+* [.line-through.red]#DR-9 — Circular Dependency Detection: The system shall detect circular dependency structures in the dependency network. The system shall detect cycles within the dependency network of a Modpack.#
+  DR-9 — Circular Dependency Detection: The system must detect all circular dependency chains within the dependency network of a given Modpack, where a circular dependency exists when a Mod directly or transitively depends on itself, and must report each cycle by listing the full chain of Mod identifiers involved.
+
+* [.line-through.red]#DR-10 — Resolution Result: The system shall produce a resolution result identifying satisfied dependencies, missing dependencies, incompatibilities, version violations, and cycles. The system shall produce a resolution result that explicitly identifies:#
+  DR-10 — Resolution Result: The system must produce a structured resolution result for a given Modpack that explicitly includes:
+** satisfied dependencies, identified by source and target Mod identifier and version,
+** missing required dependencies, identified by their identifier and version constraint,
+** incompatibility violations, identified by the pair of conflicting Mod identifiers and versions,
+** version constraint violations, identified by the source Mod, target Mod, required version constraint, and present version,
+** circular dependency chains, identified by the full list of Mod identifiers involved.
+  
 
 ==== 2.3.3 Interface Requirements
 
