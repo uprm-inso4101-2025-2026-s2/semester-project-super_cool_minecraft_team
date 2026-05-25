@@ -652,12 +652,12 @@ Scalability:
 * [.line-through.red]#The system shall support growth in mod volume, dependency complexity, and user activity without requiring architectural redesign.#
   MR-10 — The system shall support horizontal scaling and growth in mod volume, dependency complexity, and player demand without requiring architectural redesign, safely scaling to modpacks containing up to 500 Mods without degradation in functionality (criteria for scaling beyond 30 simultaneous users remains to be defined through further research).
 
-  NOTE: Modified text to append "horizontal scaling," "player demand," and the explicit 30-user research boundary derived from Section 2.8's Scalability section.
+NOTE: Modified text to append "horizontal scaling," "player demand," and the explicit 30-user research boundary derived from Section 2.8's Scalability section.
 
 * [.line-through.red]#The subsystem architecture shall allow integration of additional mod sources or APIs in future iterations.#
   MR-11 — The subsystem architecture shall be modular to allow extensions and improvements without redesigning core components, supporting the integration of at least one additional external mod repository or API without requiring major architectural changes.
 
-  NOTE: Modified text to merge Section 2.8’s modular architecture clause directly into the existing repository expansion rule.
+NOTE: Modified text to merge Section 2.8’s modular architecture clause directly into the existing repository expansion rule.
   
 ---
 
