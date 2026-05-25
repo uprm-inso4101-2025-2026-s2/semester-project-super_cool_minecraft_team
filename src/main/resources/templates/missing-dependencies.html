@@ -37,6 +37,21 @@
                 placeholder="Search dependencies..."
             />
 
+            <div id="dependency-summary" class="dependency-summary" hidden>
+                <div class="summary-item">
+                    <span class="summary-label">Total</span>
+                    <span id="summary-total" class="summary-value">0</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Resolved</span>
+                    <span id="summary-resolved" class="summary-value">0</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Unresolved</span>
+                    <span id="summary-unresolved" class="summary-value">0</span>
+                </div>
+            </div>
+
            <div id="partial-results-banner" class="info-banner" hidden>
             Some dependencies were resolved, but others could not be matched automatically.
             You can still install the resolved ones first and retry analysis.
