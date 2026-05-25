@@ -589,50 +589,93 @@ Daniel highlights the need for version control, dependency tracking, and reliabl
 Performance:
 
 * [.line-through.red]#The subsystem shall process dependency resolution requests efficiently, ensuring reasonable response times under typical user workloads.#
-  MR-1 — The subsystem shall process dependency resolution requests within 2 seconds for modpacks containing up to 100 Mods.
+  MR-1 — The subsystem shall process dependency resolution requests and re-render the dependency graph within 2 seconds after a mod is added, removed, or modified, for modpacks containing up to 150 Mods.
+
+NOTE: Modified original text to expand the mod threshold capacity from 100 mods to 150 mods and specified exact graph re-rendering conditions. This incorporates granular performance metrics from Section 2.8 to remove structural redundancy.
 
 * [.line-through.red]#The system shall support multiple simultaneous requests without significant performance degradation or instability.#
-  MR-2 — The system shall support at least 50 concurrent dependency resolution requests without failure.
+  MR-2 — The system shall support at least 50 concurrent dependency resolution requests without failure, maintaining stable performance without crashing when handling concurrent download and graph update operations for at least 20 simultaneous active users.
+
+NOTE: Modified text to combine Section 2.3.4’s higher concurrency metric (50 requests) with Section 2.8’s specific multi-operation safety rules (download and graph updates running concurrently) to construct a non-contradictory backend constraint.
 
 * [.line-through.red]#Retrieval of dependency metadata and download links shall be performed in a timely manner to maintain smooth workflow execution.#
-  MR-3 — The system shall retrieve dependency metadata and download links within 1 second per external request.
+  MR-3 — The system shall retrieve dependency metadata and download links within 1 second per external request, responding to an external mod metadata lookup request (e.g., Modrinth) within 3 seconds under a normal load of $\le$ 20 simultaneous users.
+
+NOTE: Added the 3-second/20-user external lookup context from Section 2.8 to provide an objective, testable threshold under specific load states.
 
 * [.line-through.red]#The subsystem shall efficiently read and analyze modpack contents, including individual mod files, to detect dependencies and incompatibilities.#
-  MR-4 — The subsystem shall analyze modpack contents and detect dependencies and incompatibilities within 2 seconds for modpacks containing up to 100 Mods.
+  MR-4 — The subsystem shall analyze, validate, and normalize modpack contents to detect dependencies and incompatibilities within 2 seconds for modpacks containing up to 100 Mods, ensuring accurate representation of required, optional, and incompatible dependencies along with version constraints.
+
+NOTE: Modified text to absorb validation, normalization, and dependency mapping rules from Section 2.8’s Integrity section into the primary contents-analysis contract.
 
 ---
 
 Reliability:
 
 * [.line-through.red]#The subsystem shall maintain stable operation during normal usage, with minimal downtime.#
-  MR-5 — The subsystem shall maintain at least 99% uptime under normal operating conditions.
+  MR-5 — The subsystem shall maintain at least 99% uptime under normal operating conditions, maintaining at least 95% uptime specifically during scheduled operational hours.
+
+NOTE: Reconciled uptime rules by keeping the stricter 99% standard from 2.3.4 as the primary metric, while appending the "scheduled operational hours" qualifier extracted from Section 2.8.
 
 * [.line-through.red]#External API failures shall be handled gracefully, ensuring partial failures do not crash the system or corrupt stored data.#
-  MR-6 — The system shall handle external API failures without crashing and shall preserve all previously processed data.
+  MR-6 — The system shall handle external API failures gracefully without crashing, preserving all previously processed data; if an external API (e.g., Modrinth) fails or becomes unreachable, the system must return a clear error message to the player within 5 seconds, allow a retry, and fall back to cached or previously processed data when available.
+
+NOTE: Modified text to expand the original API fallback logic, explicitly introducing the missing "API Failure Paths" category from Section 2.8 (5-second player notifications, retry options, and cache management rules).
 
 * [.line-through.red]#Errors and exceptions shall be logged to support debugging, testing, and verification activities.#
-  MR-7 — The system shall log all errors and exceptions, including timestamps and error details.
+  MR-7 — The system shall log all errors and exceptions, including timestamps and error details, and implement monitoring to detect performance bottlenecks and abnormal resource consumption.
+
+NOTE: Modified text to incorporate logging-driven monitoring parameters from Section 2.8's Resource Usage section.
 
 ---
 
 Resource and Stability:
 
 * [.line-through.red]#The subsystem shall operate within reasonable CPU and memory limits to avoid negatively impacting other system components.#
-  MR-8 — The subsystem shall not exceed 70% CPU utilization and 512 MB of memory under normal workload conditions.
+  MR-8 — The subsystem shall not exceed 70% CPU utilization and 512 MB of memory under normal workload conditions, explicitly encompassing active graph construction and metadata processing tasks.
+
+NOTE: Modified text to define the exact workloads (graph construction and metadata processing) flagged in Section 2.8's resource references.
 
 * [.line-through.red]#The system shall ensure consistent behavior during extended processing tasks such as large modpack analysis.#
-  MR-9 — The system shall maintain stable operation during analysis of modpacks containing up to 500 Mods without failure.
+  MR-9 — The system shall maintain stable operation during graph processing and analysis of modpacks containing up to 500 Mods without failure, satisfying the following step-down processing intervals:
+  
+  ** Less than 5 seconds for modpacks containing between 30 and 100 mods.
+  ** Less than 10 seconds for modpacks containing up to 200 mods.
+  ** Between 30 seconds and 2 minutes for extreme cases containing between 200 and 500 mods depending on graph complexity.
+
+  NOTE: Modified text to replace general stability phrasing with highly detailed, non-conflicting performance tiers extracted directly from Section 2.8's "Graph Processing Performance" metrics.
 
 ---
 
 Scalability:
 
 * [.line-through.red]#The system shall support growth in mod volume, dependency complexity, and user activity without requiring architectural redesign.#
-  MR-10 — The system shall support scaling to modpacks containing up to 500 Mods without degradation in functionality.
+  MR-10 — The system shall support horizontal scaling and growth in mod volume, dependency complexity, and player demand without requiring architectural redesign, safely scaling to modpacks containing up to 500 Mods without degradation in functionality (criteria for scaling beyond 30 simultaneous users remains to be defined through further research).
+
+NOTE: Modified text to append "horizontal scaling," "player demand," and the explicit 30-user research boundary derived from Section 2.8's Scalability section.
 
 * [.line-through.red]#The subsystem architecture shall allow integration of additional mod sources or APIs in future iterations.#
-  MR-11 — The subsystem shall support integration of at least one additional external mod repository without requiring major architectural changes.
+  MR-11 — The subsystem architecture shall be modular to allow extensions and improvements without redesigning core components, supporting the integration of at least one additional external mod repository or API without requiring major architectural changes.
+
+NOTE: Modified text to merge Section 2.8’s modular architecture clause directly into the existing repository expansion rule.
   
+---
+
+Data Integrity & Degradation (Newly Incorporated Categories):
+
+* MR-12 (Data Integrity - Download Performance) — The system shall download and append a mod file ($\le$ 20MB) to the modpack archive within 10 seconds, excluding external network delays beyond the system’s control.
+  
+NOTE: Extracted from Section 2.8 Performance Requirements and introduced as a new Machine Requirement to capture file transfer constraints missing from the original 2.3.4 layout.
+
+* MR-13 (Data Integrity - Archive Validation) — The system shall validate that a downloaded mod file is successfully retrieved and structurally valid before appending it to the modpack archive, preventing duplicate mod files with identical identifiers from being added without explicit player confirmation.
+
+NOTE: Extracted from Section 2.8 Integrity Requirements and appended as a brand-new Machine Requirement to establish rigorous data verification parameters.
+
+* MR-14 (Graceful Degradation & Throttling) — Under heavy load or resource-constrained conditions, the system shall degrade gracefully by prioritizing essential operations, applying request throttling to prevent unexpected termination, and queuing additional active requests with a maximum delay of 10 seconds if simultaneous active users exceed 20 (allowing metadata lookup response times to temporarily increase up to 8 seconds).
+
+NOTE: Consolidates all graceful degradation parameters, heavy-load thresholds, and request-throttled limits from Section 2.8 into a brand-new engineering contract within Section 2.3.4.
+
+
 === 2.4 Terminology
 
 This section defines the core terms that will be used throughout the project.
@@ -1064,42 +1107,42 @@ Each term includes:
   Outcome: The system confirms the structural integrity of the modpack and allows it to proceed to validation or deployment stages. +
   State Change: inconsistent or under validation -> consistent configuration state"
 
-=== 2.8 Operational Requirements
+=== [.line-through.red]#2.8 Operational Requirements#
  
-This section defines measurable criteria based on the Machine Requirements stated in Section 2.3.4.
-While Section 2.3.4 explains how the system is expected to behave, this section specifies concrete limits and thresholds used to evaluate performance, reliability, and scalability during testing.
+[.line-through.red]#This section defines measurable criteria based on the Machine Requirements stated in Section 2.3.4.
+While Section 2.3.4 explains how the system is expected to behave, this section specifies concrete limits and thresholds used to evaluate performance, reliability, and scalability during testing.#
  
-==== Performance Requirements
+==== [.line-through.red]#Performance Requirements#
  
-* The system must respond to a mod metadata lookup request (via external API such as Modrinth) within 3 seconds under normal load (≤ 20 simultaneous users performing lookup operations).
-* The system must update and re-render the dependency graph within 2 seconds after a mod is added, removed, or modified, for modpacks containing up to 150 mods.
-* The system must download and append a mod file (≤ 20MB) to the modpack archive within 10 seconds, excluding external network delays beyond the system's control.
+* [.line-through.red]#The system must respond to a mod metadata lookup request (via external API such as Modrinth) within 3 seconds under normal load (≤ 20 simultaneous users performing lookup operations).#
+* [.line-through.red]#The system must update and re-render the dependency graph within 2 seconds after a mod is added, removed, or modified, for modpacks containing up to 150 mods.#
+* [.line-through.red]#The system must download and append a mod file (≤ 20MB) to the modpack archive within 10 seconds, excluding external network delays beyond the system's control.#
  
 [.line-through.red]#Graph Processing Performance: The system must generate a dependency graph for modpacks containing between 30 and 100 mods under typical conditions in less than 5 seconds.
 For larger modpacks containing up to 200 mods, the system must generate the dependency graph in less than 10 seconds.
 For extreme cases containing between 200 and 500 mods, the system may require between 30 seconds and 2 minutes depending on graph complexity but must complete the process in a stable and predictable manner without system failure.#
  
-NOTE: Graph processing performance thresholds are now consolidated under Performance Requirements above and in Section 2.3.4 (MR-1, MR-4, MR-9).
+[.line-through.red]#NOTE: Graph processing performance thresholds are now consolidated under Performance Requirements above and in Section 2.3.4 (MR-1, MR-4, MR-9).#
  
-==== Concurrency Requirements
+==== [.line-through.red]#Concurrency Requirements#
  
-* The system must support at least 20 simultaneous active users, each performing metadata lookups and graph updates, without service interruption.
-* If the number of simultaneous active users exceeds 20, the system must continue operating and may queue additional requests with a maximum delay of 10 seconds.
-* The system must not crash when handling concurrent download and graph update operations.
+* [.line-through.red]#The system must support at least 20 simultaneous active users, each performing metadata lookups and graph updates, without service interruption.#
+* [.line-through.red]#If the number of simultaneous active users exceeds 20, the system must continue operating and may queue additional requests with a maximum delay of 10 seconds.#
+* [.line-through.red]#The system must not crash when handling concurrent download and graph update operations.#
  
 [.line-through.red]#Concurrent Requests: The backend must be designed to support multiple concurrent users performing dependency analysis and graph generation.
 Since the expected number of concurrent users depends on the final scope of the application, the system must maintain stable performance and predictable response times under moderate and peak usage scenarios.#
  
-NOTE: Consolidated into Concurrency Requirements above. Vague phrasing ("moderate and peak") replaced with measurable thresholds.
+[.line-through.red]#NOTE: Consolidated into Concurrency Requirements above. Vague phrasing ("moderate and peak") replaced with measurable thresholds.#
  
-==== Reliability Requirements
+==== [.line-through.red]#Reliability Requirements#
  
-* The system must maintain 95% uptime during scheduled operational hours.
-* If an external API (e.g., Modrinth) fails or becomes unreachable, the system must:
-** Return a clear error message to the player within 5 seconds, and
-** Allow the player to retry the operation.
-* The failure of an external API must not cause the entire application to terminate.
-* When external services are unavailable, the system must use cached or previously processed data when available and display a meaningful status message to the player.
+* [.line-through.red]#The system must maintain 95% uptime during scheduled operational hours.#
+* [.line-through.red]#If an external API (e.g., Modrinth) fails or becomes unreachable, the system must:#
+** [.line-through.red]#Return a clear error message to the player within 5 seconds, and#
+** [.line-through.red]#Allow the player to retry the operation.#
+* [.line-through.red]#The failure of an external API must not cause the entire application to terminate.#
+* [.line-through.red]#When external services are unavailable, the system must use cached or previously processed data when available and display a meaningful status message to the player.#
  
 [.line-through.red]#Reliability and Availability: The system must maintain high availability during active usage.
 Automatic recovery mechanisms must handle network failures, API interruptions, and temporary service outages.
@@ -1109,62 +1152,62 @@ The backend must prevent corruption of dependency and modpack data and ensure co
 The backend must handle rate limits, temporary service failures, incomplete responses, and data inconsistencies.
 When external services are unavailable, the system must use cached or previously processed data when possible and provide meaningful feedback to the user.#
  
-NOTE: Both blocks consolidated and rewritten as measurable bullet points above.
+[.line-through.red]#NOTE: Both blocks consolidated and rewritten as measurable bullet points above.#
  
-==== Integrity Requirements
+==== [.line-through.red]#Integrity Requirements#
  
-* The system must validate that a downloaded mod file is successfully retrieved before appending it to the modpack archive.
-* The system must ensure that the modpack archive remains structurally valid after file modifications.
-* The system must prevent duplicate mod files with identical identifiers from being appended without player confirmation.
-* Dependency data must be validated and normalized before graph construction.
-* The system must ensure accurate representation of required, optional, and incompatible dependencies, as well as version constraints.
+* [.line-through.red]#The system must validate that a downloaded mod file is successfully retrieved before appending it to the modpack archive.#
+* [.line-through.red]#The system must ensure that the modpack archive remains structurally valid after file modifications.#
+* [.line-through.red]#The system must prevent duplicate mod files with identical identifiers from being appended without player confirmation.#
+* [.line-through.red]#Dependency data must be validated and normalized before graph construction.#
+* [.line-through.red]#The system must ensure accurate representation of required, optional, and incompatible dependencies, as well as version constraints.#
  
 [.line-through.red]#Data Integrity and Validation: Dependency data must be validated and normalized before graph construction.
 The system must ensure accurate representation of required, optional, and incompatible dependencies, as well as version constraints.#
  
-NOTE: Consolidated into Integrity Requirements above.
+[.line-through.red]#NOTE: Consolidated into Integrity Requirements above.#
  
-==== Scalability Requirements
+==== [.line-through.red]#Scalability Requirements#
  
-* The system architecture must support horizontal scaling to accommodate increases in modpack size, graph complexity, and player demand.
-* The backend must be modular to allow improvements and extensions without redesigning core components.
-* Criteria for scalability beyond 30 simultaneous users remain to be researched and defined.
+* [.line-through.red]#The system architecture must support horizontal scaling to accommodate increases in modpack size, graph complexity, and player demand.#
+* [.line-through.red]#The backend must be modular to allow improvements and extensions without redesigning core components.#
+* [.line-through.red]#Criteria for scalability beyond 30 simultaneous users remain to be researched and defined.#
  
 [.line-through.red]#Scalability: The architecture must support horizontal scaling to accommodate future increases in modpack size, graph complexity, and user demand.
 The backend must be modular to allow improvements and extensions without redesigning core components.#
  
-NOTE: Rewritten as bullet points and updated "user" → "player" where referring to domain context.
+[.line-through.red]#NOTE: Rewritten as bullet points and updated "user" → "player" where referring to domain context.#
  
-==== Resource Usage Requirements
+==== [.line-through.red]#Resource Usage Requirements#
  
-* Memory and CPU usage must remain within acceptable limits during graph construction and metadata processing, as specified in Section 2.3.4 (MR-8).
-* Monitoring and logging must be implemented to detect performance bottlenecks and abnormal resource consumption.
+* [.line-through.red]#Memory and CPU usage must remain within acceptable limits during graph construction and metadata processing, as specified in Section 2.3.4 (MR-8).#
+* [.line-through.red]#Monitoring and logging must be implemented to detect performance bottlenecks and abnormal resource consumption.#
  
 [.line-through.red]#Resource Usage: Memory and CPU usage must remain within acceptable limits during graph construction and metadata processing.
 Monitoring and logging must be implemented to detect performance bottlenecks and abnormal resource consumption.#
  
-NOTE: Rewritten as bullet points and cross-referenced with MR-8.
+[.line-through.red]#NOTE: Rewritten as bullet points and cross-referenced with MR-8.#
  
-==== Degradation Requirements
+==== [.line-through.red]#Degradation Requirements#
  
-* Under heavy load, the system may:
-** Increase response time up to 8 seconds for metadata lookups, and
-** Queue download operations.
-* The system must not terminate unexpectedly under heavy load conditions.
-* Under overload conditions or limited resources, the system must degrade gracefully by:
-** Prioritizing essential operations,
-** Applying request throttling, and
-** Avoiding system crashes.
+* [.line-through.red]#Under heavy load, the system may:#
+** [.line-through.red]#Increase response time up to 8 seconds for metadata lookups, and#
+** [.line-through.red]#Queue download operations.#
+* [.line-through.red]#The system must not terminate unexpectedly under heavy load conditions.#
+* [.line-through.red]#Under overload conditions or limited resources, the system must degrade gracefully by:#
+** [.line-through.red]#Prioritizing essential operations,#
+** [.line-through.red]#Applying request throttling, and#
+** [.line-through.red]#Avoiding system crashes.#
  
 [.line-through.red]#Stability and Graceful Degradation: Under overload conditions or limited resources, the system must degrade gracefully by prioritizing essential operations, applying request throttling, and avoiding system crashes.#
  
-NOTE: Merged into Degradation Requirements above and rewritten as measurable bullet points.
+[.line-through.red]#NOTE: Merged into Degradation Requirements above and rewritten as measurable bullet points.#
  
 [.line-through.red]#The backend system must meet measurable and realistic machine requirements to ensure efficient dependency graph construction, scalability, and reliability when processing Minecraft mod metadata.#
  
-NOTE: This introductory paragraph was redundant; content is covered by the structured requirements above and in Section 2.3.4.
+[.line-through.red]#NOTE: This introductory paragraph was redundant; content is covered by the structured requirements above and in Section 2.3.4.#
 
-=== 2.9 Software Architecture Design
+=== 2.8 Software Architecture Design
 
 The system follows a layered client - server architecture composed of four main components:
 
