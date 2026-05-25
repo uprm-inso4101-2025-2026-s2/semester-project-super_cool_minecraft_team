@@ -1,16 +1,8 @@
 # Graph Consistency and Conflict Validation
 
-## Relation to Lecture Topic
+## Overview
 
 This document applies Requirements Engineering concepts such as inconsistencies, conflicts, satisfiability, and dependency validation to Minecraft mod dependency graphs.
-
-## Relation to Domain Facet Analysis
-
-This document extends the graph domain definition by introducing validation rules that determine when a mod dependency graph becomes inconsistent, incomplete, or invalid during dependency resolution.
-
----
-
-## Introduction
 
 Minecraft modpacks often contain dozens or hundreds of interconnected mods that depend on specific loaders, APIs, and compatible versions. Dependency graphs represent these relationships, including required dependencies, optional integrations, and incompatibility rules.
 
@@ -18,83 +10,124 @@ This document defines the conditions under which a mod dependency graph is consi
 
 ---
 
-## Consistency Rules
+## Relation to Domain Facet Analysis
 
-A dependency graph is considered consistent when:
+This document extends the graph domain definition by introducing validation rules that determine when a mod dependency graph becomes inconsistent, incomplete, or invalid during dependency resolution.
 
-### 1. Dependency Satisfaction
+It defines the conceptual rules for ensuring consistency and identifying conflicts in a mod dependency graph. The goal is to determine when a modpack configuration becomes invalid due to contradictions, incompatibilities, or unsatisfiable constraints.
 
-Every required dependency declared by a mod exists within the modpack configuration.
+This analysis is based on Requirements Engineering concepts such as consistency, conflict detection, and satisfiability.
 
-For example, Sodium requires Fabric API to function correctly on Fabric-based Minecraft instances.
+---
 
-### 2. Version Compatibility
+## Key Concepts
 
-All declared version constraints must be satisfiable simultaneously.
+### Consistency
 
-For example, mods targeting Minecraft 1.21 Fabric may become incompatible when paired with dependencies designed for Minecraft 1.20.4.
+A dependency graph is considered consistent when no contradictions exist between its nodes and relationships.
 
-### 3. Non-Contradictory Relationships
+### Conflict
 
-A mod cannot simultaneously require and conflict with the same dependency.
+A conflict occurs when two or more relationships cannot be satisfied simultaneously.
 
-Conflicting declarations create invalid dependency states that prevent successful dependency resolution.
+### Satisfiability
+
+A configuration is satisfiable if all dependency constraints can be fulfilled without violating any rules.
 
 ---
 
 ## Conflict Scenarios
 
-### 1. Dependency vs Conflict
+### 1. Dependency vs Incompatibility Conflict
 
-Certain rendering optimization mods may require Fabric API while also conflicting with outdated rendering extensions installed in the same modpack.
+A mod declares a dependency on another mod that it is also incompatible with.
 
-For example, an outdated version of Indium may conflict with newer Sodium rendering implementations on Minecraft 1.21 Fabric.
+**Example:**
+- Mod A depends on Mod B
+- Mod A is incompatible with Mod B
 
-→ This may result in startup crashes, rendering instability, or failed dependency validation.
-
----
-
-### 2. Mutual Incompatibility
-
-Some mods explicitly declare incompatibilities with one another because they modify the same internal Minecraft systems.
-
-For example, OptiFine frequently conflicts with Fabric rendering and shader optimization mods.
-
-→ These mods cannot reliably coexist in the same configuration.
+This creates a direct contradiction and results in an invalid dependency configuration.
 
 ---
 
-### 3. Unsatisfiable Versions
+### 2. Mutual Incompatibility in Required Mods
 
-Different mods may require incompatible versions of the same dependency.
+Two required mods are incompatible with each other.
 
-For example:
-- one mod requires Fabric API version 0.100+
-- another mod only supports Fabric API versions below 0.95
+**Example:**
+- Mod A depends on Mod B
+- Mod A depends on Mod C
+- Mod B is incompatible with Mod C
 
-→ No valid dependency configuration can satisfy both requirements simultaneously.
+Both dependencies cannot coexist, making the configuration invalid.
 
----
-
-### 4. Missing Dependency
-
-A required dependency may be absent from the modpack configuration.
-
-For example, installing Sodium without the required Fabric Loader environment may prevent the game from launching correctly.
-
-→ The dependency graph becomes incomplete and invalid.
+For example, some rendering optimization mods may conflict because they modify the same internal Minecraft rendering systems.
 
 ---
 
-## Invalid Configurations
+### 3. Version Constraint Conflict
 
-A configuration is considered invalid if:
+Dependency version requirements cannot be satisfied simultaneously.
 
-- a required dependency is missing
-- a dependency violates incompatibility constraints
-- version requirements cannot be satisfied
-- required mods cannot coexist safely
-- dependency cycles or contradictory relationships prevent stable resolution
+**Example:**
+- Mod A requires Mod B version ≥ 2.0
+- Mod C requires Mod B version ≤ 1.5
+
+No valid version satisfies both constraints.
+
+For example, one mod may require Fabric API version 0.100+ while another only supports versions below 0.95.
+
+---
+
+### 4. Missing Required Dependency
+
+A required dependency is not present in the configuration.
+
+**Example:**
+- Mod A depends on Mod B
+- Mod B is not included
+
+This results in an incomplete dependency graph.
+
+For example, installing Sodium without the required Fabric Loader environment may prevent Minecraft from launching correctly.
+
+---
+
+## Consistency Rules
+
+### Rule 1: No Contradictory Relationships
+
+A mod cannot simultaneously depend on and be incompatible with the same mod.
+
+---
+
+### Rule 2: All Dependencies Must Be Satisfied
+
+Every declared dependency must exist within the graph.
+
+---
+
+### Rule 3: Version Constraints Must Be Compatible
+
+All version requirements for a given dependency must overlap.
+
+---
+
+### Rule 4: Required Mods Must Be Compatible
+
+All required dependencies must not conflict with each other.
+
+---
+
+## Conditions for Invalid Configurations
+
+A mod dependency graph is considered invalid if any of the following conditions are met:
+
+- A required dependency is missing
+- A dependency violates incompatibility constraints
+- Version requirements cannot be satisfied
+- Required dependencies are mutually incompatible
+- Dependency cycles or contradictory relationships prevent stable resolution
 
 ---
 
@@ -109,16 +142,12 @@ Without consistency:
 - gameplay instability may occur
 - players may experience corrupted or incomplete mod behavior
 
-Consistency validation helps modpack creators identify incompatibilities before launching the game.
+Maintaining consistency allows for predictable and reliable behavior of the system. Consistency validation also helps modpack creators identify incompatibilities before launching the game.
 
 ---
 
-## Summary
+## Conclusion
 
-This document defines:
-- dependency consistency rules
-- realistic mod conflict scenarios
-- invalid configuration conditions
-- validation principles for dependency graphs
+By defining conflict scenarios, consistency rules, and invalid configuration conditions, this document establishes a clear conceptual framework for evaluating Minecraft mod dependency graphs.
 
-These rules provide a conceptual foundation for validating Minecraft mod dependency graphs and improving modpack stability.
+These validation principles help ensure that configurations are logically sound, executable, and aligned with Requirements Engineering principles.

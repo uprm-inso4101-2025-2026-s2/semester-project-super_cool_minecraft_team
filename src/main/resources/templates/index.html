@@ -4,12 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Minecraft Dependency Visualizer</title>
+  <link rel="stylesheet" href="/CSS_Files/global.css" />
   <link rel="stylesheet" href="/CSS_Files/homepage.css" />
+  <link rel="icon" type="image/x-icon" href="/images/logos/Header Icon- Cuadrado.ico">
 </head>
 
 <body class="site-background" id="page-home">
 
-  <header th:replace="~{components/navbar :: navbar}"></header>
+  <header th:replace="~{components/navbar :: navbar('home')}"></header>
 
   <header id="app-header">
     <div id="header-inner">
@@ -24,9 +26,10 @@
     <section id="hero-section">
       <div id="hero-inner">
         <div id="hero-action">
-          <button id="get-mods-btn" type="button">
+          <a href="/upload"><button id="get-mods-btn" type="button">
             Get Started
-          </button>
+          </button></a>
+          
         </div>
       </div>
     </section>

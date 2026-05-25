@@ -1,15 +1,13 @@
 package com.inso.MinecraftProject.graph;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import com.inso.MinecraftProject.dto.DTO;
 import com.inso.MinecraftProject.entity.Mod;
-
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 
 /**
  * Graph class responsible for managing all ModNode objects
@@ -37,7 +35,7 @@ public class Graph implements GraphI<ModNode> {
     public Graph(DTO dto) {
         this();
 
-        if (dto == null || dto.getMods() == null) {
+        if (dto == null || dto.getMods() == null || dto.getMods().isEmpty()) {
             return;
         }
 
@@ -57,18 +55,12 @@ public class Graph implements GraphI<ModNode> {
                 }
             }
 
-            ModNode node = new ModNode(
-                    mod.getId(),
-                    mod.getVersion(),
-                    dependencies,
-                    conflicts
-            );
+            ModNode node = new ModNode(mod.getId(),mod.getVersion(),dependencies,conflicts);
 
             String key = mod.getId() + "@" + mod.getVersion();
             nodes.put(key, node);
         }
     }
-
 
     @Override
     public String generateKey(ModNode modNode) throws IllegalArgumentException {
@@ -97,22 +89,22 @@ public class Graph implements GraphI<ModNode> {
     }
 
     @Override
-    public boolean removeNode(String key){
+    public boolean removeNode(String key) {
         if (key == null || !nodes.containsKey(key)) {
             return false;
         }
-        // Remove the node from all dependencies and conflicts of other nodes
-        for (ModNode node : nodes.values()) {        
+
+        for (ModNode node : nodes.values()) {
             node.getDependencies().remove(key);
             node.getConflicts().remove(key);
         }
-        // Remove the node from the graph
+
         nodes.remove(key);
         return true;
     }
 
     @Override
-    public ModNode findNode(String key){
+    public ModNode findNode(String key) {
         if (key == null) {
             return null;
         }
@@ -126,21 +118,19 @@ public class Graph implements GraphI<ModNode> {
 
     @Override
     public boolean hasModNode(String key) {
-        return key != null && nodes.containsKey(key); 
+        return key != null && nodes.containsKey(key);
     }
 
-    @Override 
-    public boolean hasDependency(String dependency, ModNode modNode){
-        if (dependency == null || modNode == null){
+    @Override
+    public boolean hasDependency(String dependency, ModNode modNode) {
+        if (dependency == null || modNode == null) {
             return false;
         }
         return modNode.getDependencies() != null && modNode.getDependencies().contains(dependency);
     }
 
     @Override
-    public Iterator<ModNode> iterator(){
-        // Return an iterator over the values of the nodes map
+    public Iterator<ModNode> iterator() {
         return nodes.values().iterator();
     }
-
 }
