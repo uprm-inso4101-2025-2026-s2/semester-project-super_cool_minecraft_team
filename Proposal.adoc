@@ -1260,7 +1260,8 @@ This implementation was later tested using the RedirectControllerTest.java unit 
 
 *Gap Identified:* Initial application had conflicts with Spring Boot, Gradle and Java configuration, and sometimes developers had trouble finding the reason why the application wouldn't run on their IDE. 
 
-*Remedy:* Implemented a Spring Boot test file that boots up the whole framework to verify the configuration's state and that Spring Boot is working adequately. This test was made in the file called MinecraftProjectApplicationTests.java inside the project, for debugging purposes, since it is important to be able to identify if the issue is Gradle, Spring Boot, or a developer's Java version configurations messing with the project startup. The result this test returns varies depending on whether or not whoever is running it has their configurations properly set. If their configurations are inadequate, the test will fail and will point to it being a Spring Boot error. It is a very simple test that has been useful for checking what is working and what is not with the current configuration.
+*Remedy:* Implemented a Spring Boot test file that boots up the whole framework to verify the configuration's state and that Spring Boot is working adequately. This test was made in the file called MinecraftProjectApplicationTests.java inside the project, for debugging purposes, since it is important to be able to identify if the issue is Gradle, Spring Boot, or a developer's Java version configurations messing with the project startup. This file does a standard Spring Boot integration smoke test to verify that the core application 
+context loads properly without throwing any errors during startup. The result this test returns varies depending on whether or not whoever is running it has their configurations properly set. If their configurations are inadequate, the test will fail and will point to it being a Spring Boot error. It is a very simple test that has been useful for checking what is working and what is not with the current configuration.
 
 --
 
@@ -1289,6 +1290,60 @@ This implementation was later tested using the RedirectControllerTest.java unit 
 *Gap Identified:* The application frontend would crash or hang indefinitely if the external mod registries became slow, rate-limited the application, or returned incomplete data structures.
 
 *Remedy:* Built an extensive REST test suite using MockitoBean to isolate the controller. This was implemented in the DependencyControllerTest.java file, which does comprehensive unit testing for the /api/dependencies/missing REST API endpoint by mocking the DependencyLookupService to validate correct JSON responses and HTTP status codes across different scenarios, including successful queries, varying response structures (default, ok, partial, empty), and error-handling simulations for rate limits (429), server errors (500), and timeouts (504). The application was tested after we implemented exception handling in the DependencyController.java file, and these tests verified the implementations were working correctly. The file now has several try-catches for such events.
+
+--
+
+=== Scenario 4: Graph Subsystem Mapping of Mod Dependencies and Conflicts (GraphServiceTest.java)
+
+[.green]
+--
+
+*Dataset:* Mod metadata extracted from fabric.mod.json elements within unzipped JAR files, tracking raw structural string collections (depends, breaks, conflicts), parsed ModNode structures (jei, forge, cloth-config), and target visualization NodeDto and LinkDto objects.
+
+*Workflow:*
+
+- The system scans local directory paths, utilizing a Jackson ObjectMapper within ModpackParsingService to search compiled .jar bundles for internal fabric.mod.json files.
+
+- The parsing service crawls the JSON structures, pulling explicit metadata fields (depends, breaks, conflicts) into distinct lookup collection streams before terminating the stream loop per file.
+
+- The application layer standardizes this raw manifest payload, wrapping it inside a domain DTO to instantly seed the internal model through graphService.setGraphData(DTO).
+
+- The graph service iterates cleanly across the structural nodes, utilizing a custom graph key generator to dynamically format standard serialized identifier strings (id@version).
+
+- The service cross-references the underlying metadata matrices, transforming mapped dependencies into visualization vectors assigned a type of "required", while explicitly identifying breaking or conflicting elements to inject visual connections assigned a type of "conflicts".
+
+*Property Being Verified:* The core graph data transformation layer correctly constructs a deterministic graph model, accurately handles edge cases like missing metadata fields or null objects, and maps domain relationships into correct visual node/link structures.
+
+*Gap Identified:* Malformed mod configuration structures, empty manifests, or missing version keys would cause conversion exceptions, leading to broken data graphs or unhandled application crashes in the visualizer subsystem.
+
+*Remedy:* Implemented a transformation unit test suite in GraphServiceTest.java. The test suite targets data mapping pipelines within GraphService, verifying null safety boundaries across all transformation endpoints (mapToNodeDTO, mapDependencies, mapConflicts). The tests explicitly validate that string-concatenated node identifiers format correctly, missing properties drop into safe defaults instead of throwing exceptions, and multi-relational maps correctly translate graph links simultaneously without missing or misclassifying relational keys. All test states successfully verified the functionality of the graph service, and it is working as intended. 
+
+--
+
+=== Scenario 5: Graph Data Structure Construction and Node Lifecycle Validation (GraphDSTests.java)
+
+[.green]
+--
+
+*Dataset:* Mod dependency structures instantiated through Mod entities, internal ModNode graph objects, and DTO containers representing resolved mod collections and missing dependency entries. Test data models include isolated nodes (modA), dependency-linked nodes (modB → modA), conflict-linked nodes (modC → modB), and manually injected graph nodes (modD) containing serialized dependency and conflict key sets.
+
+*Workflow:*
+
+- The graph subsystem initializes an internal node registry through the Graph constructor, utilizing a HashMap to persist graph state and dynamically generate serialized identifiers in the format modId@version.
+
+- The DTO-based constructor iterates across dto.getMods(), extracting dependency and conflict relationships from nested Mod structures and normalizing them into Set<String> collections before constructing internal ModNode representations.
+
+- The graph transformation layer serializes relational references using concatenated identifier keys (dependencyId@dependencyVersion) to maintain deterministic lookup behavior across dependency and conflict mappings.
+
+- The graph API validates node lifecycle operations by inserting nodes through addNode(), rejecting invalid or duplicate node states, locating nodes through iterator-driven key matching inside findNode(), and removing nodes through removeNode() while simultaneously cleaning dependency/conflict references from remaining graph members.
+
+- The validation layer additionally exercises null-safety and boundary protections, verifying failures for null lookup keys, duplicate insertions, nonexistent removals, and exception handling within generateKey() when invalid ModNode objects are supplied.
+
+*Property Being Verified:* The internal graph data structure correctly constructs a deterministic mod graph from DTO input, preserves stable serialized node identifiers, safely manages node insertion and deletion lifecycles, prevents duplicate or invalid graph states, and accurately maintains dependency/conflict integrity across lookup and removal operations.
+
+*Gap Identified:* Missing mod identifiers, absent version metadata, duplicate graph insertions, malformed node objects, or invalid lookup keys could cause unstable graph state, failed node retrieval, orphaned dependency references, or unhandled exceptions that disrupt downstream dependency visualization behavior.
+
+*Remedy:* Implemented a structural unit test suite in GraphDSTests.java. The tests explicitly verify DTO-driven graph construction, exclusion of unresolved missing dependencies from graph population, deterministic identifier generation through modId@version formatting, successful node insertion and removal behavior, duplicate prevention logic, iterator-based node retrieval accuracy, cleanup of dependency and conflict references during deletion, null-safe lookup handling, and exception boundaries for invalid key generation inputs. All tested graph states successfully verified the expected functionality of the graph subsystem, and it is working as intended.
 
 --
 
