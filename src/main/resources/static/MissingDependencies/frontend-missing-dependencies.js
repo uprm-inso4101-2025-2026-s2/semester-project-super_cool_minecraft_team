@@ -56,6 +56,30 @@ async function missingDependenciesPage() {
             
             dependencyList.appendChild(createDependencyCard(dependencyObj, resolvedDependency));
         }
+
+
+        const totalDependencies = missingDependencies.length;
+        const resolvedDependencies = resolvedById.size;
+        const unresolvedDependencies =
+            totalDependencies - resolvedDependencies;
+
+        const dependencySummary =
+            document.getElementById("dependency-summary");
+
+        document.getElementById("summary-total").textContent =
+            totalDependencies;
+
+        document.getElementById("summary-resolved").textContent =
+            resolvedDependencies;
+
+        document.getElementById("summary-unresolved").textContent =
+            unresolvedDependencies;
+
+        dependencySummary.hidden = false;
+
+
+
+        
         setupDependencySearch();
     } catch (error) {
         errorState.textContent = error.message || "Unable to load missing dependencies.";

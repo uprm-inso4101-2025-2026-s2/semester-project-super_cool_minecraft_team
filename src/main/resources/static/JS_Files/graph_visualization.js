@@ -1024,28 +1024,92 @@ function exportGraphToPNG(svgSelector, fileName) {
 /* SIDEBAR TOGGLE LOGIC */
 document.addEventListener("DOMContentLoaded", () => {
     const dashboard = document.querySelector(".dashboard-container");
+    const sidebar = document.getElementById("filterSidebar");
     const closeBtn = document.getElementById("sidebarToggleBtn");
     const reopenBtn = document.getElementById("sidebarReopenBtn");
+    const collapseStorageKey = "graphSidebarCollapsed";
+    const focusableSelector =
+        "a[href], button, input, select, textarea, [tabindex]:not([tabindex='-1'])";
 
-    if (!dashboard) return;
+    if (!dashboard || !sidebar) return;
 
     const resizeGraphAfterAnimation = () => {
+        requestAnimationFrame(() => {
+            window.dispatchEvent(new Event("resize"));
+            document.dispatchEvent(new Event("sidebar-toggle"));
+        });
+
         setTimeout(() => {
             window.dispatchEvent(new Event("resize"));
-        }, 300);
+            document.dispatchEvent(new Event("sidebar-toggle"));
+        }, 320);
     };
+
+    const setSidebarFocusableState = (isFocusable) => {
+        const focusables = sidebar.querySelectorAll(focusableSelector);
+
+        focusables.forEach((element) => {
+            if (element === closeBtn) return;
+
+            if (!isFocusable) {
+                if (!element.hasAttribute("data-prev-tabindex")) {
+                    const previous = element.getAttribute("tabindex");
+                    element.setAttribute("data-prev-tabindex", previous === null ? "" : previous);
+                }
+                element.setAttribute("tabindex", "-1");
+                return;
+            }
+
+            if (!element.hasAttribute("data-prev-tabindex")) {
+                element.removeAttribute("tabindex");
+                return;
+            }
+
+            const previousTabIndex = element.getAttribute("data-prev-tabindex");
+            if (previousTabIndex === "") {
+                element.removeAttribute("tabindex");
+            } else {
+                element.setAttribute("tabindex", previousTabIndex);
+            }
+            element.removeAttribute("data-prev-tabindex");
+        });
+    };
+
+    const syncSidebarState = (collapsed, moveFocusTarget) => {
+        dashboard.classList.toggle("sidebar-collapsed", collapsed);
+        sidebar.setAttribute("aria-hidden", String(collapsed));
+        closeBtn?.setAttribute("aria-expanded", String(!collapsed));
+        reopenBtn?.setAttribute("aria-expanded", String(!collapsed));
+
+        if (collapsed) {
+            sidebar.setAttribute("inert", "");
+        } else {
+            sidebar.removeAttribute("inert");
+        }
+
+        setSidebarFocusableState(!collapsed);
+        localStorage.setItem(collapseStorageKey, String(collapsed));
+        resizeGraphAfterAnimation();
+
+        if (moveFocusTarget) {
+            moveFocusTarget.focus();
+        }
+    };
+
+    const collapsedByDefault = localStorage.getItem(collapseStorageKey) === "true";
+    syncSidebarState(collapsedByDefault);
 
     if (closeBtn) {
         closeBtn.addEventListener("click", () => {
-            dashboard.classList.add("sidebar-collapsed");
-            resizeGraphAfterAnimation();
+            const activeElement = document.activeElement;
+            const moveFocus = sidebar.contains(activeElement) ? reopenBtn : null;
+            syncSidebarState(true, moveFocus);
         });
     }
 
     if (reopenBtn) {
         reopenBtn.addEventListener("click", () => {
-            dashboard.classList.remove("sidebar-collapsed");
-            resizeGraphAfterAnimation();
+            syncSidebarState(false, closeBtn || null);
         });
     }
 });
