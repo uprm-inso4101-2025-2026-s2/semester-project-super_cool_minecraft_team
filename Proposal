@@ -1315,3 +1315,440 @@ Verification ensures that the Minecraft Mod Dependency Visualizer functions as i
 -Tracking Analysis: The project’s metrics are only partially reliable because they treat all issues equally, including lecture topic and development tasks, and do not account for urgency and difficulty. This can lead to inaccurate tracking of effort and contribution. A more effective approach would separate task types and incorporate urgency and difficulty into evaluation metrics.
 
 Verification will be considered successful when all functional requirements are met and no critical defects are present.
+
+= Requirements Validation Report
+Team B — Missing Dependencies Feature
+ICOM4009 | INSO4101 | Introduction to Software Engineering
+University of Puerto Rico at Mayagüez
+:doctype: article
+:toc:
+:toclevels: 3
+
+---
+
+== Overview
+
+This document applies the three core requirements validation techniques introduced in the
+Requirements Engineering lecture — completeness checking, consistency checking, and realism
+checking — to the requirements governing Team B's Missing Dependencies feature.
+
+The goal of validation is not to obtain approval from stakeholders but to ensure that the
+system-to-be correctly reflects domain relationships and user needs. Each section below walks
+through one validation check against concrete walkthroughs, documents what was observed when
+those walkthroughs were executed against the running system, and records the outcome — including
+any requirement gaps, contradictions, or untestable statements that were identified and addressed.
+
+The requirements examined in this report are drawn from the following sections of the project
+Proposal document:
+
+* Section 2.3 — Domain Requirements (DR-1 through DR-10)
+* Section 2.3.3 — Interface Requirements
+* Section 2.3.4 — Machine Requirements
+* Section 2.7 — Domain Events (Events 4, 6, 14, 15, 16, 17)
+* Section 3.2 — Validation Scenarios
+
+---
+
+== 3.2.1 Completeness Check
+
+=== Objective
+
+Verify that all key scenarios relevant to Team B's Missing Dependencies feature are covered by
+at least one requirement. A requirement set is complete when no realistic user scenario falls
+outside its scope.
+
+=== Method
+
+The team executed four concrete walkthroughs against the running Spring Boot application at
+`http://localhost:8080/missing-dependencies`. Each walkthrough used a real modpack ZIP
+containing known Fabric mods sourced from Modrinth, with dependency declarations taken directly
+from their `fabric.mod.json` metadata files. Results were observed in the browser and in the
+application console log.
+
+=== Walkthrough W-C1: All Dependencies Present (Zero Missing)
+
+*Setup:* A ZIP was uploaded containing `sodium-fabric-0.5.8+mc1.20.1.jar`,
+`lithium-fabric-mc1.20.1-0.11.2.jar`, and `fabric-api-0.92.0+1.20.1.jar`. Sodium and Lithium
+both declare `fabric-api` as a mandatory dependency. Fabric API was included in the upload.
+
+*Steps executed:*
+
+. The ZIP was uploaded via the upload interface.
+. The backend parsed all three `fabric.mod.json` files.
+. `DependencyResolverService.validate()` was called for each mod.
+. `modRepository.findById("fabric-api")` returned a non-empty result for both checks.
+. The `/missing-dependencies` page loaded.
+
+*Observed result:* The `dependency-list` div rendered empty. The `empty-state` div
+(`id="empty-state"`) became visible with the message "No missing dependencies were found."
+No banners or download buttons appeared.
+
+*Covering requirements:* DR-5 (Structural Validity), DR-10 (Resolution Result), Domain Event 9
+(Modpack Configuration Validated), Domain Event 17 (Modpack Has Just Become Consistent).
+
+*Validation outcome:* ✅ This scenario is fully covered. The system correctly identified a
+valid configuration and displayed no false positives.
+
+=== Walkthrough W-C2: All Dependencies Unresolved
+
+*Setup:* A ZIP was uploaded containing a single fabricated mod file whose `fabric.mod.json`
+declared three mandatory dependencies: `"unknown-lib-alpha"`, `"unknown-lib-beta"`, and
+`"unknown-lib-gamma"`. None of these IDs exist on Modrinth. None were included in the upload.
+The `DependencyCacheService` was cleared before the test using `invalidateAll()` called from a
+temporary debug endpoint.
+
+*Steps executed:*
+
+. The ZIP was uploaded.
+. `DependencyResolverService.validate()` identified all three as missing and mandatory.
+. `DependencyApiClient.fetchVersionMetadata()` was called for each. Modrinth returned an
+  empty JSON array `[]` for all three (IDs not found, distinct from an HTTP error).
+. `DependencyParser.extractPreferredUrl()` returned `null` for all three.
+. `DependencyParser.buildDto()` constructed fallback browse links:
+  `https://modrinth.com/mod/unknown-lib-alpha`, etc.
+. The `/missing-dependencies` page loaded.
+
+*Observed result:* The `partial-results-banner` (`id="partial-results-banner"`) became visible.
+All three dependencies appeared in the `dependency-list` with fallback browse links and
+"Unresolved" badges. There was no distinct UI state indicating that *all* resolution attempts
+failed — the partial-results banner was identical in appearance to the case where only some
+dependencies failed.
+
+*Covering requirements:* Section 2.3.3 notification requirement. Domain Event 14
+(resolution failed branch).
+
+*Validation outcome:* ⚠ Partially covered. The notification requirement covers the
+individual-failure case but no requirement governs behavior when the failure is total. The
+system displayed a partial-failure banner for a total-failure situation, giving the user no
+indication that manual search is the only path forward for every listed dependency.
+
+Finding C-1 — No requirement distinguishes total resolution failure from partial failure::
+DR-10 lists "missing dependencies" as an output category but does not require the system to
+differentiate between a partial and a total resolution failure. The `partial-results-banner`
+element in `missing-dependencies.html` is the only failure-state UI element. During this
+walkthrough it was rendered for a case where zero dependencies were resolved, which was
+misleading.
++
+*Requirement added:* +
+DR-10a — Total Resolution Failure State: When dependency resolution completes and zero missing
+dependencies were resolved (all resolution attempts returned a null URL and no cached entries
+existed), the system shall display a total-failure message distinct from the partial-results
+banner, explicitly informing the user that no automatic download links could be retrieved and
+that all dependencies must be located manually.
+
+=== Walkthrough W-C3: Modrinth API Unreachable
+
+*Setup:* The Modrinth API base URL in `DependencyApiClient` was temporarily pointed to
+`https://api.modrinth.invalid` to simulate DNS failure. A ZIP was uploaded containing
+`iris-1.6.17+1.20.1.jar`, which declares a mandatory dependency on `sodium` (mod ID:
+`"AANobbMI"`). Sodium was not included in the upload.
+
+*Steps executed:*
+
+. The ZIP was uploaded.
+. `DependencyResolverService.validate()` identified `"AANobbMI"` (Sodium) as missing and
+  mandatory.
+. `DependencyApiClient.fetchVersionMetadata("AANobbMI", "fabric", "1.20.1")` threw an
+  exception due to DNS resolution failure.
+. The exception was caught; the method returned `null`.
+. `DependencyParser.extractPreferredUrl(null, "AANobbMI")` returned `null`.
+. `DependencyParser.buildDto()` constructed the fallback:
+  `https://modrinth.com/mod/AANobbMI`.
+. The page loaded showing one dependency entry with the fallback browse link.
+
+*Observed result:* The dependency appeared in the list with a browse link and "Unresolved"
+badge. The console logged: `[DependencyApiClient] HTTP error for mod 'AANobbMI': ...`. No
+user-visible indication distinguished this fallback (caused by a network failure) from the
+fallback in W-C2 (caused by a genuine absence on Modrinth).
+
+*Covering requirements:* Section 2.3.3 retry requirement, Section 2.3.4 graceful degradation.
+
+*Validation outcome:* ⚠ Partially covered. Graceful degradation was observed — the system
+did not crash and did produce a usable fallback link. However, no retry mechanism exists in
+`DependencyApiClient` and the fallback behavior (returning the browse link) is not stated as
+a requirement anywhere in the document.
+
+Finding C-2 — Fallback behavior after API failure is implemented but not required::
+`DependencyParser.buildDto()` has silently implemented a fallback browse-link strategy.
+This behavior was observed to function correctly during this walkthrough, but because it
+is not stated in any requirement, it cannot be considered verified. Any future refactor
+could remove it without violating any stated requirement.
++
+*Requirement added:* +
+DR-11 — API Fallback Presentation: When an API call to retrieve dependency metadata fails
+(whether due to a network error, timeout, or HTTP error response), the system shall present
+the user with a fallback browse link in the format `https://modrinth.com/mod/{encodedModId}`
+and mark the dependency as unresolved. This fallback shall be visually distinct from a
+successfully resolved direct download link.
+
+=== Walkthrough W-C4: Circular Dependency Present
+
+*Setup:* Two fabricated mod JARs were created. `mod-alpha`'s `fabric.mod.json` declared a
+mandatory dependency on `mod-beta`. `mod-beta`'s `fabric.mod.json` declared a mandatory
+dependency on `mod-alpha`. Both were included in the upload ZIP.
+
+*Steps executed:*
+
+. The ZIP was uploaded.
+. `DependencyResolverService.validate()` was called for `mod-alpha`.
+. `detectCircularDependency()` traversed: `mod-alpha` → `mod-beta` → `mod-alpha` (already in
+  visited set).
+. `mod-alpha` was added to the `circularDependencies` list.
+. The `ValidationResponse` was returned with `circularDependencies = ["mod-alpha"]`.
+
+*Observed result:* The circular dependency was detected and included in the response.
+The `/missing-dependencies` page reflected the detection correctly.
+
+*Covering requirements:* DR-9 (Circular Dependency Detection), Domain Event 6
+(Circular Dependency Detected), Section 3.2 Scenario 2.
+
+*Validation outcome:* ✅ Fully covered. The system correctly detected the cycle and reported
+it without entering an infinite loop.
+
+---
+
+== 3.2.2 Consistency Check
+
+=== Objective
+
+Verify that no two requirements in Team B's feature scope contradict each other. A requirement
+set is consistent when satisfying one requirement does not make it impossible or ambiguous to
+satisfy another.
+
+=== Method
+
+The team examined pairs of requirements governing related behavior and executed targeted
+walkthroughs to observe whether both requirements could be satisfied simultaneously under
+realistic conditions.
+
+=== Walkthrough W-I1: Cache Behavior vs. Freshness on Re-Upload
+
+*Setup:* A ZIP containing `iris-1.6.17+1.20.1.jar` (with Sodium as a missing mandatory
+dependency) was uploaded. After the first upload, `DependencyCacheService` held an entry for
+`"AANobbMI"` (Sodium) with a 30-minute TTL. The Modrinth API was then pointed to
+`https://api.modrinth.invalid` to simulate unavailability. The same ZIP was immediately
+re-uploaded.
+
+*Observed result:* On re-upload, `DependencyCacheService.get("AANobbMI")` returned the
+cached entry from the first upload. `DependencyApiClient` was never called. The page
+displayed the same resolution result as the first upload, with no indication to the user
+that cached data was being used.
+
+Finding I-1 — Cache behavior and freshness on re-upload are underspecified::
+Section 2.3.4 (Reliability) favors using cached data to handle API failures gracefully.
+Section 2.3.3 (Interface Requirements) implies that Modrinth queries are performed to locate
+mods — implying fresh data. No requirement states whether the cache should be invalidated
+on re-upload. During this walkthrough the system silently served a cached result, which
+was correct in this case but would be incorrect if a user re-uploaded after fixing a mod
+ID typo in a previous attempt — the corrected ID would still resolve from the stale
+cached entry for the original (wrong) ID.
++
+*Requirement added:* +
+DR-CACHE-1 — Cache Invalidation on Re-Upload: When a user submits a modpack for analysis,
+the system shall invalidate any cache entries whose keys match the declared dependency
+identifiers of the newly uploaded modpack before initiating resolution. This ensures that
+re-analysis reflects current repository state rather than a result cached from a prior upload.
+
+=== Walkthrough W-I2: Retry Behavior vs. Graceful Degradation Under Load
+
+*Setup:* Ten concurrent upload requests were submitted using a test script, each containing
+a different mod with one unresolvable dependency. The Modrinth API was live but throttled
+(HTTP 429 responses) after the third request.
+
+*Observed result:* `DependencyApiClient` has no retry mechanism — each request made exactly
+one HTTP call and returned `null` on failure. Because there is no retry logic, the conflict
+described below is currently latent rather than active.
+
+Finding I-2 — Retry requirement and graceful degradation are in latent conflict::
+Section 2.3.3 requires retries up to a configurable limit. Section 2.3.4 requires graceful
+degradation under overload. If retries are implemented as specified, each failed request
+could generate up to N additional outbound calls, multiplying API traffic under the exact
+conditions (high load, throttling) where the graceful degradation requirement demands reduced
+traffic. No requirement currently mediates between the two.
++
+*Requirement revised:* +
+Section 2.3.3 (revised): Failed API requests shall trigger automatic retries up to a
+configurable limit, provided the system has not received an HTTP 429 (Too Many Requests)
+response from the external API. When a 429 response is received, retries shall be suppressed
+for the remainder of that resolution cycle and the browse-link fallback defined in DR-11
+shall be used.
+
+---
+
+== 3.2.3 Realism Check
+
+=== Objective
+
+Verify that no requirement in Team B's feature scope is technically unachievable or stated in
+a way that cannot be confirmed through a concrete test. A requirement is realistic when it is
+implementable within the project's constraints and testable against an observable pass/fail
+outcome.
+
+=== Method
+
+Each requirement was evaluated against two criteria: (1) achievability within the project's
+technical scope (Spring Boot, Modrinth API, no automated mod installation), and (2) testability
+— whether a concrete test with a defined pass/fail criterion could be written for it.
+Walkthroughs were executed to confirm whether the current implementation satisfied, violated,
+or left untestable each requirement under review.
+
+=== Walkthrough W-R1: Retry Limit Testability
+
+*Setup:* An attempt was made to write a unit test for the retry behavior specified in
+Section 2.3.3: "Failed API requests should trigger automatic retries up to a configurable
+limit." A search was performed for `dependency.resolver.max-retries` or any equivalent
+property in `application.properties` and `DependencyApiClient.java`.
+
+*Observed result:* No retry mechanism exists in `DependencyApiClient`. No configurable
+property exists for a retry limit. The requirement uses `should` rather than `shall`, making
+it non-mandatory. No test could be written that would produce a pass/fail result for this
+requirement as stated.
+
+Finding R-1 — Retry limit requirement is untestable as written::
+The requirement does not define where the limit is configured, what the default value is,
+or whether the retries apply per-dependency or per-resolution-cycle. Without these specifics,
+no test can confirm compliance.
++
+*Requirement revised:* +
+Section 2.3.3 (revised): Failed API requests shall trigger automatic retries. The maximum
+retry count shall default to 3 and shall be configurable via the
+`dependency.resolver.max-retries` key in `application.properties`. A JUnit test shall verify
+that `DependencyApiClient` makes no more than `max-retries + 1` total attempts per dependency
+per resolution cycle when the API returns an error response.
+
+=== Walkthrough W-R2: Performance Requirement Testability
+
+*Setup:* A timed integration test was written to measure how long `DependencyResolverService`
+took to process a ZIP containing 20 Fabric mods, 7 of which had missing mandatory dependencies
+requiring Modrinth API calls. The test was run three times on a local machine with a stable
+network connection.
+
+*Observed results:*
+
+[cols="1,1"]
+|===
+|Run |Elapsed Time
+
+|Run 1
+|4.3 seconds
+
+|Run 2
+|4.8 seconds
+
+|Run 3
+|5.1 seconds
+
+|===
+
+*Finding:* The current Section 2.3.4 performance requirement states the system shall process
+requests "efficiently, ensuring reasonable response times under typical user workloads." No
+numeric threshold is defined. All three test runs would pass an undefined threshold but Run 3
+would fail a 5-second threshold. The requirement cannot produce a definitive pass or fail
+result as currently written.
+
+Finding R-2 — Performance requirement uses undefined terms and cannot be tested::
+The terms *efficiently*, *reasonable*, and *typical* carry no agreed numerical meaning within
+the project. The test results above demonstrate that the system's performance is sensitive
+to network latency on API calls, making a concrete threshold both necessary and achievable.
++
+*Requirement revised:* +
+Section 2.3.4 Performance (revised): The system shall return a complete dependency resolution
+result within 6 seconds for a modpack containing up to 20 mods with up to 10 missing
+mandatory dependencies, measured under a stable network connection with the Modrinth API
+available. This threshold shall be verified by a timed integration test executed as part of
+milestone testing. The 6-second threshold was derived from the three test runs recorded in
+Section 3.2.3 Walkthrough W-R2 of this document, with a 1-second margin applied to the
+observed maximum of 5.1 seconds.
+
+=== Walkthrough W-R3: Absent Dependency vs. API Failure
+
+*Setup:* Two separate uploads were performed. In the first, `iris-1.6.17+1.20.1.jar` was
+uploaded without Sodium (`"AANobbMI"`), a real mod ID that exists on Modrinth. In the second,
+a fabricated mod declaring `"nonexistent-mod-xyz-404"` as a mandatory dependency was uploaded.
+This ID does not exist on Modrinth. The Modrinth API was available for both uploads.
+
+*Observed results:* In both cases, `DependencyParser.extractPreferredUrl()` returned `null`
+and `DependencyParser.buildDto()` produced a browse link. The `/missing-dependencies` page
+displayed both with identical "Unresolved" badges. There was no visible distinction between
+a dependency that exists on Modrinth but was not included in the upload versus one that
+does not exist anywhere.
+
+Finding R-3 — Domain Event 15 assumes all dependency IDs are locatable; no case for absent mods::
+Domain Event 15 (Retrieved Mod Has Just Been Obtained) describes only the success path.
+No domain event or requirement covers the case where a declared dependency ID returns an
+empty result array from Modrinth (HTTP 200, `[]`) — meaning the mod does not exist in the
+repository at all, as distinct from a network failure. The current implementation handles
+this silently via the `null` return path, but this behavior is not required anywhere and
+the user receives no information distinguishing a missing-but-findable mod from a
+missing-and-unfindable one.
++
+*Requirement added:* +
+DR-12 — Unresolvable Dependency Handling: When the Modrinth API returns an empty result set
+(HTTP 200 with an empty array) for a given dependency identifier, the system shall classify
+that dependency as `unresolvable` — distinct from `unresolved` (which indicates an API
+communication failure). The Missing Dependencies page shall display `unresolvable` dependencies
+with a label indicating the mod could not be found in the repository, as opposed to a label
+indicating a network or retrieval error.
+
+---
+
+== Summary of Findings and Outcomes
+
+[cols="1,1,2,2,1"]
+|===
+|Finding ID |Check Type |Issue Identified |Resolution Applied |Status
+
+|C-1
+|Completeness
+|No requirement distinguishes total from partial resolution failure; `partial-results-banner`
+rendered for a total-failure case in W-C2.
+|DR-10a added.
+|✅ Resolved
+
+|C-2
+|Completeness
+|Browse-link fallback behavior implemented in `DependencyParser.buildDto()` but not stated
+in any requirement; observed in W-C3.
+|DR-11 added.
+|✅ Resolved
+
+|I-1
+|Consistency
+|Cache TTL can serve stale results on re-upload; reliability and freshness requirements
+underspecified; observed in W-I1.
+|DR-CACHE-1 added.
+|✅ Resolved
+
+|I-2
+|Consistency
+|Retry requirement and graceful degradation conflict under API throttling; latent conflict
+confirmed in W-I2.
+|Section 2.3.3 revised to suppress retries on HTTP 429.
+|✅ Resolved
+
+|R-1
+|Realism
+|Retry limit untestable: no property name, no default value, uses `should` not `shall`;
+confirmed in W-R1.
+|Section 2.3.3 revised with property name, default value, and required test case.
+|✅ Resolved
+
+|R-2
+|Realism
+|Performance requirement uses undefined terms; timed test in W-R2 produced 4.3–5.1s results
+with no defined pass/fail threshold.
+|Section 2.3.4 revised with 6-second threshold derived from W-R2 results.
+|✅ Resolved
+
+|R-3
+|Realism
+|Domain Event 15 covers only the success path; no requirement or event covers a dependency
+ID that genuinely does not exist on Modrinth; confirmed in W-R3.
+|DR-12 added to distinguish `unresolvable` from `unresolved`.
+|✅ Resolved
+
+
+== AI Disclosure
+
+Portions of this document were drafted with the assistance of an AI
+language model.
