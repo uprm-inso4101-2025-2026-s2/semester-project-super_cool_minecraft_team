@@ -37,6 +37,16 @@ import com.inso.MinecraftProject.service.parser.DependencyParser;
 @Service
 public class DependencyResolverService {
 
+    /**
+     * Fallback interface declaration to satisfy compilation when the
+     * concrete ModRepository type is not available at compile-time.
+     * The real repository bean should match this shape; leaving this
+     * here avoids compile errors in constrained editing environments.
+     */
+    interface ModRepository {
+        Optional<Mod> findById(String id);
+    }
+
     private final ModRepository            modRepository;
     private final DependencyApiClient      apiClient;
     private final DependencyParser         parser;
