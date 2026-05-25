@@ -1301,6 +1301,227 @@ Walkthrough Steps:
 Validation Outcome:
 A new requirement was added to explicitly detect circular dependencies and notify users when a cycle exists. The concept of “graph as structural model” was distinguished from “graph as visual representation.”
 
+= Requirements Validation Report
+Team B — Missing Dependencies Feature
+ICOM4009 | INSO4101 | Introduction to Software Engineering
+University of Puerto Rico at Mayagüez
+
+---
+
+== Overview
+
+This document applies the three core requirements validation techniques introduced in the Requirements Engineering lecture — completeness checking, consistency checking, and realism checking — to the requirements governing Team B's Missing Dependencies feature.
+
+The goal of validation is not to obtain approval from stakeholders but to ensure that the system-to-be correctly reflects domain relationships and user needs. Each section below walks through one validation check, documents findings, and proposes corrected or clarified requirement statements where issues are identified.
+
+The requirements examined in this report are drawn from the following sections of the project Proposal document:
+
+* Section 2.3 — Domain Requirements (DR-1 through DR-10)
+* Section 2.3.3 — Interface Requirements
+* Section 2.3.4 — Machine Requirements
+* Section 2.7 — Domain Events (Events 4, 6, 14, 15, 16, 17)
+* Section 3.2 — Validation Scenarios
+
+---
+
+== 3.2.1 Completeness Check
+
+=== Objective
+
+Verify that all key scenarios relevant to Team B's Missing Dependencies feature are covered by at least one requirement. A requirement set is complete when no realistic user scenario falls outside its scope.
+
+=== Method
+
+The team identified the four primary scenarios that can occur when the system processes missing dependencies and cross-referenced each against the existing requirements and domain events.
+
+[cols="1,2,2,1"]
+|===
+|Scenario |Description |Covering Requirement(s) |Status
+
+|S-1: Zero missing dependencies
+|The uploaded modpack satisfies all declared mandatory dependencies.
+|DR-5 (Structural Validity), DR-10 (Resolution Result), Domain Event 9 (Modpack Configuration Validated), Domain Event 17 (Modpack Has Just Become Consistent)
+|✅ Covered
+
+|S-2: All dependencies unresolved
+|Every missing dependency returns no result from the Modrinth API and no cached entry exists.
+|Section 2.3.3: "Notifications are provided whenever a required dependency cannot be resolved." Domain Event 14 (Dependency Resolution Has Just Been Completed — resolution failed branch).
+|⚠ Partially Covered
+
+|S-3: Modrinth API unreachable
+|The external API is unavailable at the time of resolution.
+|Section 2.3.3: "Failed API requests should trigger automatic retries up to a configurable limit." Section 2.3.4: "External API failures shall be handled gracefully."
+|⚠ Partially Covered
+
+|S-4: Circular dependencies present
+|The modpack contains a cycle (e.g., Mod A requires Mod B and Mod B requires Mod A).
+|DR-9 (Circular Dependency Detection), Domain Event 6 (Circular Dependency Detected), Section 3.2 Scenario 2 (Circular Dependency Case)
+|✅ Covered
+
+|===
+
+=== Findings
+
+Finding C-1 — Missing requirement for the all-unresolved scenario::
+Scenario S-2 is only partially covered. The notification requirement in Section 2.3.3 addresses the case where a single dependency cannot be resolved, but no requirement explicitly governs the behavior of the system when *every* dependency in a modpack fails to resolve. The current `missing-dependencies.html` renders a partial-results banner (`id="partial-results-banner"`) but no full-failure state distinct from a partial failure. The resolution result requirement (DR-10) lists "missing dependencies" as an output category but does not distinguish between partial and total resolution failure.
+
+Finding C-2 — Missing requirement for API-unavailability fallback behavior::
+Scenario S-3 is only partially covered. Section 2.3.3 states that failed requests should trigger retries "up to a configurable limit," and Section 2.3.4 states that failures shall be handled gracefully. However, no requirement specifies what the system must present to the user after all retries are exhausted. The current `DependencyApiClient` catches exceptions and returns `null`, and `DependencyParser.buildDto()` falls back to a Modrinth browse link — but this fallback behavior is not stated as a requirement anywhere in the document.
+
+=== Suggested Requirement Additions
+
+*Suggested addition for Finding C-1:*
+
+DR-10a — Total Resolution Failure State::
+When the system completes dependency resolution and no missing dependency could be resolved (i.e., all resolution attempts returned null and no cached entries exist), the system shall display a distinct total-failure state on the Missing Dependencies page, separate from the partial-resolution state, informing the user that no automatic download links are available.
+
+*Suggested addition for Finding C-2:*
+
+DR-11 — API Fallback Presentation::
+When all retry attempts to the external metadata API are exhausted for a given dependency, the system shall present the user with a fallback browse link to the mod's page on Modrinth (or an equivalent repository) and indicate that the direct download link could not be automatically retrieved.
+
+---
+
+== 3.2.2 Consistency Check
+
+=== Objective
+
+Verify that no two requirements in Team B's feature scope contradict each other. A requirement set is consistent when satisfying one requirement does not make it impossible or ambiguous to satisfy another.
+
+=== Method
+
+The team examined pairs of requirements that govern related behavior — specifically cache behavior versus freshness guarantees, and retry behavior versus graceful degradation — and checked whether their combined satisfaction is achievable without contradiction.
+
+=== Findings
+
+Finding I-1 — Cache behavior vs. fresh metadata on re-upload::
+Section 2.3.4 (Reliability) states: "External API failures shall be handled gracefully, ensuring partial failures do not crash the system or corrupt stored data."
++
+Section 2.3.3 (Interface Requirements) states: "Queries to the Modrinth API should allow the system to locate required mods using dependency identifiers."
++
+The current `DependencyCacheService` uses a 30-minute TTL. If a user uploads a modpack, receives stale or incorrect resolution results from the cache, and immediately re-uploads the same modpack to retry, the cache will return the same stale entry for up to 30 minutes. No requirement currently states whether the cache should be invalidated on re-upload. This creates a tension: the reliability requirement favors using cached data to handle API failures gracefully, while the interface requirement implies that queries to the API should be performed to locate mods — implying freshness. The two requirements do not explicitly contradict each other, but they create an underspecified gap that leads to inconsistent system behavior depending on implementation choices.
+
+Finding I-2 — Retry limit vs. graceful degradation::
+Section 2.3.3 states that "failed API requests should trigger automatic retries up to a configurable limit." Section 2.3.4 (Stability and Graceful Degradation) states that "under overload conditions or limited resources, the system must degrade gracefully by prioritizing essential operations, applying request throttling, and avoiding system crashes."
++
+These two requirements are potentially in conflict under high-load conditions: if multiple users simultaneously upload modpacks with many missing dependencies, the retry mechanism could multiply the number of outbound API requests significantly, directly worsening the overload condition the graceful degradation requirement is meant to address. No requirement currently mediates between retry behavior and load conditions.
+
+=== Suggested Clarifications
+
+*Suggested clarification for Finding I-1:*
+
+DR-CACHE-1 — Cache Invalidation on Re-Upload::
+When a user uploads a new modpack or re-submits an existing one for analysis, the system shall invalidate all cache entries associated with the dependencies of that modpack prior to initiating resolution. This ensures that re-analysis reflects the latest available metadata rather than a previously cached result.
+
+*Suggested clarification for Finding I-2:*
+
+Section 2.3.3 (revised)::
+Failed API requests shall trigger automatic retries up to a configurable limit, provided that the system is not currently operating under a throttled or degraded state. When request throttling is active, retries shall be deferred or skipped in favor of returning cached data or the browse-link fallback defined in DR-11.
+
+---
+
+== 3.2.3 Realism Check
+
+=== Objective
+
+Verify that no requirement in Team B's feature scope is technically unachievable or is stated in a way that cannot be tested or confirmed. A requirement is realistic when it is implementable given the project's technical constraints, and testable against an observable outcome.
+
+=== Method
+
+The team reviewed each requirement for Team B's feature against two criteria:
+
+. *Achievability* — Can the requirement be satisfied within the project's technical scope (Spring Boot backend, Modrinth API, no automated mod installation)?
+. *Testability* — Can a test case be written that clearly confirms whether the requirement is met or not?
+
+=== Findings
+
+Finding R-1 — Untestable retry limit ("up to a configurable limit")::
+Section 2.3.3 states: "Failed API requests should trigger automatic retries up to a configurable limit to maintain reliability." The phrase "configurable limit" implies the limit is set via configuration (e.g., `application.properties`), but the current `DependencyApiClient` has no retry mechanism and no configurable property for this limit. The requirement is stated as a *should* (not a *shall*), making it non-mandatory, but more importantly, it cannot be tested without first defining what the configurable limit is and where it is configured. As stated, no test can confirm compliance.
+
+Finding R-2 — Unverifiable performance requirement::
+Section 2.3.4 states: "The subsystem shall process dependency resolution requests efficiently, ensuring reasonable response times under typical user workloads." The terms *efficiently*, *reasonable*, and *typical* are undefined. No quantitative threshold is given (e.g., "within 3 seconds for a modpack of up to 50 mods"). This requirement cannot be verified through performance testing because there is no pass/fail criterion. The current `DependencyResolverService` resolves dependencies sequentially with no timeout — behavior that may or may not satisfy an undefined notion of "reasonable."
+
+Finding R-3 — Assumption that Modrinth always returns a result::
+Domain Event 15 (Retrieved Mod Has Just Been Obtained) describes the state transition from `dependency unsatisfied` to `dependency provisionally satisfied pending validation` and assumes that "a required mod is successfully retrieved from a mod source." The event does not define what happens when the mod is *not* found on Modrinth at all (not an API failure, but a genuine absence — the mod does not exist in the repository). The current `DependencyParser.extractPreferredUrl()` returns `null` in this case and `DependencyParser.buildDto()` falls back to a browse link, but no domain event or requirement covers this case. The implicit assumption that every declared dependency ID is findable on Modrinth is unrealistic for unknown, private, or legacy mods.
+
+=== Suggested Corrections
+
+*Suggested correction for Finding R-1:*
+
+Section 2.3.3 (revised)::
+Failed API requests shall trigger automatic retries. The maximum number of retries shall be set to three (3) by default and shall be overridable via the `dependency.resolver.max-retries` property in `application.properties`. A test case shall verify that no more than the configured number of attempts is made per dependency per resolution cycle.
+
+*Suggested correction for Finding R-2:*
+
+Section 2.3.4 Performance (revised)::
+The subsystem shall return a complete dependency resolution result within five (5) seconds for a modpack containing up to fifty (50) mods under standard operating conditions (single user, stable network, Modrinth API available). Performance shall be verified by a timed integration test using a representative sample modpack.
+
+*Suggested correction for Finding R-3:*
+
+DR-12 — Unresolvable Dependency Handling::
+When a declared dependency identifier cannot be located in the external mod repository (as distinct from an API communication failure), the system shall classify the dependency as `unresolvable` and present the user with the dependency identifier, the name of the mod that declared it, and a message indicating that the dependency could not be found in the repository. The system shall not treat an absent mod as equivalent to an API error.
+
+---
+
+== Summary of Findings
+
+[cols="1,1,2,2"]
+|===
+|Finding ID |Check Type |Issue |Suggested Fix
+
+|C-1
+|Completeness
+|No requirement covers the total-resolution-failure scenario (all deps unresolved).
+|Add DR-10a.
+
+|C-2
+|Completeness
+|No requirement specifies user-facing behavior after all API retries are exhausted.
+|Add DR-11.
+
+|I-1
+|Consistency
+|Cache behavior and freshness-on-re-upload are underspecified, creating implementation ambiguity.
+|Add DR-CACHE-1.
+
+|I-2
+|Consistency
+|Retry mechanism and graceful degradation under load can work against each other.
+|Revise Section 2.3.3 to condition retries on throttle state.
+
+|R-1
+|Realism
+|"Configurable retry limit" is untestable without a defined property and default value.
+|Specify `dependency.resolver.max-retries=3` as the default; require a test case.
+
+|R-2
+|Realism
+|Performance requirement uses undefined terms ("reasonable", "efficient", "typical").
+|Specify a measurable threshold: 5 seconds for up to 50 mods.
+
+|R-3
+|Realism
+|Domain Event 15 assumes all dependency IDs are locatable on Modrinth; no case for absent mods.
+|Add DR-12 to distinguish API failure from a genuinely absent dependency.
+
+|===
+
+---
+
+== References
+
+* Project Proposal — Section 2.3 Domain Requirements (DR-1 through DR-10)
+* Project Proposal — Section 2.3.3 Interface Requirements
+* Project Proposal — Section 2.3.4 Machine Requirements
+* Project Proposal — Section 2.7 Domain Events (Events 4, 6, 14, 15, 16, 17)
+* Project Proposal — Section 3.2 Validation Scenarios
+* `DependencyResolverService.java` — `service/resolver/`
+* `DependencyApiClient.java` — `service/client/`
+* `DependencyParser.java` — `service/parser/`
+* `DependencyCacheService.java` — `service/cache/`
+* `missing-dependencies.html` — `src/main/resources/templates/`
+* `missing-dependencies.css` — `src/main/resources/static/CSS_Files/`
+
 3.3 Verification
 Verification ensures that the Minecraft Mod Dependency Visualizer functions as intended and satisfies the specified requirements. The system will be verified through functional testing and user validation.
 
