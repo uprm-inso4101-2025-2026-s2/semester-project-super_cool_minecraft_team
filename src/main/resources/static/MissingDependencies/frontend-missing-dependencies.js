@@ -140,6 +140,7 @@ function createDependencyCard(dependency, resolvedDependency) {
 
 function setupDependencySearch() {
     const searchInput = document.getElementById("dependency-search");
+    const clearButton = document.getElementById("clear-search-button");
     const dependencyList = document.getElementById("dependency-list");
 
     if (!searchInput || !dependencyList) {
@@ -159,6 +160,19 @@ function setupDependencySearch() {
                 card.style.display = "none";
             }
         });
+    });
+
+    clearButton.addEventListener("click", () => {
+        searchInput.value = "";
+
+        const dependencyCards =
+            dependencyList.querySelectorAll(".dependency-item");
+
+        dependencyCards.forEach((card) => {
+            card.style.display = "flex";
+        });
+
+        searchInput.focus();
     });
 }
 
