@@ -1248,6 +1248,65 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 200);
     });
 });
+/* ===== SHOW REQUIRED MODS TOGGLE LOGIC ===== */
+document.addEventListener("DOMContentLoaded", () => {
+    const showRequiredModsToggle = document.getElementById("showRequiredModsToggle");
+
+    if (!showRequiredModsToggle) return;
+
+    const savedState = localStorage.getItem("visibility_show_required");
+    if (savedState !== null) {
+        showRequiredModsToggle.checked = savedState === "true";
+    }
+
+    const getEndpointId = (endpoint) => {
+        if (!endpoint) return null;
+        return typeof endpoint === "string" ? endpoint : endpoint.id;
+    };
+
+    const applyVisibility = () => {
+        const shouldShow = showRequiredModsToggle.checked;
+
+        d3.selectAll(".link").style("display", function(d) {
+            if (d.rel === "required" && !shouldShow) {
+                return "none";
+            }
+            return null;
+        });
+
+        d3.selectAll(".node").style("display", function(d) {
+            const nodeId = d && typeof d === "object" ? d.id : d;
+            if (!nodeId) return null;
+
+            const connectedLinks = links.filter(link => {
+                const sourceId = getEndpointId(link.source);
+                const targetId = getEndpointId(link.target);
+                return sourceId === nodeId || targetId === nodeId;
+            });
+
+            if (shouldShow) {
+                return null;
+            }
+
+            const hasOnlyRequiredConnections = connectedLinks.length > 0 && connectedLinks.every(link => link.rel === "required");
+            const hasNoConnections = connectedLinks.length === 0;
+
+            return (hasNoConnections || hasOnlyRequiredConnections) ? "none" : null;
+        });
+
+
+
+        if (simulation) {
+            simulation.alpha(0.2).restart();
+        }
+    };
+
+    applyVisibility();
+
+    showRequiredModsToggle.addEventListener("change", (e) => {
+        localStorage.setItem("visibility_show_required", String(e.target.checked));
+        applyVisibility();
+    });
 
 document.addEventListener("DOMContentLoaded", function() {
     const installedToggle = document.getElementById("showInstalledModsToggle");

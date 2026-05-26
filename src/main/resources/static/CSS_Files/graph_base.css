@@ -1279,6 +1279,13 @@ svg:active {
     }
 }
 
+/* Mod filtering classes */
+/* Hide required mods */
+.hide-required .node[data-rel="required"],
+.hide-required .link[data-rel="required"] {
+    display: none !important;
+}
+
 /* Light theme variables */
 body.light-theme {
     --bg: #f5f7fb;
