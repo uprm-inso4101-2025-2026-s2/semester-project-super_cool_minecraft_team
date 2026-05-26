@@ -1,4 +1,5 @@
 # 📝 [Lecture Topic Task] TLA+ for Dependency Lookup Consistency
+INSO 4101 — Lecture Topic Task | Victor E. Ravelo Santana 
 
 ### 🎯 Objective
 Analyze how TLA+ can formally model and verify the correctness of the dependency lookup subsystem, especially regarding cache consistency, external API requests, and dependency resolution states.
