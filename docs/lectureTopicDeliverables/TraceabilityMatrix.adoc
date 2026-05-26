@@ -1,0 +1,92 @@
+= Project Traceability Matrix
+:toc: macro
+:toclevels: 2
+:reproducible:
+
+This document contains the project traceability matrix mapping requirement descriptions, implementation status, architectural modules, verification methods, and testing states for the MAIN requirements of our application.
+
+== Requirements Traceability Matrix
+
+[cols="3,1,3,3,2", options="header"]
+|===
+| Requirement Description | Status | Implementation Module | Verification Method | Test Case State
+| UI for modpack/folder upload.
+| Implemented
+| upload.html / Thymeleaf Controller
+| Manual Browser Inspection
+| passed
+
+| Validate file is not empty and supported format.
+| Implemented
+| Spring Boot Validator / File Service
+| Unit Test
+| no formal test file
+
+| Dependency Type (required, optional, incompatible).
+| Implemented
+| Edge Attributes / D3.js Styling
+| Visual Inspection
+| passed
+
+| Reject invalid uploads with clear error messages.
+| Implemented
+| File service used in upload.html
+| Manual Browser Inspection
+| passed
+
+| Missing Dependency Identification.
+| Implemented
+| File Service / API
+| Unit Test
+| no formal test file
+
+| Incompatibility Detection.
+| Implemented
+| File Service / API
+| Unit Test
+| no formal test file
+
+| Fetch Mod Identity From APIs (ID, Version, Dependencies ).
+| Implemented
+| File Service / API
+| Unit Test [DependencyControllerTest.java]
+| passed
+
+| Declared Dependency Relationships (Source to Target).
+| Implemented
+| Graph Data Structure / D3.js Links
+| Logic Audit / Unit Test
+| no formal test file
+
+| No Malicious URL redirects
+| Implemented
+| Redirect Controller
+| Unit Test [RedirectControllerTest.java]
+| passed
+
+| Version Constraints association.
+| Implemented
+| File Service / JSON
+| Unit Test
+| no formal test file
+
+| Graph Displays Mod Dependency info properly
+| Implemented
+| Graph_visualizer files and DTOs
+| Unit Test [GraphServiceTest.java]
+| passed
+
+| Graph Data Structure functions properly
+| Implemented
+| Graph DTO
+| Unit Test [GraphDSTest.java]
+| passed
+
+
+|===
+
+
+=== Project Requirements
+As seen above, although all main features in our application have been implemented, there aren't many concrete unit tests available. The only main unit tests made so far for our most important requirements are GraphServiceTest.java, RedirectControllerTest.java, GraphDSTest.java and DependencyControllerTest.java.
+
+The application can take input in the form of a zip folder successfully, can fetch all mods within it's dependencies with the backend implementation, and create a graph with it, meeting the core requirements, although lacking a few concrete unit tests.
