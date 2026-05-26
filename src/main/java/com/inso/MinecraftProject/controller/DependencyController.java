@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.inso.MinecraftProject.service.DependencyLookupService;
 
 import com.inso.MinecraftProject.dto.DTO;
 import com.inso.MinecraftProject.dto.Edge;
@@ -17,8 +16,9 @@ import com.inso.MinecraftProject.dto.MissingDependencyDto;
 import com.inso.MinecraftProject.dto.ResolvedDependencyDto;
 import com.inso.MinecraftProject.dto.ValidationResponse;
 import com.inso.MinecraftProject.entity.Mod;
+import com.inso.MinecraftProject.service.DependencyLookupService;
 import com.inso.MinecraftProject.service.ModRepository;
-import com.inso.MinecraftProject.service.DependencyResolverService;
+import com.inso.MinecraftProject.service.resolver.DependencyResolverService;
 
 @RestController
 public class DependencyController {

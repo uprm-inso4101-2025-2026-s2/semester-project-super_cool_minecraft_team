@@ -5,11 +5,12 @@ const rawGraphData = window.graphData || { nodes: [], links: [] };
 const nodes = (rawGraphData.nodes || []).map(node => ({
     id: node.id,
     type: node.type || "mod",
-    status: node.status || "compatible"
+    status: node.status || "compatible",
+    installed: node.installed || false  
 }));
 
 const links = (rawGraphData.links || []).map(link => ({
-    source: link.source,
+    source: link.source,    
     target: link.target,
     rel: link.rel || "required"
 }));
@@ -356,6 +357,8 @@ if (!validationResult.isValid) {
         .enter()
         .append("g")
         .attr("class", "node")
+        .on("mouseover", function(event, d) { handleNodeHover(event, d, true); })
+        .on("mouseout", function(event, d) { handleNodeHover(event, d, false); })
         .on("click", (event, d) => handleNodeClick(event, d))
         .call(
             d3.drag()
@@ -368,6 +371,26 @@ if (!validationResult.isValid) {
         .attr("r", 10)
         .attr("fill", d => d.type === "root" ? "var(--blue)" : "var(--panel)")
         .attr("class", "node-circle");
+
+    // Add mod icon image
+    node.append("image")
+        .attr("class", "mod-icon-img")
+        .attr("xlink:href", "/images/logos/Header Icon- Cuadrado.png")   // path to your icon
+        .attr("width", 20)
+        .attr("height", 20)
+        .attr("x", -10)
+        .attr("y", -10);
+        const iconToggle = document.getElementById("showModIconsToggle");
+
+    function updateModIconVisibility() {
+        const showIcons = iconToggle.checked;
+        d3.selectAll('.mod-icon-img').style("display", showIcons ? null : "none");
+    }
+
+    updateModIconVisibility();
+
+    
+    iconToggle.addEventListener('change', updateModIconVisibility);
 
     node.append("text")
         .attr("dx", 14)
@@ -604,6 +627,37 @@ function dragended(event, d) {
     if (!event.active) simulation.alphaTarget(0);
     d.fx = null;
     d.fy = null;
+}
+
+function handleNodeHover(event, d, isHovered) {
+    if (selectedNodeId) return; // Do NOT hover-highlight if a node is selected
+
+    if (isHovered) {
+        const dependencies = new Set(getDependencies(d.id));
+        const dependents = new Set(getDependents(d.id));
+        const allRelated = new Set([d.id, ...dependencies, ...dependents]);
+
+        // Highlight nodes
+        d3.selectAll(".node").each(function(nodeData) {
+            d3.select(this)
+                .classed("hovered", allRelated.has(nodeData.id))
+                .classed("dimmed", !allRelated.has(nodeData.id));
+        });
+
+        // Highlight links
+        d3.selectAll(".link").each(function(linkData) {
+            const sourceId = getNodeId(linkData.source);
+            const targetId = getNodeId(linkData.target);
+            const isRelated = allRelated.has(sourceId) && allRelated.has(targetId);
+            d3.select(this)
+                .classed("hovered", isRelated)
+                .classed("dimmed", !isRelated);
+        });
+    } else {
+        // Remove all hover classes if not selected
+        d3.selectAll(".node").classed("hovered", false).classed("dimmed", false);
+        d3.selectAll(".link").classed("hovered", false).classed("dimmed", false);
+    }
 }
 
 /* ===== SEARCH LOGIC + NODE MATCHING ===== */
@@ -1004,28 +1058,92 @@ function exportGraphToPNG(svgSelector, fileName) {
 /* SIDEBAR TOGGLE LOGIC */
 document.addEventListener("DOMContentLoaded", () => {
     const dashboard = document.querySelector(".dashboard-container");
+    const sidebar = document.getElementById("filterSidebar");
     const closeBtn = document.getElementById("sidebarToggleBtn");
     const reopenBtn = document.getElementById("sidebarReopenBtn");
+    const collapseStorageKey = "graphSidebarCollapsed";
+    const focusableSelector =
+        "a[href], button, input, select, textarea, [tabindex]:not([tabindex='-1'])";
 
-    if (!dashboard) return;
+    if (!dashboard || !sidebar) return;
 
     const resizeGraphAfterAnimation = () => {
+        requestAnimationFrame(() => {
+            window.dispatchEvent(new Event("resize"));
+            document.dispatchEvent(new Event("sidebar-toggle"));
+        });
+
         setTimeout(() => {
             window.dispatchEvent(new Event("resize"));
-        }, 300);
+            document.dispatchEvent(new Event("sidebar-toggle"));
+        }, 320);
     };
+
+    const setSidebarFocusableState = (isFocusable) => {
+        const focusables = sidebar.querySelectorAll(focusableSelector);
+
+        focusables.forEach((element) => {
+            if (element === closeBtn) return;
+
+            if (!isFocusable) {
+                if (!element.hasAttribute("data-prev-tabindex")) {
+                    const previous = element.getAttribute("tabindex");
+                    element.setAttribute("data-prev-tabindex", previous === null ? "" : previous);
+                }
+                element.setAttribute("tabindex", "-1");
+                return;
+            }
+
+            if (!element.hasAttribute("data-prev-tabindex")) {
+                element.removeAttribute("tabindex");
+                return;
+            }
+
+            const previousTabIndex = element.getAttribute("data-prev-tabindex");
+            if (previousTabIndex === "") {
+                element.removeAttribute("tabindex");
+            } else {
+                element.setAttribute("tabindex", previousTabIndex);
+            }
+            element.removeAttribute("data-prev-tabindex");
+        });
+    };
+
+    const syncSidebarState = (collapsed, moveFocusTarget) => {
+        dashboard.classList.toggle("sidebar-collapsed", collapsed);
+        sidebar.setAttribute("aria-hidden", String(collapsed));
+        closeBtn?.setAttribute("aria-expanded", String(!collapsed));
+        reopenBtn?.setAttribute("aria-expanded", String(!collapsed));
+
+        if (collapsed) {
+            sidebar.setAttribute("inert", "");
+        } else {
+            sidebar.removeAttribute("inert");
+        }
+
+        setSidebarFocusableState(!collapsed);
+        localStorage.setItem(collapseStorageKey, String(collapsed));
+        resizeGraphAfterAnimation();
+
+        if (moveFocusTarget) {
+            moveFocusTarget.focus();
+        }
+    };
+
+    const collapsedByDefault = localStorage.getItem(collapseStorageKey) === "true";
+    syncSidebarState(collapsedByDefault);
 
     if (closeBtn) {
         closeBtn.addEventListener("click", () => {
-            dashboard.classList.add("sidebar-collapsed");
-            resizeGraphAfterAnimation();
+            const activeElement = document.activeElement;
+            const moveFocus = sidebar.contains(activeElement) ? reopenBtn : null;
+            syncSidebarState(true, moveFocus);
         });
     }
 
     if (reopenBtn) {
         reopenBtn.addEventListener("click", () => {
-            dashboard.classList.remove("sidebar-collapsed");
-            resizeGraphAfterAnimation();
+            syncSidebarState(false, closeBtn || null);
         });
     }
 });
@@ -1054,4 +1172,41 @@ document.addEventListener("DOMContentLoaded", () => {
             window.dispatchEvent(new Event("resize"));
         }, 200);
     });
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    const installedToggle = document.getElementById("showInstalledModsToggle");
+    if (!installedToggle) return;
+
+    // This will run every time the toggle is changed
+    function filterInstalledMods() {
+        const showInstalled = installedToggle.checked;
+
+        // Hide/show .node for installed mods
+        d3.selectAll(".node").style("display", function(d) {
+            // d.installed (true OR string "true") expected!
+            const isInstalled = d.installed === true || d.installed === "true";
+            // If toggle is ON, show everything. If OFF, hide installed.
+            if (showInstalled) return null;
+            return isInstalled ? "none" : null;
+        });
+
+        // Hide/show .link if connected to any hidden node
+        d3.selectAll(".link").style("display", function(l) {
+            // .link's l.source/l.target could be an object or string id
+            const getInstalled = n => {
+                if (typeof n === "object" && n.installed !== undefined)
+                    return n.installed === true || n.installed === "true";
+                return false;
+            };
+            if (showInstalled) return null;
+            // Hide if either side is an installed mod
+            return (getInstalled(l.source) || getInstalled(l.target)) ? "none" : null;
+        });
+    }
+
+    installedToggle.addEventListener("change", filterInstalledMods);
+
+
+    setTimeout(filterInstalledMods, 0);
 });
