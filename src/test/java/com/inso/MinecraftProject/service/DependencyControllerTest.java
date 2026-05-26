@@ -1,5 +1,6 @@
 package com.inso.MinecraftProject.service;
 
+import com.inso.MinecraftProject.controller.DependencyController;
 import com.inso.MinecraftProject.dto.ResolvedDependencyDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

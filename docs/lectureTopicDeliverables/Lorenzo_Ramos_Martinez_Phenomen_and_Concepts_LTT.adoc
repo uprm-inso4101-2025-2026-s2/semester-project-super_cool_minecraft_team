@@ -1,0 +1,97 @@
+= Phenomena and Concepts in the ModrinthServiceWrapper
+INSO 4101 — Lecture Topic Task | Lorenzo Ramos Martinez
+
+== 1. Phenomena vs. Concepts
+
+A phenomenon is a concrete, observable instance — a specific value at a point in time. A concept is the abstraction or type that classifies it.
+
+[cols="1,1", options="header"]
+|===
+| Phenomenon | Concept
+
+| The JSON string returned for "sodium"
+| ModrinthProject (the class)
+
+| A specific ProjectId string like "sodium"
+| ProjectId (the type)
+
+| An HTTP 404 response from Modrinth
+| Error response (the concept)
+|===
+
+== 2. Entities
+
+Entities are things that carry information. They can be atomic (no meaningful sub-parts) or composed (made of smaller parts).
+
+[cols="1,1,2", options="header"]
+|===
+| Entity | Kind | Composition
+
+| ProjectId / VersionId
+| Atomic
+| A single opaque string identifier
+
+| ModrinthProject
+| Composed
+| id, slug, title, description, versions[]
+
+| ModrinthVersion
+| Composed
+| id, projectId, name, dependencies[], files[]
+
+| Dependency
+| Composed
+| versionId, projectId, dependencyType
+|===
+
+== 3. Functions
+
+Functions take inputs and produce outputs. The signature names the types; the specification states what the result satisfies, not how it is computed.
+
+[cols="1,2,2", options="header"]
+|===
+| Function | Signature | Specification
+
+| getProject
+| ProjectId → ModrinthProject
+| Yields p where p.id equals the given id
+
+| getProjectVersions
+| ProjectId → List[ModrinthVersion]
+| Yields all published versions of that project
+
+| getProjectDependencies
+| ProjectId → List[Dependency]
+| Yields all dependencies declared across its versions
+
+| searchProject
+| Query x Limit → List[ModrinthProject]
+| Yields up to limit projects matching the query
+|===
+
+== 4. Events and Behaviors
+
+An event is instantaneous — triggered by an action and may trigger another. A behavior is a sequence of actions interleaved with events.
+
+[cols="1,1,1", options="header"]
+|===
+| Event | Triggered by | Triggers
+
+| HTTP_REQUEST_SENT
+| Calling sendRequest(url)
+| Waiting for response
+
+| HTTP_RESPONSE_RECEIVED
+| Modrinth returning data
+| JSON deserialization
+
+| HTTP_ERROR_RECEIVED
+| Modrinth returning 4xx/5xx
+| Exception propagation
+|===
+
+The behavior for a single `getProject` call: build URL → HTTP_REQUEST_SENT → wait → HTTP_RESPONSE_RECEIVED → deserialize → return ModrinthProject.
+
+All communication is synchronous — the calling thread blocks on `HttpClient.send()` until a response arrives. No asynchronous behavior exists inside the wrapper.
+
+'''

@@ -18,7 +18,8 @@ if (filePicker && statusText)
         const file = files[0];
 
         // Optional
-        if (!file.name.endsWith(".zip")) {
+        if (!file.name.toLowerCase().endsWith(".zip"))
+        {
             statusText.textContent = "Please upload a .zip file.";
             return;
         }
@@ -27,12 +28,10 @@ if (filePicker && statusText)
         filePicker.disabled = true;
 
         uploadFile(file)
-            .then(() => 
-            {
-                statusText.textContent = "Upload successful!";
-                window.location.href = "/graph";
+            .then(() => {statusText.textContent = "Upload successful!";})
+            .catch((err) => {
+                statusText.textContent = err && err.message ? err.message : "Upload failed.";
             })
-            .catch(() => {statusText.textContent = "Upload failed.";})
             .finally(() => {filePicker.disabled = false;});
     });
 }
@@ -41,7 +40,7 @@ else
 
 async function uploadFile(file)
 {
-    const baseUrl = "http://localhost:8080/api/modpack/zip";
+    const baseUrl = "/api/modpack/zip";
 
     try
     {
@@ -50,11 +49,24 @@ async function uploadFile(file)
         fData.append("file", file);
 
         const resp = await fetch(baseUrl, {method: "POST", body: fData});
+        const bodyText = await resp.text();
 
-        if (!resp.ok)
-            throw new Error("Upload failed");
+        let payload = {};
 
-        console.log("Server response:", await resp.text());
+        try {payload = bodyText ? JSON.parse(bodyText) : {};} 
+        catch (_) {/* non-JSON success body*/}
+        
+        if(!resp.ok)
+        {
+            const message = typeof payload.message === "string"
+                ? payload.message
+                : `Upload failed (${resp.status})`;
+                throw new Error(message);
+        }
+
+        console.log("Server response:", bodyText);
+        const nextUrl = typeof payload.redirect === "string" ? payload.redirect : "/graph";
+        window.location.assign(nextUrl);
     }
     catch (errorC)
     {

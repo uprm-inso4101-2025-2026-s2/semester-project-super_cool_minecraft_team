@@ -1,10 +1,14 @@
 package com.inso.MinecraftProject.controller;
 
-import com.inso.MinecraftProject.dto.DTO;
-import com.inso.MinecraftProject.service.ModpackParsingService;
-import org.springframework.http.MediaType;
-import org.springframework.http.HttpHeaders;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Locale;
+import java.util.Map;
+import java.util.zip.ZipFile;
+
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,10 +16,10 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.inso.MinecraftProject.dto.DTO;
+import com.inso.MinecraftProject.service.ModpackParsingService;
+
 import jakarta.servlet.http.HttpSession;
-import java.net.URI;
-import java.util.Locale;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/modpack")
@@ -42,11 +46,30 @@ public class ZipFileController {
             return ResponseEntity.badRequest().body(Map.of("message", "Only .zip files are supported."));
         }
 
-        DTO graphData = modpackParsingService.parseModpack();
-        session.setAttribute("graphDto", graphData);
+        Path tempFile = null;
+        try {
+            tempFile = Files.createTempFile("modpack-upload-", ".zip");
+            file.transferTo(tempFile);
 
-        return ResponseEntity.status(HttpStatus.FOUND)
-                .header(HttpHeaders.LOCATION, URI.create("/graph").toString())
-                .build();
+            try (ZipFile zipFile = new ZipFile(tempFile.toFile())) {
+                DTO graphData = (modpackParsingService.parseModpack(zipFile));
+                session.setAttribute("graphDto", graphData);
+            }
+
+            return ResponseEntity.ok(Map.of(
+                    "ok", true,
+                    "redirect", "/graph"
+            ));
+        } catch (IOException ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "Failed to process modpack: " + ex.getMessage()));
+        } finally {
+            if (tempFile != null) {
+                try {
+                    Files.deleteIfExists(tempFile);
+                } catch (IOException ignored) {
+                }
+            }
+        }
     }
 }

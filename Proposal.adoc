@@ -21,15 +21,16 @@ ICOM4009 | INSO4101 | Introduction to Software Engineering
 
 ==== 1.2.2 Team Leaders
 
-* Team A
+* Team A - responsible for the dependency graph subsystem, including building the internal graph structure, implementing cycle detection and transitive dependency resolution, and producing structured graph data for frontend visualization.
+
 ** Zabdiel J. Valentin-Perez
 ** Karilys A. Muñiz-Ramos
 
-* Team B
+* Team B -  responsible for the external API integration and dependency resolution subsystem, including querying the Modrinth API, detecting missing and circular dependencies, and returning structured resolution results to the frontend.
 ** Gabriel A. Sanchez-Santos
 ** Ricardo Burgos
 
-* Team C
+* Team C - responsible for the frontend web application, including handling modpack uploads, transmitting mod data to the backend, and rendering the dependency graph and resolution results for the player.
 ** Victor M. De Jesús
 ** Javier M. Aguilo Agosto
 
@@ -505,25 +506,39 @@ Daniel highlights the need for version control, dependency tracking, and reliabl
 ===== External System Interfaces
 
 * [.line-through.red]#The subsystem must be capable of receiving dependency metadata from the Mod Uploading subsystem, including mod identifiers, version information, and declared dependencies.#
-  IR-1 — Metadata Reception: The subsystem shall receive dependency metadata from the Mod Uploading subsystem, including mod identifiers, version information, and declared dependency relationships.
+* [.line-through.red]#IR-1 — Metadata Reception: The subsystem shall receive dependency metadata from the Mod Uploading subsystem, including mod identifiers, version information, and declared dependency relationships.#
+
+  IR-1 MetaData reception: The Dependency Resolution subsystem accepts dependency metadata from the Mod Upload subsystem in the form of a structured list of mod entries, where each entry contains a Modrinth project identifier and a version string, from which declared dependency relationships will be extracted and processed.
 
 * [.line-through.red]#Queries to the Modrinth API (or similar repositories) should allow the system to locate required mods using dependency identifiers.#
-  IR-2 — External Repository Querying: The subsystem shall query external repositories (e.g., Modrinth API) using dependency identifiers to locate required Mods and retrieve associated metadata.
+* [.line-through.red]#IR-2 — External Repository Querying: The subsystem shall query external repositories (e.g., Modrinth API) using dependency identifiers to locate required Mods and retrieve associated metadata.#
+
+  IR-2 External Repository Querying: The Dependency Resolution subsystem shall querie the Modrinth API in sequence using the received project slug: first retrieving the project ID, then retrieving the available project versions, and finally retrieving the declared dependencies associated with those versions. Each one of these returned dependencies have their own project slug and version string, which will be used to recursively query the API until all transitive dependencies are resolved or identified as missing." 
 
 * [.line-through.red]#Download URLs for compatible dependency versions must be retrieved and made available for installation.#
-  IR-3 — Download URL Retrieval: The subsystem shall retrieve download URLs for compatible dependency versions from external repositories and provide them to the corresponding subsystem for installation.
+* [.line-through.red]#IR-3 — Download URL Retrieval: The subsystem shall retrieve download URLs for compatible dependency versions from external repositories and provide them to the corresponding subsystem for installation.#
+
+  IR-3 Url Retrieval: The Dependency Resolution subsystem shall retrieve version metadata for resolved dependencies from the Modrinth API, which includes file download URLs within the returned version data, and makes those URLs available to the frontend for player reference only. The subsystem does not perform any download or installation operations just returns the URL from which it can be downloaded.
 
 * [.line-through.red]#Structured results of the dependency resolution process are returned to the Visualization subsystem, including resolved dependencies, version matches, and any unresolved items.#
-  IR-4 — Resolution Result Transfer: The subsystem shall return structured dependency resolution results to the Visualization subsystem, including resolved dependencies, version matches, unresolved dependencies, incompatibilities, and version constraint violations.
+* [.line-through.red]#IR-4 — Resolution Result Transfer: The subsystem returns structured dependency resolution results to the Visualization subsystem, including resolved dependencies, version matches, unresolved dependencies, incompatibilities, and version constraint violations.#
+
+  IR-4 Resolution Result Transfer: The Dependency Resolution subsystem shall return a structured ValidationResponse to the frontend containing: a list of missing required dependency identifiers, a list of mod identifiers involved in circular dependency chains, and a list of resolved dependency entries each containing the dependency identifier, a preferred download URL filtered by loader and Minecraft version compatibility, and a fallback Modrinth page URL when no compatible version is found.
 
 * [.line-through.red]#Notifications are provided whenever a required dependency cannot be resolved, ensuring the system or user is aware of the issue.#
-  IR-5 — Unresolved Dependency Notification: The subsystem shall generate a notification whenever a required dependency cannot be resolved.
+* [.line-through.red]#IR-5 — Unresolved Dependency Notification: The subsystem shall generate a notification whenever a required dependency cannot be resolved.#
+
+  IR-5 Unresolved Dependency Reporting: The Dependency Resolution subsystem shall populate the missing dependencies list within the ValidationResponse for each required dependency that cannot be satisfied. The frontend renders each unresolved dependency as a card displaying the dependency identifier, required version, loader, and Minecraft version, with a status badge indicating whether a download URL was resolved or not. When no compatible version can be located, the frontend displays an explicit message stating that no download link could be resolved for that dependency.
 
 * [.line-through.red]#Failed API requests should trigger automatic retries up to a configurable limit to maintain reliability.#
-  IR-6 — API Retry Handling: The subsystem shall retry failed external API requests up to a configurable maximum number of attempts.
+* [.line-through.red]#IR-6 — API Retry Handling: The subsystem shall retry failed external API requests up to a configurable maximum number of attempts.#
+
+  IR-6 External API Timeout and Error Handling: The Dependency Resolution subsystem shall handle failed external API requests by throwing a descriptive ApiException that identifies the failure type, including unauthorized access (401), resource not found (404), rate limiting (429), server error (500), and service unavailability (503). All requests to the Modrinth API is subject to a 10 second connection and response timeout, after which the request will be considered failed and an appropriate exception will be raised.
 
 * [.line-through.red]#All interactions with external APIs are logged for debugging, verification, and auditing purposes.#
-  IR-7 — External Interaction Logging: The subsystem shall log all interactions with external repositories, including requests, responses, and failures.
+* [.line-through.red]#IR-7 — External Interaction Logging: The subsystem shall log all interactions with external repositories, including requests, responses, and failures.#
+
+  IR-7 Resolution and Error Logging: The Dependency Resolution subsystem shall log successful dependency URL resolutions including the dependency identifier and resolved URL, and logs parsing errors encountered during external API responses including the dependency identifier and error message. Logs will be written to standard output for successful resolutions and standard error for failures.
 
 ---
 
@@ -545,7 +560,9 @@ Daniel highlights the need for version control, dependency tracking, and reliabl
   UI-5 — The system shall provide an interactive dependency graph to visualize mod dependency relationships.
 
 * [.line-through.red]#Allow users to select a mod and view its required, optional, and incompatible dependencies.#
-  UI-6 — The interface shall allow users to select a mod and view its required, optional, and incompatible dependencies.
+* [.line-through,red]#UI-6 — The interface shall allow users to select a mod and view its required, optional, and incompatible dependencies.#
+
+  UI-6 - The interface shall enable players to select a mod and display its required, optional, and incompatible dependencies.
 
 * [.line-through.red]#Provide a search interface to locate mods by name or identifier.#
   UI-7 — The system shall provide a search interface to locate Mods by name or identifier.
@@ -557,7 +574,9 @@ Daniel highlights the need for version control, dependency tracking, and reliabl
   UI-9 — The interface shall display a detailed view panel containing information about the selected Mod and its dependency relationships.
 
 * [.line-through.red]#Allow users to navigate between related mods directly from the dependency visualization.#
-  UI-10 — The interface shall allow navigation between related Mods through the dependency visualization.
+* [.line-through.red]#UI-10 — The interface shall allow navigation between related Mods through the dependency visualization.#
+
+  UI-10 - The interface shall provide navigation between related mods through the dependency visualization.
 
 * [.line-through.red]#Provide clear feedback messages when dependency data cannot be loaded or is incomplete.#
   UI-11 — The system shall provide feedback messages when dependency data cannot be loaded or is incomplete.
@@ -570,50 +589,93 @@ Daniel highlights the need for version control, dependency tracking, and reliabl
 Performance:
 
 * [.line-through.red]#The subsystem shall process dependency resolution requests efficiently, ensuring reasonable response times under typical user workloads.#
-  MR-1 — The subsystem shall process dependency resolution requests within 2 seconds for modpacks containing up to 100 Mods.
+  MR-1 — The subsystem shall process dependency resolution requests and re-render the dependency graph within 2 seconds after a mod is added, removed, or modified, for modpacks containing up to 150 Mods.
+
+NOTE: Modified original text to expand the mod threshold capacity from 100 mods to 150 mods and specified exact graph re-rendering conditions. This incorporates granular performance metrics from Section 2.8 to remove structural redundancy.
 
 * [.line-through.red]#The system shall support multiple simultaneous requests without significant performance degradation or instability.#
-  MR-2 — The system shall support at least 50 concurrent dependency resolution requests without failure.
+  MR-2 — The system shall support at least 50 concurrent dependency resolution requests without failure, maintaining stable performance without crashing when handling concurrent download and graph update operations for at least 20 simultaneous active users.
+
+NOTE: Modified text to combine Section 2.3.4’s higher concurrency metric (50 requests) with Section 2.8’s specific multi-operation safety rules (download and graph updates running concurrently) to construct a non-contradictory backend constraint.
 
 * [.line-through.red]#Retrieval of dependency metadata and download links shall be performed in a timely manner to maintain smooth workflow execution.#
-  MR-3 — The system shall retrieve dependency metadata and download links within 1 second per external request.
+  MR-3 — The system shall retrieve dependency metadata and download links within 1 second per external request, responding to an external mod metadata lookup request (e.g., Modrinth) within 3 seconds under a normal load of $\le$ 20 simultaneous users.
+
+NOTE: Added the 3-second/20-user external lookup context from Section 2.8 to provide an objective, testable threshold under specific load states.
 
 * [.line-through.red]#The subsystem shall efficiently read and analyze modpack contents, including individual mod files, to detect dependencies and incompatibilities.#
-  MR-4 — The subsystem shall analyze modpack contents and detect dependencies and incompatibilities within 2 seconds for modpacks containing up to 100 Mods.
+  MR-4 — The subsystem shall analyze, validate, and normalize modpack contents to detect dependencies and incompatibilities within 2 seconds for modpacks containing up to 100 Mods, ensuring accurate representation of required, optional, and incompatible dependencies along with version constraints.
+
+NOTE: Modified text to absorb validation, normalization, and dependency mapping rules from Section 2.8’s Integrity section into the primary contents-analysis contract.
 
 ---
 
 Reliability:
 
 * [.line-through.red]#The subsystem shall maintain stable operation during normal usage, with minimal downtime.#
-  MR-5 — The subsystem shall maintain at least 99% uptime under normal operating conditions.
+  MR-5 — The subsystem shall maintain at least 99% uptime under normal operating conditions, maintaining at least 95% uptime specifically during scheduled operational hours.
+
+NOTE: Reconciled uptime rules by keeping the stricter 99% standard from 2.3.4 as the primary metric, while appending the "scheduled operational hours" qualifier extracted from Section 2.8.
 
 * [.line-through.red]#External API failures shall be handled gracefully, ensuring partial failures do not crash the system or corrupt stored data.#
-  MR-6 — The system shall handle external API failures without crashing and shall preserve all previously processed data.
+  MR-6 — The system shall handle external API failures gracefully without crashing, preserving all previously processed data; if an external API (e.g., Modrinth) fails or becomes unreachable, the system must return a clear error message to the player within 5 seconds, allow a retry, and fall back to cached or previously processed data when available.
+
+NOTE: Modified text to expand the original API fallback logic, explicitly introducing the missing "API Failure Paths" category from Section 2.8 (5-second player notifications, retry options, and cache management rules).
 
 * [.line-through.red]#Errors and exceptions shall be logged to support debugging, testing, and verification activities.#
-  MR-7 — The system shall log all errors and exceptions, including timestamps and error details.
+  MR-7 — The system shall log all errors and exceptions, including timestamps and error details, and implement monitoring to detect performance bottlenecks and abnormal resource consumption.
+
+NOTE: Modified text to incorporate logging-driven monitoring parameters from Section 2.8's Resource Usage section.
 
 ---
 
 Resource and Stability:
 
 * [.line-through.red]#The subsystem shall operate within reasonable CPU and memory limits to avoid negatively impacting other system components.#
-  MR-8 — The subsystem shall not exceed 70% CPU utilization and 512 MB of memory under normal workload conditions.
+  MR-8 — The subsystem shall not exceed 70% CPU utilization and 512 MB of memory under normal workload conditions, explicitly encompassing active graph construction and metadata processing tasks.
+
+NOTE: Modified text to define the exact workloads (graph construction and metadata processing) flagged in Section 2.8's resource references.
 
 * [.line-through.red]#The system shall ensure consistent behavior during extended processing tasks such as large modpack analysis.#
-  MR-9 — The system shall maintain stable operation during analysis of modpacks containing up to 500 Mods without failure.
+  MR-9 — The system shall maintain stable operation during graph processing and analysis of modpacks containing up to 500 Mods without failure, satisfying the following step-down processing intervals:
+  
+  ** Less than 5 seconds for modpacks containing between 30 and 100 mods.
+  ** Less than 10 seconds for modpacks containing up to 200 mods.
+  ** Between 30 seconds and 2 minutes for extreme cases containing between 200 and 500 mods depending on graph complexity.
+
+  NOTE: Modified text to replace general stability phrasing with highly detailed, non-conflicting performance tiers extracted directly from Section 2.8's "Graph Processing Performance" metrics.
 
 ---
 
 Scalability:
 
 * [.line-through.red]#The system shall support growth in mod volume, dependency complexity, and user activity without requiring architectural redesign.#
-  MR-10 — The system shall support scaling to modpacks containing up to 500 Mods without degradation in functionality.
+  MR-10 — The system shall support horizontal scaling and growth in mod volume, dependency complexity, and player demand without requiring architectural redesign, safely scaling to modpacks containing up to 500 Mods without degradation in functionality (criteria for scaling beyond 30 simultaneous users remains to be defined through further research).
+
+NOTE: Modified text to append "horizontal scaling," "player demand," and the explicit 30-user research boundary derived from Section 2.8's Scalability section.
 
 * [.line-through.red]#The subsystem architecture shall allow integration of additional mod sources or APIs in future iterations.#
-  MR-11 — The subsystem shall support integration of at least one additional external mod repository without requiring major architectural changes.
+  MR-11 — The subsystem architecture shall be modular to allow extensions and improvements without redesigning core components, supporting the integration of at least one additional external mod repository or API without requiring major architectural changes.
+
+NOTE: Modified text to merge Section 2.8’s modular architecture clause directly into the existing repository expansion rule.
   
+---
+
+Data Integrity & Degradation (Newly Incorporated Categories):
+
+* MR-12 (Data Integrity - Download Performance) — The system shall download and append a mod file ($\le$ 20MB) to the modpack archive within 10 seconds, excluding external network delays beyond the system’s control.
+  
+NOTE: Extracted from Section 2.8 Performance Requirements and introduced as a new Machine Requirement to capture file transfer constraints missing from the original 2.3.4 layout.
+
+* MR-13 (Data Integrity - Archive Validation) — The system shall validate that a downloaded mod file is successfully retrieved and structurally valid before appending it to the modpack archive, preventing duplicate mod files with identical identifiers from being added without explicit player confirmation.
+
+NOTE: Extracted from Section 2.8 Integrity Requirements and appended as a brand-new Machine Requirement to establish rigorous data verification parameters.
+
+* MR-14 (Graceful Degradation & Throttling) — Under heavy load or resource-constrained conditions, the system shall degrade gracefully by prioritizing essential operations, applying request throttling to prevent unexpected termination, and queuing additional active requests with a maximum delay of 10 seconds if simultaneous active users exceed 20 (allowing metadata lookup response times to temporarily increase up to 8 seconds).
+
+NOTE: Consolidates all graceful degradation parameters, heavy-load thresholds, and request-throttled limits from Section 2.8 into a brand-new engineering contract within Section 2.3.4.
+
+
 === 2.4 Terminology
 
 This section defines the core terms that will be used throughout the project.
@@ -902,182 +964,185 @@ Each term includes:
 
 === 2.7 Domain Events
 
-* Event 1: Modpack Provided for Analysis +
+* [.line-through.red]#Event 1: Modpack Provided for Analysis +
   Meaning: A modpack becomes available for dependency analysis. +
   After: Its metadata can be examined and its declared dependencies can be identified. +
-  State Change: The modpack transitions from "not analyzed" to "analysis in progress."
+  State Change: The modpack transitions from "not analyzed" to "analysis in progress."#
 
-* Event 2: Dependencies Identified +
+* [.line-through.red]#Event 2: Dependencies Identified +
   Meaning: All declared dependencies of included mods have been extracted from metadata. +
   After: Each dependency exists in normalized form and is classified as required, optional, incompatible, or version-constrained. +
-  State Change: Dependency data transitions from "raw metadata" to "identified and classified."
+  State Change: Dependency data transitions from "raw metadata" to "identified and classified."#
 
-* Event 3: Dependency Graph Exists +
+* [.line-through.red]#Event 3: Dependency Graph Exists +
   Meaning: A dependency graph representing all declared relationships among mods has been constructed. +
   After: All mods appear as nodes and their declared relationships exist as directed edges. +
-  State Change: The modpack transitions to "dependency graph constructed."
+  State Change: The modpack transitions to "dependency graph constructed."#
 
-* Event 4: Missing Dependency Exists +
+* [.line-through.red]#Event 4: Missing Dependency Exists +
   Meaning: A required dependency declared by a mod is not present in the modpack. +
   After: The configuration is incomplete. +
-  State Change: The modpack transitions to "invalid missing required dependency."
+  State Change: The modpack transitions to "invalid missing required dependency."#
 
-* Event 5: Incompatibility Exists +
+* [.line-through.red]#Event 5: Incompatibility Exists +
   Meaning: Two or more mods declare mutual incompatibility. +
   After: The configuration contains conflicting components. +
-  State Change: The modpack transitions to "invalid incompatibility conflict."
+  State Change: The modpack transitions to "invalid incompatibility conflict."#
 
-* Event 6: Circular Dependency Exists +
+* [.line-through.red]#Event 6: Circular Dependency Exists +
   Meaning: A cycle exists in the dependency relationships among mods. +
   After: The dependency structure cannot be resolved hierarchically. +
-  State Change: The modpack transitions to "invalid circular dependency."
+  State Change: The modpack transitions to "invalid circular dependency."#
 
-* Event 7: Version Constraint Violation Exists +
+* [.line-through.red]#Event 7: Version Constraint Violation Exists +
   Meaning: A mod version does not satisfy the version constraints declared by dependent mods. +
   After: The configuration violates declared version requirements. +
-  State Change: The modpack transitions to "invalid version constraint violation."
+  State Change: The modpack transitions to "invalid version constraint violation."#
 
-* Event 8: Transitive Dependencies Expanded +
+* [.line-through.red]#Event 8: Transitive Dependencies Expanded +
   Meaning: Indirect dependencies (dependencies of dependencies) have been incorporated into the dependency structure. +
   After: The complete dependency chain exists. +
-  State Change: The modpack transitions from "direct dependencies only" to "complete dependency closure."
+  State Change: The modpack transitions from "direct dependencies only" to "complete dependency closure."#
 
-* Event 9: Dependency Resolution Completed +
+* [.line-through.red]#Event 9: Dependency Resolution Completed +
   Meaning: The process of resolving all declared dependencies has finished. +
   After: It is determined whether all required dependencies are satisfied. +
-  State Change: The modpack transitions from "resolution in progress" to either "resolved successfully" or "resolution failed."
+  State Change: The modpack transitions from "resolution in progress" to either "resolved successfully" or "resolution failed."#
 
-* Event 10: Dependency Has Become Unsatisfied +
+* [.line-through.red]#Event 10: Dependency Has Become Unsatisfied +
   Meaning: A previously satisfied dependency becomes invalid due to mod removal, version change, or constraint violation. +
   After: The configuration no longer satisfies all declared requirements. +
-  State Change: The modpack transitions from "dependency satisfied" to "dependency unsatisfied."
+  State Change: The modpack transitions from "dependency satisfied" to "dependency unsatisfied."#
 
-* Event 11: Modpack Configuration Validated +
+* [.line-through.red]#Event 11: Modpack Configuration Validated +
   Meaning: All dependency, incompatibility, circularity, and version checks have completed successfully. +
   After: The modpack is structurally valid. +
-  State Change: The modpack transitions to "valid configuration."
+  State Change: The modpack transitions to "valid configuration."#
+
+
+  
 
 * Event 1: Modpack Uploaded +
   Triggered when: a user uploads a modpack or mod collection for analysis. +
   Outcome: The system initiates metadata parsing and begins extracting dependency information from all included mods. +
-  State Change: The modpack transitions from "not analyzed" to "parsing in progress."
+  State Change: not analyzed -> parsing in progress"
 
 * Event 2: Dependencies Extracted +
   Triggered when: metadata parsing completes and all mod dependencies are successfully identified. +
   Outcome: The system classifies each dependency as required, optional, or incompatible and prepares data for graph construction. +
-  State Change: Dependency data transitions from "raw metadata" to "normalized and classified."
+  State Change: raw metadata -> normalized and classified"
 
 * Event 3: Dependency Graph Generated +
   Triggered when: the system successfully constructs the dependency graph from normalized dependency data. +
   Outcome: The graph is made available for visualization and analysis, representing all mods as nodes and their relationships as directed edges. +
-  State Change: The modpack analysis transitions to "graph ready for visualization."
+  State Change: parsing in progress -> graph ready for visualization"
 
 * Event 4: Missing Dependency Detected +
   Triggered when: the system identifies that a mod declares a required dependency that is not present in the modpack. +
   Outcome: The system flags the missing dependency, identifies which mod requires it, and signals a critical configuration error. +
-  State Change: The modpack configuration transitions to "invalid - missing required dependency."
+  State Change: graph ready for visualization -> invalid - missing required dependency"
 
 * Event 5: Incompatibility Detected +
   Triggered when: the system identifies that two or more mods in the modpack declare mutual incompatibility. +
   Outcome: The system highlights the conflicting mods and the reason for incompatibility in the dependency graph. +
-  State Change: The modpack configuration transitions to "invalid - incompatibility conflict."
+  State Change: graph ready for visualization -> invalid - incompatibility conflict"
 
 * Event 6: Circular Dependency Detected +
   Triggered when: the system identifies a cycle in the dependency graph (e.g., Mod A requires Mod B, and Mod B requires Mod A). +
   Outcome: The system reports the circular dependency chain and prevents graph construction from entering an infinite loop. +
-  State Change: The modpack configuration transitions to "invalid - circular dependency."
+  State Change: graph ready for visualization -> invalid - circular dependency"
 
 * Event 7: Version Constraint Violation Detected +
   Triggered when: a mod's version does not satisfy the version constraints specified by its dependent mods. +
   Outcome: The system identifies which mods have incompatible versions and suggests compatible alternatives or version updates. +
-  State Change: The modpack configuration transitions to "invalid - version constraint violation."
+  State Change: graph ready for visualization -> invalid - version constraint violation"
 
 * Event 8: Transitive Dependencies Resolved +
   Triggered when: the system expands the dependency graph to include all transitive dependencies (dependencies of dependencies). +
   Outcome: The complete dependency chain is made visible, showing not only direct dependencies but also indirect requirements. +
-  State Change: The modpack representation transitions from "direct dependencies only" to "complete transitive dependency view."
+  State Change: direct dependencies only -> complete transitive dependency view"
 
 * Event 9: Modpack Configuration Validated +
   Triggered when: all dependency checks, incompatibility checks, and version constraint validations complete successfully. +
   Outcome: The system marks the modpack as structurally valid and ready for use, providing a summary of all valid mods and dependencies. +
-  State Change: The modpack configuration transitions to "valid and ready for deployment."
+  State Change: under validation -> valid and ready for deployment"
 
 * Event 10: Mod Removed or Updated +
   Triggered when: a user modifies the modpack by removing a mod or updating an existing mod to a new version. +
   Outcome: The system recalculates the dependency graph, identifies new missing dependencies or incompatibilities, and updates the visualization. +
-  State Change: The modpack configuration reverts to analysis mode and reassesses validity based on the new composition.
+  State Change: valid and ready for deployment -> composition modified - revalidation required"
 
 * Event 11: Dependency Graph Visualized +
   Triggered when: the system renders the dependency graph for user interaction and exploration. +
   Outcome: Users can select mods, view which mods depend on them, understand why dependencies are required, and explore impact of potential removals. +
-  State Change: The modpack transitions from "analyzed" to "interactive visualization available."
+  State Change: analyzed -> interactive visualization available"
 
 * Event 12: Dependency Has Just Been Declared +
   Triggered when: a mod explicitly declares a required relationship with another mod within its metadata. +
   Outcome: The system records the dependency as a directed relationship in the dependency model and prepares it for validation and resolution. +
-  State Change: The dependency model transitions from "no declared relationship" to "declared dependency recorded."
+  State Change: no declared relationship -> declared dependency recorded"
 
 * Event 13: Mod Has Just Been Added To Modpack +
   Triggered when: a user adds a new mod to an existing modpack configuration. +
   Outcome: The system updates the modpack composition, re-evaluates declared dependencies and incompatibilities, and schedules dependency resolution if required. +
-  State Change: The modpack configuration transitions from "stable composition" to "composition modified - revalidation required."
+  State Change: stable composition -> composition modified - revalidation required"
 
 * Event 14: Dependency Resolution Has Just Been Completed +
   Triggered when: the system completes the process of resolving all declared dependencies for the current modpack configuration. +
   Outcome: The system determines whether all required mods are present and whether any dependencies remain unsatisfied. +
-  State Change: The dependency resolution process transitions from "in progress" to either "resolved successfully" or "resolution failed."
+  State Change: resolution in progress -> resolved successfully OR resolution failed"
 
 * Event 15: Retrieved Mod Has Just Been Obtained +
   Triggered when: a required mod is successfully retrieved from a mod source to satisfy a previously declared dependency. +
   Outcome: The retrieved mod is added to the modpack configuration and incorporated into the dependency graph for further validation. +
-  State Change: The modpack transitions from "dependency unsatisfied" to "dependency provisionally satisfied pending validation."
+  State Change: dependency unsatisfied -> dependency provisionally satisfied pending validation"
 
 * Event 16: Dependency Has Just Become Unsatisfied +
   Triggered when: a previously satisfied dependency becomes invalid due to mod removal, version change, or constraint violation. +
   Outcome: The system flags the dependency as unsatisfied and initiates corrective actions such as retrieval suggestions or configuration warnings. +
-  State Change: The modpack configuration transitions from "dependency satisfied" to "dependency unsatisfied."
+  State Change: dependency satisfied -> dependency unsatisfied"
 
 * Event 17: Modpack Has Just Become Consistent +
   Triggered when: all declared dependencies are satisfied and no declared incompatibilities are violated within the modpack configuration. +
   Outcome: The system confirms the structural integrity of the modpack and allows it to proceed to validation or deployment stages. +
-  State Change: The modpack configuration transitions from "inconsistent or under validation" to "consistent configuration state."
+  State Change: inconsistent or under validation -> consistent configuration state"
 
-=== 2.8 Operational Requirements
+=== [.line-through.red]#2.8 Operational Requirements#
  
-This section defines measurable criteria based on the Machine Requirements stated in Section 2.3.4.
-While Section 2.3.4 explains how the system is expected to behave, this section specifies concrete limits and thresholds used to evaluate performance, reliability, and scalability during testing.
+[.line-through.red]#This section defines measurable criteria based on the Machine Requirements stated in Section 2.3.4.
+While Section 2.3.4 explains how the system is expected to behave, this section specifies concrete limits and thresholds used to evaluate performance, reliability, and scalability during testing.#
  
-==== Performance Requirements
+==== [.line-through.red]#Performance Requirements#
  
-* The system must respond to a mod metadata lookup request (via external API such as Modrinth) within 3 seconds under normal load (≤ 20 simultaneous users performing lookup operations).
-* The system must update and re-render the dependency graph within 2 seconds after a mod is added, removed, or modified, for modpacks containing up to 150 mods.
-* The system must download and append a mod file (≤ 20MB) to the modpack archive within 10 seconds, excluding external network delays beyond the system's control.
+* [.line-through.red]#The system must respond to a mod metadata lookup request (via external API such as Modrinth) within 3 seconds under normal load (≤ 20 simultaneous users performing lookup operations).#
+* [.line-through.red]#The system must update and re-render the dependency graph within 2 seconds after a mod is added, removed, or modified, for modpacks containing up to 150 mods.#
+* [.line-through.red]#The system must download and append a mod file (≤ 20MB) to the modpack archive within 10 seconds, excluding external network delays beyond the system's control.#
  
 [.line-through.red]#Graph Processing Performance: The system must generate a dependency graph for modpacks containing between 30 and 100 mods under typical conditions in less than 5 seconds.
 For larger modpacks containing up to 200 mods, the system must generate the dependency graph in less than 10 seconds.
 For extreme cases containing between 200 and 500 mods, the system may require between 30 seconds and 2 minutes depending on graph complexity but must complete the process in a stable and predictable manner without system failure.#
  
-NOTE: Graph processing performance thresholds are now consolidated under Performance Requirements above and in Section 2.3.4 (MR-1, MR-4, MR-9).
+[.line-through.red]#NOTE: Graph processing performance thresholds are now consolidated under Performance Requirements above and in Section 2.3.4 (MR-1, MR-4, MR-9).#
  
-==== Concurrency Requirements
+==== [.line-through.red]#Concurrency Requirements#
  
-* The system must support at least 20 simultaneous active users, each performing metadata lookups and graph updates, without service interruption.
-* If the number of simultaneous active users exceeds 20, the system must continue operating and may queue additional requests with a maximum delay of 10 seconds.
-* The system must not crash when handling concurrent download and graph update operations.
+* [.line-through.red]#The system must support at least 20 simultaneous active users, each performing metadata lookups and graph updates, without service interruption.#
+* [.line-through.red]#If the number of simultaneous active users exceeds 20, the system must continue operating and may queue additional requests with a maximum delay of 10 seconds.#
+* [.line-through.red]#The system must not crash when handling concurrent download and graph update operations.#
  
 [.line-through.red]#Concurrent Requests: The backend must be designed to support multiple concurrent users performing dependency analysis and graph generation.
 Since the expected number of concurrent users depends on the final scope of the application, the system must maintain stable performance and predictable response times under moderate and peak usage scenarios.#
  
-NOTE: Consolidated into Concurrency Requirements above. Vague phrasing ("moderate and peak") replaced with measurable thresholds.
+[.line-through.red]#NOTE: Consolidated into Concurrency Requirements above. Vague phrasing ("moderate and peak") replaced with measurable thresholds.#
  
-==== Reliability Requirements
+==== [.line-through.red]#Reliability Requirements#
  
-* The system must maintain 95% uptime during scheduled operational hours.
-* If an external API (e.g., Modrinth) fails or becomes unreachable, the system must:
-** Return a clear error message to the player within 5 seconds, and
-** Allow the player to retry the operation.
-* The failure of an external API must not cause the entire application to terminate.
-* When external services are unavailable, the system must use cached or previously processed data when available and display a meaningful status message to the player.
+* [.line-through.red]#The system must maintain 95% uptime during scheduled operational hours.#
+* [.line-through.red]#If an external API (e.g., Modrinth) fails or becomes unreachable, the system must:#
+** [.line-through.red]#Return a clear error message to the player within 5 seconds, and#
+** [.line-through.red]#Allow the player to retry the operation.#
+* [.line-through.red]#The failure of an external API must not cause the entire application to terminate.#
+* [.line-through.red]#When external services are unavailable, the system must use cached or previously processed data when available and display a meaningful status message to the player.#
  
 [.line-through.red]#Reliability and Availability: The system must maintain high availability during active usage.
 Automatic recovery mechanisms must handle network failures, API interruptions, and temporary service outages.
@@ -1087,62 +1152,62 @@ The backend must prevent corruption of dependency and modpack data and ensure co
 The backend must handle rate limits, temporary service failures, incomplete responses, and data inconsistencies.
 When external services are unavailable, the system must use cached or previously processed data when possible and provide meaningful feedback to the user.#
  
-NOTE: Both blocks consolidated and rewritten as measurable bullet points above.
+[.line-through.red]#NOTE: Both blocks consolidated and rewritten as measurable bullet points above.#
  
-==== Integrity Requirements
+==== [.line-through.red]#Integrity Requirements#
  
-* The system must validate that a downloaded mod file is successfully retrieved before appending it to the modpack archive.
-* The system must ensure that the modpack archive remains structurally valid after file modifications.
-* The system must prevent duplicate mod files with identical identifiers from being appended without player confirmation.
-* Dependency data must be validated and normalized before graph construction.
-* The system must ensure accurate representation of required, optional, and incompatible dependencies, as well as version constraints.
+* [.line-through.red]#The system must validate that a downloaded mod file is successfully retrieved before appending it to the modpack archive.#
+* [.line-through.red]#The system must ensure that the modpack archive remains structurally valid after file modifications.#
+* [.line-through.red]#The system must prevent duplicate mod files with identical identifiers from being appended without player confirmation.#
+* [.line-through.red]#Dependency data must be validated and normalized before graph construction.#
+* [.line-through.red]#The system must ensure accurate representation of required, optional, and incompatible dependencies, as well as version constraints.#
  
 [.line-through.red]#Data Integrity and Validation: Dependency data must be validated and normalized before graph construction.
 The system must ensure accurate representation of required, optional, and incompatible dependencies, as well as version constraints.#
  
-NOTE: Consolidated into Integrity Requirements above.
+[.line-through.red]#NOTE: Consolidated into Integrity Requirements above.#
  
-==== Scalability Requirements
+==== [.line-through.red]#Scalability Requirements#
  
-* The system architecture must support horizontal scaling to accommodate increases in modpack size, graph complexity, and player demand.
-* The backend must be modular to allow improvements and extensions without redesigning core components.
-* Criteria for scalability beyond 30 simultaneous users remain to be researched and defined.
+* [.line-through.red]#The system architecture must support horizontal scaling to accommodate increases in modpack size, graph complexity, and player demand.#
+* [.line-through.red]#The backend must be modular to allow improvements and extensions without redesigning core components.#
+* [.line-through.red]#Criteria for scalability beyond 30 simultaneous users remain to be researched and defined.#
  
 [.line-through.red]#Scalability: The architecture must support horizontal scaling to accommodate future increases in modpack size, graph complexity, and user demand.
 The backend must be modular to allow improvements and extensions without redesigning core components.#
  
-NOTE: Rewritten as bullet points and updated "user" → "player" where referring to domain context.
+[.line-through.red]#NOTE: Rewritten as bullet points and updated "user" → "player" where referring to domain context.#
  
-==== Resource Usage Requirements
+==== [.line-through.red]#Resource Usage Requirements#
  
-* Memory and CPU usage must remain within acceptable limits during graph construction and metadata processing, as specified in Section 2.3.4 (MR-8).
-* Monitoring and logging must be implemented to detect performance bottlenecks and abnormal resource consumption.
+* [.line-through.red]#Memory and CPU usage must remain within acceptable limits during graph construction and metadata processing, as specified in Section 2.3.4 (MR-8).#
+* [.line-through.red]#Monitoring and logging must be implemented to detect performance bottlenecks and abnormal resource consumption.#
  
 [.line-through.red]#Resource Usage: Memory and CPU usage must remain within acceptable limits during graph construction and metadata processing.
 Monitoring and logging must be implemented to detect performance bottlenecks and abnormal resource consumption.#
  
-NOTE: Rewritten as bullet points and cross-referenced with MR-8.
+[.line-through.red]#NOTE: Rewritten as bullet points and cross-referenced with MR-8.#
  
-==== Degradation Requirements
+==== [.line-through.red]#Degradation Requirements#
  
-* Under heavy load, the system may:
-** Increase response time up to 8 seconds for metadata lookups, and
-** Queue download operations.
-* The system must not terminate unexpectedly under heavy load conditions.
-* Under overload conditions or limited resources, the system must degrade gracefully by:
-** Prioritizing essential operations,
-** Applying request throttling, and
-** Avoiding system crashes.
+* [.line-through.red]#Under heavy load, the system may:#
+** [.line-through.red]#Increase response time up to 8 seconds for metadata lookups, and#
+** [.line-through.red]#Queue download operations.#
+* [.line-through.red]#The system must not terminate unexpectedly under heavy load conditions.#
+* [.line-through.red]#Under overload conditions or limited resources, the system must degrade gracefully by:#
+** [.line-through.red]#Prioritizing essential operations,#
+** [.line-through.red]#Applying request throttling, and#
+** [.line-through.red]#Avoiding system crashes.#
  
 [.line-through.red]#Stability and Graceful Degradation: Under overload conditions or limited resources, the system must degrade gracefully by prioritizing essential operations, applying request throttling, and avoiding system crashes.#
  
-NOTE: Merged into Degradation Requirements above and rewritten as measurable bullet points.
+[.line-through.red]#NOTE: Merged into Degradation Requirements above and rewritten as measurable bullet points.#
  
 [.line-through.red]#The backend system must meet measurable and realistic machine requirements to ensure efficient dependency graph construction, scalability, and reliability when processing Minecraft mod metadata.#
  
-NOTE: This introductory paragraph was redundant; content is covered by the structured requirements above and in Section 2.3.4.
+[.line-through.red]#NOTE: This introductory paragraph was redundant; content is covered by the structured requirements above and in Section 2.3.4.#
 
-=== 2.9 Software Architecture Design
+=== 2.8 Software Architecture Design
 
 The system follows a layered client - server architecture composed of four main components:
 
@@ -1165,6 +1230,25 @@ This subsystem is kept separate from upload handling, external API communication
 Such separation improves modularity, maintainability, and testability by isolating graph logic from other system concerns.
 
 Within the overall architecture, the Team A graph subsystem connects dependency resolution results with the frontend visualization layer.
+
+==== Team B External API integration and Dependency Resolution Subsystem
+
+Team B is responsible for the external API integration and dependency resolution subsystem. Its main role is to communicate with the Modrinth API to retrieve mod metadata, resolve declared dependencies, and detect missing or circular dependencies given a modpack configuration.
+
+The subsystem recieves a Modrinth project slug as its entry point and executes a sequence of API calls to retrieve the project ID, available versions, and declared dependencies. For each missing required dependency, the subsystem quieres the Modrinth API filtered by mod loader and Minecraft version to find a compatible version and extract its downloaded URL.
+
+Results are packaged into a structured ValidationResponse containing missing dependencies, circular dependency chains, and resolved dependency entries with download URL's. 
+
+This subsystem is kept separate from the graph and frontend visualization rendering, communicating with the rest of the system through well defined DTO's. Such seperation impoves modularity and makes the external API behaviour testable. 
+
+=== Team C Frontend Web App and Visualization: 
+
+  Team C is responsible for the frontend web application layer. This includes accepting mod/modpack uploads in .zip format from players through a file picker interface and transmitting the uploaded uploaded file to the backend via a POST requst to the /api/modpack/zip endpoint. 
+  
+  Upon recieving the processed dependency data from the backend, the frontend renders the dependency graph and displays resolved and unresolved dependencies to the player. 
+  
+  Team C also implements client-side dependency resolution logic, including functions for retrieving direct dependencies and reverse dependents from the graph data structure, and maintains the graph state used by the visualization layer. The subsystem validates uploaded file formats before transmission and provides real-time status feedback to the player during the upload process.
+
 
 == 3. Analytical
 
@@ -1533,3 +1617,12 @@ The system will be verified through functional testing and user validation.
 Verification will be considered successful when all functional requirements are met and no critical defects are present.
 
 --
+Verification will be considered successful when all functional requirements are met and no critical defects are present.
+
+=== 3.4 AI disclosure
+
+[.red]#This section discloses the use of AI tools in the development of the Minecraft Mod Dependency Visualizer.#
+
+During the development of the Minecraft Mod Dependency Visualizer, the team utilized AI assistant tools — including ChatGPT, Claude, Gemini, and others — to assist with code generation, debugging, and documentation. These tools were used to enhance productivity, allowing developers to quickly research, explore implementation approaches, debug issues, and optimize different aspects of the project in shorter amounts of time. All final implementations were reviewed, tested, and approved by the team's developers to ensure accuracy and alignment with project requirements. Any AI-generated content — whether documentation, or structural suggestions — was treated as a starting point rather than a final product, with each developer exercising their own judgment to adapt, modify, or rewrite it as needed.
+
+The team views AI tools as exactly that — tools. Much like a search engine or a reference manual, they exist to reduce friction and accelerate work, not to replace the critical thinking, problem-solving, and engineering judgment that define good software development. Every meaningful design and implementation decision in this project was made and validated by a human team member. AI assistance helped us work smarter and faster, but the understanding and ownership of the project remain entirely with the team.

@@ -27,6 +27,22 @@ const relColors = {
     conflict: "var(--red)"
 };
 
+/* ===== INITIALIZE GRAPH DATA ===== */
+// Load the data into the global graphData object from dependency-resolution.js
+loadGraphData({
+    nodes: nodes,
+    links: links
+});
+
+/* ===== STATE TRACKING ===== */
+let selectedNodeId = null;
+let highlightState = {
+    selectedNode: null,
+    directDependencies: new Set(),
+    directDependents: new Set(),
+    allRelated: new Set()
+};
+
 /* ===== DOM REFERENCES ===== */
 const container = document.getElementById("dependency-graph-canvas");
 const panel = document.getElementById("mod-info-panel");
@@ -44,9 +60,14 @@ if (!container) {
 }
 
 /* ===== DIMENSIONS ===== */
-const width = container.clientWidth || 800;
-const height = container.clientHeight || 650;
+let width = container.clientWidth || 800;
+let height = container.clientHeight || 650;
+
 let simulation = null;
+let svg = null;
+let mainGroup = null;
+let zoom = null;
+let graphLayoutUpdateTimeout = null;
 
 /* ===== JSON VALIDATION LOGIC ===== */
 
@@ -231,13 +252,13 @@ if (!validationResult.isValid) {
         return validationResult.nodeIds.has(link.source) && validationResult.nodeIds.has(link.target);
     });
 
-    const svg = d3.select("#dependency-graph-canvas")
+    svg = d3.select("#dependency-graph-canvas")
         .append("svg")
         .attr("width", width)
         .attr("height", height)
         .attr("viewBox", `0 0 ${width} ${height}`);
 
-    const mainGroup = svg.append("g");
+    mainGroup = svg.append("g");
 
     /* ===== PAN BOUNDS CONFIGURATION ===== */
     const PAN_BOUNDS = {
@@ -245,7 +266,7 @@ if (!validationResult.isValid) {
         maxPanY: 400
     };
 
-    const zoom = d3.zoom()
+    zoom = d3.zoom()
         .scaleExtent([0.2, 5])
         .on("zoom", (event) => {
             let transform = event.transform;
@@ -289,6 +310,33 @@ if (!validationResult.isValid) {
             .call(zoom.transform, d3.zoomIdentity);
     }
 
+    function updateGraphLayout() {
+        if (!container || !svg || !simulation) return;
+
+        width = container.clientWidth || 800;
+        height = container.clientHeight || 650;
+
+        svg
+            .attr("width", width)
+            .attr("height", height)
+            .attr("viewBox", `0 0 ${width} ${height}`);
+
+        simulation.force("center", d3.forceCenter(width / 2, height / 2));
+        simulation.alpha(0.3).restart();
+    }
+
+    function scheduleGraphLayoutUpdate() {
+        if (graphLayoutUpdateTimeout) {
+            clearTimeout(graphLayoutUpdateTimeout);
+        }
+
+        requestAnimationFrame(updateGraphLayout);
+
+        graphLayoutUpdateTimeout = setTimeout(() => {
+            updateGraphLayout();
+        }, 300);
+    }
+
     simulation = d3.forceSimulation(nodes)
         .force("link", d3.forceLink(renderableLinks).id(d => d.id).distance(150))
         .force("charge", d3.forceManyBody().strength(-500))
@@ -308,7 +356,7 @@ if (!validationResult.isValid) {
         .enter()
         .append("g")
         .attr("class", "node")
-        .on("click", (event, d) => showPanel(d))
+        .on("click", (event, d) => handleNodeClick(event, d))
         .call(
             d3.drag()
                 .on("start", dragstarted)
@@ -318,11 +366,13 @@ if (!validationResult.isValid) {
 
     node.append("circle")
         .attr("r", 10)
-        .attr("fill", d => d.type === "root" ? "var(--blue)" : "var(--panel)");
+        .attr("fill", d => d.type === "root" ? "var(--blue)" : "var(--panel)")
+        .attr("class", "node-circle");
 
     node.append("text")
         .attr("dx", 14)
         .attr("dy", ".35em")
+        .attr("class", "node-text")
         .text(d => d.id);
 
     if (validationResult.missingDependencies) {
@@ -347,12 +397,30 @@ if (!validationResult.isValid) {
     if (zoomOutBtn) zoomOutBtn.addEventListener("click", () => zoomBy(0.8));
     if (resetViewBtn) resetViewBtn.addEventListener("click", resetView);
 
+    window.addEventListener("resize", scheduleGraphLayoutUpdate);
+
+    document.addEventListener("sidebar-toggle", scheduleGraphLayoutUpdate);
+
+    const sidebarToggleBtn = document.getElementById("sidebarToggleBtn");
+    if (sidebarToggleBtn) {
+        sidebarToggleBtn.addEventListener("click", scheduleGraphLayoutUpdate);
+    }
+
     node.on('click', (event, d) => {
         if (searchInput) searchInput.value = '';
         if (clearBtn) clearBtn.style.display = 'none';
         if (searchResults) searchResults.classList.remove('show');
         currentSelectedNodeId = null;
         event.stopPropagation();
+    });
+
+    /* ===== RESET ON CANVAS CLICK ===== */
+    // Clicking empty canvas (outside nodes) resets highlighting
+    svg.on("click", function(event) {
+        // Only reset if clicking on the SVG background, not on a node
+        if (event.target === this) {
+            closePanel();
+        }
     });
 }
 
@@ -361,10 +429,59 @@ function getNodeId(endpoint) {
     return typeof endpoint === "object" ? endpoint.id : endpoint;
 }
 
+function buildHighlightState(selectedId) {
+    // Call the functions from dependency-resolution.js
+    const dependencies = new Set(getDependencies(selectedId));
+    const dependents = new Set(getDependents(selectedId));
+    
+    // All related nodes: selected + direct dependencies + dependents
+    const allRelated = new Set([selectedId, ...dependencies, ...dependents]);
+    
+    return {
+        selectedNode: selectedId,
+        directDependencies: dependencies,
+        directDependents: dependents,
+        allRelated: allRelated
+    };
+}
+
+function getNodeStateClass(nodeData, state) {
+    if (!state.selectedNode) return "normal";
+    
+    if (nodeData.id === state.selectedNode) {
+        return "selected";
+    }
+    
+    if (state.directDependencies.has(nodeData.id)) {
+        return "dependency";
+    }
+    
+    if (state.directDependents.has(nodeData.id)) {
+        return "dependent";
+    }
+    
+    return "dimmed";
+}
+
+function getLinkStateClass(linkData, state) {
+    if (!state.selectedNode) return "normal";
+    
+    const sourceId = getNodeId(linkData.source);
+    const targetId = getNodeId(linkData.target);
+    
+    // Link is related if it connects to any related node
+    const isRelated = state.allRelated.has(sourceId) && state.allRelated.has(targetId);
+    
+    return isRelated ? "highlighted" : "dimmed";
+}
 
 /* ===== PANEL + FADE LOGIC ===== */
 function showPanel(d) {
     if (!panel || !title || !status || !list) return;
+
+    // Update highlight state - uses getDependencies/getDependents from dependency-resolution.js
+    highlightState = buildHighlightState(d.id);
+    selectedNodeId = d.id;
 
     panel.style.display = "flex";
     title.textContent = d.id;
@@ -390,20 +507,20 @@ function showPanel(d) {
         }
     });
 
-    d3.selectAll(".node").classed("faded", true);
-    d3.selectAll(".link").classed("faded", true);
+    // Apply dynamic styling to nodes
+    d3.selectAll(".node").each(function(nodeData) {
+        const stateClass = getNodeStateClass(nodeData, highlightState);
+        d3.select(this).attr("class", `node ${stateClass}`);
+    });
 
-    d3.selectAll(".node")
-        .filter((n) => connected.has(n.id))
-        .classed("faded", false);
+    // Apply dynamic styling to links
+    d3.selectAll(".link").each(function(linkData) {
+        const stateClass = getLinkStateClass(linkData, highlightState);
+        d3.select(this).attr("class", `link ${stateClass}`);
+    });
 
-    d3.selectAll(".link")
-        .filter((l) => {
-            const sourceId = getNodeId(l.source);
-            const targetId = getNodeId(l.target);
-            return sourceId === d.id || targetId === d.id;
-        })
-        .classed("faded", false);
+    // Apply animation to selected node
+    d3.selectAll(".node-circle").filter((n) => n.id === d.id).classed("pulse", true);
 
     const connectedLinks = links.filter((l) => {
         const sourceId = getNodeId(l.source);
@@ -415,9 +532,10 @@ function showPanel(d) {
         const sourceId = getNodeId(l.source);
         const targetId = getNodeId(l.target);
         const neighbor = sourceId === d.id ? targetId : sourceId;
+        const direction = sourceId === d.id ? "DEPENDENCY" : "DEPENDENT";
 
         const li = document.createElement("li");
-        li.textContent = `${l.rel.toUpperCase()}: ${neighbor}`;
+        li.textContent = `${direction}: ${neighbor}`;
         li.classList.add(`dep-${l.rel}`);
         list.appendChild(li);
     });
@@ -427,8 +545,25 @@ function closePanel() {
     if (panel) {
         panel.style.display = "none";
     }
+
+    // Reset state
+    selectedNodeId = null;
+    highlightState = {
+        selectedNode: null,
+        directDependencies: new Set(),
+        directDependents: new Set(),
+        allRelated: new Set()
+    };
+
     d3.selectAll(".node").classed("faded", false);
     d3.selectAll(".link").classed("faded", false);
+
+    // Reset node styling
+    d3.selectAll(".node").attr("class", "node normal");
+    d3.selectAll(".node-circle").classed("pulse", false);
+
+    // Reset link styling
+    d3.selectAll(".link").attr("class", "link normal");
 }
 
 window.closePanel = closePanel;
@@ -436,6 +571,19 @@ window.closePanel = closePanel;
 /* ===== BUTTON EVENTS ===== */
 if (closePanelBtn) {
     closePanelBtn.addEventListener("click", closePanel);
+}
+
+function handleNodeClick(event, d) {
+    event.stopPropagation();
+    
+    // Toggle: clicking same node twice clears selection
+    if (selectedNodeId === d.id) {
+        closePanel();
+        return;
+    }
+    
+    selectedNodeId = d.id;
+    showPanel(d);
 }
 
 /* ===== DRAG ===== */
@@ -509,18 +657,26 @@ const clearBtn = document.getElementById('search-clear-btn');
 const searchResults = document.getElementById('search-results');
 
 let currentSelectedNodeId = null;
+let searchResultIndex = -1;
+let lastMatchingNodes = [];
 
 function getNodeList() {
     return nodes || [];
 }
 
 function updateSearchResults(searchTerm) {
+    if (!searchResults) return;
+
     if (!searchTerm || searchTerm.trim() === '') {
         searchResults.classList.remove('show');
+        lastMatchingNodes = [];
+        searchResultIndex = -1;
         return;
     }
 
     const matchingNodes = getMatchingNodes(getNodeList(), searchTerm);
+    lastMatchingNodes = matchingNodes;
+    searchResultIndex = -1;
 
     if (matchingNodes.length === 0) {
         searchResults.classList.remove('show');
@@ -528,16 +684,20 @@ function updateSearchResults(searchTerm) {
     }
 
     searchResults.innerHTML = '';
-    matchingNodes.forEach(node => {
+    matchingNodes.forEach((node, idx) => {
         const item = document.createElement('div');
         item.className = 'search-result-item';
         item.textContent = node.id;
         item.setAttribute('role', 'option');
+        item.setAttribute('tabindex', '-1');
+        item.setAttribute('data-index', idx);
+        item.title = node.id;
         item.onclick = () => {
             selectNode(node.id);
             searchInput.value = node.id;
             searchResults.classList.remove('show');
             clearBtn.style.display = 'block';
+            searchInput.focus();
         };
         searchResults.appendChild(item);
     });
@@ -553,6 +713,8 @@ function highlightNode(nodeId) {
 }
 
 function zoomToNode(nodeId) {
+    if (!svg || !zoom) return;
+
     const nodeData = getNodeList().find(n => n.id === nodeId);
     if (!nodeData || nodeData.x === undefined || nodeData.y === undefined) {
         console.warn(`Node ${nodeId} not found or has no position data`);
@@ -615,6 +777,8 @@ function resetVisuals() {
     d3.selectAll('.link').classed('faded', false);
     currentSelectedNodeId = null;
 
+    if (!svg || !zoom) return;
+
     svg.transition()
         .duration(300)
         .call(zoom.transform, d3.zoomIdentity);
@@ -637,7 +801,10 @@ function clearSearch() {
     searchInput.value = '';
     clearBtn.style.display = 'none';
     searchResults.classList.remove('show');
+    lastMatchingNodes = [];
+    searchResultIndex = -1;
     resetVisuals();
+    searchInput.focus();
 }
 
 function handleSearchInput(e) {
@@ -656,22 +823,58 @@ function handleSearchInput(e) {
 }
 
 function handleSearchKeypress(e) {
-    if (e.key === 'Enter' && searchInput.value.trim()) {
-        const exactMatch = findNodeByQuery(getNodeList(), searchInput.value);
-        if (exactMatch) {
-            selectNode(exactMatch.id);
+    const items = searchResults.querySelectorAll('.search-result-item');
+    if (e.key === 'ArrowDown' && lastMatchingNodes.length > 0) {
+        e.preventDefault();
+        searchResultIndex = (searchResultIndex + 1) % lastMatchingNodes.length;
+        items.forEach((el, idx) => {
+            el.classList.toggle('active', idx === searchResultIndex);
+            if (idx === searchResultIndex) el.focus();
+        });
+    } else if (e.key === 'ArrowUp' && lastMatchingNodes.length > 0) {
+        e.preventDefault();
+        searchResultIndex = (searchResultIndex - 1 + lastMatchingNodes.length) % lastMatchingNodes.length;
+        items.forEach((el, idx) => {
+            el.classList.toggle('active', idx === searchResultIndex);
+            if (idx === searchResultIndex) el.focus();
+        });
+    } else if (e.key === 'Enter') {
+        if (searchResultIndex >= 0 && lastMatchingNodes[searchResultIndex]) {
+            selectNode(lastMatchingNodes[searchResultIndex].id);
+            searchInput.value = lastMatchingNodes[searchResultIndex].id;
             searchResults.classList.remove('show');
+            clearBtn.style.display = 'block';
+        } else if (searchInput.value.trim()) {
+            const exactMatch = findNodeByQuery(getNodeList(), searchInput.value);
+            if (exactMatch) {
+                selectNode(exactMatch.id);
+                searchResults.classList.remove('show');
+            }
         }
+    } else if (e.key === 'Escape') {
+        clearSearch();
     }
 }
 
+
 if (searchInput) {
     searchInput.addEventListener('input', handleSearchInput);
-    searchInput.addEventListener('keypress', handleSearchKeypress);
+    searchInput.addEventListener('keydown', handleSearchKeypress);
+    searchInput.setAttribute('aria-autocomplete', 'list');
+    searchInput.setAttribute('aria-controls', 'search-results');
+    searchInput.setAttribute('role', 'combobox');
 }
 
 if (clearBtn) {
     clearBtn.addEventListener('click', clearSearch);
+    clearBtn.tabIndex = 0;
+}
+
+if (searchResults) {
+    searchResults.addEventListener('mousedown', e => {
+        // Prevent input blur when clicking result
+        e.preventDefault();
+    });
 }
 
 document.addEventListener('click', (e) => {
@@ -798,3 +1001,121 @@ function exportGraphToPNG(svgSelector, fileName) {
 
     image.src = url;
 }
+/* SIDEBAR TOGGLE LOGIC */
+document.addEventListener("DOMContentLoaded", () => {
+    const dashboard = document.querySelector(".dashboard-container");
+    const sidebar = document.getElementById("filterSidebar");
+    const closeBtn = document.getElementById("sidebarToggleBtn");
+    const reopenBtn = document.getElementById("sidebarReopenBtn");
+    const collapseStorageKey = "graphSidebarCollapsed";
+    const focusableSelector =
+        "a[href], button, input, select, textarea, [tabindex]:not([tabindex='-1'])";
+
+    if (!dashboard || !sidebar) return;
+
+    const resizeGraphAfterAnimation = () => {
+        requestAnimationFrame(() => {
+            window.dispatchEvent(new Event("resize"));
+            document.dispatchEvent(new Event("sidebar-toggle"));
+        });
+
+        setTimeout(() => {
+            window.dispatchEvent(new Event("resize"));
+            document.dispatchEvent(new Event("sidebar-toggle"));
+        }, 320);
+    };
+
+    const setSidebarFocusableState = (isFocusable) => {
+        const focusables = sidebar.querySelectorAll(focusableSelector);
+
+        focusables.forEach((element) => {
+            if (element === closeBtn) return;
+
+            if (!isFocusable) {
+                if (!element.hasAttribute("data-prev-tabindex")) {
+                    const previous = element.getAttribute("tabindex");
+                    element.setAttribute("data-prev-tabindex", previous === null ? "" : previous);
+                }
+                element.setAttribute("tabindex", "-1");
+                return;
+            }
+
+            if (!element.hasAttribute("data-prev-tabindex")) {
+                element.removeAttribute("tabindex");
+                return;
+            }
+
+            const previousTabIndex = element.getAttribute("data-prev-tabindex");
+            if (previousTabIndex === "") {
+                element.removeAttribute("tabindex");
+            } else {
+                element.setAttribute("tabindex", previousTabIndex);
+            }
+            element.removeAttribute("data-prev-tabindex");
+        });
+    };
+
+    const syncSidebarState = (collapsed, moveFocusTarget) => {
+        dashboard.classList.toggle("sidebar-collapsed", collapsed);
+        sidebar.setAttribute("aria-hidden", String(collapsed));
+        closeBtn?.setAttribute("aria-expanded", String(!collapsed));
+        reopenBtn?.setAttribute("aria-expanded", String(!collapsed));
+
+        if (collapsed) {
+            sidebar.setAttribute("inert", "");
+        } else {
+            sidebar.removeAttribute("inert");
+        }
+
+        setSidebarFocusableState(!collapsed);
+        localStorage.setItem(collapseStorageKey, String(collapsed));
+        resizeGraphAfterAnimation();
+
+        if (moveFocusTarget) {
+            moveFocusTarget.focus();
+        }
+    };
+
+    const collapsedByDefault = localStorage.getItem(collapseStorageKey) === "true";
+    syncSidebarState(collapsedByDefault);
+
+    if (closeBtn) {
+        closeBtn.addEventListener("click", () => {
+            const activeElement = document.activeElement;
+            const moveFocus = sidebar.contains(activeElement) ? reopenBtn : null;
+            syncSidebarState(true, moveFocus);
+        });
+    }
+
+    if (reopenBtn) {
+        reopenBtn.addEventListener("click", () => {
+            syncSidebarState(false, closeBtn || null);
+        });
+    }
+});
+/* ===== THEME TOGGLE LOGIC ===== */
+document.addEventListener("DOMContentLoaded", () => {
+    const themeToggle = document.getElementById("themeToggle");
+    const savedTheme = localStorage.getItem("theme");
+
+    if (savedTheme === "light") {
+        document.body.classList.add("light-theme");
+        if (themeToggle) themeToggle.checked = true;
+    }
+
+    if (!themeToggle) return;
+
+    themeToggle.addEventListener("change", () => {
+        if (themeToggle.checked) {
+            document.body.classList.add("light-theme");
+            localStorage.setItem("theme", "light");
+        } else {
+            document.body.classList.remove("light-theme");
+            localStorage.setItem("theme", "dark");
+        }
+
+        setTimeout(() => {
+            window.dispatchEvent(new Event("resize"));
+        }, 200);
+    });
+});

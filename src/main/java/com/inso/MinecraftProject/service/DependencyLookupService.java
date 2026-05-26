@@ -3,8 +3,14 @@ package com.inso.MinecraftProject.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.inso.MinecraftProject.dto.MissingDependencyDto;
 import com.inso.MinecraftProject.dto.ResolvedDependencyDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 
+
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
@@ -18,12 +24,18 @@ import java.util.Optional;
 @Service
 public class DependencyLookupService {
 
-    private final DependencyLookupCache<Optional<ResolvedDependencyDto>> cache;
+    private static final Logger logger = LoggerFactory.getLogger(DependencyLookupService.class);
+
+    private final DependencyLookupCache<ResolvedDependencyDto> cache;
     private final ModrinthServiceWrapper modrinthServiceWrapper;
 
-    public DependencyLookupService(ModrinthServiceWrapper modrinthServiceWrapper) {
-        this.cache = new DependencyLookupCache<>();
+    public DependencyLookupService(
+            ModrinthServiceWrapper modrinthServiceWrapper,
+            @Value("${cache.dependency.ttl-minutes:10}")long ttlMinutes) {
+        this.cache = new DependencyLookupCache<>(Duration.ofMinutes(ttlMinutes));
         this.modrinthServiceWrapper = modrinthServiceWrapper;
+            
+
     }
 
     public List<ResolvedDependencyDto> resolveDependencies(List<MissingDependencyDto> dependencies) {
@@ -43,11 +55,38 @@ public class DependencyLookupService {
 
         String key = buildCacheKey(dependency);
 
-        return cache.get(key).orElseGet(() -> {
-            Optional<ResolvedDependencyDto> result = fetchFromExternalSource(dependency);
-            cache.put(key, result);
-            return result;
-        });
+        Optional<ResolvedDependencyDto> cached = cache.get(key);
+        if (cached.isPresent()) {
+            ResolvedDependencyDto dto = cached.get();
+            if (isValidCacheEntry(dto)) {
+                return cached;
+            }
+            logger.debug("Invalidating cache entry with invalid download links: {}", key);
+            cache.invalidate(key);
+        }
+
+        Optional<ResolvedDependencyDto> result = fetchFromExternalSource(dependency);
+
+        if (result.isPresent() && isValidCacheEntry(result.get())) {
+            cache.put(key, result.get());
+        } else {
+            logger.debug("Not caching invalid or empty result for: {}", key);
+        }
+
+        return result;
+    }
+
+    private boolean isValidCacheEntry(ResolvedDependencyDto dto) {
+        if (dto == null) {
+            return false;
+        }
+        if (dto.links() == null || dto.links().isEmpty()) {
+            return false;
+        }
+        if (dto.preferred() == null || dto.preferred().isBlank()) {
+            return false;
+        }
+        return true;
     }
 
     public Optional<ResolvedDependencyDto> resolveDependencyById(String projectId) {
@@ -247,5 +286,10 @@ public class DependencyLookupService {
 
     private String defaultString(String value) {
         return value == null ? "" : value;
+    }
+
+    @Scheduled(fixedRateString = "${cache.dependency.cleanup-interval-ms:60000}")
+    public void evictExpiredCacheEntries() {
+        cache.evictExpired();
     }
 }

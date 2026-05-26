@@ -1,4 +1,4 @@
-package com.inso.MinecraftProject.service;
+package com.inso.MinecraftProject.controller;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +16,9 @@ import com.inso.MinecraftProject.dto.MissingDependencyDto;
 import com.inso.MinecraftProject.dto.ResolvedDependencyDto;
 import com.inso.MinecraftProject.dto.ValidationResponse;
 import com.inso.MinecraftProject.entity.Mod;
+import com.inso.MinecraftProject.service.DependencyLookupService;
+import com.inso.MinecraftProject.service.ModRepository;
+import com.inso.MinecraftProject.service.resolver.DependencyResolverService;
 
 @RestController
 public class DependencyController {
