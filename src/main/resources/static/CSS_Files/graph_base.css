@@ -300,7 +300,7 @@ body {
     border-radius: 0;
     cursor: pointer;
     box-shadow:
-        inset 2px 2px 0 #9a9a9a
+        inset 2px 2px 0 #9a9a9a,
         inset -2px -2px 0 #3a3a3a;
     transition: 0.12s ease;
 }
@@ -325,8 +325,7 @@ body {
     background: #4AA23F;
     box-shadow:
         inset 2px 2px 0 #6BC35F,
-
-        inset -2px -2px 0 #6BC35F,
+        inset -2px -2px 0 #6BC35F;
 }
 
 .switch input:checked + .slider::before {
