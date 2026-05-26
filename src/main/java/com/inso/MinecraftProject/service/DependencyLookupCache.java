@@ -82,6 +82,7 @@ public class DependencyLookupCache<T> {
     public int size() {
         return cache.size();
     }
+
     private static class CacheEntry<T> {
         T value;
         long expiresAt;

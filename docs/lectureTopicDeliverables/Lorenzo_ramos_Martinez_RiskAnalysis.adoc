@@ -1,0 +1,65 @@
+= Risk Analysis in the ModrinthServiceWrapper
+INSO 4101 — Lecture Topic Task | Lorenzo Ramos Martinez
+
+== 1. Risk Identification
+
+The lecture defines a risk as an uncertain factor whose occurrence may result in loss of satisfaction of a corresponding objective. The ModrinthServiceWrapper depends entirely on the Modrinth API — if that external service is unavailable, every feature in the system that relies on mod data fails with no fallback.
+
+[cols="1,2", options="header"]
+|===
+| Field | Description
+
+| Risk
+| Modrinth API unavailability or timeout
+
+| Type
+| Product-related — failure to deliver service
+
+| Condition
+| Modrinth servers are down or unreachable at request time
+
+| Affected objective
+| The system must be able to retrieve mod and dependency data on demand
+|===
+
+== 2. Risk Assessment
+
+The lecture distinguishes likelihood of occurrence from severity of consequences. Both are estimated here qualitatively.
+
+[cols="1,1,2", options="header"]
+|===
+| Dimension | Estimate | Justification
+
+| Risk likelihood
+| Unlikely
+| Modrinth is a stable public API but any external service can have outages
+
+| Consequence
+| All mod lookups return errors; no data is served to the user
+|
+
+| Consequence likelihood
+| Certain (if risk occurs)
+| The wrapper has no fallback — any failed call propagates as an exception
+
+| Severity
+| High
+| Core functionality of the project is completely unavailable during an outage
+|===
+
+== 3. Risk Control
+
+The lecture introduces risk reduction tactics. The most applicable here is reducing consequence likelihood: add a requirement that ensures the impact of the risk is contained even if the risk itself occurs.
+
+[cols="1,2,2", options="header"]
+|===
+| Tactic | Countermeasure | New Requirement
+
+| Reduce consequence likelihood
+| Return a cached response if one exists when a live API call fails
+| The wrapper must serve the last known cached result when the Modrinth API is unreachable
+
+| Reduce risk likelihood
+| Retry the request once before failing
+| The wrapper must retry a failed request up to one time before propagating the error
+|===

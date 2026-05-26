@@ -30,12 +30,21 @@
 
         <section class="card dependencies-card">
             <h2>Detected Missing Dependencies</h2>
-            <input
-                type="text"
-                id="dependency-search"
-                class="dependency-search"
-                placeholder="Search dependencies..."
-            />
+            <div class="search-container">
+                <input
+                    type="text"
+                    id="dependency-search"
+                    class="dependency-search"
+                    placeholder="Search dependencies..."
+                />
+
+                <button
+                    id="clear-search-button"
+                    class="clear-search-button"
+                    type="button">
+                    ✕
+                </button>
+            </div>
 
             <div id="dependency-summary" class="dependency-summary" hidden>
                 <div class="summary-item">

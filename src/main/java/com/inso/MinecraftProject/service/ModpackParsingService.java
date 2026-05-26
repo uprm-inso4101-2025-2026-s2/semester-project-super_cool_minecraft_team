@@ -1,114 +1,78 @@
 package com.inso.MinecraftProject.service;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
+import java.util.Locale;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.zip.ZipFile;
 
 import org.springframework.stereotype.Service;
 
 import com.inso.MinecraftProject.dto.DTO;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.inso.MinecraftProject.dto.Edge;
+import com.inso.MinecraftProject.entity.Mod;
 
 @Service
 public class ModpackParsingService {
 
-    public DTO parseModpack() {
-        return DTO.builder()
-                .mods(List.of())
-                .edges(List.of())
-                .missingDependencies(null)
-                .resolvedDependencies(null)
-                .build();
+    private static final Set<String> EXCLUDED_MOD_IDS = Set.of("minecraft", "fabric-api", "fabricloader", "java");
+
+    /**
+     * MAIN FUNCTION:
+     * Parses a single mod jar pack and returns DTO graph.
+     */
+    public DTO parseModpack(ZipFile zipFile) {
+        ZipProcessingService processing = new ZipProcessingService();
+        DTO dto = processing.processModpackZip(zipFile);
+        return excludeRuntimeDependencies(dto);
     }
 
-    //Function that return a List with 3 Lists inside that have all the data
-    public List<List<String>> ReadJson(JarFile jarFile){
+    private DTO excludeRuntimeDependencies(DTO dto) {
+        List<Mod> filteredMods = dto.getMods().stream()
+                .filter(mod -> !isExcludedMod(mod.getId()))
+                .peek(this::removeExcludedFromRelationships)
+                .collect(Collectors.toCollection(ArrayList::new));
 
-        //Creates List for store results
-        List<String> Depends = new ArrayList<>();
-        List<String> Breaks = new ArrayList<>();
-        List<String> Conflicts = new ArrayList<>();
-        List<List<String>> Results = new ArrayList<>();
+        List<Edge> filteredEdges = dto.getEdges().stream()
+                .filter(edge -> !isExcludedMod(edge.getFrom().getId())
+                        && !isExcludedMod(edge.getTo().getId()))
+                .collect(Collectors.toCollection(ArrayList::new));
 
-        //Try and Catch to go around Null errors
-        try {
+        List<Mod> filteredMissing = dto.getMissingDependencies().stream()
+                .filter(mod -> !isExcludedMod(mod.getId()))
+                .collect(Collectors.toCollection(ArrayList::new));
 
-            //Get info in jarFile
-            Enumeration<JarEntry> entries = jarFile.entries();
+        List<String> filteredResolved = dto.getResolvedDependencies().stream()
+                .filter(id -> !isExcludedMod(id))
+                .collect(Collectors.toCollection(ArrayList::new));
 
-            //Jackson parser for reading JSON
-            ObjectMapper mapper = new ObjectMapper();
+        dto.setMods(filteredMods);
+        dto.setEdges(filteredEdges);
+        dto.setMissingDependencies(filteredMissing);
+        dto.setResolvedDependencies(filteredResolved);
 
-            //Go searching the .Json
-            while (entries.hasMoreElements()) {
-                JarEntry entry = entries.nextElement();
+        return dto;
+    }
 
-                // When .Json is found go into the file
-                if (entry.getName().equals("fabric.mod.json")) {
+    private void removeExcludedFromRelationships(Mod mod) {
+        mod.setDepends(filterRelationshipList(mod.getDepends()));
+        mod.setBreaks(filterRelationshipList(mod.getBreaks()));
+        mod.setSuggests(filterRelationshipList(mod.getSuggests()));
+        mod.setRecommends(filterRelationshipList(mod.getRecommends()));
+        mod.setConflicts(filterRelationshipList(mod.getConflicts()));
+    }
 
-                    InputStream is = jarFile.getInputStream(entry);
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-
-                    StringBuilder content = new StringBuilder();
-                    String line;
-
-                    while ((line = reader.readLine()) != null) {
-                        content.append(line);
-                    }
-
-                    reader.close();
-
-                    try {
-                        //Parse JSON using Jackson
-                        JsonNode json = mapper.readTree(content.toString());
-
-                        //Extract "breaks" and add them to Breaks List
-                        if (json.has("breaks")) {
-                            JsonNode breaksNode = json.get("breaks");
-                            breaksNode.fieldNames().forEachRemaining(Breaks::add);
-                        }
-
-                        //Extract "conflicts" and add them to Conflict List
-                        if (json.has("conflicts")) {
-                            JsonNode conflictsNode = json.get("conflicts");
-                            conflictsNode.fieldNames().forEachRemaining(Conflicts::add);
-                        }
-
-                        //Extract "depends" and add them to Depends List
-                        if (json.has("depends")) {
-                            JsonNode dependsNode = json.get("depends");
-                            dependsNode.fieldNames().forEachRemaining(Depends::add);
-                        }
-
-                    } catch (Exception e) {
-                        // Not all JSON files are mod metadata, ignore this part
-                    }
-
-                    //Stop after finding metadata file
-                    break;
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
+    private List<Mod> filterRelationshipList(List<Mod> relationships) {
+        if (relationships == null) {
+            return new ArrayList<>();
         }
+        return relationships.stream()
+                .filter(rel -> !isExcludedMod(rel.getId()))
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
 
-        //Add the Lists to Result
-        System.out.println(Depends);
-        System.out.println(Conflicts);
-        System.out.println(Breaks);
-
-        Results.add(Depends);
-        Results.add(Conflicts);
-        Results.add(Breaks);
-
-        //Returns the List with all the needed Lists
-        return Results;
+    private boolean isExcludedMod(String modId) {
+        return modId != null && EXCLUDED_MOD_IDS.contains(modId.toLowerCase(Locale.ROOT));
     }
 }
