@@ -357,6 +357,8 @@ if (!validationResult.isValid) {
         .enter()
         .append("g")
         .attr("class", "node")
+        .on("mouseover", function(event, d) { handleNodeHover(event, d, true); })
+        .on("mouseout", function(event, d) { handleNodeHover(event, d, false); })
         .on("click", (event, d) => handleNodeClick(event, d))
         .call(
             d3.drag()
@@ -625,6 +627,37 @@ function dragended(event, d) {
     if (!event.active) simulation.alphaTarget(0);
     d.fx = null;
     d.fy = null;
+}
+
+function handleNodeHover(event, d, isHovered) {
+    if (selectedNodeId) return; // Do NOT hover-highlight if a node is selected
+
+    if (isHovered) {
+        const dependencies = new Set(getDependencies(d.id));
+        const dependents = new Set(getDependents(d.id));
+        const allRelated = new Set([d.id, ...dependencies, ...dependents]);
+
+        // Highlight nodes
+        d3.selectAll(".node").each(function(nodeData) {
+            d3.select(this)
+                .classed("hovered", allRelated.has(nodeData.id))
+                .classed("dimmed", !allRelated.has(nodeData.id));
+        });
+
+        // Highlight links
+        d3.selectAll(".link").each(function(linkData) {
+            const sourceId = getNodeId(linkData.source);
+            const targetId = getNodeId(linkData.target);
+            const isRelated = allRelated.has(sourceId) && allRelated.has(targetId);
+            d3.select(this)
+                .classed("hovered", isRelated)
+                .classed("dimmed", !isRelated);
+        });
+    } else {
+        // Remove all hover classes if not selected
+        d3.selectAll(".node").classed("hovered", false).classed("dimmed", false);
+        d3.selectAll(".link").classed("hovered", false).classed("dimmed", false);
+    }
 }
 
 /* ===== SEARCH LOGIC + NODE MATCHING ===== */

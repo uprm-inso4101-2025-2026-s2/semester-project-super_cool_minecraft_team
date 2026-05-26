@@ -1315,4 +1315,25 @@ svg {
   background: transparent;
 }
 
+.node.hovered .node-circle,
+.node.selected .node-circle {
+    stroke: var(--yellow);
+    stroke-width: 4px;
+}
+
+.node.hovered .node-circle {
+    filter: drop-shadow(0 0 8px var(--yellow));
+}
+
+.link.hovered {
+    stroke: var(--yellow) !important;
+    stroke-width: 4px !important;
+}
+
+.node.dimmed,
+.link.dimmed {
+    opacity: 0.2;
+    filter: none;
+}
+
 
