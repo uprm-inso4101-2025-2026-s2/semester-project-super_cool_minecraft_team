@@ -8,11 +8,11 @@
                     { id: "CoreMod", type: "root", status: "compatible" },
                     { id: "JEI", type: "mod", status: "compatible" },
                     { id: "Optifine", type: "mod", status: "compatible" },
-                    { id: "OldPhysics", type: "mod", status: "incompatible" },
-                    { id: "Patchouli", type: "mod", status: "compatible" },
-                    { id: "Botania", type: "mod", status: "compatible" },
-                    { id: "ExtraLib", type: "mod", status: "compatible" },
-                    { id: "Renderer", type: "mod", status: "compatible" }
+                    { id: "OldPhysics", type: "mod", status: "incompatible", installed: true },
+                    { id: "Patchouli", type: "mod", status: "compatible" , installed: true},
+                    { id: "Botania", type: "mod", status: "compatible", installed : true },
+                    { id: "ExtraLib", type: "mod", status: "compatible" ,},
+                    { id: "Renderer", type: "mod", status: "compatible", installed: true }
                 ],
                 links: [
                     { source: "CoreMod", target: "JEI", rel: "required" },
@@ -44,16 +44,16 @@
         // default: small dataset
         return {
             nodes: [
-                { id: "CoreMod", type: "root", status: "compatible" },
+                { id: "CoreMod", type: "root", status: "compatible", installed: true },
                 { id: "JEI", type: "mod", status: "compatible" },
                 { id: "Optifine", type: "mod", status: "compatible" },
-                { id: "OldPhysics", type: "mod", status: "incompatible" },
-                { id: "Patchouli", type: "mod", status: "compatible" }
+                { id: "OldPhysics", type: "mod", status: "incompatible", installed: true },
+                { id: "Patchouli", type: "mod", status: "compatible" , installed: true}
             ],
             links: [
                 { source: "CoreMod", target: "JEI", rel: "required" },
                 { source: "CoreMod", target: "Optifine", rel: "optional" },
-                { source: "CoreMod", target: "OldPhysics", rel: "conflict" },
+                { source: "CoreMod", target: "OldPhysics", rel: "conflict",  },
                 { source: "CoreMod", target: "Patchouli", rel: "required" }
             ]
         };

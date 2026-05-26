@@ -300,7 +300,7 @@ body {
     border-radius: 0;
     cursor: pointer;
     box-shadow:
-        inset 2px 2px 0 #9a9a9a
+        inset 2px 2px 0 #9a9a9a,
         inset -2px -2px 0 #3a3a3a;
     transition: 0.12s ease;
 }
@@ -325,8 +325,7 @@ body {
     background: #4AA23F;
     box-shadow:
         inset 2px 2px 0 #6BC35F,
-
-        inset -2px -2px 0 #6BC35F,
+        inset -2px -2px 0 #6BC35F;
 }
 
 .switch input:checked + .slider::before {
@@ -526,7 +525,7 @@ svg:active {
 
 /* Graph styling */
 .node text {
-    fill: var(--text);
+    fill: #ffffff;
     font-size: 0.72rem;
     pointer-events: none;
 }
@@ -722,9 +721,9 @@ svg:active {
     top: 20px;
     z-index: 10; /* Ensures it sits above the D3 canvas */
     
-    background-color: #2c3e50; 
-    color: #ffffff;
-    border: 1px solid #34495e;
+    background-color: var(--panel);
+    color: var(--text);
+    border: 1px solid var(--input-border);
     padding: 10px 16px;
     font-size: 0.9rem;
     font-weight: 600;
@@ -738,14 +737,16 @@ svg:active {
 }
 
 /* Hover & Interactive States */
-.btn-export-top:hover {
-    background-color: #34495e;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-    transform: translateY(-1px);
+.btn-export-top {
+    background-color: var(--panel) !important;
+    color: var(--text) !important;
+    border: 1px solid var(--input-border) !important;
 }
 
-.btn-export-top:active {
-    transform: translateY(1px);
+.btn-export-top:hover {
+    background-color: var(--input-bg) !important;
+    color: var(--text) !important;
+    border-color: var(--green) !important;
 }
 
 /* Zoom controls */
@@ -1093,12 +1094,12 @@ svg:active {
    ========================================================================== */
 
 .mc-navbar {
-    background: #000000; 
+    background: var(--bg);
     display: flex;
     justify-content: space-between; 
     align-items: center; 
     padding: 16px 32px;
-    border-bottom: 1px solid #222222; 
+    border-bottom: 1px solid var(--line);
 }
 
 /* Brand Text Grouping */
@@ -1111,14 +1112,14 @@ svg:active {
 .project-title {
     font-family: 'Monocraft', monospace;
     font-size: 1.5rem;
-    color: #ffffff;
+    color: var(--text);
     margin: 0;
 }
 
 .project-subtitle {
     font-family: 'Monocraft', monospace;
     font-size: 0.8rem;
-    color: #888888;
+    color: var(--muted);
     margin: 0;
 }
 
@@ -1135,15 +1136,15 @@ svg:active {
     background: transparent;
     border: none;
     border-radius: 4px;
-    color: #aaaaaa;
+    color: var(--muted);
     cursor: pointer;
     font-size: 0.95rem;
     transition: color 0.2s ease, background-color 0.2s ease;
 }
 
 .mc-button:hover {
-    color: #ffffff;
-    background: rgb(74, 162, 63); 
+    color: var(--text);
+    background: var(--green);
 }
 
 
@@ -1184,15 +1185,15 @@ svg:active {
     height: 42px;
     border: none;
     border-radius: 8px;
-    background-color: #1f2937;
-    color: white;
+    background-color: var(--panel);
+    color: var(--text);
     font-size: 20px;
     cursor: pointer;
     flex-shrink: 0;
 }
 
 .sidebar-toggle-btn:hover {
-    background-color: #374151;
+    background-color: var(--input-bg);
 }
 
 .dashboard-container.sidebar-collapsed .sidebar {
@@ -1210,8 +1211,8 @@ svg:active {
     height: 42px;
     border: none;
     border-radius: 8px;
-    background-color: #1f2937;
-    color: white;
+    background-color: var(--panel);
+    color: var(--text);
     font-size: 20px;
     cursor: pointer;
     display: none;
@@ -1220,7 +1221,7 @@ svg:active {
 }
 
 .sidebar-reopen-btn:hover {
-    background-color: #374151;
+    background-color: var(--input-bg);
 }
 
 .sidebar-reopen-btn:focus-visible,
@@ -1318,4 +1319,25 @@ svg {
 #dependency-graph-canvas .optional-hidden {
     display: none !important;
 }
+.node.hovered .node-circle,
+.node.selected .node-circle {
+    stroke: var(--yellow);
+    stroke-width: 4px;
+}
+
+.node.hovered .node-circle {
+    filter: drop-shadow(0 0 8px var(--yellow));
+}
+
+.link.hovered {
+    stroke: var(--yellow) !important;
+    stroke-width: 4px !important;
+}
+
+.node.dimmed,
+.link.dimmed {
+    opacity: 0.2;
+    filter: none;
+}
+
 
