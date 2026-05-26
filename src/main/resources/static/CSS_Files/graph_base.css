@@ -116,6 +116,7 @@
     --radius-lg: 16px;
 
     --transition: 0.2s ease;
+    --sidebar-expanded-width: 360px;
 }
 
 * {
@@ -175,7 +176,7 @@ body {
 .dashboard-container {
     flex: 1;
     display: grid;
-    grid-template-columns: 360px 1fr;
+    grid-template-columns: var(--sidebar-expanded-width) 1fr;
     min-height: calc(100vh - 78px);
 }
 
@@ -187,6 +188,7 @@ body {
     flex-direction: column;
     gap: 20px;
     border-right: 1px solid var(--line-soft);
+    max-width: var(--sidebar-expanded-width);
 }
 
 .sidebar-group {
@@ -277,8 +279,8 @@ body {
 /* Switch */
 .switch {
     position: relative;
-    width: 42px;
-    height: 24px;
+    width: 58px;
+    height: 30px;
     display: inline-block;
     flex-shrink: 0;
 }
@@ -293,48 +295,54 @@ body {
 .slider {
     position: absolute;
     inset: 0;
-    background: #5b5f6f;
-    border-radius: 999px;
+    background: #6f6f6f;
+    border: 3px solid #111111;
+    border-radius: 0;
     cursor: pointer;
-    transition: var(--transition);
+    box-shadow:
+        inset 2px 2px 0 #9a9a9a,
+        inset -2px -2px 0 #3a3a3a;
+    transition: 0.12s ease;
 }
 
 .slider::before {
     content: "";
     position: absolute;
     width: 18px;
-    height: 18px;
-    left: 3px;
-    top: 3px;
-    border-radius: 50%;
-    background: #f2f2f2;
-    transition: var(--transition);
+    height: 26px;
+    left: -2px;
+    top: -4px;
+    background: #e8e8e8;
+    border: 3px solid #111111;
+    border-radius: 0;
+    box-shadow:
+        inset 2px 2px 0 #ffffff,
+        inset -2px -2px 0 #9b9b9b;
+    transition: 0.12s ease;
 }
 
 .switch input:checked + .slider {
-    background: var(--green);
+    background: #4AA23F;
+    box-shadow:
+        inset 2px 2px 0 #6BC35F,
+        inset -2px -2px 0 #6BC35F;
 }
 
 .switch input:checked + .slider::before {
-    transform: translateX(18px);
+    transform: translateX(30px);
+}
+.switch:hover .slider {
+    filter: brightness(1.15);
 }
 
-.sidebar-footer {
-    margin-top: auto;
-    padding-top: 4px;
+.switch:active .slider::before {
+    transform: scale(0.95);
 }
 
-.lang-selector {
-    width: 100%;
-    background: var(--panel);
-    color: var(--text);
-    border: 1.5px solid var(--input-border);
-    border-radius: 4px;
-    padding: 10px 12px;
-    font: inherit;
-    font-size: 0.72rem;
-    outline: none;
+.switch input:checked:active + .slider::before {
+    transform: translateX(30px) scale(0.95);
 }
+
 
 /* Graph workspace */
 .graph-workspace {
@@ -517,7 +525,7 @@ svg:active {
 
 /* Graph styling */
 .node text {
-    fill: var(--text);
+    fill: #ffffff;
     font-size: 0.72rem;
     pointer-events: none;
 }
@@ -713,9 +721,9 @@ svg:active {
     top: 20px;
     z-index: 10; /* Ensures it sits above the D3 canvas */
     
-    background-color: #2c3e50; 
-    color: #ffffff;
-    border: 1px solid #34495e;
+    background-color: var(--panel);
+    color: var(--text);
+    border: 1px solid var(--input-border);
     padding: 10px 16px;
     font-size: 0.9rem;
     font-weight: 600;
@@ -729,14 +737,16 @@ svg:active {
 }
 
 /* Hover & Interactive States */
-.btn-export-top:hover {
-    background-color: #34495e;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-    transform: translateY(-1px);
+.btn-export-top {
+    background-color: var(--panel) !important;
+    color: var(--text) !important;
+    border: 1px solid var(--input-border) !important;
 }
 
-.btn-export-top:active {
-    transform: translateY(1px);
+.btn-export-top:hover {
+    background-color: var(--input-bg) !important;
+    color: var(--text) !important;
+    border-color: var(--green) !important;
 }
 
 /* Zoom controls */
@@ -1084,12 +1094,12 @@ svg:active {
    ========================================================================== */
 
 .mc-navbar {
-    background: #000000; 
+    background: var(--bg);
     display: flex;
     justify-content: space-between; 
     align-items: center; 
     padding: 16px 32px;
-    border-bottom: 1px solid #222222; 
+    border-bottom: 1px solid var(--line);
 }
 
 /* Brand Text Grouping */
@@ -1102,14 +1112,14 @@ svg:active {
 .project-title {
     font-family: 'Monocraft', monospace;
     font-size: 1.5rem;
-    color: #ffffff;
+    color: var(--text);
     margin: 0;
 }
 
 .project-subtitle {
     font-family: 'Monocraft', monospace;
     font-size: 0.8rem;
-    color: #888888;
+    color: var(--muted);
     margin: 0;
 }
 
@@ -1126,15 +1136,15 @@ svg:active {
     background: transparent;
     border: none;
     border-radius: 4px;
-    color: #aaaaaa;
+    color: var(--muted);
     cursor: pointer;
     font-size: 0.95rem;
     transition: color 0.2s ease, background-color 0.2s ease;
 }
 
 .mc-button:hover {
-    color: #ffffff;
-    background: rgb(74, 162, 63); 
+    color: var(--text);
+    background: var(--green);
 }
 
 
@@ -1143,7 +1153,8 @@ svg:active {
 /* Sliding left control panel animation */
 .dashboard-container {
     position: relative;
-    transition: grid-template-columns 0.3s ease;
+    transition: grid-template-columns 0.28s ease;
+    will-change: grid-template-columns;
 }
 
 .dashboard-container.sidebar-collapsed {
@@ -1152,7 +1163,8 @@ svg:active {
 
 .sidebar {
     overflow: hidden;
-    transition: transform 0.3s ease, opacity 0.3s ease;
+    transition: transform 0.28s ease, opacity 0.2s ease;
+    will-change: transform, opacity;
 }
 
 .sidebar-title-row {
@@ -1173,15 +1185,15 @@ svg:active {
     height: 42px;
     border: none;
     border-radius: 8px;
-    background-color: #1f2937;
-    color: white;
+    background-color: var(--panel);
+    color: var(--text);
     font-size: 20px;
     cursor: pointer;
     flex-shrink: 0;
 }
 
 .sidebar-toggle-btn:hover {
-    background-color: #374151;
+    background-color: var(--input-bg);
 }
 
 .dashboard-container.sidebar-collapsed .sidebar {
@@ -1199,19 +1211,72 @@ svg:active {
     height: 42px;
     border: none;
     border-radius: 8px;
-    background-color: #1f2937;
-    color: white;
+    background-color: var(--panel);
+    color: var(--text);
     font-size: 20px;
     cursor: pointer;
     display: none;
+    align-items: center;
+    justify-content: center;
 }
 
 .sidebar-reopen-btn:hover {
-    background-color: #374151;
+    background-color: var(--input-bg);
+}
+
+.sidebar-reopen-btn:focus-visible,
+.sidebar-toggle-btn:focus-visible {
+    outline: 2px solid var(--blue);
+    outline-offset: 2px;
 }
 
 .dashboard-container.sidebar-collapsed .sidebar-reopen-btn {
-    display: block;
+    display: inline-flex;
+}
+
+.graph-workspace {
+    transition: padding-left 0.28s ease;
+}
+
+.dashboard-container.sidebar-collapsed .graph-workspace {
+    padding-left: 72px;
+}
+
+.dashboard-container.sidebar-collapsed .btn-export-top {
+    left: 84px;
+}
+
+@media (max-width: 1100px) {
+    .dashboard-container.sidebar-collapsed {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-container.sidebar-collapsed .sidebar {
+        position: absolute;
+        z-index: 50;
+        height: 100%;
+    }
+
+    .dashboard-container.sidebar-collapsed .graph-workspace {
+        padding-left: 14px;
+    }
+
+    .dashboard-container.sidebar-collapsed .btn-export-top {
+        left: 20px;
+    }
+
+    .dashboard-container.sidebar-collapsed .sidebar-reopen-btn {
+        left: 12px;
+        top: 12px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dashboard-container,
+    .sidebar,
+    .graph-workspace {
+        transition: none;
+    }
 }
 
 /* Mod filtering classes */
@@ -1237,12 +1302,19 @@ body.light-theme {
     --line-soft: rgba(0, 0, 0, 0.08);
 }
 body#page-graph {
-  background-image: url("/images/Background1.png");
+  background:
+    linear-gradient(
+      rgba(0, 0, 0, 0.55),
+      rgba(0, 0, 0, 0.55)
+    ),
+    url("../images/Background1.png");
+
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
 }
+
 
 .dashboard-container,
 .graph-workspace,
@@ -1250,3 +1322,29 @@ body#page-graph {
 svg {
   background: transparent;
 }
+
+#dependency-graph-canvas .optional-hidden {
+    display: none !important;
+}
+.node.hovered .node-circle,
+.node.selected .node-circle {
+    stroke: var(--yellow);
+    stroke-width: 4px;
+}
+
+.node.hovered .node-circle {
+    filter: drop-shadow(0 0 8px var(--yellow));
+}
+
+.link.hovered {
+    stroke: var(--yellow) !important;
+    stroke-width: 4px !important;
+}
+
+.node.dimmed,
+.link.dimmed {
+    opacity: 0.2;
+    filter: none;
+}
+
+

@@ -52,16 +52,16 @@
     </nav>
 </header>
 
-        <main class="dashboard-container">
-            <button id="sidebarReopenBtn" class="sidebar-reopen-btn" aria-label="Reopen sidebar">
+        <main class="dashboard-container" id="dashboardContainer">
+            <button id="sidebarReopenBtn" class="sidebar-reopen-btn" type="button" aria-label="Expand filter sidebar" aria-controls="filterSidebar" aria-expanded="true">
                 ☰
             </button>
-            <aside class="sidebar">
+            <aside class="sidebar" id="filterSidebar" aria-label="Filter sidebar">
                 <section class="sidebar-group">
                 <div class="sidebar-title-row">
                     <h3 class="group-label">MODPACK SELECTION</h3>
 
-                    <button id="sidebarToggleBtn" class="sidebar-toggle-btn" aria-label="Toggle sidebar">
+                    <button id="sidebarToggleBtn" class="sidebar-toggle-btn" type="button" aria-label="Collapse filter sidebar" aria-controls="filterSidebar" aria-expanded="true">
                         ☰
                     </button>
                 </div>
@@ -88,10 +88,21 @@
                 <div class="control-row">
                     <span>Show mod icons</span>
                     <label class="switch">
-                        <input type="checkbox" checked>
+                        <input type="checkbox" id="showModIconsToggle" checked>
                         <span class="slider"></span>
                     </label>
                 </div>
+
+                <div class="control-row">
+                    <span>Light mode</span>
+                    <label class="switch">
+                        <input type="checkbox" id="themeToggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </section>
+
+
             </section>
 
             <section class="sidebar-group">
@@ -106,14 +117,14 @@
                 <div class="control-row">
                     <span>Show optional mods</span>
                     <label class="switch">
-                        <input type="checkbox" checked>
+                        <input id="show-optional-mods-toggle" type="checkbox" checked>
                         <span class="slider"></span>
                     </label>
                 </div>
                 <div class="control-row">
                     <span>Show installed mods</span>
                     <label class="switch">
-                        <input type="checkbox">
+                        <input type="checkbox" id="showInstalledModsToggle" checked>
                         <span class="slider"></span>
                     </label>
                 </div>
