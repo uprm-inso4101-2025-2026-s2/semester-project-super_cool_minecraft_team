@@ -1617,9 +1617,10 @@ The system will be verified through functional testing and user validation.
 Verification will be considered successful when all functional requirements are met and no critical defects are present.
 
 --
+
 Verification will be considered successful when all functional requirements are met and no critical defects are present.
 
-=== 3.4 AI disclosure
+=== 3.3 AI disclosure
 
 [.red]#This section discloses the use of AI tools in the development of the Minecraft Mod Dependency Visualizer.#
 
