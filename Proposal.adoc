@@ -1204,7 +1204,7 @@ From these observations, dependency resolution is understood as a domain process
 [.green]#When a mod is uploaded through the frontend layer, this mod's information is passed to the backend. Once the backend receives the mod, its information is parsed and inserted into a mod DTO which contains the attributes modID, modVersion, dependencies, and conflicts (note that the dependencies and conflicts are NULL until the API is called). The modID and modVersion are then passed to the CurseForge API, which returns the dependencies and conflicts of the mod via information acquired from various mod repositories. Once this information is acquired, it is passed through the frontend and a new graph node DTO is created. This DTO is used in the Dependency Graph to display all dependency relationships accordingly.#
 
 === 3.2 Validation and Verification
-
+[.green]#The team has created 5 different tests to verify the functionality of the application. 4 of these are unit tests covering a wide range of scenarios within application usage, inlcuding URL redirects, mod dependency data, and API response. Below are the following scenarios, the test created for any gap identified, and the file in which a fix was implemented.#
 
 
 === Scenario 1: 
@@ -1346,6 +1346,8 @@ context loads properly without throwing any errors during startup. The result th
 *Remedy:* Implemented a structural unit test suite in GraphDSTests.java. The tests explicitly verify DTO-driven graph construction, exclusion of unresolved missing dependencies from graph population, deterministic identifier generation through modId@version formatting, successful node insertion and removal behavior, duplicate prevention logic, iterator-based node retrieval accuracy, cleanup of dependency and conflict references during deletion, null-safe lookup handling, and exception boundaries for invalid key generation inputs. All tested graph states successfully verified the expected functionality of the graph subsystem, and it is working as intended.
 
 --
+
+NOTE: Vague tests included previously have been replaced with concrete test files we have in the code repository, along with a description of where/how we implemented them.
 
 [.red.line-through]
 
