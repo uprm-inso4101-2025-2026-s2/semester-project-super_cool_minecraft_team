@@ -31,7 +31,7 @@
 </head>
 
 
-<body>
+<body class="site-background" id="page-graph">
 
    <header class="mc-navbar">
     <div class="header-content">
@@ -52,16 +52,16 @@
     </nav>
 </header>
 
-        <main class="dashboard-container">
-            <button id="sidebarReopenBtn" class="sidebar-reopen-btn mc-btn mc-btn--icon mc-btn--graph-green" aria-label="Reopen sidebar">
+        <main class="dashboard-container" id="dashboardContainer">
+            <button id="sidebarReopenBtn" class="sidebar-reopen-btn" type="button" aria-label="Expand filter sidebar" aria-controls="filterSidebar" aria-expanded="true">
                 ☰
             </button>
-            <aside class="sidebar">
+            <aside class="sidebar" id="filterSidebar" aria-label="Filter sidebar">
                 <section class="sidebar-group">
                 <div class="sidebar-title-row">
                     <h3 class="group-label">MODPACK SELECTION</h3>
 
-                    <button id="sidebarToggleBtn" class="sidebar-toggle-btn mc-btn mc-btn--icon mc-btn--graph-green" aria-label="Toggle sidebar">
+                    <button id="sidebarToggleBtn" class="sidebar-toggle-btn" type="button" aria-label="Collapse filter sidebar" aria-controls="filterSidebar" aria-expanded="true">
                         ☰
                     </button>
                 </div>

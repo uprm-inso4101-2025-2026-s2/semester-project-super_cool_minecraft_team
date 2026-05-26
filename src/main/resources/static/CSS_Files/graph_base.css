@@ -26,6 +26,7 @@
     --radius-lg: 16px;
 
     --transition: 0.2s ease;
+    --sidebar-expanded-width: 360px;
 }
 
 * {
@@ -85,7 +86,7 @@ body {
 .dashboard-container {
     flex: 1;
     display: grid;
-    grid-template-columns: 360px 1fr;
+    grid-template-columns: var(--sidebar-expanded-width) 1fr;
     min-height: calc(100vh - 78px);
 }
 
@@ -97,6 +98,7 @@ body {
     flex-direction: column;
     gap: 20px;
     border-right: 1px solid var(--line-soft);
+    max-width: var(--sidebar-expanded-width);
 }
 
 .sidebar-group {
@@ -178,8 +180,8 @@ body {
 /* Switch */
 .switch {
     position: relative;
-    width: 42px;
-    height: 24px;
+    width: 58px;
+    height: 30px;
     display: inline-block;
     flex-shrink: 0;
 }
@@ -194,48 +196,55 @@ body {
 .slider {
     position: absolute;
     inset: 0;
-    background: #5b5f6f;
-    border-radius: 999px;
+    background: #6f6f6f;
+    border: 3px solid #111111;
+    border-radius: 0;
     cursor: pointer;
-    transition: var(--transition);
+    box-shadow:
+        inset 2px 2px 0 #9a9a9a
+        inset -2px -2px 0 #3a3a3a;
+    transition: 0.12s ease;
 }
 
 .slider::before {
     content: "";
     position: absolute;
     width: 18px;
-    height: 18px;
-    left: 3px;
-    top: 3px;
-    border-radius: 50%;
-    background: #f2f2f2;
-    transition: var(--transition);
+    height: 26px;
+    left: -2px;
+    top: -4px;
+    background: #e8e8e8;
+    border: 3px solid #111111;
+    border-radius: 0;
+    box-shadow:
+        inset 2px 2px 0 #ffffff,
+        inset -2px -2px 0 #9b9b9b;
+    transition: 0.12s ease;
 }
 
 .switch input:checked + .slider {
-    background: var(--green);
+    background: #4AA23F;
+    box-shadow:
+        inset 2px 2px 0 #6BC35F,
+
+        inset -2px -2px 0 #6BC35F,
 }
 
 .switch input:checked + .slider::before {
-    transform: translateX(18px);
+    transform: translateX(30px);
+}
+.switch:hover .slider {
+    filter: brightness(1.15);
 }
 
-.sidebar-footer {
-    margin-top: auto;
-    padding-top: 4px;
+.switch:active .slider::before {
+    transform: scale(0.95);
 }
 
-.lang-selector {
-    width: 100%;
-    background: var(--panel);
-    color: var(--text);
-    border: 1.5px solid var(--input-border);
-    border-radius: 4px;
-    padding: 10px 12px;
-    font: inherit;
-    font-size: 0.72rem;
-    outline: none;
+.switch input:checked:active + .slider::before {
+    transform: translateX(30px) scale(0.95);
 }
+
 
 /* Graph workspace */
 .graph-workspace {
@@ -1076,7 +1085,8 @@ svg:active {
 /* Sliding left control panel animation */
 .dashboard-container {
     position: relative;
-    transition: grid-template-columns 0.3s ease;
+    transition: grid-template-columns 0.28s ease;
+    will-change: grid-template-columns;
 }
 
 .dashboard-container.sidebar-collapsed {
@@ -1085,7 +1095,8 @@ svg:active {
 
 .sidebar {
     overflow: hidden;
-    transition: transform 0.3s ease, opacity 0.3s ease;
+    transition: transform 0.28s ease, opacity 0.2s ease;
+    will-change: transform, opacity;
 }
 
 .sidebar-title-row {
@@ -1128,6 +1139,8 @@ svg:active {
     height: 42px;
     font-size: 20px;
     display: none;
+    align-items: center;
+    justify-content: center;
 }
 
 .dashboard-container:not(.sidebar-collapsed) .sidebar-reopen-btn {
@@ -1138,8 +1151,14 @@ svg:active {
     filter: brightness(1.08);
 }
 
+.sidebar-reopen-btn:focus-visible,
+.sidebar-toggle-btn:focus-visible {
+    outline: 2px solid var(--blue);
+    outline-offset: 2px;
+}
+
 .dashboard-container.sidebar-collapsed .sidebar-reopen-btn {
-    display: inline-flex !important;
+    display: block;
 }
 
 /* Light theme variables */
@@ -1157,3 +1176,26 @@ body.light-theme {
     --line: rgba(0, 0, 0, 0.16);
     --line-soft: rgba(0, 0, 0, 0.08);
 }
+body#page-graph {
+  background:
+    linear-gradient(
+      rgba(0, 0, 0, 0.55),
+      rgba(0, 0, 0, 0.55)
+    ),
+    url("../images/Background1.png");
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+
+.dashboard-container,
+.graph-workspace,
+#dependency-graph-canvas,
+svg {
+  background: transparent;
+}
+
+

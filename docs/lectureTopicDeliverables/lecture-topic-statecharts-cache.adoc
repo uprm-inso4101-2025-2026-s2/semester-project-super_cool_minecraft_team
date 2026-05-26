@@ -1,0 +1,207 @@
+= Lecture Topic Task: Statecharts in the DependencyLookupCache TTL Implementation
+Lorenzo (Formulawastaken)
+:doctype: article
+:toc: left
+:toc-title: Table of Contents
+:toclevels: 3
+:sectnums:
+:icons: font
+:source-highlighter: highlight.js
+:imagesdir: images
+
+== Objective
+
+Identify and document how the concept of **statecharts** from the course lecture was applied
+when designing and implementing the `DependencyLookupCache` TTL mechanism inside
+`DependencyLookupService`.
+
+== Background
+
+=== What Is a Statechart?
+
+A statechart is an extension of a classic finite state machine (FSM) that adds support for:
+
+* **Hierarchical (nested) states** — states that contain other states.
+* **Guard conditions** — boolean expressions that must be true for a transition to fire.
+* **Actions** — operations executed when entering, exiting, or transitioning between states.
+* **Time-triggered transitions** — transitions driven purely by the passage of time rather
+  than an explicit external event.
+
+
+=== The Problem Being Solved
+
+The `DependencyLookupService` caches resolved Minecraft mod dependency data fetched from
+the Modrinth API. Without expiration, entries accumulate indefinitely and can become stale
+as Modrinth data changes (new versions, updated dependencies).
+https://github.com/uprm-inso4101-2025-2026-s2/semester-project-super_cool_minecraft_team/issues/527[Issue #527]
+(_feat: Add cache expiration/TTL to DependencyLookupService_) introduced a
+**Time-To-Live (TTL)** mechanism: each cache entry tracks when it was stored, and entries
+are considered invalid once the TTL window has elapsed.
+
+== The Statechart Model
+
+The lifecycle of a single `CacheEntry` within `DependencyLookupCache` maps cleanly onto a
+two-state statechart.
+
+=== States
+
+[cols="1,3", options="header"]
+|===
+| State | Description
+| `VALID` | The entry was stored within the TTL window. On lookup, it is returned directly
+            without a network call to the Modrinth API.
+| `EXPIRED` | The entry's `cachedAt` timestamp plus the configured TTL duration has been
+              exceeded. The entry must be evicted and replaced with a fresh fetch.
+|===
+
+=== Transition
+
+The single transition `VALID → EXPIRED` is a **time-triggered transition**:
+
+* No external event (user action, API response, etc.) causes it.
+* The guard condition `Instant.now().isAfter(cachedAt.plus(ttl))` is evaluated on every
+  lookup, and the transition fires the moment it returns `true`.
+
+This is precisely the kind of behavior statecharts are designed to express that plain
+flowcharts or simple if-else logic cannot cleanly convey: a state change driven entirely
+by elapsed time.
+
+=== Actions on Transition
+
+When the `VALID → EXPIRED` transition fires during a lookup, the system executes two
+sequential actions:
+
+. **Eviction** — the stale entry is removed from the `ConcurrentHashMap`.
+. **Re-fetch** — a fresh `ResolvedDependency` is retrieved from the Modrinth API and
+  stored as a new `VALID` entry, resetting the TTL clock.
+
+=== Statechart Diagram
+
+[plantuml, cache-statechart, svg]
+....
+@startuml
+hide empty description
+
+state VALID : Entry exists in cache\nand is within TTL window
+state EXPIRED : TTL window exceeded;\nentry must be evicted
+
+[*] --> VALID : fetch from Modrinth API\n/ store with cachedAt timestamp
+
+VALID --> EXPIRED : [Instant.now() > cachedAt + ttl]
+
+EXPIRED --> VALID : evict entry\n/ fetch fresh data\n/ store with new cachedAt
+
+@enduml
+....
+
+== Implementation
+
+=== CacheEntry Record
+
+The `CacheEntry` record encodes both the cached data and the guard condition:
+
+[source,java]
+----
+record CacheEntry<V>(V data, Instant cachedAt) {
+
+    /**
+     * Guard condition for the VALID → EXPIRED transition.
+     * Returns true when the TTL window has been exceeded.
+     */
+    boolean isExpired(Duration ttl) {
+        return Instant.now().isAfter(cachedAt.plus(ttl));
+    }
+}
+----
+
+The `isExpired` method is the direct implementation of the statechart guard.
+
+=== DependencyLookupCache
+
+The cache container evaluates the guard on every lookup and performs the eviction action:
+
+[source,java]
+----
+public class DependencyLookupCache<K, V> {
+
+    private final ConcurrentHashMap<K, CacheEntry<V>> store = new ConcurrentHashMap<>();
+    private final Duration ttl;
+
+    public DependencyLookupCache(Duration ttl) {
+        this.ttl = ttl;
+    }
+
+    public Optional<V> get(K key) {
+        CacheEntry<V> entry = store.get(key);
+        if (entry == null) return Optional.empty();
+
+        // Guard condition: fire VALID → EXPIRED transition if time has elapsed
+        if (entry.isExpired(ttl)) {
+            store.remove(key);          // Action: evict stale entry
+            return Optional.empty();    // Caller will re-fetch (EXPIRED → VALID)
+        }
+
+        return Optional.of(entry.data());
+    }
+
+    public void put(K key, V value) {
+        // Store entry in VALID state with current timestamp
+        store.put(key, new CacheEntry<>(value, Instant.now()));
+    }
+}
+----
+
+=== Configurable TTL via application.properties
+
+The TTL duration added in
+https://github.com/uprm-inso4101-2025-2026-s2/semester-project-super_cool_minecraft_team/issues/527[#527]
+is externalized so it can be tuned without recompilation. This corresponds
+to the statechart concept of a **parameterized timeout** — the duration of the
+time-triggered transition is supplied at runtime rather than being fixed in the state model.
+
+.application.properties
+[source,properties]
+----
+cache.dependency.ttl-minutes=10
+----
+
+.DependencyLookupService.java (constructor injection)
+[source,java]
+----
+public DependencyLookupService(
+        ModrinthServiceWrapper modrinthServiceWrapper,
+        @Value("${cache.dependency.ttl-minutes:10}") long ttlMinutes) {
+    this.cache = new DependencyLookupCache<>(Duration.ofMinutes(ttlMinutes));
+    this.modrinthServiceWrapper = modrinthServiceWrapper;
+}
+----
+
+The `:10` default ensures the service starts correctly even if the property is absent.
+
+== Lecture Topic Connection
+
+[cols="1,2", options="header"]
+|===
+| Statechart Concept | Where It Appears in the Implementation
+
+| States
+| `VALID` (entry within TTL) and `EXPIRED` (entry past TTL) map to the two states of the
+  `CacheEntry` lifecycle.
+
+| Time-triggered transition
+| `VALID → EXPIRED` fires when `Instant.now().isAfter(cachedAt.plus(ttl))` — driven purely
+  by elapsed time, no external event required.
+
+| Guard condition
+| `CacheEntry.isExpired(Duration ttl)` is the guard evaluated before the transition fires.
+
+| Actions
+| On transition: evict the stale entry (`store.remove(key)`), then re-fetch from Modrinth
+  and re-enter `VALID` with a fresh timestamp.
+
+| Parameterized timeout
+| TTL is not hardcoded into the state model; it is injected via `application.properties`,
+  matching the statechart notion of a configurable timer.
+|===
+
+
