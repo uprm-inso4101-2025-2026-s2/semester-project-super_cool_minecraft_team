@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ModLink Fault Tree Analysis (Risk Tree)</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --box-blue: #cbd5e1;
+            --box-border: #475569;
+            --text-color: #1e293b;
+            --gate-bg: #ffffff;
+            --gate-text: #b91c1c;
+            --leaf-bg: #e2e8f0;
+            --leaf-border: #64748b;
+            --shield-color: #16a34a;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h2 {
+            margin-bottom: 5px;
+            color: #0f172a;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: #64748b;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        .textdescription{
+            text-align: justify;
+
+        }
+
+       
+.tree, .tree ul, .tree li {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.tree {
+    transform: scale(0.4); 
+    transform-origin: top center; 
+}
+
+        .tree ul {
+            display: flex;
+            justify-content: center;
+            padding-top: 40px;
+        }
+
+        .tree li {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0 15px;
+        }
+
+        .tree li::before, .tree li::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 50%;
+            border-top: 2px solid var(--box-border);
+            width: 50%;
+            height: 40px;
+            z-index: -1;
+        }
+
+        .tree li::after {
+            right: auto;
+            left: 50%;
+            border-left: 2px solid var(--box-border);
+        }
+
+        .tree li:only-child::after, .tree li:only-child::before {
+            display: none;
+        }
+
+        .tree li:only-child {
+            padding-top: 0;
+        }
+
+        .tree li:first-child::before, .tree li:last-child::after {
+            border: 0 none;
+        }
+
+        .tree li:last-child::before {
+            border-right: 2px solid var(--box-border);
+            border-radius: 0 5px 0 0;
+        }
+
+        .tree li:first-child::after {
+            border-radius: 5px 0 0 0;
+        }
+
+        .tree ul ul::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            border-left: 2px solid var(--box-border);
+            width: 0;
+            height: 40px;
+            z-index: -1;
+        }
+
+        .node {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background-color: #bfdbfe;
+            border: 2px solid #2563eb;
+            color: #1e3a8a;
+            font-weight: 600;
+            padding: 12px 18px;
+            font-size: 0.9rem;
+            min-width: 160px;
+            max-width: 220px;
+            min-height: 45px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.08);
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .node.top-hazard {
+            background-color: #fee2e2;
+            border: 2px solid #ef4444;
+            color: #991b1b;
+            font-size: 1.05rem;
+            padding: 15px 25px;
+        }
+
+        .node.leaf {
+            background-color: var(--leaf-bg);
+            border: 2px solid var(--leaf-border);
+            color: #334155;
+            border-radius: 50% / 50%;
+            padding: 15px 20px;
+            min-height: 60px;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+
+        .gate {
+            background: var(--gate-bg);
+            border: 2px solid var(--box-border);
+            color: var(--gate-text);
+            font-weight: bold;
+            font-size: 0.8rem;
+            padding: 4px 10px;
+            margin-top: 15px;
+            margin-bottom: -15px;
+            z-index: 10;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .gate.or-gate {
+            border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+            padding: 6px 12px 2px 12px;
+        }
+
+        .gate.and-gate {
+            border-radius: 10px 10px 0 0;
+            padding: 6px 10px 2px 10px;
+        }
+
+        .shield {
+            margin-top: 8px;
+            font-size: 0.75rem;
+            background-color: #dcfce7;
+            border: 1px dashed var(--shield-color);
+            color: #14532d;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-family: monospace;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Mod Dependency Visualizer System Fault Tree Analysis</h2>
+    <div class="subtitle">Validation & Verification Risk Model Mapping</div>
+    <div class="subtitle">(Explanation below)</div>
+
+    <div class="tree">
+    <ul>
+        <li>
+            <div class="node top-hazard">
+                Mod Application Deployment or Production Failure
+            </div>
+            <div class="gate or-gate">OR</div>
+
+            <ul>
+
+                
+                <li>
+                    <div class="node">Security Boundary Breach</div>
+                    <div class="gate or-gate">OR</div>
+
+                    <ul>
+                        <li>
+                            <div class="node leaf">
+                                Malicious actor passes arbitrary phishing domain via URL
+                            </div>
+                            <div class="shield">redirectcontroller.java</div>
+                        </li>
+
+                        <li>
+                            <div class="node leaf">
+                                Malformed or empty redirection parameters
+                            </div>
+                            <div class="shield">redirectcontroller.java</div>
+                        </li>
+                    </ul>
+                </li>
+
+                
+                <li>
+                    <div class="node">Runtime / Startup Context Crash</div>
+                    <div class="gate or-gate">OR</div>
+
+                    <ul>
+                        <li>
+                            <div class="node leaf">
+                                Critical Spring bean circular dependency injection
+                            </div>
+                            <div class="shield">
+                                minecraftprojectapplicationtests.java
+                            </div>
+                        </li>
+
+                        <li>
+                            <div class="node leaf">
+                                Local IDE build tool version mismatch (Gradle/Java)
+                            </div>
+                            <div class="shield">
+                                minecraftprojectapplicationtests.java
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+
+                
+                <li>
+                    <div class="node">
+                        Core Feature Performance Degradation
+                    </div>
+                    <div class="gate or-gate">OR</div>
+
+                    <ul>
+
+                       
+                        <li>
+                            <div class="node">
+                                Missing Dependencies Page Fails to Render
+                            </div>
+                            <div class="gate or-gate">OR</div>
+
+                            <ul>
+                                <li>
+                                    <div class="node leaf">
+                                        Missing instructional UI static text fragments
+                                    </div>
+                                    <div class="shield">
+                                        maincontrollertest.java
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+
+                        
+                        <li>
+                            <div class="node">
+                                Dependency API Endpoint Breaks
+                            </div>
+                            <div class="gate or-gate">OR</div>
+
+                            <ul>
+                                <li>
+                                    <div class="node leaf">
+                                        External mod registry rate limits application
+                                        (HTTP 429)
+                                    </div>
+                                    <div class="shield">
+                                        dependencycontrollertest.java
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <div class="node leaf">
+                                        Remote registry gateway connection times out
+                                        (HTTP 504)
+                                    </div>
+                                    <div class="shield">
+                                        dependencycontrollertest.java
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+
+                       
+                        <li>
+                            <div class="node">
+                                Dependency Graph Construction /
+                                Visualization Failure
+                            </div>
+                            <div class="gate or-gate">OR</div>
+
+                            <ul>
+
+                                <li>
+                                    <div class="node leaf">
+                                        Malformed or missing mod metadata causes graph
+                                        node creation failure
+                                    </div>
+                                    <div class="shield">
+                                        graphdstests.java
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <div class="node leaf">
+                                        Duplicate mod insertion creates unstable or
+                                        inconsistent graph state
+                                    </div>
+                                    <div class="shield">
+                                        graphdstests.java
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <div class="node leaf">
+                                        Broken dependency/conflict references remain
+                                        after node removal
+                                    </div>
+                                    <div class="shield">
+                                        graphdstests.java
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <div class="node leaf">
+                                        Invalid serialized node identifiers prevent
+                                        dependency lookup
+                                    </div>
+                                    <div class="shield">
+                                        graphdstests.java
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <div class="node leaf">
+                                        Null or malformed graph nodes crash DTO
+                                        mapping layer
+                                    </div>
+                                    <div class="shield">
+                                        graphservicetest.java
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <div class="node leaf">
+                                        Dependency links fail to transform into
+                                        visualization edges
+                                    </div>
+                                    <div class="shield">
+                                        graphservicetest.java
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <div class="node leaf">
+                                        Conflict links incorrectly omitted or
+                                        mislabeled in graph output
+                                    </div>
+                                    <div class="shield">
+                                        graphservicetest.java
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <div class="node leaf">
+                                        Empty mod collections generate invalid
+                                        visualization payloads
+                                    </div>
+                                    <div class="shield">
+                                        graphservicetest.java
+                                    </div>
+                                </li>
+
+                            </ul>
+                        </li>
+
+                    </ul>
+                </li>
+
+            </ul>
+        </li>
+    </ul>
+</div>
+<div class="textdescription">
+    <p>In the risk tree above, we represent the different exceptions and risks within our application that could cause a timeout or security risk. These risks have already been mitigated, since we have 6 different test files in our repository (DependencyControllerTest.java, MainControllerTest.java, MinecraftProjectApplicationTest.java, RedirectControllerTest.java,GraphServiceTest.java,GraphDSTests.java) we created after identifying these risks. Once the tests were created, we implemented exception handling and better security for each of these risks, and ran the tests. All have passed or served their purpose. The tests are designed to stop those specific failures from ever traveling up through the logical gates to cause the top-level system failure. 
+    <br><br>At the absolute top sits the catastrophic failure state: Mod Tool Application Deployment or Production Failure.</p>
+
+
+    <p>The Intermediate Drivers (Rectangles): The root failure is broken down into three main operational threat domains: a Security Boundary Breach, a Runtime/Startup Context Crash, and Core Feature Performance Degradation.
+    </p>
+    <p>The Root Causes (Ovals): At the very bottom of the branches are the leaf nodes, representing the specific technical errors that trigger the risks, such as unhandled network timeouts, malicious phishing inputs, or circular dependency injections. Connecting the nodes are OR gates. This logical setup dictates that the parent event will be triggered if any single child failure occurs. For instance, the system does not require both a rate-limit crash and a network timeout to break the application API; an outage or exception in either one independently will pass right through the gate and compromise the core feature. The green shield labels underneath the ovals show where our test files interact with the risk tree. By checking for bad inputs, mocking server timeouts, or validating bean injections, these test files act as defensive line-guards that catch and eliminate the root failure states before they can move up the logical gates to crash our deployment.
+    </p>
+    
+</div>
+
+</body>
+</html>
+
