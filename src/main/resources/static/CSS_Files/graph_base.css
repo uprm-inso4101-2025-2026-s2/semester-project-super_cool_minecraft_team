@@ -1316,6 +1316,9 @@ svg {
   background: transparent;
 }
 
+#dependency-graph-canvas .optional-hidden {
+    display: none !important;
+}
 .node.hovered .node-circle,
 .node.selected .node-circle {
     stroke: var(--yellow);
