@@ -234,7 +234,7 @@ function showCriticalErrorMessage() {
 
     errorDiv.innerHTML = `
         <h2 style="font-size: 1.5rem; margin-bottom: 16px; color: var(--red);">⚠ Unable to Render Graph</h2>
-        <p style="font-size: 1rem; color: var(--text); margin-bottom: 16px;">Critical errors were found in the graph data. Please fix the errors shown above and reload.</p>
+        <p style="font-size: 1rem; color: #ffffff; margin-bottom: 16px;">Critical errors were found in the graph data. Please fix the errors shown above and reload.</p>
     `;
 
     container.appendChild(errorDiv);
