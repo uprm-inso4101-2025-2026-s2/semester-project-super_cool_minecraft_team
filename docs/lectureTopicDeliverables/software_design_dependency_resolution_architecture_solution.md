@@ -1,4 +1,5 @@
 # 📝 [Lecture Topic Task] Software Design Principles in Dependency Resolution Architecture
+INSO 4101 — Lecture Topic Task | Victor E. Ravelo Santana 
 
 ### 🎯 Objective
 Analyze how software design principles are applied in the dependency lookup subsystem to improve modularity, maintainability, scalability, and separation of responsibilities.
