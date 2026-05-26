@@ -1,11 +1,11 @@
 package com.inso.MinecraftProject.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.time.Duration;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DependencyLookupCache<T> {
 
@@ -82,6 +82,7 @@ public class DependencyLookupCache<T> {
     public int size() {
         return cache.size();
     }
+
 
     private static class CacheEntry<T> {
         T value;

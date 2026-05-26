@@ -5,11 +5,12 @@ const rawGraphData = window.graphData || { nodes: [], links: [] };
 const nodes = (rawGraphData.nodes || []).map(node => ({
     id: node.id,
     type: node.type || "mod",
-    status: node.status || "compatible"
+    status: node.status || "compatible",
+    installed: node.installed || false  
 }));
 
 const links = (rawGraphData.links || []).map(link => ({
-    source: link.source,
+    source: link.source,    
     target: link.target,
     rel: link.rel || "required"
 }));
@@ -68,6 +69,69 @@ let svg = null;
 let mainGroup = null;
 let zoom = null;
 let graphLayoutUpdateTimeout = null;
+let showOptionalMods = true;
+let optionalModsToggle = null;
+
+function loadOptionalModsSetting() {
+    try {
+        const saved = window.localStorage.getItem("show-optional-mods");
+        if (saved === null) {
+            return true;
+        }
+        return saved === "true";
+    } catch (error) {
+        return true;
+    }
+}
+
+function saveOptionalModsSetting(value) {
+    try {
+        window.localStorage.setItem("show-optional-mods", String(value));
+    } catch (error) {
+        // Ignore storage failures in private browsing / restricted environments.
+    }
+}
+
+function updateOptionalModsVisibility() {
+    const shouldShow = showOptionalMods;
+
+    d3.selectAll(".link")
+        .classed("optional-hidden", function(d) {
+            return d && d.rel === "optional" && !shouldShow;
+        });
+
+    d3.selectAll(".node")
+        .classed("optional-hidden", function(d) {
+            if (!d) return false;
+            if (d.type === "root") return false;
+
+            const connectedLinks = links.filter(link => {
+                const sourceId = getNodeId(link.source);
+                const targetId = getNodeId(link.target);
+                return sourceId === d.id || targetId === d.id;
+            });
+
+            if (connectedLinks.length === 0) {
+                return false;
+            }
+
+            const hasVisibleRequiredOrConflict = connectedLinks.some(link => {
+                if (link.rel !== "optional") {
+                    return true;
+                }
+
+                return shouldShow;
+            });
+
+            return !hasVisibleRequiredOrConflict;
+        });
+}
+
+function setShowOptionalMods(value) {
+    showOptionalMods = Boolean(value);
+    saveOptionalModsSetting(showOptionalMods);
+    updateOptionalModsVisibility();
+}
 
 /* ===== JSON VALIDATION LOGIC ===== */
 
@@ -233,7 +297,7 @@ function showCriticalErrorMessage() {
 
     errorDiv.innerHTML = `
         <h2 style="font-size: 1.5rem; margin-bottom: 16px; color: var(--red);">⚠ Unable to Render Graph</h2>
-        <p style="font-size: 1rem; color: var(--text); margin-bottom: 16px;">Critical errors were found in the graph data. Please fix the errors shown above and reload.</p>
+        <p style="font-size: 1rem; color: #ffffff; margin-bottom: 16px;">Critical errors were found in the graph data. Please fix the errors shown above and reload.</p>
     `;
 
     container.appendChild(errorDiv);
@@ -356,6 +420,8 @@ if (!validationResult.isValid) {
         .enter()
         .append("g")
         .attr("class", "node")
+        .on("mouseover", function(event, d) { handleNodeHover(event, d, true); })
+        .on("mouseout", function(event, d) { handleNodeHover(event, d, false); })
         .on("click", (event, d) => handleNodeClick(event, d))
         .call(
             d3.drag()
@@ -368,6 +434,26 @@ if (!validationResult.isValid) {
         .attr("r", 10)
         .attr("fill", d => d.type === "root" ? "var(--blue)" : "var(--panel)")
         .attr("class", "node-circle");
+
+    // Add mod icon image
+    node.append("image")
+        .attr("class", "mod-icon-img")
+        .attr("xlink:href", "/images/logos/Header Icon- Cuadrado.png")   // path to your icon
+        .attr("width", 20)
+        .attr("height", 20)
+        .attr("x", -10)
+        .attr("y", -10);
+        const iconToggle = document.getElementById("showModIconsToggle");
+
+    function updateModIconVisibility() {
+        const showIcons = iconToggle.checked;
+        d3.selectAll('.mod-icon-img').style("display", showIcons ? null : "none");
+    }
+
+    updateModIconVisibility();
+
+    
+    iconToggle.addEventListener('change', updateModIconVisibility);
 
     node.append("text")
         .attr("dx", 14)
@@ -405,6 +491,18 @@ if (!validationResult.isValid) {
     if (sidebarToggleBtn) {
         sidebarToggleBtn.addEventListener("click", scheduleGraphLayoutUpdate);
     }
+
+    optionalModsToggle = document.getElementById("show-optional-mods-toggle");
+    showOptionalMods = loadOptionalModsSetting();
+
+    if (optionalModsToggle) {
+        optionalModsToggle.checked = showOptionalMods;
+        optionalModsToggle.addEventListener("change", () => {
+            setShowOptionalMods(optionalModsToggle.checked);
+        });
+    }
+
+    updateOptionalModsVisibility();
 
     node.on('click', (event, d) => {
         if (searchInput) searchInput.value = '';
@@ -604,6 +702,37 @@ function dragended(event, d) {
     if (!event.active) simulation.alphaTarget(0);
     d.fx = null;
     d.fy = null;
+}
+
+function handleNodeHover(event, d, isHovered) {
+    if (selectedNodeId) return; // Do NOT hover-highlight if a node is selected
+
+    if (isHovered) {
+        const dependencies = new Set(getDependencies(d.id));
+        const dependents = new Set(getDependents(d.id));
+        const allRelated = new Set([d.id, ...dependencies, ...dependents]);
+
+        // Highlight nodes
+        d3.selectAll(".node").each(function(nodeData) {
+            d3.select(this)
+                .classed("hovered", allRelated.has(nodeData.id))
+                .classed("dimmed", !allRelated.has(nodeData.id));
+        });
+
+        // Highlight links
+        d3.selectAll(".link").each(function(linkData) {
+            const sourceId = getNodeId(linkData.source);
+            const targetId = getNodeId(linkData.target);
+            const isRelated = allRelated.has(sourceId) && allRelated.has(targetId);
+            d3.select(this)
+                .classed("hovered", isRelated)
+                .classed("dimmed", !isRelated);
+        });
+    } else {
+        // Remove all hover classes if not selected
+        d3.selectAll(".node").classed("hovered", false).classed("dimmed", false);
+        d3.selectAll(".link").classed("hovered", false).classed("dimmed", false);
+    }
 }
 
 /* ===== SEARCH LOGIC + NODE MATCHING ===== */
@@ -1118,4 +1247,100 @@ document.addEventListener("DOMContentLoaded", () => {
             window.dispatchEvent(new Event("resize"));
         }, 200);
     });
+});
+/* ===== SHOW REQUIRED MODS TOGGLE LOGIC ===== */
+document.addEventListener("DOMContentLoaded", () => {
+    const showRequiredModsToggle = document.getElementById("showRequiredModsToggle");
+
+    if (!showRequiredModsToggle) return;
+
+    const savedState = localStorage.getItem("visibility_show_required");
+    if (savedState !== null) {
+        showRequiredModsToggle.checked = savedState === "true";
+    }
+
+    const getEndpointId = (endpoint) => {
+        if (!endpoint) return null;
+        return typeof endpoint === "string" ? endpoint : endpoint.id;
+    };
+
+    const applyVisibility = () => {
+        const shouldShow = showRequiredModsToggle.checked;
+
+        d3.selectAll(".link").style("display", function(d) {
+            if (d.rel === "required" && !shouldShow) {
+                return "none";
+            }
+            return null;
+        });
+
+        d3.selectAll(".node").style("display", function(d) {
+            const nodeId = d && typeof d === "object" ? d.id : d;
+            if (!nodeId) return null;
+
+            const connectedLinks = links.filter(link => {
+                const sourceId = getEndpointId(link.source);
+                const targetId = getEndpointId(link.target);
+                return sourceId === nodeId || targetId === nodeId;
+            });
+
+            if (shouldShow) {
+                return null;
+            }
+
+            const hasOnlyRequiredConnections = connectedLinks.length > 0 && connectedLinks.every(link => link.rel === "required");
+            const hasNoConnections = connectedLinks.length === 0;
+
+            return (hasNoConnections || hasOnlyRequiredConnections) ? "none" : null;
+        });
+
+
+
+        if (simulation) {
+            simulation.alpha(0.2).restart();
+        }
+    };
+
+    applyVisibility();
+
+    showRequiredModsToggle.addEventListener("change", (e) => {
+        localStorage.setItem("visibility_show_required", String(e.target.checked));
+        applyVisibility();
+    });
+
+document.addEventListener("DOMContentLoaded", function() {
+    const installedToggle = document.getElementById("showInstalledModsToggle");
+    if (!installedToggle) return;
+
+    // This will run every time the toggle is changed
+    function filterInstalledMods() {
+        const showInstalled = installedToggle.checked;
+
+        // Hide/show .node for installed mods
+        d3.selectAll(".node").style("display", function(d) {
+            // d.installed (true OR string "true") expected!
+            const isInstalled = d.installed === true || d.installed === "true";
+            // If toggle is ON, show everything. If OFF, hide installed.
+            if (showInstalled) return null;
+            return isInstalled ? "none" : null;
+        });
+
+        // Hide/show .link if connected to any hidden node
+        d3.selectAll(".link").style("display", function(l) {
+            // .link's l.source/l.target could be an object or string id
+            const getInstalled = n => {
+                if (typeof n === "object" && n.installed !== undefined)
+                    return n.installed === true || n.installed === "true";
+                return false;
+            };
+            if (showInstalled) return null;
+            // Hide if either side is an installed mod
+            return (getInstalled(l.source) || getInstalled(l.target)) ? "none" : null;
+        });
+    }
+
+    installedToggle.addEventListener("change", filterInstalledMods);
+
+
+    setTimeout(filterInstalledMods, 0);
 });
