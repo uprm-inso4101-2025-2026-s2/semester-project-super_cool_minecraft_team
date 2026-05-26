@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Minecraft Dependency Visualizer</title>
+  <link rel="stylesheet" href="/CSS_Files/global.css" />
+  <link rel="stylesheet" href="/CSS_Files/homepage.css" />
+  <link rel="icon" type="image/x-icon" href="/images/logos/Header Icon- Cuadrado.ico">
+</head>
+
+<body class="site-background" id="page-home">
+
+  <header th:replace="~{components/navbar :: navbar('home')}"></header>
+
+  <header id="app-header">
+    <div id="header-inner">
+      <h1 id="main-title">Welcome to the Minecraft Mod Analyzer Site</h1>
+      <p id="main-message">
+        Analyze your Minecraft mod dependencies and detect conflicts easily.
+      </p>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <section id="hero-section">
+      <div id="hero-inner">
+        <div id="hero-action">
+          <a href="/upload"><button id="get-mods-btn" class="mc-btn mc-btn--emerald mc-btn--lg" type="button">
+            Get Started
+          </button></a>
+          
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <section id="info-section">
+    <div class="info-container">
+      <h2>What is the Minecraft Mod Analyzer?</h2>
+
+      <p>
+        The Minecraft Mod Analyzer is a web-based application designed to help
+        players and modpack creators analyze the relationships between installed
+        Minecraft mods.
+      </p>
+
+      <p>
+        By uploading a compressed modpack file, the system examines mod
+        dependencies and detects potential compatibility conflicts between
+        installed mods.
+      </p>
+
+      <p>
+        This tool simplifies the process of identifying problematic mods and
+        helps users maintain stable and functional Minecraft modpacks.
+      </p>
+    </div>
+  </section>
+
+  <footer th:replace="~{components/footer :: footer}"></footer>
+
+  <script src="/JS_Files/homepage.js"></script>
+
+</body>
+</html>

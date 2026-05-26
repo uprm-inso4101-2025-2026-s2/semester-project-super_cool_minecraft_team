@@ -1,0 +1,327 @@
+= Inter-Team Dependency Input Contract
+
+== Objective
+
+Define a standardized input format for dependency metadata exchanged between teams.  
+This contract ensures that dependency information can be validated, parsed, and integrated consistently without ambiguity.
+
+The specification describes the required structure, allowed values, validation rules, and example payloads.
+
+== Data Contract
+
+The dependency input payload represents metadata extracted from a Fabric mod's `fabric.mod.json`.
+
+=== Required Fields
+
+[cols="1,1,3",options="header"]
+|===
+|Field |Type |Description
+
+|id
+|string
+|Unique identifier for the mod. This may differ from the displayed mod name.
+
+|name
+|string
+|Human-readable mod name displayed in mod management interfaces.
+
+|version
+|string
+|Version string of the mod. Stored as a string due to non-numeric characters (`+`, `.`, `>=`).
+
+|environment
+|string (enum)
+|Defines where the mod must be installed. Allowed values: `"client"`, `"server"`, `"*"`.
+|===
+
+=== Optional Fields
+
+[cols="1,1,3",options="header"]
+|===
+|Field |Type |Description
+
+|depends
+|array
+|Required dependencies for the mod to run.
+
+|recommends
+|array
+|Recommended mods that enhance functionality but are not required.
+
+|suggests
+|array
+|Suggested mods that may improve compatibility or features.
+
+|conflicts
+|array
+|Mods that may cause warnings but do not prevent the game from loading.
+
+|breaks
+|array
+|Mods that are incompatible and will prevent the game from loading.
+|===
+
+== Dependency Object Structure
+
+All dependency-related fields (`depends`, `recommends`, `suggests`, `conflicts`, `breaks`)
+contain an array of dependency objects.
+
+=== Dependency Object
+
+[cols="1,1,3",options="header"]
+|===
+|Field |Type |Description
+
+|id
+|string
+|Mod identifier of the dependency
+
+|version
+|string
+|Version constraint for the dependency
+|===
+
+Example:
+
+[source,json]
+----
+{
+  "id": "fabricloader",
+  "version": ">=0.17.2"
+}
+----
+
+== JSON Schema Definition
+
+[source,json]
+----
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["id", "name", "version", "environment"],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "environment": {
+      "type": "string",
+      "enum": ["client", "server", "*"]
+    },
+    "depends": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/dependency" }
+    },
+    "recommends": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/dependency" }
+    },
+    "suggests": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/dependency" }
+    },
+    "conflicts": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/dependency" }
+    },
+    "breaks": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/dependency" }
+    }
+  },
+  "definitions": {
+    "dependency": {
+      "type": "object",
+      "required": ["id", "version"],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
+----
+
+== Validation Rules
+
+=== 1. `id`
+
+Must satisfy:
+
+* non-empty string
+* lowercase alphanumeric characters
+* may contain `-` or `_`
+
+Example regex:
+
+[source]
+----
+^[a-z0-9_-]+$
+----
+
+=== 2. `name`
+
+* must be a non-empty string
+* human-readable identifier
+
+Example values:
+
+* Cobblemon
+* Mod Menu
+* Sodium
+
+=== 3. `version`
+
+* must be a string
+* may contain semantic versioning or version constraints
+
+Examples:
+
+* `1.21.1`
+* `1.7.3+1.21.1`
+* `>=0.17.2`
+* `>=1.20 <1.22`
+
+=== 4. `environment`
+
+Must be one of:
+
+* `client`
+* `server`
+* `*`
+
+Meaning:
+
+[cols="1,3",options="header"]
+|===
+|Value |Meaning
+
+|client
+|Mod is required only on the client
+
+|server
+|Mod is required only on the server
+
+|*
+|Mod must be installed on both client and server
+|===
+
+=== 5. Dependency Arrays
+
+For all dependency arrays (`depends`, `recommends`, etc.):
+
+* must be an array of dependency objects
+* each dependency object must contain:
+** `id`
+** `version`
+
+== Valid Payload Examples
+
+=== Example 1 — Full Dependency Metadata
+
+[source,json]
+----
+{
+  "id": "cobblemon",
+  "name": "Cobblemon",
+  "version": "1.7.3+1.21.1",
+  "environment": "*",
+  "depends": [
+    { "id": "fabricloader", "version": ">=0.17.2" },
+    { "id": "fabric-api", "version": ">=0.116.6+1.21.1" },
+    { "id": "minecraft", "version": "1.21.1" },
+    { "id": "java", "version": "21" }
+  ]
+}
+----
+
+=== Example 2 — Minimal Valid Payload
+
+[source,json]
+----
+{
+  "id": "modmenu",
+  "name": "Mod Menu",
+  "version": "11.0.1",
+  "environment": "client"
+}
+----
+
+== Invalid Payload Examples
+
+=== Example 1 — Missing Required Field
+
+[source,json]
+----
+{
+  "name": "Test Mod",
+  "version": "1.0.0",
+  "environment": "*"
+}
+----
+
+Error:
+
+----
+Missing required property: id
+----
+
+=== Example 2 — Invalid Environment Value
+
+[source,json]
+----
+{
+  "id": "testmod",
+  "name": "Test Mod",
+  "version": "1.0.0",
+  "environment": "desktop"
+}
+----
+
+Error:
+
+----
+environment must be one of: client, server, *
+----
+
+=== Example 3 — Invalid Dependency Structure
+
+[source,json]
+----
+{
+  "id": "examplemod",
+  "name": "Example Mod",
+  "version": "1.0.0",
+  "environment": "*",
+  "depends": [
+    "fabric-api"
+  ]
+}
+----
+
+Error:
+
+----
+depends items must be objects containing id and version
+----
+
+== Summary
+
+This contract defines:
+
+* a standardized structure for dependency metadata
+* required and optional fields
+* schema-based validation
+* strict dependency object formatting
+* example valid and invalid payloads
+
+This ensures that dependency data exchanged between teams remains consistent, machine-validated, and integration-ready.

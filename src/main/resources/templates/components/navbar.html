@@ -1,0 +1,21 @@
+<header th:fragment="navbar(activePage)" id="site-header">
+  <div class="nav-container">
+
+    <button class="logo-btn" onclick="window.location.href='/'">
+      <img src="/images/logos/Minecraft logo.png" alt="logo" id="nav-logo">
+    </button>
+
+    <nav class="nav-links">
+      <a href="/" 
+         th:classappend="${activePage == 'home'} ? 'active' : ''">Home</a>
+    
+      <a href="/upload" 
+         th:classappend="${activePage == 'upload'} ? 'active' : ''">Upload</a>
+
+      <a href="#" 
+         th:classappend="${activePage == 'visualizer'} ? 'active' : ''">Visualizer</a>
+
+    </nav>
+
+  </div>
+</header>
