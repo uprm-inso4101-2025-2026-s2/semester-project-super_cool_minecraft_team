@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minecraft DT - Dependency Visualizer</title>
+    <link rel="stylesheet" href="/CSS_Files/global.css">
     <link rel="stylesheet" href="/CSS_Files/graph_base.css">
     
     <!-- D3 Library -->
@@ -19,7 +20,7 @@
     <th:block th:if="${@environment.acceptsProfiles('dev')}">
         <script th:inline="javascript">
             // The available test modes are 'cycle', 'simple', and 'medium'
-             window.TEST_MODE = 'medium';
+            window.TEST_MODE = 'medium';
         </script>
     </th:block>
     <script th:src="@{/JS_Files/test_graph_data.js}"></script>
@@ -29,19 +30,41 @@
     <script src="/JS_Files/dependency-resolution.js"></script>
 </head>
 
-<body>
 
-    <header class="app-header">
-        <div class="header-content">
-            <h1 class="project-title">Minecraft DT</h1>
-            <p class="project-subtitle">Dependency Visualizer</p>
-        </div>
-    </header>
+<body class="site-background" id="page-graph">
 
-    <main class="dashboard-container">
-        <aside class="sidebar">
-            <section class="sidebar-group">
-                <h3 class="group-label">MODPACK SELECTION</h3>
+   <header class="mc-navbar">
+    <div class="header-content">
+        <h1 class="project-title">Minecraft DT</h1>
+        <p class="project-subtitle">Dependency Visualizer</p>
+    </div>
+
+    <nav class="mc-nav">
+        <button class="mc-button" onclick="location.href='index.html'">
+            Home
+        </button>
+        <button class="mc-button" onclick="location.href='settings.html'">
+            Settings
+        </button>
+        <button class="mc-button" onclick="location.href='about.html'">
+            About
+        </button>
+    </nav>
+</header>
+
+        <main class="dashboard-container" id="dashboardContainer">
+            <button id="sidebarReopenBtn" class="sidebar-reopen-btn" type="button" aria-label="Expand filter sidebar" aria-controls="filterSidebar" aria-expanded="true">
+                ☰
+            </button>
+            <aside class="sidebar" id="filterSidebar" aria-label="Filter sidebar">
+                <section class="sidebar-group">
+                <div class="sidebar-title-row">
+                    <h3 class="group-label">MODPACK SELECTION</h3>
+
+                    <button id="sidebarToggleBtn" class="sidebar-toggle-btn" type="button" aria-label="Collapse filter sidebar" aria-controls="filterSidebar" aria-expanded="true">
+                        ☰
+                    </button>
+                </div>
                 <div class="folder-display">
                     <code>/home/user/Projects/ModpackG</code>
                 </div>

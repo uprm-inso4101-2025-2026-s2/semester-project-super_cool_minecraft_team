@@ -30,23 +30,50 @@
 
         <section class="card dependencies-card">
             <h2>Detected Missing Dependencies</h2>
+            <div class="search-container">
+                <input
+                    type="text"
+                    id="dependency-search"
+                    class="dependency-search"
+                    placeholder="Search dependencies..."
+                />
+
+                <button
+                    id="clear-search-button"
+                    class="clear-search-button"
+                    type="button">
+                    ✕
+                </button>
+            </div>
+
+            <div id="dependency-summary" class="dependency-summary" hidden>
+                <div class="summary-item">
+                    <span class="summary-label">Total</span>
+                    <span id="summary-total" class="summary-value">0</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Resolved</span>
+                    <span id="summary-resolved" class="summary-value">0</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Unresolved</span>
+                    <span id="summary-unresolved" class="summary-value">0</span>
+                </div>
+            </div>
 
            <div id="partial-results-banner" class="info-banner" hidden>
             Some dependencies were resolved, but others could not be matched automatically.
             You can still install the resolved ones first and retry analysis.
-
             </div>
 
             <div id="loading-state">
             Loading missing dependencies...
-
             </div>
 
             <div id="error-state" class="error-banner" hidden></div>
 
             <div id="empty-state" hidden>
             No missing dependencies were found.
-
             </div>
 
             <div id="dependency-list" class="dependency-list"></div>
@@ -56,18 +83,24 @@
         <aside class="side-panels">
 
             <section class="card">
-                <h2>How to install</h2>
+                <h2 class="panel-title">
+                    <span class="panel-icon guide-icon" aria-hidden="true">✓</span>
+                    <span class="install-title">How to install</span>
+                </h2>
                 <ol>
                     <li>Open the dependency link for each missing mod.</li>
                     <li>Download the file that matches your Minecraft version.</li>
                     <li>Make sure the mod also matches your loader (<span th:text="${loader}">Fabric</span>).</li>
-                    <li>Place the downloaded <code>.jar</code> file into your modpack’s <code>mods</code> folder.</li>
+                    <li>Place the downloaded <code>.jar</code> file into your modpack's <code>mods</code> folder.</li>
                     <li>After installing the missing mods, re-run analysis.</li>
                 </ol>
             </section>
 
             <section class="card warning-card">
-                <h2>Warnings</h2>
+                <h2 class="panel-title">
+                    <span class="panel-icon warning-icon" aria-hidden="true">!</span>
+                    <span class="warning-title">Warnings</span>
+                </h2>
                 <ul>
                     <li>Do not install a Forge mod in a Fabric modpack.</li>
                     <li>Do not install a mod built for a different Minecraft version.</li>
@@ -76,7 +109,10 @@
             </section>
 
             <section class="card">
-                <h2>What to do if unresolved</h2>
+                <h2 class="panel-title">
+                    <span class="panel-icon troubleshooting-icon" aria-hidden="true">?</span>
+                    <span class="unresolved-title">What to do if unresolved</span>
+                </h2>
                 <ul>
                     <li>Search for the dependency manually on Modrinth or CurseForge.</li>
                     <li>Confirm the exact mod ID, Minecraft version, and loader.</li>

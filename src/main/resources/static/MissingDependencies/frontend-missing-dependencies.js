@@ -56,6 +56,31 @@ async function missingDependenciesPage() {
             
             dependencyList.appendChild(createDependencyCard(dependencyObj, resolvedDependency));
         }
+
+
+        const totalDependencies = missingDependencies.length;
+        const resolvedDependencies = resolvedById.size;
+        const unresolvedDependencies =
+            totalDependencies - resolvedDependencies;
+
+        const dependencySummary =
+            document.getElementById("dependency-summary");
+
+        document.getElementById("summary-total").textContent =
+            totalDependencies;
+
+        document.getElementById("summary-resolved").textContent =
+            resolvedDependencies;
+
+        document.getElementById("summary-unresolved").textContent =
+            unresolvedDependencies;
+
+        dependencySummary.hidden = false;
+
+
+
+        
+        setupDependencySearch();
     } catch (error) {
         errorState.textContent = error.message || "Unable to load missing dependencies.";
         errorState.hidden = false;
@@ -111,6 +136,44 @@ function createDependencyCard(dependency, resolvedDependency) {
     dependencyCard.appendChild(dependencyMain);
     dependencyCard.appendChild(dependencyActions);
     return dependencyCard;
+}
+
+function setupDependencySearch() {
+    const searchInput = document.getElementById("dependency-search");
+    const clearButton = document.getElementById("clear-search-button");
+    const dependencyList = document.getElementById("dependency-list");
+
+    if (!searchInput || !dependencyList) {
+        return;
+    }
+
+    searchInput.addEventListener("input", () => {
+        const searchValue = searchInput.value.toLowerCase();
+        const dependencyCards = dependencyList.querySelectorAll(".dependency-item");
+
+        dependencyCards.forEach((card) => {
+            const dependencyText = card.textContent.toLowerCase();
+
+            if (dependencyText.includes(searchValue)) {
+                card.style.display = "flex";
+            } else {
+                card.style.display = "none";
+            }
+        });
+    });
+
+    clearButton.addEventListener("click", () => {
+        searchInput.value = "";
+
+        const dependencyCards =
+            dependencyList.querySelectorAll(".dependency-item");
+
+        dependencyCards.forEach((card) => {
+            card.style.display = "flex";
+        });
+
+        searchInput.focus();
+    });
 }
 
 

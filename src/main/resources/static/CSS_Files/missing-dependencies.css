@@ -22,7 +22,13 @@
 
 body#page-missing-dependencies {
     font-family: 'Monocraft', sans-serif;
-    background: linear-gradient(180deg, #10151c 0%, #17212b 100%);
+    background:
+        linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.75)),
+        url("/images/Background1.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
     color: #f5f5f5;
     min-height: 100vh;
     padding: 40px 24px;
@@ -92,16 +98,53 @@ body#page-missing-dependencies {
 }
 
 .card {
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    background: rgba(0, 0, 0, 0.65);
+    border: none;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
 .card h2 {
     font-size: 1.25rem;
     margin-bottom: 16px;
+}
+
+.panel-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.panel-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.guide-icon {
+    background: rgba(62, 190, 69, 0.18);
+    border: 1px solid rgba(62, 190, 69, 0.55);
+    color: #bff7c4;
+}
+
+.warning-icon {
+    background: rgba(255, 190, 80, 0.18);
+    border: 1px solid rgba(255, 190, 80, 0.55);
+    color: #ffe0a3;
+}
+
+.troubleshooting-icon {
+    background: rgba(111, 171, 255, 0.18);
+    border: 1px solid rgba(111, 171, 255, 0.55);
+    color: #cfe3ff;
 }
 
 .info-banner {
@@ -258,4 +301,109 @@ code {
 .back-to-graph-button:hover {
     transform: translateY(-2px);
     opacity: 0.95;
+}
+
+
+.dependency-search {
+    width: 100%;
+    padding: 14px 16px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.06);
+    color: white;
+    font-family: 'Monocraft', sans-serif;
+    font-size: 0.95rem;
+}
+
+.dependency-search::placeholder {
+    color: #cfcfcf;
+}
+
+.dependency-search:focus {
+    outline: none;
+    border-color: #3ebe45;
+}
+
+/* ── Side Panel Title Colors ── */
+.install-title {
+    color: #3ebe45;
+}
+
+.warning-title {
+    color: #f5c542;
+}
+
+.unresolved-title {
+    color: #7db7ff;
+}
+
+@media (max-width: 768px) {
+    .install-title,
+    .warning-title,
+    .unresolved-title {
+        font-size: 1rem;
+        word-break: break-word;
+    }
+}
+
+
+
+.dependency-summary {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.summary-item {
+    flex: 1;
+    min-width: 120px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    padding: 14px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.summary-label {
+    color: #cfcfcf;
+    font-size: 0.9rem;
+}
+
+.summary-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #3ebe45;
+}
+
+
+
+.search-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.search-container .dependency-search {
+    margin-bottom: 0;
+    flex: 1;
+}
+
+.clear-search-button {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: white;
+    border-radius: 10px;
+    padding: 0 16px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.clear-search-button:hover {
+    background: rgba(255, 255, 255, 0.14);
+    transform: translateY(-1px);
 }
