@@ -1,0 +1,141 @@
+Verification of Version Constraint Logic Through Input-Output Test Cases
+Objective
+Define a verification plan for the “Check Version Rules” behavior by creating clear inputoutput test cases for the Minecraft Mod Dependency Visualizer.
+The Documents lecture explains that verification includes testing and demonstrating that
+system properties hold correctly for specific inputs and outputs.
+The lecture provides the example:
+“my implementation of sqrt will return 1.0, 2.0, 3.0, 4.0, 5.0 on inputs of 1.0, 4.0, 9.0, 16.0,
+25.0 respectively”
+This same verification pattern is applied to semantic version constraint validation in the
+dependency resolution engine.
+1. Verification Context
+The “Check Version Rules” behavior determines whether an installed mod version satisfies
+the dependency constraints declared by another mod.
+The backend evaluates:
+• an installed version
+• a semantic version constraint
+and returns:
+• True
+• False
+• or a parsing error
+Instead of relying on abstract descriptions, the system uses explicit input-output test pairs
+as a verification contract for backend implementation.
+This follows the lecture’s definition of verification through testing.
+2. Version Constraint Test Case Suite
+Test
+Case
+Installed
+Version
+Constraint Expected
+Output
+Purpose
+TC-1 1.5.2 >=1.5.0
+<1.6.0
+True Standard valid range
+Test
+Case
+Installed
+Version
+Constraint Expected
+Output
+Purpose
+TC-2 1.6.0 >=1.5.0
+<1.6.0
+False Upper boundary exclusion
+TC-3 1.5.0 >=1.5.0 True Exact lower boundary match
+TC-4 1.4.9 >=1.5.0 False Below minimum version
+TC-5 2.0.0 ==2.0.0 True Exact equality match
+TC-6 2.0.1 ==2.0.0 False Equality mismatch
+TC-7 1.5.3 1.5.* True Wildcard patch version
+TC-8 1.6.1 1.5.* False
+Wildcard major/minor
+mismatch
+TC-9 1.5.0-beta >=1.5.0 False Pre-release exclusion
+TC-10 1.5.0 >=1.5.0-beta True Stable release satisfies beta
+minimum
+TC-11 3.2.1 <4.0.0 True Simple upper bound
+TC-12 4.0.0 <4.0.0 False Strict inequality boundary
+TC-13 1.5 >=1.5.0 Parsing Error Malformed installed version
+TC-14 1.5.2 >>1.5.0 Parsing Error Invalid constraint operator
+TC-15 (missing) >=1.5.0 Parsing Error Missing installed version
+TC-16 1.5.2 (missing) Parsing Error Missing constraint string
+3. Boundary and Edge Case Coverage
+The verification suite includes several important semantic versioning edge cases.
+Exact Boundary Matches
+The system verifies whether inclusive boundaries behave correctly.
+Example:
+Version Constraint Output
+1.5.0 >=1.5.0 True
+This confirms that equality is accepted for inclusive operators.
+Strict Inequality Rules
+The suite also verifies exclusive boundaries.
+Example:
+Version Constraint Output
+4.0.0 <4.0.0 False
+This confirms that strict upper limits are enforced correctly.
+Wildcard Constraints
+Wildcard handling is validated using patterns such as:
+1.5.*
+This ensures the resolver correctly matches all compatible patch versions within the same
+minor release.
+Pre-Release Handling
+The suite verifies behavior involving beta or pre-release versions.
+Example:
+1.5.0-beta
+These cases ensure the parser handles semantic version precedence consistently.
+4. Negative Scenario Validation
+The lecture explains that verification demonstrates whether properties hold correctly under
+testing.
+Because of this, the suite includes malformed and invalid inputs.
+Malformed Version Strings
+Example:
+Installed Version Constraint Expected Output
+1.5 >=1.5.0 Parsing Error
+This verifies that incomplete semantic versions are rejected.
+Invalid Constraint Operators
+Example:
+Installed Version Constraint Expected Output
+1.5.2 >>1.5.0 Parsing Error
+This verifies that unsupported operators are detected properly.
+Missing Arguments
+The suite also validates behavior when required inputs are absent.
+This prevents undefined parsing behavior and improves backend stability.
+5. Relation to Verification in the Lecture
+The Documents lecture defines verification as:
+• testing
+• model checking
+• showing properties to hold for other texts or implementations
+The lecture’s square root example demonstrates correctness by mapping specific inputs
+directly to expected outputs.
+The version constraint suite applies the exact same structure:
+Input Expected Output
+Installed Version + Constraint True, False, or Parsing Error
+This creates a deterministic validation framework for the dependency resolution engine.
+6. Functional Validation Contract
+The test table acts as the functional “Source of Truth” for backend implementation.
+Backend developers can directly convert these cases into deterministic unit tests such as:
+• JUnit tests
+• parser validation tests
+• dependency resolver integration tests
+This ensures:
+• semantic version rules are implemented consistently
+• edge cases are validated early
+• malformed inputs are handled safely
+• dependency resolution behavior remains predictable
+The verification suite also reduces ambiguity between frontend expectations and backend
+implementation logic.
+7. Conclusion
+The Minecraft Mod Dependency Visualizer applies the verification principles from the
+Documents lecture by defining explicit input-output test pairs for semantic version
+constraint evaluation.
+Following the lecture’s square root verification example, the system validates correctness
+by mapping:
+• installed versions
+• version constraints
+to predictable outputs:
+• True
+• False
+• or Parsing Error
+This verification table provides a formal validation contract for the dependency engine and
+establishes a reliable foundation for future backend unit testing and parser
+implementation.

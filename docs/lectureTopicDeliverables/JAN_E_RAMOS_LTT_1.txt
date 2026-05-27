@@ -1,0 +1,115 @@
+Defining User Roles and Access Constraints for Modpack Integrity
+Objective
+Apply the principles of system security and user distinction discussed in the Requirements
+Engineering lecture to define a formal access control policy. The goal is to specify which system
+functions are available to Authorized versus Unauthorized users in order to protect modpack data
+integrity while ensuring the dependency visualizer remains a useful public resource.
+The design follows the security principle described in the lecture (requirements.pdf, p.250) that
+systems must distinguish between authorized and unauthorized users and restrict system
+knowledge and modification capabilities accordingly.
+1. Security Principle from the Lecture
+The Requirements Engineering lecture explains that secure systems must enforce a clear
+distinction between authorized and unauthorized users.
+As described in the lecture (requirements.pdf, p.250):
+An unauthorized user gaining access to a system resource cannot determine what the system
+resource is doing.
+The user cannot determine how the resource works.
+The user does not even know that they lack this knowledge.
+This principle ensures that sensitive system behavior and internal logic remain hidden from
+unauthorized actors.
+The Minecraft dependency visualization system applies this principle by ensuring that users who
+are not authenticated can only interact with public read-only system outputs, while modification
+capabilities are restricted to authorized roles.
+2. Role-Based Access Control Model
+The system distinguishes between different categories of users to protect the integrity of
+modpack data.
+Unauthorized User (Guest)
+Guests represent users who access the platform without authentication.
+Permissions:
+View dependency graphs
+Inspect dependency relationships
+Analyze modpacks without saving modifications
+Guest users can analyze dependencies for mods already indexed in the system’s metadata
+database. The platform stores dependency information extracted from previously uploaded or
+externally sourced mod metadata, allowing guests to explore dependency graphs without
+uploading files.
+Restrictions:
+Cannot upload mod files
+Cannot create modpacks
+Cannot delete or modify stored configurations
+Cannot access internal system metadata
+This aligns with the lecture's security principle: unauthorized users may see system outputs but
+cannot understand or manipulate internal system behavior.
+Authorized User (Registered User)
+Authorized users are authenticated users who can interact with the system beyond read-only
+operations.
+Permissions:
+Upload mod files
+Create modpack configurations
+Trigger dependency resolution
+Save dependency graphs
+Modify their own modpacks
+Restrictions:
+Cannot modify system configuration
+Cannot delete other users' data
+Authentication ensures that only trusted users can modify system state.
+System Administrator
+Administrators maintain system stability and configuration.
+Permissions:
+Manage API integration
+Clear cached metadata
+Maintain system logs
+Remove corrupted modpacks
+Configure system behavior
+Administrators have elevated privileges because they maintain the platform infrastructure.
+3. Permission Matrix
+System Behavior Unauthorized Authorized Admin
+View dependency graph ✓ ✓ ✓
+Analyze modpacks ✓ ✓ ✓
+Upload mod files X ✓ ✓
+Create modpack X ✓ ✓
+Save dependency
+graphs X ✓ ✓
+Delete modpacks X
+They can only delete Modpacks
+they themselves own ✓
+Resolve dependencies ✓ ✓ ✓
+Manage API
+configuration X X ✓
+Clear metadata cache X X ✓
+4. Functional Requirements
+FR-1
+The system shall allow authorized users to view dependency graphs.
+FR-2
+The system shall prevent unauthorized users from uploading mod files or modifying stored
+modpack configurations.
+FR-3
+The system shall require authentication before allowing a user to upload mod files or create
+modpacks.
+FR-4
+The system shall allow authorized users to upload supported mod files.
+FR-5
+The system shall allow authorized users to create and modify their own modpack configurations.
+FR-6
+The system shall restrict deletion of modpacks to their owner or a system administrator.
+FR-7
+The system must verify user authorization before executing any operation that modifies stored
+system data.
+FR-8
+The system shall allow administrators to manage system configuration and dependency
+metadata.
+FR-9
+The system must reject any write operation performed without appropriate authorization.
+5. Protection of Data Integrity
+The separation between authorized and unauthorized users protects the integrity of dependency
+metadata and modpack configurations.
+Following the security principle discussed in the Requirements Engineering lecture
+(requirements.pdf, p.250), the system ensures that unauthorized users cannot access internal
+system behavior or modify stored resources.
+Integrity protection is implemented through:
+Role-Based Access Control (RBAC) restricting write operations to authenticated users
+Read-only public access for guest users
+Privilege separation for administrative operations
+Authorization checks before executing any data-modifying behavior
+These controls prevent accidental or malicious modification of dependency graphs, corrupted
+modpack configurations, and unauthorized changes to system metadata.

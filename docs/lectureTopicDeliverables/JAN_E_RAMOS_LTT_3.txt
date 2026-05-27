@@ -1,0 +1,196 @@
+Distinguishing Phenomena vs. Concepts in Mod Metadata and Database
+Schema Design
+Objective
+Apply the principles discussed in the Phenomena and Concepts lecture to the data modeling
+architecture of the Minecraft Mod Dependency Visualizer. The goal is to formally distinguish
+between concrete uploaded mod files and the abstract logical identity of a mod in order to
+support database normalization, prevent duplicate processing, and maintain consistent
+dependency relationships.
+The design follows the distinction presented in phenomena-concepts.pdf, where:
+• A phenomenon is defined as an observable, concrete instance or specific measurable
+value.
+• A concept is defined as an abstraction, class, type, or kind.
+This distinction is directly applicable to the backend architecture because the system must
+separately manage:
+1. Physical uploaded files (ModFile)
+2. Logical mod identities (Mod)
+without incorrectly merging their responsibilities or metadata.
+1. Security and Modeling Principle from the Lecture
+The lecture Phenomena and Concepts defines the distinction between concrete instances and
+abstract categories as follows:
+• Phenomena: observable, concrete instances or measurable values
+• Concepts: abstractions, classes, types, or kinds
+The lecture further explains the difference through examples:
+• “my car sitting in the parking lot right now” → phenomenon
+• “cars” as a generic category → concept
+• “vehicles” → abstract concept
+This same abstraction hierarchy exists in the Minecraft dependency visualization system.
+A specific uploaded .jar file is a measurable physical artifact and therefore represents a
+phenomenon.
+The logical identity of the mod itself, such as:
+• "jei"
+• "create"
+• "fabric-api"
+represents a reusable abstract entity and therefore corresponds to a concept.
+The architecture intentionally separates these layers because multiple physical files may
+represent the same logical mod concept across different versions, loaders, or distributions.
+2. Architectural Distinction Between Phenomena and Concepts
+The Phenomenon: ModFile
+A ModFile represents a concrete uploaded artifact processed by the backend.
+Examples include:
+• jei-1.20.1-forge.jar
+• jei-fabric-15.2.0.jar
+• a .zip archive uploaded by a user
+• a specific SHA-256 file hash
+These are observable and measurable objects because they possess:
+• byte content
+• file size
+• upload timestamps
+• processing status
+• hash values
+• storage locations
+According to the lecture definition, these properties classify the uploaded file as a phenomenon
+because it is a concrete instance that can be sensed and measured.
+ModFile Attributes
+Attribute Purpose
+File Hash (SHA-256) Unique physical file identity
+File Size Concrete measurable metadata
+Upload Timestamp Tracks ingestion events
+Processing Status Tracks parser state
+File Format .jar, .zip, etc.
+Storage Path Physical file reference
+These attributes belong only to the physical uploaded object and should not be merged with
+conceptual dependency information.
+The Concept: Mod
+A Mod represents the abstract logical identity of a Minecraft modification.
+Examples include:
+• jei
+• create
+• sodium
+Unlike ModFile, this entity is not tied to any single uploaded archive.
+Instead, it represents:
+• the persistent mod identity
+• dependency relationships
+• logical graph nodes
+• canonical mod metadata
+This corresponds to the lecture’s definition of a concept because it is an abstraction or type
+rather than a specific measurable artifact.
+Mod Attributes
+Attribute Purpose
+Mod ID Canonical logical identifier
+Attribute Purpose
+Mod Name Human-readable abstraction
+Description Conceptual metadata
+Dependency Relationships Graph structure
+Supported Loaders Forge/Fabric abstraction
+Author Information Persistent mod metadata
+These attributes remain stable across multiple uploaded files and versions.
+3. Structural Entity Mapping Overview
+The backend architecture establishes a one-to-many relationship between Mod and ModFile.
+Conceptual Relationship
+Mod (Concept)
+ ├── ModFile v1.0
+ ├── ModFile v1.1
+ ├── ModFile Fabric Edition
+ └── ModFile Forge Edition
+In this model:
+• Mod acts as the canonical dependency graph node.
+• ModFile represents a specific uploaded physical realization of that mod.
+Example Database Structure
+mods Table (Concept Layer)
+Column Description
+mod_id Canonical logical identifier
+name Generic mod name
+description Abstract mod metadata
+created_at Logical entity creation timestamp
+mod_files Table (Phenomenon Layer)
+Column Description
+file_hash Unique physical file hash
+mod_id Foreign key to mods
+file_name Uploaded artifact name
+file_size Concrete measurable property
+upload_status Processing state
+uploaded_at Upload timestamp
+This separation ensures proper database normalization because concrete file metadata does not
+pollute conceptual dependency relationships.
+4. Why Separating Mod IDs from File Hashes Prevents Schema Problems
+The distinction between logical mod identity and physical file identity prevents several major
+backend issues.
+Prevention of Duplicate Dependency Graph Nodes
+Without abstraction, every uploaded .jar file would become a separate dependency node.
+Example:
+jei-v1.jar
+jei-v2.jar
+jei-fabric.jar
+would incorrectly create three independent graph entities instead of one conceptual mod.
+By separating:
+• Mod ID → conceptual identity
+• SHA-256 Hash → physical file identity
+the system correctly recognizes that multiple uploads belong to the same logical mod.
+Prevention of Processing Bottlenecks
+File hashes identify exact uploaded artifacts.
+This allows the backend to:
+• avoid reparsing identical uploads
+• reuse cached dependency metadata
+• skip redundant extraction operations
+Example:
+SHA-256 already processed → reuse metadata
+instead of re-running dependency analysis every upload.
+This reduces:
+• CPU usage
+• dependency resolution overhead
+• metadata extraction duplication
+Prevention of Schema Anomalies
+If physical file data and logical mod relationships are merged into one entity, the system risks:
+• duplicated dependency edges
+• inconsistent version relationships
+• conflicting metadata updates
+• redundant storage records
+Separating concepts from phenomena ensures:
+• normalized relational design
+• stable graph identities
+• reusable dependency metadata
+• cleaner Hibernate entity relationships
+5. Alignment with the Lecture’s Abstraction Model
+The architecture directly follows the abstraction hierarchy described in phenomena-concepts.pdf.
+Lecture Example:
+Lecture Example Classification
+“my car” Phenomenon
+Lecture Example Classification
+“cars” Concept
+“vehicles” Abstract Concept
+System Equivalent:
+System Example Classification
+Specific uploaded .jar file Phenomenon
+Generic mod identity (jei) Concept
+“Minecraft Mods” category Abstract Concept
+The uploaded file corresponds to a measurable physical instance, while the mod identifier
+represents a reusable abstraction independent of any specific artifact.
+6. Relation to Entity Modeling in the Lecture
+The lecture also explains that entities are “things represented as data” inside the machine.
+Both Mod and ModFile are entities within the backend domain model, but they exist at different
+abstraction levels:
+Entity Abstraction Level
+ModFile Concrete entity
+Mod Abstract entity
+This layered design improves:
+• database normalization
+• dependency graph consistency
+• metadata reuse
+• backend scalability
+• ORM relationship clarity
+7. Conclusion
+The Minecraft Mod Dependency Visualizer applies the lecture’s distinction between phenomena
+and concepts by separating:
+• physical uploaded mod artifacts (ModFile)
+• logical mod identities (Mod)
+into independent architectural layers.
+This distinction ensures that:
+• multiple file uploads can map to the same dependency graph node
+• dependency relationships remain conceptually stable
+• duplicate processing is avoided
+• database anomalies are prevented
+• backend entities remain normalized and scalable
+Following the abstraction principles described in phenomena-concepts.pdf, the system models
+uploaded files as measurable concrete phenomena while treating mod identities as persistent
+abstract concepts.

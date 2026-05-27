@@ -1,0 +1,164 @@
+Agile Backlog Grooming and INVEST Decomposition for Dependency
+Visualization
+Objective
+Apply Agile backlog grooming principles to break the large “Interactive Dependency Graph”
+requirement into smaller, developer-ready User Stories for the Minecraft Mod Dependency
+Visualizer.
+The Agile Development lecture explains that backlog grooming helps teams “add detail” and
+“achieve INVEST.”
+The lecture also defines User Stories using the format:
+“As a <role> I want to <perform activity> in order to <higher-level goal>”
+This task applies those principles to the interface requirements described in Section 2.8 of the
+proposal.
+1. Agile Backlog Grooming Context
+The Agile lecture identifies important Scrum concepts such as:
+• Product and sprint backlogs
+• User stories
+• Deliverables
+• Backlog grooming
+The lecture also explains that backlog items should satisfy the INVEST criteria:
+• Independent
+• Negotiable
+• Valuable
+• Estimable
+• Testable
+The original “Interactive Dependency Graph” requirement is too broad to function as a single
+sprint task. It combines multiple frontend and backend responsibilities into one large feature.
+To support Agile development, the requirement must be divided into smaller user stories that can
+be implemented and tested independently.
+2. Decomposed User Stories
+User Story 1 — Display Required Dependencies
+User Story
+As a modpack creator, I want required dependencies to appear as connected graph nodes so that I
+can understand which mods are necessary for the modpack to work correctly.
+Acceptance Criteria
+• The system shall display required dependencies as connected nodes.
+• The graph shall render dependency edges between related mods.
+• Selecting a node shall display dependency metadata.
+• The visualization shall update after dependency resolution.
+INVEST Analysis
+INVEST Property Explanation
+Independent Separate from search or conflict visualization
+Negotiable Rendering approach may change during planning
+Valuable Helps users understand required dependencies
+Estimable Developers can estimate rendering and API work
+Small Focused only on required dependency display
+Testable Graph rendering can be verified directly
+User Story 2 — Highlight Incompatible Mods
+User Story
+As a modpack creator, I want incompatible mods to be connected with red visual links so that I
+can quickly identify configuration conflicts.
+Acceptance Criteria
+• The system shall display incompatible relationships using red edges.
+• Conflict edges shall appear only when incompatibilities exist.
+• Hovering over a conflict edge shall display an explanation tooltip.
+• The graph legend shall explain conflict indicators.
+INVEST Analysis
+INVEST Property Explanation
+Independent Does not depend on search or navigation
+Negotiable Visual styling may change later
+Valuable Helps users detect mod conflicts
+Estimable Scope is limited to conflict visualization
+Small Focused only on incompatibility rendering
+Testable Conflict edges and tooltips can be verified
+User Story 3 — Navigate Between Related Mods
+User Story
+As a modpack creator, I want to click graph nodes to navigate between related mods so that I can
+explore dependency chains interactively.
+Acceptance Criteria
+• Users shall be able to select dependency nodes.
+• Selecting a node shall center the graph on that mod.
+• Connected dependencies shall remain visible after selection.
+• The selected node shall be visually highlighted.
+INVEST Analysis
+INVEST Property Explanation
+Independent Separate from search and conflict features
+Negotiable Navigation behavior may be adjusted
+Valuable Improves graph exploration usability
+Estimable Limited interaction-focused scope
+Small Covers only graph navigation
+Testable Node selection behavior can be validated
+User Story 4 — Search for Mods in the Graph
+User Story
+As a modpack creator, I want to search for mods by name so that I can quickly locate nodes in
+large dependency graphs.
+Acceptance Criteria
+• The system shall provide a mod search input.
+• Partial mod-name matching shall be supported.
+• Matching nodes shall be highlighted.
+• The graph shall focus on the selected search result.
+• Invalid searches shall display a “No matching mods found” message.
+INVEST Analysis
+INVEST Property Explanation
+Independent Separate from visualization logic
+Negotiable Search behavior may evolve later
+Valuable Improves usability for large graphs
+Estimable Search functionality is clearly scoped
+Small Focused only on graph search
+Testable Search results can be directly verified
+User Story 5 — Display Optional Dependencies
+User Story
+As a modpack creator, I want optional dependencies to use a different visual style so that I can
+distinguish them from required dependencies.
+Acceptance Criteria
+• Optional dependencies shall use a different visual style.
+• The graph legend shall explain optional dependency indicators.
+• Optional dependency nodes shall remain interactive.
+• The graph shall update after dependency recalculation.
+INVEST Analysis
+INVEST Property Explanation
+Independent Separate from search and navigation
+Negotiable Visual styles may change
+Valuable Helps users understand dependency importance
+Estimable Scope is limited to visual differentiation
+Small Focused only on optional dependency display
+Testable Visual indicators can be validated easily
+3. Overall INVEST Compliance Analysis
+The Agile lecture states that backlog items should satisfy INVEST requirements during backlog
+grooming.
+The generated stories satisfy these principles in the following ways:
+Independent
+Each story focuses on a single feature:
+• dependency display
+• conflict visualization
+• navigation
+• search
+• optional dependency rendering
+This allows teams to work on features separately without blocking one another.
+Negotiable
+The stories describe functional goals rather than strict technical implementations. Teams may
+adjust:
+• UI design
+• graph libraries
+• interaction behavior
+during sprint planning.
+Valuable
+Each story provides a clear user-facing improvement to dependency analysis and modpack
+management.
+Estimable
+The stories are scoped narrowly enough for developers to estimate implementation effort
+accurately.
+Small
+The large dependency graph requirement was divided into manageable sprint-sized tasks.
+Testable
+Every story includes measurable acceptance criteria that can be verified during sprint review and
+testing.
+4. Relation to Agile Backlog Grooming
+The lecture explains that backlog grooming is used to “add detail” and “achieve INVEST.”
+This decomposition follows that process by transforming a broad interface requirement into:
+• smaller backlog items
+• sprint-ready user stories
+• independently testable features
+The lecture also states that deliverables become backlog items.
+Each user story therefore represents a concrete deliverable that can be assigned to a sprint
+independently.
+5. Conclusion
+The Minecraft Mod Dependency Visualizer applies Agile backlog grooming principles by
+decomposing the “Interactive Dependency Graph” requirement into smaller INVEST-compliant
+user stories.
+Following the Agile Development lecture:
+• User stories capture requirements from the user perspective
+• Backlog grooming improves detail and INVEST quality
+• Sprint backlog items should be estimable and testable
+This decomposition allows frontend and backend teams to implement features incrementally
+while keeping sprint tasks organized, testable, and manageable.
