@@ -1,0 +1,21 @@
+== Agile Development
+Throughout the development of the Minecraft Mod Dependency Visualizer, Agile principles
+have been present in the day-to-day rhythm of Team C's frontend work in ways that go beyond
+theory. Each week, as team leader, I organize a Discord meeting with the frontend developers
+to discuss the state of the project, propose new ideas, and define the issues that the team will
+work on during that sprint. These issues are created incrementally and not all at once, because
+the goal is to build the frontend page gradually, improving it week by week until reaching a
+version that is complete and functional. This reflects one of the core ideas behind Agile:
+delivering working software in small, consistent steps rather than attempting to build
+everything in a single effort. Every Friday, the entire project participates in a Scrum-style
+reflection posted on a GitHub Discussion, where each member writes what they worked on
+during the week, what obstacles they ran into, and what their next steps are. This ritual keeps
+the team accountable and makes progress visible to everyone, which is something Agile
+heavily emphasizes through transparency and regular inspection. Beyond the internal team
+dynamic, collaboration has also extended across groups. Meetings between the frontend and
+backend sides of Team C have been necessary to make sure the interface connects properly
+with what the backend is producing. Additionally, as frontend team leader, I have met with the
+frontend leaders from the other teams, those responsible for the graph visualization and the
+missing dependencies display, to align on how the different parts of the page fit together. This
+kind of cross-team communication is exactly what Agile promotes, since a working product
+depends not just on individual effort but on how well the pieces come together as a whole.

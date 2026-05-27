@@ -1,0 +1,37 @@
+== TLA+ MODEL PAGE NAVIGATION AS A STATE MACHINE
+
+=== 1.TLA + Model Definition
+    The following module defines the state machine for a website navigation system. The states are represented by the set 
+    Pages, and the transition logic is captured by the Next relation
+
+    ---------------- MODULE WebNavigation ---------------
+EXTENDS Sequences, TLC
+(* The set of all possible pages/states *)
+Pages == {"Home", "Visualizer", "About"}
+VARIABLES 
+    current_page
+vars == <>-----------------------------------------------------
+(* Init: The user always starts at the "Home" page *)
+Init == 
+    current_page = "Home"
+(* Next: Defines the state transitions *)
+(* The user can navigate to any page in the set, 
+   provided it is different from the current one. *)
+Next == 
+    \E p \in Pages: 
+        /\ p /= current_page
+        /\ current_page' = p
+(* The complete specification *)
+Spec == Init /\ [][Next]_vars-----------------------------------------------------
+(* Safety Property: current_page must always be a valid member of Pages *)
+TypeOK == current_page \in Pages
+
+
+=== 2. Execution Trace
+This trace shows a sequential path of the user through the system, demonstrating how the state variable 
+current_page evolves.
+
+* Step 1: current_page = "Home" (Initial state)
+* Step 2: current_page = "Visualizer" (Transition to tool)
+* Step 3: current_page = "About" (Direct navigation to info)
+* Step 4: current_page = "Home" (Return to start)

@@ -1,0 +1,67 @@
+= UML Class Diagram - Web UI Components
+
+== Classes
+
+=== NavBar
+* `+render()`
+* `+highlightActive(link)`
+
+=== Footer
+* `+discordURL: String`
+* `+githubURL: String`
+* `+render()`
+* `+redirect(url)`
+
+=== IndexPage
+* `+title: String`
+* `+heroText: String`
+* `+render()`
+* `+onGetStarted()`
+
+=== UploadPage
+* `+acceptedFormats: String`
+* `+render()`
+* `+handleUpload()`
+
+=== GraphVisualizationPage
+* `+filterState: String`
+* `+zoomLevel: int`
+* `+render()`
+* `+applyFilter()`
+* `+resetView()`
+
+=== MissingDependenciesPage
+* `+missingList: List`
+* `+render()`
+* `+fetchMissing()`
+
+=== AboutPage
+* `+teamInfo: String`
+* `+render()`
+
+== Relationships
+
+[cols="1,1,1,3", options="header"]
+|===
+| From | To | Type | Description
+
+| NavBar
+| All Pages
+| Association
+| NavBar is included in every page and handles navigation.
+
+| Footer
+| All Pages
+| Association
+| Footer included in every page with links to Discord, About, GitHub.
+
+| UploadPage
+| GraphVisualizationPage
+| «uses» Dependency
+| After upload, graph visualization is triggered.
+
+| GraphVisualizationPage
+| MissingDependenciesPage
+| «uses» Dependency
+| Graph view links to the missing dependencies view.
+|===
