@@ -352,6 +352,9 @@ Sam justifies features like automatic download fetching, clear dependency previe
 - Notifications are provided whenever a required dependency cannot be resolved, ensuring the system or user is aware of the issue.
 - Failed API requests should trigger automatic retries up to a configurable limit to maintain reliability.
 - All interactions with external APIs are logged for debugging, verification, and auditing purposes.
+- Allow users to upload mod files or submit mod metadata for processing.
+- Validate uploaded metadata and report errors for missing or malformed entries.
+- Provide clear feedback messages when dependency data cannot be loaded or is incomplete.
 
 # 2.3.4 – Machine Requirements
 
