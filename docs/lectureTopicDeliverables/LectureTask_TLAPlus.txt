@@ -1,0 +1,229 @@
+TLA+
+
+Formal Specification of the Dependency Cache Consistency Property
+
+Objective
+
+Formally specify the dependency resolution state machine in TLA+ and use TLC to verify that the cache never becomes inconsistent and that the system never deadlocks.
+
+System Variables
+
+pc — program counter. Values: "checking", "fetching", "resolved", "error".
+
+cacheState — function mapping cache keys to dependency lists. Starts empty.
+
+apiResult — result of the last Modrinth API call. NULL if no call has been made yet.
+
+currentMod — the mod currently being resolved — a record with fields id, version, and loader.
+
+resolvedDeps — accumulated list of resolved dependencies for all mods in the current modpack.
+
+Cache key format used throughout the specification:
+
+cacheKey(mod) == mod.id \o "|" \o mod.version \o "|" \o mod.loader
+
+Initial State: Formula
+
+The system starts at the beginning of a dependency check with an empty cache and no results accumulated.
+
+Init ==
+
+/\ pc           = "checking"
+
+/\ cacheState   = [k \in {} |-> <<>>]
+
+/\ apiResult    = NULL
+
+/\ resolvedDeps = <<>>
+
+Next State: Formula
+
+Next is a disjunction over four transitions. Each corresponds to one arc in the Petri Net model (T8a, T8b, API return, T15).
+
+Cache Hit
+
+Fires when the current mod's key is already in the cache. Resolution completes immediately.
+
+CacheHit ==
+
+/\ pc = "checking"
+
+/\ cacheKey(currentMod) \in DOMAIN cacheState
+
+/\ resolvedDeps' = Append(resolvedDeps, cacheState[cacheKey(currentMod)])
+
+/\ pc' = "resolved"
+
+/\ UNCHANGED <<cacheState, apiResult, currentMod>>
+
+API Fetch
+
+Fires when the key is not in the cache. Moves to the fetching state to call the API.
+
+ApiFetch ==
+
+/\ pc = "checking"
+
+/\ cacheKey(currentMod) \notin DOMAIN cacheState
+
+/\ pc' = "fetching"
+
+/\ UNCHANGED <<cacheState, apiResult, resolvedDeps, currentMod>>
+
+API Return
+
+Fires when the API responds successfully. Stores the result in the cache and resolves.
+
+ApiReturn ==
+
+/\ pc = "fetching"
+
+/\ apiResult' \in PossibleResults
+
+/\ cacheState' = cacheState @@ (cacheKey(currentMod) :> apiResult')
+
+/\ resolvedDeps' = Append(resolvedDeps, apiResult')
+
+/\ pc' = "resolved"
+
+/\ UNCHANGED currentMod
+
+Lookup Failed
+
+Fires when the API call fails. Moves the system to the error state without modifying the cache.
+
+LookupFailed ==
+
+/\ pc = "fetching"
+
+/\ pc' = "error"
+
+/\ UNCHANGED <<cacheState, apiResult, resolvedDeps, currentMod>>
+
+Next == CacheHit \/ ApiFetch \/ ApiReturn \/ LookupFailed
+
+Properties
+
+Safety: Cache Immutability
+
+Once a key is written into the cache its value never changes. This ensures every mod always receives the same dependency list on repeat lookups.
+
+CacheImmutability ==
+
+[][\A k \in DOMAIN cacheState :
+
+k \in DOMAIN cacheState' =>
+
+cacheState'[k] = cacheState[k]]_cacheState
+
+Safety: No Deadlock
+
+In every reachable state at least one transition remains enabled. The system can never get permanently stuck.
+
+NoDeadlock == [](ENABLED Next)
+
+Liveness: Resolution Termination
+
+Every execution that enters the checking state must eventually leave it, either by resolving or by reaching the error state.
+
+EventualResolution ==
+
+(pc = "checking") ~> (pc = "resolved" \/ pc = "error")
+
+TLC Model Configuration
+
+Modpack size — bounded to 3 mods for initial verification.
+
+Cache size — bounded to 5 entries maximum.
+
+PossibleResults — a set of two distinct dependency lists to simulate nondeterministic API responses.
+
+Search mode — breadth-first search so TLC reports the shortest counterexample if any property fails.
+
+Expected outcome — all three properties hold; TLC reports no counterexample found.
+
+Complete Module
+
+MODULE DependencyFetcher
+
+EXTENDS Integers, Sequences, FiniteSets
+
+VARIABLES pc, cacheState, apiResult, currentMod, resolvedDeps
+
+PossibleResults == {<<"mod-a">>, <<"mod-b", "mod-c">>}
+
+cacheKey(mod) == mod.id \o "|" \o mod.version \o "|" \o mod.loader
+
+Init ==
+
+/\ pc           = "checking"
+
+/\ cacheState   = [k \in {} |-> <<>>]
+
+/\ apiResult    = NULL
+
+/\ resolvedDeps = <<>>
+
+CacheHit ==
+
+/\ pc = "checking"
+
+/\ cacheKey(currentMod) \in DOMAIN cacheState
+
+/\ resolvedDeps' = Append(resolvedDeps, cacheState[cacheKey(currentMod)])
+
+/\ pc' = "resolved"
+
+/\ UNCHANGED <<cacheState, apiResult, currentMod>>
+
+ApiFetch ==
+
+/\ pc = "checking"
+
+/\ cacheKey(currentMod) \notin DOMAIN cacheState
+
+/\ pc' = "fetching"
+
+/\ UNCHANGED <<cacheState, apiResult, resolvedDeps, currentMod>>
+
+ApiReturn ==
+
+/\ pc = "fetching"
+
+/\ apiResult' \in PossibleResults
+
+/\ cacheState' = cacheState @@ (cacheKey(currentMod) :> apiResult')
+
+/\ resolvedDeps' = Append(resolvedDeps, apiResult')
+
+/\ pc' = "resolved"
+
+/\ UNCHANGED currentMod
+
+LookupFailed ==
+
+/\ pc = "fetching"
+
+/\ pc' = "error"
+
+/\ UNCHANGED <<cacheState, apiResult, resolvedDeps, currentMod>>
+
+Next == CacheHit \/ ApiFetch \/ ApiReturn \/ LookupFailed
+
+Spec == Init /\ [][Next]_<<pc, cacheState, apiResult, resolvedDeps, currentMod>>
+
+CacheImmutability ==
+
+[][\A k \in DOMAIN cacheState :
+
+k \in DOMAIN cacheState' =>
+
+cacheState'[k] = cacheState[k]]_cacheState
+
+NoDeadlock == [](ENABLED Next)
+
+EventualResolution ==
+
+(pc = "checking") ~> (pc = "resolved" \/ pc = "error")
+
+THEOREM Spec => CacheImmutability /\ NoDeadlock /\ EventualResolution

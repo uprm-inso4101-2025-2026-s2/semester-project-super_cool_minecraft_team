@@ -1,0 +1,87 @@
+Class Diagrams
+
+Mod Dependency Backend Domain Model
+
+Objective
+
+Produce a class diagram for the backend components involved in mod dependency resolution, covering both a domain-level and an implementation-level view.
+
+Domain Models
+
+The domain model identifies the core entities and their relationships independent of any implementation detail.
+
+Entities
+
+ModPack — a ZIP archive uploaded by the user, containing one or more mods.
+
+Mod — a single mod extracted from a modpack, identified by ID, version, and loader type.
+
+Dependency — a mod that another mod requires in order to run correctly.
+
+DependencyResult — the resolved list of dependencies for a given mod, returned to the caller.
+
+Relationships
+
+ModPack contains 1..* Mod — a modpack must have at least one mod.
+
+Mod requires 0..* Dependency — a mod may have zero or more dependencies.
+
+Dependency resolves to DependencyResult — each lookup produces one result object.
+
+Implementation Models
+
+The implementation model maps the domain entities to the actual Java classes in the project and defines their attributes, operations, and inter-class relationships.
+
+Classes
+
+DependencyController — REST entry point. Exposes GET /api/dependencies/missing. Depends on DependencyLookupService.
+
+DependencyLookupService — core business logic. Checks the cache first; falls back to the Modrinth API on a miss. Holds a composition relationship with DependencyLookupCache.
+
+DependencyLookupCache — in-memory key/value store. Key format: modId | version | loader. Returns Optional<List<String>>.
+
+DTO — data transfer object carrying the dependency graph and missing-dependency list to the frontend.
+
+ModrinthApiClient (to create) — encapsulates all HTTP calls to api.modrinth.com. Used by DependencyLookupService on a cache miss.
+
+Attributes and Operations
+
+DependencyLookupService
+
+resolveDependency(modId: String, version: String, loader: String): List<String>
+
+fetchFromExternalSource(modId: String, version: String, loader: String): List<String>
+
+DependencyLookupCache
+
+get(key: String): Optional<List<String>>
+
+put(key: String, value: List<String>): void
+
+contains(key: String): boolean
+
+DependencyController
+
+getMissingDependencies(modpack: MultipartFile): ResponseEntity<DTO>
+
+Relationships
+
+DependencyController --depends on--> DependencyLookupService — controller calls service via dependency injection.
+
+DependencyLookupService --composes--> DependencyLookupCache — service owns the cache; 1-to-1 composition.
+
+DependencyLookupService --depends on--> ModrinthApiClient — service calls client only on a cache miss.
+
+DependencyLookupService --creates--> DTO — service builds the result object returned to the controller.
+
+Multiplicity Summary
+
+DependencyController to DependencyLookupService — 1 to 1
+
+DependencyLookupService to DependencyLookupCache — 1 to 1 (composition)
+
+DependencyLookupService to ModrinthApiClient — 1 to 1 (dependency)
+
+ModPack to Mod — 1 to 1..*
+
+Mod to Dependency — 1 to 0..*

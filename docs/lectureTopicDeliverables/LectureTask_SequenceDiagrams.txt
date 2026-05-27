@@ -1,0 +1,101 @@
+Sequence Diagrams
+
+Mod Dependency Resolution Request Flow
+
+Objective
+
+Document the sequence of messages between backend components during mod dependency resolution, covering the cache-hit path, the Modrinth API-fetch path, and the API error path.
+
+Participants
+
+Client — the frontend or any consumer calling the REST endpoint.
+
+DependencyController — receives the HTTP request and delegates to the service.
+
+DependencyLookupService — core logic; checks cache and calls API as needed.
+
+DependencyLookupCache — in-memory store keyed by modId | version | loader.
+
+ModrinthAPI — external REST API at api.modrinth.com called on a cache miss.
+
+Scenario 1: Cache Hit
+
+Description
+
+The service finds the dependency in the local cache and returns immediately. No outbound HTTP call is made. Expected latency is under 50 ms.
+
+Message Sequence
+
+Client  →  DependencyController:  GET /api/dependencies/missing
+
+DependencyController  →  DependencyLookupService:  resolveDependency(modId, version, loader)
+
+DependencyLookupService  →  DependencyLookupCache:  get(modId | version | loader)
+
+DependencyLookupCache  →  DependencyLookupService:  Optional<List<String>>  [value present]
+
+DependencyLookupService  →  DependencyController:  List<String>  (from cache)
+
+DependencyController  →  Client:  200 OK  ResponseEntity<DTO>
+
+Scenario 2: Cache Miss
+
+Description
+
+The cache returns empty. The service calls the Modrinth API, stores the result in the cache for future use, and returns the result. Expected API latency is approximately 5 seconds.
+
+Message Sequence
+
+Client  →  DependencyController:  GET /api/dependencies/missing
+
+DependencyController  →  DependencyLookupService:  resolveDependency(modId, version, loader)
+
+DependencyLookupService  →  DependencyLookupCache:  get(modId | version | loader)
+
+DependencyLookupCache  →  DependencyLookupService:  Optional.empty()
+
+DependencyLookupService  →  ModrinthAPI:  GET /v2/project/{modId}/dependencies
+
+ModrinthAPI  →  DependencyLookupService:  200 OK  JSON dependency list
+
+DependencyLookupService  →  DependencyLookupCache:  put(modId | version | loader, result)
+
+DependencyLookupService  →  DependencyController:  List<String>
+
+DependencyController  →  Client:  200 OK  ResponseEntity<DTO>
+
+Scenario 3: API Error
+
+Description
+
+The cache misses and the Modrinth API call fails with a timeout or HTTP 503. The service throws an exception, the error is logged, and a 503 response is returned to the client. The user can retry.
+
+Message Sequence
+
+Client  →  DependencyController:  GET /api/dependencies/missing
+
+DependencyController  →  DependencyLookupService:  resolveDependency(modId, version, loader)
+
+DependencyLookupService  →  DependencyLookupCache:  get(modId | version | loader)
+
+DependencyLookupCache  →  DependencyLookupService:  Optional.empty()
+
+DependencyLookupService  →  ModrinthAPI:  GET /v2/project/{modId}/dependencies
+
+ModrinthAPI  →  DependencyLookupService:  503 Service Unavailable / timeout
+
+DependencyLookupService  throws  ApiCallException
+
+DependencyController  catches exception  →  ErrorHandler:  logError(exception)
+
+DependencyController  →  Client:  503 Service Unavailable  with error message
+
+Alt Fragment Structure
+
+When drawing the combined diagram, the three scenarios map onto a single alt fragment with the following guards:
+
+[cache.contains(key) == true] — execute Scenario 1 — cache hit branch.
+
+[cache.contains(key) == false  AND  api succeeds] — execute Scenario 2 — API fetch branch.
+
+[cache.contains(key) == false  AND  api fails] — execute Scenario 3 — error branch.
