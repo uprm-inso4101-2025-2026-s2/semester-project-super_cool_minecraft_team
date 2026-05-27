@@ -687,18 +687,21 @@ NOTE: Consolidates all graceful degradation parameters, heavy-load thresholds, a
 This section defines the core terms that will be used throughout the project.
 These definitions apply to both the backend dependency logic and the frontend graph interface.
 
-Goal: Keep the language consistent across documentation and communication.
-
 A key distinction in this terminology is the difference between domain concepts and system concepts.
 Domain concepts refer to phenomena that exist in the Minecraft modding ecosystem independently of the application, such as Mod, Dependency, Incompatibility, Mod pack, and Version Constraint.
 System concepts are introduced by the design and implementation of the project itself, such as Mod Instance, Dependency Graph, Node, Edge, UploadQueue, and ValidationFeedback.
 
 This distinction helps avoid mixing properties of the observed domain with structures that only exist inside the system.
-As a result, the terminology supports clearer requirements, more consistent msodeling, and a better separation between domain understanding and implementation design.
+As a result, the terminology supports clearer requirements, more consistent [.line-through.red]#msodeling# modeling, and a better separation between domain understanding and implementation design.
+
+Two additional distinctions are worth clarifying upfront. First, Events and Actions are not the same thing: an Event is instantaneous and marks a transition between states (e.g., a conflict is detected), while an Action has duration and describes something the system or user does over time (e.g., resolving dependencies). Second, a State is a condition that persists until something changes it — a Modpack being in conflict is a State, not an Event. These distinctions affected several classifications below.
+
+Additionally, the Minecraft base game is treated as a mod-like entity in this model. It has an identifier (`minecraft`) and a version (e.g., `1.21.1`), and mods declare dependencies toward it the same way they do toward other mods. This lets the system handle Minecraft version constraints the same way it handles any other dependency constraint.
 
 Each term includes:
 
-* Classification (Entity, Relation, Attribute, Event, Behavior)
+* [.line-through.red]#Classification (Entity, Relation, Attribute, Event, Behavior)#
+* Classification (Entity, Relation, Attribute, Event, Behavior, State)
 * Phase Introduced (Domain = Minecraft ecosystem concept, System = project-specific concept)
 * Definition (Implementation-independent)
 
@@ -709,30 +712,57 @@ Each term includes:
   Phase Introduced: Domain +
   Definition: A mod (modification) is a packaged software extension that alters or adds functionality to Minecraft. A mod may introduce new content, mechanics, or systems and may declare dependencies or incompatibilities with other mods.
 
-. Dependency +
-  Classification: Relation +
-  Phase Introduced: Domain +
-  Definition: A dependency is a directed relationship in which one mod requires another mod in order to function correctly. If the required mod is missing or does not satisfy the stated version constraint, the dependent mod cannot operate as intended.
+. [.line-through.red]#Dependency# +
+  [.line-through.red]#Classification: Relation# +
+  [.line-through.red]#Phase Introduced: Domain# +
+  [.line-through.red]#Definition: A dependency is a directed relationship in which one mod requires another mod in order to function correctly. If the required mod is missing or does not satisfy the stated version constraint, the dependent mod cannot operate as intended.# +
++
+Dependency +
+Classification: Relation +
+Phase Introduced: Domain +
+Definition: A directed relation from a source Mod to a target Mod, stating that the source requires the target to be present and satisfy any associated Version Constraint to function correctly. A dependency cannot exist without both Mods — it is always between two specific participants. +
++
+A dependency is classified as a Relation rather than an Entity because it has no existence on its own; it only makes sense in the context of two Mods. It is not a Behavior either, since it does not describe a process — it describes a structural constraint that exists regardless of whether resolution has been run. When a dependency carries a specific version requirement (e.g., `fabric-api >= 0.90.0`), it is a versioned dependency. When no version is specified, any version of the target Mod is acceptable. +
++
+Example: Sodium declares a dependency on Fabric API. When a player updates Sodium, its version constraint on Fabric API may tighten, causing a previously working Modpack to break if the installed Fabric API no longer qualifies.
 
 . Optional Dependency +
   Classification: Relation +
   Phase Introduced: Domain +
-  Definition: A relationship where a mod can integrate with another mod if it is present, but does not require it for core functionality.
+  Definition: A relationship where a mod can integrate with another mod if it is present, but does not require it for core functionality. Like Dependency, it connects two specific Mods and cannot exist independently, so it is classified as a Relation for the same reasons.
 
 . Version +
   Classification: Attribute +
   Phase Introduced: Domain +
   Definition: A structured identifier assigned to a specific release of a mod. Versions are used to distinguish releases and evaluate compatibility between mods.
 
-. Version Constraint +
-  Classification: Attribute +
-  Phase Introduced: Domain +
-  Definition: A rule that specifies which versions of a mod are acceptable within a dependency relationship. A version constraint defines a valid range or condition that must be satisfied.
+. [.line-through.red]#Version Constraint# +
+  [.line-through.red]#Classification: Attribute# +
+  [.line-through.red]#Phase Introduced: Domain# +
+  [.line-through.red]#Definition: A rule that specifies which versions of a mod are acceptable within a dependency relationship. A version constraint defines a valid range or condition that must be satisfied.# +
++
+Version Constraint +
+Classification: Attribute +
+Phase Introduced: Domain +
+Definition: A rule attached to a Dependency relation that specifies which versions of the target Mod are acceptable (e.g., `>= 0.90.0`, `^1.4.0`). The constraint must be satisfied for the dependency to be considered resolved. +
++
+Version Constraint is an Attribute because it is a property of a Dependency — it does not exist on its own. When two dependencies in the same Modpack impose conflicting constraints on the same target Mod, the Modpack enters a Conflict state that cannot be fixed without changing one of the source Mods. +
++
+Example: Indium 1.0.21 requires `fabric-api <= 0.88.1`, while Geckolib 4 requires `fabric-api >= 0.90.0`. No single version of Fabric API satisfies both, so the Modpack is in conflict.
 
-. Minecraft Version +
-  Classification: Entity +
-  Phase Introduced: Domain +
-  Definition: A specific release of Minecraft and its updates. It defines the base environment and APIs that mods and mod loader target. Important for the compatibility constraint in the dependency graph.
+. [.line-through.red]#Minecraft Version# +
+  [.line-through.red]#Classification: Entity# +
+  [.line-through.red]#Phase Introduced: Domain# +
+  [.line-through.red]#Definition: A specific release of Minecraft and its updates. It defines the base environment and APIs that mods and mod loader target. Important for the compatibility constraint in the dependency graph.# +
++
+Minecraft Version +
+Classification: Entity +
+Phase Introduced: Domain +
+Definition: A specific release of Minecraft and its updates. It defines the base environment and APIs that mods and mod loaders target, and is central to compatibility constraints in the dependency graph. +
++
+Within the dependency model, the Minecraft base game behaves as a mod-like entity with identifier `minecraft` and a version string (e.g., `1.21.1`). Mods may declare a dependency on `minecraft` with a Version Constraint, resolved the same way as any other dependency. This allows the system to catch cases where a player runs a Modpack on a Minecraft version the mods do not support. +
++
+Example: A player moves their Modpack from Minecraft 1.20.1 to 1.21.1. Several mods declare `minecraft ~1.20` as a dependency. The system flags each of them as having an unresolved dependency against the new version.
 
 . Mod Loader +
   Classification: Entity +
@@ -769,35 +799,87 @@ Each term includes:
   Phase Introduced: System +
   Definition: A directed connection between two nodes that represents a dependency relationship.
 
-. Resolution +
-  Classification: Behavior +
-  Phase Introduced: System +
-  Definition: The process of evaluating whether all declared dependencies within a given mod set are satisfied according to version constraints and compatibility rules.
+. [.line-through.red]#Resolution# +
+  [.line-through.red]#Classification: Behavior# +
+  [.line-through.red]#Phase Introduced: System# +
+  [.line-through.red]#Definition: The process of evaluating whether all declared dependencies within a given mod set are satisfied according to version constraints and compatibility rules.# +
++
+Resolution +
+Classification: Behavior +
+Phase Introduced: System +
+Definition: The process of evaluating whether all declared Dependency relations within a Modpack are satisfied according to their Version Constraints and compatibility rules. It begins when a Modpack is submitted for analysis and ends when a Resolution Result is produced. +
++
+Resolution is a Behavior because it takes time — it is something the system does, not a moment in time. The moment it finishes is an Event (see section 2.7). What might look like separate processes — checking version rules, detecting conflicts, expanding transitive dependencies — are all phases of Resolution, not independent actions.
 
-. Conflict +
-  Classification: Event +
-  Phase Introduced: System +
-  Definition: A condition that occurs when dependency requirements or version constraints cannot be satisfied simultaneously. A conflict prevents successful resolution of the mod set.
+. [.line-through.red]#Conflict# +
+  [.line-through.red]#Classification: Event# +
+  [.line-through.red]#Phase Introduced: System# +
+  [.line-through.red]#Definition: A condition that occurs when dependency requirements or version constraints cannot be satisfied simultaneously. A conflict prevents successful resolution of the mod set.# +
++
+Conflict +
+Classification: [.line-through.red]#Event# State +
+Phase Introduced: System +
+Definition: A condition in which two or more Mods in a Modpack cannot coexist due to a declared Incompatibility or an unsatisfiable Version Constraint. The Modpack remains in this state until the problem is corrected. +
++
+Conflict was reclassified from Event to State because it is not instantaneous — it is a condition the Modpack sits in over time. The moment the conflict is first detected is the Event (see "Incompatibility Detected" in section 2.7). +
++
+Example: A player adds Canvas Renderer to a Modpack that already has Sodium. Since Canvas Renderer declares Sodium as incompatible, the Modpack enters a Conflict state and stays there until one of them is removed.
 
-. Compatibility +
-  Classification: Attribute +
-  Phase Introduced: Domain +
-  Definition: The state in which two or more mods, versions, or loaders can operate together without violating declared dependencies or constraints.
+. [.line-through.red]#Compatibility# +
+  [.line-through.red]#Classification: Attribute# +
+  [.line-through.red]#Phase Introduced: Domain# +
+  [.line-through.red]#Definition: The state in which two or more mods, versions, or loaders can operate together without violating declared dependencies or constraints.# +
++
+Compatibility +
+Classification: [.line-through.red]#Attribute# State +
+Phase Introduced: Domain +
+Definition: The condition in which two or more Mods, versions, or loaders can coexist in a Modpack without violating any declared Dependency relations, Incompatibility relations, or Version Constraints. +
++
+Compatibility was reclassified from Attribute to State because it describes the overall condition of a configuration at a point in time, not a property of any single Mod. It can change — a Modpack that is compatible today may become incompatible after a mod update. +
++
+Example: Sodium and Fabric API are compatible as long as the installed Fabric API version satisfies Sodium's constraint. If the player updates Sodium and the new version requires a higher Fabric API version than what is installed, the Modpack moves from a compatible to an incompatible state.
 
 . Installation State +
   Classification: Attribute +
   Phase Introduced: System +
   Definition: The current status of a mod instance within the managed environment, such as installed, missing, unresolved, or conflicting.
 
-. Transitive Dependency +
-  Classification: Relation +
-  Phase Introduced: System +
-  Definition: A dependency that arises indirectly through a chain of other dependencies. If Mod A depends on Mod B, and Mod B depends on Mod C, then Mod A has a transitive dependency on Mod C.
+. [.line-through.red]#Transitive Dependency# +
+  [.line-through.red]#Classification: Relation# +
+  [.line-through.red]#Phase Introduced: System# +
+  [.line-through.red]#Definition: A dependency that arises indirectly through a chain of other dependencies. If Mod A depends on Mod B, and Mod B depends on Mod C, then Mod A has a transitive dependency on Mod C.# +
++
+Transitive Dependency +
+Classification: Relation +
+Phase Introduced: System +
+Definition: A dependency that arises indirectly through a chain of other dependencies. If Mod A depends on Mod B, and Mod B depends on Mod C, then Mod A has a transitive dependency on Mod C. +
++
+Like Dependency, this is classified as a Relation. The difference is that transitive dependencies are not declared explicitly in any Mod's metadata — they emerge from following the chain of declared relations during Resolution. +
++
+Example: A player installs Autochef's Delight, which depends on Farmer's Delight, which depends on Fabric API. The Modpack ends up with a transitive dependency on Fabric API even though Autochef's Delight never mentions it.
 
 . Profile +
   Classification: Entity +
   Phase Introduced: System +
   Definition: A named container that stores a user's mod instances and their installation statuses.
+
+. Incompatibility +
+  Classification: Relation +
+  Phase Introduced: Domain +
+  Definition: A declared constraint between two Mods stating they must not coexist in the same Modpack. +
++
+Incompatibility is a Relation because it connects two specific Mods and has no meaning without both. It is worth distinguishing from Conflict: Incompatibility is the rule declared in a Mod's metadata, while Conflict is the State that results when that rule is violated in a Modpack. +
++
+Example: Canvas Renderer declares an Incompatibility with Sodium. If a player includes both in a Modpack, the result is a Conflict state.
+
+. Versioned Dependency +
+  Classification: Relation +
+  Phase Introduced: Domain +
+  Definition: A Dependency relation that carries an explicit Version Constraint on the target Mod. The source Mod functions correctly only if the target is present at a version within the declared range. +
++
+Many of the dependency problems seen in the Minecraft modding community come specifically from versioned dependencies where the acceptable version range is narrow or clashes with the range required by another mod in the same Modpack. +
++
+Example: Indium 1.0.21 requires `fabric-api <= 0.88.1` and Geckolib 4 requires `fabric-api >= 0.90.0`. Since no version of Fabric API satisfies both at once, the Modpack is in conflict.
 
 ==== Mod Uploading Terminology
 
@@ -831,45 +913,80 @@ Each term includes:
   Phase: System +
   Definition: A designated UI area where users can drag files directly from their desktop to initiate upload.
 
-* FileSelected +
-  Classification: Event +
-  Phase: Domain +
-  Definition: User action of choosing a file through the file picker dialog.
+* [.line-through.red]#FileSelected# +
+  [.line-through.red]#Classification: Event# +
+  [.line-through.red]#Phase: Domain# +
+  [.line-through.red]#Definition: User action of choosing a file through the file picker dialog.# +
++
+FileSelected +
+Classification: Event +
+Phase: Domain +
+Definition: The moment a user selects a file through the file picker, triggering the transition from idle to file-selected state.
 
-* FileDropped +
-  Classification: Event +
-  Phase: Domain +
-  Definition: User action of dragging and releasing a file into the drag and drop zone.
+* [.line-through.red]#FileDropped# +
+  [.line-through.red]#Classification: Event# +
+  [.line-through.red]#Phase: Domain# +
+  [.line-through.red]#Definition: User action of dragging and releasing a file into the drag and drop zone.# +
++
+FileDropped +
+Classification: Event +
+Phase: Domain +
+Definition: The moment a user releases a file into the DragAndDropZone, triggering the transition from idle to file-selected state.
 
-* UploadStarted +
-  Classification: Event +
-  Phase: Domain +
-  Definition: User action of initiating the upload process after file selection.
+* [.line-through.red]#UploadStarted# +
+  [.line-through.red]#Classification: Event# +
+  [.line-through.red]#Phase: Domain# +
+  [.line-through.red]#Definition: User action of initiating the upload process after file selection.# +
++
+UploadStarted +
+Classification: Event +
+Phase: Domain +
+Definition: The moment the upload process begins, marking the transition from file-selected to uploading state.
 
-* UploadCancelled +
-  Classification: Event +
-  Phase: Domain +
-  Definition: User action that aborts an ongoing file upload.
+* [.line-through.red]#UploadCancelled# +
+  [.line-through.red]#Classification: Event# +
+  [.line-through.red]#Phase: Domain# +
+  [.line-through.red]#Definition: User action that aborts an ongoing file upload.# +
++
+UploadCancelled +
+Classification: Event +
+Phase: Domain +
+Definition: The moment an ongoing upload is aborted, marking the transition from uploading to cancelled state.
 
-* UploadPaused +
-  Classification: Event +
-  Phase: Domain +
-  Definition: User action that temporarily stops an active upload.
+* [.line-through.red]#UploadPaused# +
+  [.line-through.red]#Classification: Event# +
+  [.line-through.red]#Phase: Domain# +
+  [.line-through.red]#Definition: User action that temporarily stops an active upload.# +
++
+UploadPaused +
+Classification: Event +
+Phase: Domain +
+Definition: The moment an active upload is temporarily halted, marking the transition from uploading to paused state.
 
-* UploadResumed +
-  Classification: Event +
-  Phase: Domain +
-  Definition: User action that continues a paused upload.
+* [.line-through.red]#UploadResumed# +
+  [.line-through.red]#Classification: Event# +
+  [.line-through.red]#Phase: Domain# +
+  [.line-through.red]#Definition: User action that continues a paused upload.# +
++
+UploadResumed +
+Classification: Event +
+Phase: Domain +
+Definition: The moment a paused upload continues, marking the transition from paused to uploading state.
 
-* RetryUpload +
-  Classification: Event +
-  Phase: Domain +
-  Definition: User action that attempts to upload a previously failed file again.
+* [.line-through.red]#RetryUpload# +
+  [.line-through.red]#Classification: Event# +
+  [.line-through.red]#Phase: Domain# +
+  [.line-through.red]#Definition: User action that attempts to upload a previously failed file again.# +
++
+RetryUpload +
+Classification: Event +
+Phase: Domain +
+Definition: The moment a previously failed upload is reattempted, marking the transition from failed to uploading state.
 
 * UploadProgress +
   Classification: Attribute +
   Phase: System +
-  Definition: Numerical value 0 - 100  indicating how much of a file has been successfully transferred.
+  Definition: Numerical value 0 - 100 indicating how much of a file has been successfully transferred.
 
 * ProgressIndicator +
   Classification: Entity +
@@ -881,10 +998,15 @@ Each term includes:
   Phase: System +
   Definition: Thumbnail, icon, or filename display representing the uploaded file.
 
-* ValidationFeedback +
-  Classification: Behavior +
-  Phase: System +
-  Definition: Visual messages displayed to users indicating if a selected file meets requirements.
+* [.line-through.red]#ValidationFeedback# +
+  [.line-through.red]#Classification: Behavior# +
+  [.line-through.red]#Phase: System# +
+  [.line-through.red]#Definition: Visual messages displayed to users indicating if a selected file meets requirements.# +
++
+ValidationFeedback +
+Classification: Behavior +
+Phase: System +
+Definition: The process of evaluating an uploaded file against format and size requirements and displaying the result to the user. It has duration — it starts when a file is selected and ends when the result is shown — so it is classified as a Behavior, not an Event.
 
 * ValidationError +
   Classification: Attribute +
@@ -896,10 +1018,15 @@ Each term includes:
   Phase: System +
   Definition: Notification that the selected file exceeds recommended size limits.
 
-* UploadComplete +
-  Classification: Event +
-  Phase: Domain +
-  Definition: Notification that all files have been successfully transferred to the server.
+* [.line-through.red]#UploadComplete# +
+  [.line-through.red]#Classification: Event# +
+  [.line-through.red]#Phase: Domain# +
+  [.line-through.red]#Definition: Notification that all files have been successfully transferred to the server.# +
++
+UploadComplete +
+Classification: Event +
+Phase: Domain +
+Definition: The moment all files have been successfully transferred to the server, marking the transition from uploading to completed state.
 
 * MetadataForm +
   Classification: Entity +
