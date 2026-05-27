@@ -1,0 +1,16 @@
+= Requirements Specification: Minecraft Mod Dependency Visualizer
+
+== Functional Requirements
+
+The system must fulfill the following core functional requirements to ensure a minimum viable product:
+
+* **File Upload**: The system must allow users to upload mod files for processing and dependency extraction.
+* **Graph Visualization**: The system must render a visual representation of the mod dependency graph.
+* **Filter Functionality**: The system must provide a mechanism to filter the dependency graph for better readability and data management.
+* **Missing Dependency Detection**: The system must identify and display a list of missing dependencies required by the uploaded mod.
+* **System Navigation**: The system must allow users to seamlessly navigate between the Index, Upload, Graph, and About pages.
+
+== Acceptance Criteria
+* The application must successfully process an uploaded file and generate a corresponding graph view.
+* The UI must correctly display the missing dependencies list derived from the graph analysis.
+* All navigation links must be functional across all pages.
