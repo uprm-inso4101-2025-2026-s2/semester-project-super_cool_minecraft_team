@@ -153,73 +153,32 @@ public class DependencyLookupService {
     }
 
     private Optional<ResolvedDependencyDto> fetchFromExternalSource(MissingDependencyDto dependency) {
-        String query = firstNonBlank(dependency.name(), dependency.id());
-        if (query == null) {
+        String primaryQuery = firstNonBlank(dependency.name(), dependency.id());
+        if (primaryQuery == null) {
             throw new IllegalArgumentException("Dependency must include a valid id or name.");
         }
 
-        try {
-            JsonNode searchResults = modrinthServiceWrapper.searchProject(query, 5);
-            JsonNode hits = searchResults.path("hits");
-            if (!hits.isArray() || hits.isEmpty()) {
-                throw new NoSuchElementException("Dependency not found: " + query);
-            }
-
-            List<JsonNode> candidates = new ArrayList<>();
-            hits.forEach(candidates::add);
-            candidates.sort(Comparator.comparingInt(hit -> scoreCandidate(dependency, hit)));
-
-            JsonNode preferredCandidate = candidates.get(0);
-
-            String candidateSlug = preferredCandidate.path("slug").asText("").toLowerCase(Locale.ROOT);
-            String candidateTitle = preferredCandidate.path("title").asText("").toLowerCase(Locale.ROOT);
-
-            String dependencyId = defaultString(dependency.id()).toLowerCase(Locale.ROOT);
-            String dependencyName = defaultString(dependency.name()).toLowerCase(Locale.ROOT);
-
-            boolean matchesId = !dependencyId.isBlank() &&
-                    (candidateSlug.equals(dependencyId) || candidateTitle.contains(dependencyId));
-
-            boolean matchesName = !dependencyName.isBlank() &&
-                    (candidateTitle.equals(dependencyName) || candidateSlug.contains(dependencyName));
-
-            if (!matchesId && !matchesName) {
-                throw new NoSuchElementException("Dependency not found: " + query);
-            }
-
-            LinkedHashSet<String> links = new LinkedHashSet<>();
-            for (JsonNode hit : candidates) {
-                String slug = hit.path("slug").asText("");
-                if (!slug.isBlank()) {
-                    links.add("https://modrinth.com/mod/" + slug);
-                }
-                if (links.size() == 3) {
-                    break;
-                }
-            }
-
-            if (links.isEmpty()) {
-                throw new NoSuchElementException("Dependency not found: " + query);
-            }
-
-            String preferredName = firstNonBlank(
-                    dependency.name(),
-                    preferredCandidate.path("title").asText(null),
-                    dependency.id()
-            );
-            String preferred = links.iterator().next();
-
-            return Optional.of(new ResolvedDependencyDto(
-                    dependency.id(),
-                    preferredName,
-                    List.copyOf(links),
-                    preferred
-            ));
-        } catch (IllegalArgumentException | NoSuchElementException ex) {
-            throw ex;
-        } catch (RuntimeException ex) {
-            throw new RuntimeException("Failed to resolve dependency: " + query, ex);
+        Optional<ResolvedDependencyDto> directFallback = resolveDirectProjectFallback(dependency);
+        if (directFallback.isPresent()) {
+            return directFallback;
         }
+
+        NoSuchElementException lastLookupError = null;
+        for (String query : buildLookupQueries(dependency)) {
+            try {
+                return Optional.of(resolveDependencyFromQuery(dependency, query));
+            } catch (NoSuchElementException ex) {
+                lastLookupError = ex;
+            } catch (IllegalArgumentException ex) {
+                throw ex;
+            } catch (RuntimeException ex) {
+                throw new RuntimeException("Failed to resolve dependency: " + primaryQuery, ex);
+            }
+        }
+
+        throw lastLookupError != null
+                ? lastLookupError
+                : new NoSuchElementException("Dependency not found: " + primaryQuery);
     }
 
     public List<MissingDependencyDto> fetchMissingDependencies(String slug, String loader, String mcVersion) {
@@ -275,6 +234,133 @@ public class DependencyLookupService {
         return 3;
     }
 
+    private Optional<ResolvedDependencyDto> resolveDirectProjectFallback(MissingDependencyDto dependency) {
+        ProjectFallback projectFallback = mapDependencyToProjectFallback(dependency.id());
+        if (projectFallback == null) {
+            return Optional.empty();
+        }
+
+        String preferred = "https://modrinth.com/mod/" + projectFallback.projectSlug();
+        return Optional.of(new ResolvedDependencyDto(
+                dependency.id(),
+                projectFallback.displayName(),
+                List.of(preferred),
+                preferred
+        ));
+    }
+
+    private List<String> buildLookupQueries(MissingDependencyDto dependency) {
+        LinkedHashSet<String> queries = new LinkedHashSet<>();
+
+        String primaryQuery = firstNonBlank(dependency.name(), dependency.id());
+        if (primaryQuery != null) {
+            queries.add(primaryQuery);
+        }
+
+        ProjectFallback aliasedProject = mapDependencyToProjectFallback(dependency.id());
+        String aliasedProjectQuery = aliasedProject != null ? aliasedProject.projectSlug() : null;
+        if (aliasedProjectQuery != null) {
+            queries.add(aliasedProjectQuery);
+        }
+
+        return List.copyOf(queries);
+    }
+
+    private ProjectFallback mapDependencyToProjectFallback(String dependencyId) {
+        if (dependencyId == null || dependencyId.isBlank()) {
+            return null;
+        }
+
+        String normalized = dependencyId.toLowerCase(Locale.ROOT);
+        if (normalized.startsWith("fabric-") && normalized.contains("-api-")) {
+            return new ProjectFallback("fabric-api", "Fabric API");
+        }
+
+        return null;
+    }
+
+    private ResolvedDependencyDto resolveDependencyFromQuery(MissingDependencyDto dependency, String query) {
+        JsonNode searchResults = modrinthServiceWrapper.searchProject(query, 5);
+        JsonNode hits = searchResults.path("hits");
+        if (!hits.isArray() || hits.isEmpty()) {
+            throw new NoSuchElementException("Dependency not found: " + query);
+        }
+
+        List<JsonNode> candidates = new ArrayList<>();
+        hits.forEach(candidates::add);
+        candidates.sort(Comparator.comparingInt(hit -> scoreCandidateForQuery(dependency, query, hit)));
+
+        JsonNode preferredCandidate = candidates.get(0);
+        String candidateSlug = preferredCandidate.path("slug").asText("").toLowerCase(Locale.ROOT);
+        String candidateTitle = preferredCandidate.path("title").asText("").toLowerCase(Locale.ROOT);
+        String normalizedQuery = query.toLowerCase(Locale.ROOT);
+
+        boolean matchesDependency = candidateSlug.equals(normalizedQuery)
+                || candidateTitle.equals(normalizedQuery)
+                || candidateTitle.contains(normalizedQuery)
+                || candidateSlug.contains(normalizedQuery);
+
+        if (!matchesDependency) {
+            throw new NoSuchElementException("Dependency not found: " + query);
+        }
+
+        LinkedHashSet<String> links = new LinkedHashSet<>();
+        for (JsonNode hit : candidates) {
+            String slug = hit.path("slug").asText("");
+            if (!slug.isBlank()) {
+                links.add("https://modrinth.com/mod/" + slug);
+            }
+            if (links.size() == 3) {
+                break;
+            }
+        }
+
+        if (links.isEmpty()) {
+            throw new NoSuchElementException("Dependency not found: " + query);
+        }
+
+        String preferredName = resolveDisplayName(dependency, preferredCandidate);
+        String preferred = links.iterator().next();
+
+        return new ResolvedDependencyDto(
+                dependency.id(),
+                preferredName,
+                List.copyOf(links),
+                preferred
+        );
+    }
+
+    private int scoreCandidateForQuery(MissingDependencyDto dependency, String query, JsonNode candidate) {
+        int dependencyScore = scoreCandidate(dependency, candidate);
+        String normalizedQuery = query.toLowerCase(Locale.ROOT);
+        String slug = candidate.path("slug").asText("").toLowerCase(Locale.ROOT);
+        String title = candidate.path("title").asText("").toLowerCase(Locale.ROOT);
+
+        if (slug.equals(normalizedQuery)) {
+            return -2;
+        }
+        if (title.equals(normalizedQuery)) {
+            return -1;
+        }
+
+        return dependencyScore;
+    }
+
+    private String resolveDisplayName(MissingDependencyDto dependency, JsonNode preferredCandidate) {
+        String dependencyName = dependency.name();
+        String candidateTitle = preferredCandidate.path("title").asText(null);
+
+        if (dependencyName == null || dependencyName.isBlank()) {
+            return firstNonBlank(candidateTitle, dependency.id());
+        }
+
+        if (dependency.id() != null && dependencyName.equalsIgnoreCase(dependency.id())) {
+            return firstNonBlank(candidateTitle, dependencyName, dependency.id());
+        }
+
+        return dependencyName;
+    }
+
     private String firstNonBlank(String... values) {
         for (String value : values) {
             if (value != null && !value.isBlank()) {
@@ -286,6 +372,9 @@ public class DependencyLookupService {
 
     private String defaultString(String value) {
         return value == null ? "" : value;
+    }
+
+    private record ProjectFallback(String projectSlug, String displayName) {
     }
 
     @Scheduled(fixedRateString = "${cache.dependency.cleanup-interval-ms:60000}")

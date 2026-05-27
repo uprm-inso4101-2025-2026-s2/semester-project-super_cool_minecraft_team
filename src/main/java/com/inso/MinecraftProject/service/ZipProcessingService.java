@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
@@ -41,13 +42,15 @@ public class ZipProcessingService {
             List<Edge> edges = new ArrayList<>();
             List<Mod> missingDependencies = new ArrayList<>();
             Set<String> resolvedDependencies = new HashSet<>();
+            Set<String> installedModIds = new HashSet<>();
 
             for (Path modArchivePath : modArchives) {
                 processSingleModArchive(
                         modArchivePath,
                         discoveredMods,
                         edges,
-                        resolvedDependencies
+                        resolvedDependencies,
+                        installedModIds
                 );
             }
 
@@ -55,7 +58,7 @@ public class ZipProcessingService {
                 throw new RuntimeException("No Fabric mods found in zip");
             }
 
-            detectMissingDependencies(discoveredMods, missingDependencies);
+            detectMissingDependencies(discoveredMods, installedModIds, missingDependencies);
 
             return DTO.builder()
                     .mods(new ArrayList<>(discoveredMods.values()))
@@ -123,7 +126,19 @@ public class ZipProcessingService {
             Path modArchivePath,
             Map<String, Mod> discoveredMods,
             List<Edge> edges,
-            Set<String> resolvedDependencies
+            Set<String> resolvedDependencies,
+            Set<String> installedModIds
+    ) {
+        processSingleModArchive(modArchivePath, discoveredMods, edges, resolvedDependencies, installedModIds, new HashSet<>());
+    }
+
+    private void processSingleModArchive(
+            Path modArchivePath,
+            Map<String, Mod> discoveredMods,
+            List<Edge> edges,
+            Set<String> resolvedDependencies,
+            Set<String> installedModIds,
+            Set<String> processedModIds
     ) {
         try {
             JsonNode root = readFabricModJsonFromArchive(modArchivePath);
@@ -146,12 +161,21 @@ public class ZipProcessingService {
             );
 
             currentMod.setVersion(version);
+            installedModIds.add(modId);
+
+            if (!processedModIds.add(modId)) {
+                return;
+            }
 
             parseRelationship(root, "depends", currentMod, discoveredMods, edges, resolvedDependencies);
             parseRelationship(root, "breaks", currentMod, discoveredMods, edges, resolvedDependencies);
             parseRelationship(root, "suggests", currentMod, discoveredMods, edges, resolvedDependencies);
             parseRelationship(root, "recommends", currentMod, discoveredMods, edges, resolvedDependencies);
             parseRelationship(root, "conflicts", currentMod, discoveredMods, edges, resolvedDependencies);
+
+            for (Path nestedArchive : extractNestedModArchives(modArchivePath)) {
+                processSingleModArchive(nestedArchive, discoveredMods, edges, resolvedDependencies, installedModIds, processedModIds);
+            }
 
         } catch (Exception e) {
             throw new RuntimeException("Failed to process mod archive: " + modArchivePath, e);
@@ -185,6 +209,44 @@ public class ZipProcessingService {
             return null;
         } catch (Exception e) {
             throw new RuntimeException("Failed to read fabric.mod.json from archive: " + archivePath, e);
+        }
+    }
+
+    private List<Path> extractNestedModArchives(Path archivePath) {
+        List<Path> nestedArchives = new ArrayList<>();
+
+        try (ZipFile zipFile = new ZipFile(archivePath.toFile())) {
+            Path nestedRoot = Files.createTempDirectory("nested-mod-");
+            Enumeration<? extends ZipEntry> entries = zipFile.entries();
+
+            while (entries.hasMoreElements()) {
+                ZipEntry entry = entries.nextElement();
+                String entryName = entry.getName().replace('\\', '/');
+                String lowerEntryName = entryName.toLowerCase(Locale.ROOT);
+
+                if (entry.isDirectory() || !entryName.startsWith("META-INF/jars/")) {
+                    continue;
+                }
+
+                if (!lowerEntryName.endsWith(".jar") && !lowerEntryName.endsWith(".zip")) {
+                    continue;
+                }
+
+                Path outputPath = nestedRoot.resolve(Path.of(entryName).getFileName().toString()).normalize();
+                if (!outputPath.startsWith(nestedRoot)) {
+                    throw new RuntimeException("Invalid nested archive path: " + entryName);
+                }
+
+                try (InputStream inputStream = zipFile.getInputStream(entry)) {
+                    Files.copy(inputStream, outputPath, StandardCopyOption.REPLACE_EXISTING);
+                }
+
+                nestedArchives.add(outputPath);
+            }
+
+            return nestedArchives;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to extract nested mod archives from: " + archivePath, e);
         }
     }
 
@@ -293,21 +355,13 @@ public class ZipProcessingService {
         }
     }
 
-    private void detectMissingDependencies(Map<String, Mod> discoveredMods, List<Mod> missingDependencies) {
-        Set<String> realMods = new HashSet<>();
-
+    private void detectMissingDependencies(Map<String, Mod> discoveredMods, Set<String> installedModIds, List<Mod> missingDependencies) {
         for (Mod mod : discoveredMods.values()) {
-            if (!"unknown".equals(mod.getVersion())) {
-                realMods.add(mod.getId());
-            }
-        }
-
-        for (Mod mod : discoveredMods.values()) {
-            checkAndAddMissing(mod.getDepends(), realMods, missingDependencies);
-            checkAndAddMissing(mod.getBreaks(), realMods, missingDependencies);
-            checkAndAddMissing(mod.getSuggests(), realMods, missingDependencies);
-            checkAndAddMissing(mod.getRecommends(), realMods, missingDependencies);
-            checkAndAddMissing(mod.getConflicts(), realMods, missingDependencies);
+            checkAndAddMissing(mod.getDepends(), installedModIds, missingDependencies);
+            checkAndAddMissing(mod.getBreaks(), installedModIds, missingDependencies);
+            checkAndAddMissing(mod.getSuggests(), installedModIds, missingDependencies);
+            checkAndAddMissing(mod.getRecommends(), installedModIds, missingDependencies);
+            checkAndAddMissing(mod.getConflicts(), installedModIds, missingDependencies);
         }
     }
 

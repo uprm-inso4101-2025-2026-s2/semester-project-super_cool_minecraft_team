@@ -14,6 +14,7 @@ import com.inso.MinecraftProject.entity.Mod;
 import com.inso.MinecraftProject.service.cache.DependencyCacheService;
 import com.inso.MinecraftProject.service.client.DependencyApiClient;
 import com.inso.MinecraftProject.service.parser.DependencyParser;
+import com.inso.MinecraftProject.service.ModRepository;
 
 /**
  * Coordinates the dependency validation flow.
@@ -43,9 +44,7 @@ public class DependencyResolverService {
      * The real repository bean should match this shape; leaving this
      * here avoids compile errors in constrained editing environments.
      */
-    interface ModRepository {
-        Optional<Mod> findById(String id);
-    }
+    
 
     private final ModRepository            modRepository;
     private final DependencyApiClient      apiClient;
