@@ -196,12 +196,27 @@ At the core of the platform is the ability to analyze a user’s selected mod co
 
     Risk: If these resources are unavailable or improperly configured, progress may be delayed and errors could be introduced.
 
-1.9 Implicit and Derived Goals
-    - Goal 1: Simplify and automate the management of Minecraft mods and libraries to ensure all dependencies are correctly installed and compatible, reducing errors and manual configuration for users.
+1.9 Implicit Goals
 
-    - Goal 2: Provide a reliable system for detecting version conflicts and missing dependencies, enabling mod developers and players to maintain stable modpacks without technical troubleshooting.
+    - Help users better understand dependency relationships between Minecraft mods.
 
-    - Goal 3: Offer optional features such as dependency visualization and compatibility suggestions to enhance user experience and improve modpack maintenance efficiency.
+    - Reduce confusion caused by missing dependencies and incompatibility issues.
+
+    - Improve accessibility for users with limited technical knowledge of modding environments.
+
+    - Support clearer visualization of dependency structures and mod interactions.
+
+
+1.10 Derived Goals
+
+    - Improve overall modpack stability by helping users identify dependency issues earlier.
+
+    - Reduce the amount of manual troubleshooting required during modpack setup and maintenance.
+
+    - Encourage more efficient management of medium-sized Minecraft modpacks.
+
+    - Improve the user experience of dependency analysis through visual feedback and interaction.
+
 
 2. Descriptive
 
