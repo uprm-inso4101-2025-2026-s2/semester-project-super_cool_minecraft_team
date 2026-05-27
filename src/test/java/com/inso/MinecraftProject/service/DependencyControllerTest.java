@@ -2,8 +2,7 @@ package com.inso.MinecraftProject.service;
 
 import com.inso.MinecraftProject.dto.ResolvedDependencyDto;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.beans.factory.annotation.Autowired;import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -43,7 +42,7 @@ class DependencyControllerTest {
                 )
         ));
 
-        mockMvc.perform(get("/api/dependencies/missing"))
+        mockMvc.perform(get("/api/dependencies/missing?modId=test-mod"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.missingDependencies[0].id").value("fabric-api"))
                 .andExpect(jsonPath("$.missingDependencies[1].id").value("modmenu"))
@@ -63,7 +62,7 @@ class DependencyControllerTest {
                 )
         ));
 
-        mockMvc.perform(get("/api/dependencies/missing?mode=ok"))
+        mockMvc.perform(get("/api/dependencies/missing?modId=test-mod&mode=ok"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.missingDependencies[0].id").value("fabric-api"))
                 .andExpect(jsonPath("$.missingDependencies[0].requiredVersion").value("0.100.1"))
@@ -88,7 +87,7 @@ class DependencyControllerTest {
                 )
         ));
 
-        mockMvc.perform(get("/api/dependencies/missing?mode=partial"))
+        mockMvc.perform(get("/api/dependencies/missing?modId=test-mod&mode=partial"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.missingDependencies[0].id").value("fabric-api"))
                 .andExpect(jsonPath("$.missingDependencies[1].id").value("cloth-config"))
@@ -101,7 +100,7 @@ class DependencyControllerTest {
     void shouldReturnEmptyResponse() throws Exception {
         when(dependencyLookupService.resolveDependencies(anyList())).thenReturn(List.of());
 
-        mockMvc.perform(get("/api/dependencies/missing?mode=empty"))
+        mockMvc.perform(get("/api/dependencies/missing?modId=test-mod&mode=empty"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.missingDependencies.length()").value(0))
                 .andExpect(jsonPath("$.resolvedDependencies.length()").value(0))
@@ -110,7 +109,7 @@ class DependencyControllerTest {
 
     @Test
     void shouldReturn429ForFail429Mode() throws Exception {
-        mockMvc.perform(get("/api/dependencies/missing?mode=fail429"))
+        mockMvc.perform(get("/api/dependencies/missing?modId=test-mod&mode=fail429"))
                 .andExpect(status().isTooManyRequests())
                 .andExpect(jsonPath("$.message").value("Dependency lookup was rate limited."));
 
@@ -119,7 +118,7 @@ class DependencyControllerTest {
 
     @Test
     void shouldReturn500ForFail500Mode() throws Exception {
-        mockMvc.perform(get("/api/dependencies/missing?mode=fail500"))
+        mockMvc.perform(get("/api/dependencies/missing?modId=test-mod&mode=fail500"))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.message").value("Dependency lookup failed on the server."));
 
@@ -128,7 +127,7 @@ class DependencyControllerTest {
 
     @Test
     void shouldReturn504ForTimeoutMode() throws Exception {
-        mockMvc.perform(get("/api/dependencies/missing?mode=timeout"))
+        mockMvc.perform(get("/api/dependencies/missing?modId=test-mod&mode=timeout"))
                 .andExpect(status().isGatewayTimeout())
                 .andExpect(jsonPath("$.message").value("Dependency lookup timed out."));
     }
@@ -144,7 +143,7 @@ class DependencyControllerTest {
                 )
         ));
 
-        mockMvc.perform(get("/api/dependencies/missing?mode=ok"))
+        mockMvc.perform(get("/api/dependencies/missing?modId=test-mod&mode=ok"))
                 .andExpect(status().isOk());
 
         verify(dependencyLookupService).resolveDependencies(anyList());
