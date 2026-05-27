@@ -947,30 +947,51 @@ Each term includes:
 
 === 2.6 Domain Functions
 
-.A. Resolve Dependencies
+[.line-through.red]#A. Resolve Dependencies
 . Collect dependency information declared by each Mod in a Modpack.
 . Determine whether required dependencies are satisfied.
-. Produce a Resolution Result summarizing satisfied, missing, and conflicting items.
+. Produce a Resolution Result summarizing satisfied, missing, and conflicting items.#
+
+.A. Resolve Dependencies
+. Collect all required dependencies declared by each Mod in a Modpack.
+. Expand transitive dependencies by following dependency chains recursively.
+. Identify which required Mods are missing from the current Modpack configuration.
+. Produce a Resolution Result containing the complete required dependency set.
 
 .B. Find Missing Dependencies
 . Compare required dependencies against the Mods included in the Modpack.
 . List missing required dependencies in the Resolution Result.
 
-.C. Detect Conflicts / Incompatibilities
+[.line-through.red]#C. Detect Conflicts / Incompatibilities
 . Check incompatibility rules when available.
-. Identify mods that cannot coexist and record conflicts in the Resolution Result.
+. Identify mods that cannot coexist and record conflicts in the Resolution Result.#
+
+.C. Detect Conflicts / Incompatibilities
+. Evaluate declared incompatibility relationships between Mods.
+. Identify Mods that cannot coexist within the same Modpack configuration.
+. Record incompatibility violations separately from dependency resolution and version validation results.
+
+[.line-through.red]#D. Check Version Rules
+. Verify that mod versions satisfy dependency version constraints.
+. Record version mismatches in the Resolution Result.#
 
 .D. Check Version Rules
-. Verify that mod versions satisfy dependency version constraints.
-. Record version mismatches in the Resolution Result.
+. Compare installed Mod versions against declared version constraints.
+. Verify that each dependency satisfies the acceptable version range required by dependent Mods.
+. Record all version mismatches and unsupported version combinations in the Resolution Result.
 
 .E. Locate Mod Sources
 . Identify possible Mod Sources where missing dependencies can be found.
 . Collect candidate references/versions from those sources.
 
-.F. Create and Execute a Download Task
+[.line-through.red]#F. Create and Execute a Download Task
 . Create a Download Task for a selected candidate reference.
-. Retrieve the dependency as a Retrieved Mod (conceptually) for inclusion in the resolved configuration.
+. Retrieve the dependency as a Retrieved Mod (conceptually) for inclusion in the resolved configuration.#
+
+.F. Create and Execute a Download Task
+. Create a Download Task representing a candidate dependency retrieval operation.
+. Associate the selected dependency with its corresponding external download source.
+. Provide reference information required for player-directed retrieval without automatically downloading or installing Mods.
 
 .G. Build and Export the Dependency Graph
 . Add Mod nodes to the Dependency Graph.
@@ -1276,7 +1297,6 @@ This subsystem is kept separate from the graph and frontend visualization render
   Upon recieving the processed dependency data from the backend, the frontend renders the dependency graph and displays resolved and unresolved dependencies to the player. 
   
   Team C also implements client-side dependency resolution logic, including functions for retrieving direct dependencies and reverse dependents from the graph data structure, and maintains the graph state used by the visualization layer. The subsystem validates uploaded file formats before transmission and provides real-time status feedback to the player during the upload process.
-
 
 == 3. Analytical
 
