@@ -144,37 +144,43 @@ Minecraft Dependency Visualizer
         -Commercial Deployment: The final deliverable will be a functional prototype for academic evaluation, not a productionready, publicly hosted service.
 
 1.6.2.3 Key Focus Areas and Methodology
-    The project will be executed using an agile-inspired methodology suitable for a student team. Work will be organized into
-    iterative sprints, each focusing on a key deliverable. The primary focus areas are:
-        - Data Acquisition & Modeling: Researching and implementing the parsing of metadata from CurseForge/Modrinth APIs and
-        designing the internal graph data structure.
-        - Graph Visualization Engine: Selecting and implementing a suitable JavaScript library (e.g., D3.js, vis.js, Cytoscape.js) to
-        render the interactive dependency graph.
-        - User Interface & Interaction: Designing and building the user interface components for displaying mod information, search,
-        and selection, ensuring clarity and ease of use.
-        - Evaluation & Analysis: Defining success metrics, designing user test cases, conducting the evaluation, and analyzing the
-        results to determine the project's success against the criteria outlined in Section 5.
+
+The project focuses on creating a dependency visualization and validation tool for Minecraft mods. The team will apply software engineering principles related to graph structures, dependency resolution, and conflict analysis to ensure that mod compatibility can be analyzed effectively.
+
+The methodology includes:
+- analyzing dependency graph structures
+- validating dependency relationships
+- identifying conflicts and incompatibilities
+- testing graph consistency rules
+- implementing visualization and interaction features
+
+---
 
 1.6.2.4 Timeline
-    The project milestones and key dates are as follows:
-        - Project A3 submissions: January 27–30
-        - Project selection: February 2
-        - First milestone ends: February 27
-        - Milestone 1 presentation: March 2
-        - Second milestone ends: April 3
-        - Milestone 2 presentation: April 6
-        - Final milestone ends: May 8
-        - Final milestone presentation: May 11
-These dates define the structured time frame within which all planning, development, evaluation, and reporting activities will be
-conducted. All deliverables and presentations will be completed in accordance with this timeline to ensure timely progress and
-academic review.
+
+The project milestones and key dates are as follows:
+- Project A3 submissions: January 27–30
+- Project selection: February 2
+- First milestone ends: February 27
+- Milestone 1 presentation: March 2
+- Second milestone ends: April 3
+- Milestone 2 presentation: April 6
+- Final milestone ends: May 8
+- Final milestone presentation: May 11
+
+These dates define the structured time frame within which all planning, development, testing, and documentation activities will be conducted. All deliverables and presentations will be completed in accordance with academic review.
+
+---
 
 1.7 Synopsis
-Minecraft modding has become a common way for players to expand and personalize the game experience, but it also introduces a recurring challenge: many mods rely on other mods, libraries, specific loaders, and specific Minecraft versions in order to function correctly. When these dependencies are missing, incompatible, or incorrectly ordered, Minecraft may fail to launch or crash during runtime. This situation is often made worse by the lack of accessibility in dependency documentation, since users are frequently forced to interpret technical plain text and logs, and many mods do not clearly display their dependencies or incompatibilities on their main pages. As a result, many users become frustrated and abandon the idea of using mods because they cannot easily understand what is going wrong.
 
-To help diminish the effects of this problem, the team proposes the Minecraft Dependency Visualizer, a web-based platform intended to make dependency management more understandable and approachable. The platform will represent mods as nodes and dependencies as directed connections, forming a Dynamic Dependency Graph that users can explore. Users will be able to select a mod and view which mods depend on it, as well as why it is required within a configuration. In addition, the platform will support identifying and signaling conflicts through incompatibility information, helping users recognize when certain mods cannot coexist in the same mod configuration.
+Minecraft modding has become a common way for players to expand and personalize gameplay experiences. However, managing dependencies and incompatibilities between mods can become increasingly difficult as modpacks grow in size and complexity.
 
-At the core of the platform is the ability to analyze a user’s selected mod collection (modpack) and validate it through dependency resolution and conflict analysis. Dependencies will be classified into exactly one type—required, optional, or incompatible—and the platform will represent dependencies transitively, ensuring that dependencies of dependencies are also included. By shifting the experience away from text-heavy troubleshooting and toward a clear visual representation, the Minecraft Dependency Visualizer aims to reduce confusion, improve accessibility for all users, and make modpack setup and maintenance significantly easier.
+To help diminish the effects of this problem, the team proposes the Minecraft Dependency Visualization and Validation Tool, a system capable of representing mod relationships using dependency graphs while identifying conflicts, missing dependencies, and invalid configurations.
+
+At the core of the platform is the ability to analyze a user’s selected mod collection and determine whether the dependency graph remains consistent and satisfiable.
+
+---
 
 1.8 Assumptions and Dependencies
 
@@ -196,12 +202,30 @@ At the core of the platform is the ability to analyze a user’s selected mod co
 
     Risk: If these resources are unavailable or improperly configured, progress may be delayed and errors could be introduced.
 
-1.9 Implicit and Derived Goals
-    - Goal 1: Simplify and automate the management of Minecraft mods and libraries to ensure all dependencies are correctly installed and compatible, reducing errors and manual configuration for users.
+---
 
-    - Goal 2: Provide a reliable system for detecting version conflicts and missing dependencies, enabling mod developers and players to maintain stable modpacks without technical troubleshooting.
+1.9 Implicit Goals
 
-    - Goal 3: Offer optional features such as dependency visualization and compatibility suggestions to enhance user experience and improve modpack maintenance efficiency.
+    - Enable users to better understand dependency relationships between Minecraft mods.
+
+    - Reduce confusion caused by missing dependencies and incompatibility issues.
+
+    - Improve accessibility for users with limited technical knowledge of modding environments.
+
+    - Support clearer visualization of dependency structures and mod interactions.
+
+---
+
+1.10 Derived Goals
+
+    - Improve overall modpack stability by helping users identify dependency issues earlier.
+
+    - Reduce the amount of manual troubleshooting required during modpack setup and maintenance.
+
+    - Encourage more efficient management of medium-sized Minecraft modpacks.
+
+    - Improve the user experience of dependency analysis through visual feedback and interaction.
+
 
 2. Descriptive
 
