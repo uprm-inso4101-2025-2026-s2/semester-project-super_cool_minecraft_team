@@ -168,36 +168,68 @@ Overall, these ideas aim to improve how players interact with mod configurations
 
 ===== 1.5.2.1 Inclusions
 
-The project will focus on the design, development, and evaluation of a web-based proof-of-concept platform for visualizing Minecraft mod dependencies.
+[.line-through.red]#The project will focus on the design, development, and evaluation of a web-based proof-of-concept platform for visualizing Minecraft mod dependencies.#
+
+The project includes the design, development, and evaluation of a web-based dependency visualization platform for Minecraft Mods.
+
 The core activities included in the project span are:
 
 * Platform Development: Create an interactive, browser-based prototype that visualizes mods as nodes and their dependencies as directed edges in a graph data structure.
-  The platform will be designed to support a curated dataset of mods, rather than attempting to index the entire CurseForge and Modrinth repositories.
-* Metadata Parsing and Normalization: Develop scripts to programmatically parse dependency metadata from a preselected set of mods sourced from CurseForge and Modrinth.
-  This includes identifying required dependencies, optional dependencies, and incompatible mod versions.
-  The project will handle all mod metadata in accordance with ethical data handling principles, ensuring that any data acquisition, storage, and processing respects the terms of use and privacy expectations established by the source repositories.
-  The data will then be normalized into a unified internal schema to manage differences between the two source platforms.
-* Visual Highlighting of Critical Information: Implement visual cues within the graph interface to draw user attention to key issues.
-  This will include distinct highlighting for missing dependencies, version incompatibilities, and optional relationships.
-* Decision-Support Features: Enable players to interact with the graph and access relevant information.
-  Upon selecting a specific mod node, the platform will display:
+The platform will support a curated dataset of Mods rather than attempting to index all available repositories.
+
+* Metadata Parsing and Normalization: Develop scripts to parse dependency metadata from CurseForge and Modrinth and normalize the resulting information into a unified internal schema.
+
+[.line-through.red]#* Visual Highlighting of Critical Information: Implement visual cues within the graph interface to draw user attention to key issues.
+This will include distinct highlighting for missing dependencies, version incompatibilities, and optional relationships.#
+
+* Detection and visual highlighting of:
+** missing dependencies,
+** incompatibility conflicts,
+** circular dependencies,
+** and version constraint violations.
+
+[.line-through.red]#* Decision-Support Features: Enable players to interact with the graph and access relevant information.
+Upon selecting a specific mod node, the platform will display:
 ** Its direct and transitive dependents (i.e., which other mods rely on it).
 ** A plain-language explanation of its dependency requirements (e.g., "Required for game launch on the client-side").
-** A simulation of the potential impact, highlighting which other mods would be affected if the selected mod were removed or updated.
-* Evaluation with Sample Modpacks: Conduct a formal evaluation of the prototype's effectiveness using sample modpacks.
+** A simulation of the potential impact, highlighting which other mods would be affected if the selected mod were removed or updated.#
+
+* User interaction features including:
+** graph navigation,
+** Mod inspection,
+** dependency exploration,
+** and visualization of direct and transitive dependency chains.
+
+* Evaluation and testing of the platform using representative Minecraft modpacks.
 
 ===== 1.5.2.2 Exclusions
 
-To maintain a realistic scope and focus on the core problem of visualization and understanding, the following activities are explicitly excluded from the project span:
+To maintain a realistic scope and focus on dependency visualization and dependency analysis, the following activities are explicitly excluded from the project span:
 
-* Automated Installation or Management: The platform will function solely as a decision-support tool.
-  It will not download, install, update, remove, or modify a user's Minecraft instance.
-* Exhaustive Mod Indexing: The project will not attempt to index or visualize all mods available on CurseForge and Modrinth.
-  The focus will be on a curated, representative dataset sufficient to demonstrate the platform's functionality and core features.
-* Generalization to Other Games: Potential for future generalization is acknowledged (Section 6), but the development and testing of the prototype will be strictly confined to the Minecraft modding ecosystem.
-* Addressing Runtime Errors: The project will not build a system that diagnoses live game crashes or reads Minecraft log files.
-  Its purpose is preventative and analytical, focusing on understanding dependencies before launching the game.
-* Commercial Deployment: The final deliverable will be a functional prototype for academic evaluation, not a production-ready, publicly hosted service.
+[.line-through.red]#* Automated Installation or Management: The platform will function solely as a decision-support tool.
+It will not download, install, update, remove, or modify a user's Minecraft instance.#
+
+* Automatic installation, updating, removal, or management of Mods.
+
+* Direct modification of the player's Minecraft installation.
+
+[.line-through.red]#* Exhaustive Mod Indexing: The project will not attempt to index or visualize all mods available on CurseForge and Modrinth.
+The focus will be on a curated, representative dataset sufficient to demonstrate the platform's functionality and core features.#
+
+* Exhaustive indexing of all Minecraft Mods available online.
+
+[.line-through.red]#* Generalization to Other Games: Potential for future generalization is acknowledged (Section 6), but the development and testing of the prototype will be strictly confined to the Minecraft modding ecosystem.#
+
+* Generalization to games outside the Minecraft ecosystem.
+
+[.line-through.red]#* Addressing Runtime Errors: The project will not build a system that diagnoses live game crashes or reads Minecraft log files.
+Its purpose is preventative and analytical, focusing on understanding dependencies before launching the game.#
+
+* Runtime crash-log diagnosis or live debugging of Minecraft instances.
+
+* Automatic repair or correction of dependency conflicts.
+
+* Commercial deployment or public hosting of the platform.
 
 ===== 1.5.2.3 Key Focus Areas and Methodology
 
@@ -231,27 +263,42 @@ All deliverables and presentations will be completed in accordance with this tim
 [.line-through.red]#Minecraft modding has become a common way for players to expand and personalize the game experience, but it also introduces a recurring challenge: many mods rely on other mods, libraries, specific loaders, and specific Minecraft versions in order to function correctly.
 When these dependencies are missing, incompatible, or incorrectly ordered, Minecraft may fail to launch or crash during runtime.#
 
-Minecraft mods often depend on other mods, libraries, mod loaders, and specific Minecraft versions. When these dependencies are missing or incompatible, the game may fail to launch or crash.
+[.line-through.red]#Minecraft mods often depend on other mods, libraries, mod loaders, and specific Minecraft versions. When these dependencies are missing or incompatible, the game may fail to launch or crash.#
+
+The Minecraft Dependency Visualizer is a web-based platform intended to improve how Minecraft players understand dependency relationships between Mods, loaders, libraries, and game versions.
 
 [.line-through.red]#This situation is often made worse by the lack of accessibility in dependency documentation, since players are frequently forced to interpret technical plain text and logs, and many mods do not clearly display their dependencies or incompatibilities on their main pages.
 As a result, many players become frustrated and abandon the idea of using mods because they cannot easily understand what is going wrong.#
 
-Players frequently struggle to understand these relationships because dependency information is usually presented as technical metadata or logs.
+[.line-through.red]#Players frequently struggle to understand these relationships because dependency information is usually presented as technical metadata or logs.#
+
+The project addresses the difficulty players experience when configuring modpacks containing missing dependencies, incompatible versions, and unresolved dependency chains.
 
 [.line-through.red]#To help diminish the effects of this problem, the team proposes the Minecraft Dependency Visualizer, a web-based platform intended to make dependency management more understandable and approachable.#
 
-The Minecraft Dependency Visualizer is a web-based platform designed to make mod dependency relationships easier to understand.
+[.line-through.red]#The Minecraft Dependency Visualizer is a web-based platform designed to make mod dependency relationships easier to understand.#
+
+To address this problem, the project includes domain engineering activities to analyze the Minecraft modding ecosystem and identify relevant dependency relationships and conflict scenarios.
 
 [.line-through.red]#The platform will represent mods as nodes and dependencies as directed connections, forming a Dynamic Dependency Graph that users can explore.#
 
-The system will analyze mod relationships and represent them as a dynamic dependency graph that players can explore interactively.
+[.line-through.red]#The system will analyze mod relationships and represent them as a dynamic dependency graph that players can explore interactively.#
 
-Players will be able to select a mod and view which mods depend on it, as well as why it is required within a configuration.
+Requirements engineering activities are included to formally capture system behaviors, interface requirements, dependency rules, and validation constraints derived from the domain.
 
-In addition, the platform will support identifying and signaling conflicts through incompatibility information, helping players recognize when certain mods cannot coexist in the same mod configuration.
+[.line-through.red]#Players will be able to select a mod and view which mods depend on it, as well as why it is required within a configuration.#
 
-At the core of the platform is the ability to analyze a user's selected mod collection (modpack) and validate it through dependency resolution and conflict analysis.
-Dependencies will be classified into exactly one type—required, optional, or incompatible—and the platform will represent dependencies transitively, ensuring that dependencies of dependencies are also included.
+Software architecture design activities are included to define the interaction between frontend visualization components, backend dependency analysis services, and external metadata repositories such as Modrinth and CurseForge.
+
+[.line-through.red]#In addition, the platform will support identifying and signaling conflicts through incompatibility information, helping players recognize when certain mods cannot coexist in the same mod configuration.#
+
+Validation and verification activities are included to evaluate dependency analysis accuracy, graph generation correctness, conflict detection behavior, and overall system reliability.
+
+[.line-through.red]#At the core of the platform is the ability to analyze a user's selected mod collection (modpack) and validate it through dependency resolution and conflict analysis.
+Dependencies will be classified into exactly one type—required, optional, or incompatible—and the platform will represent dependencies transitively, ensuring that dependencies of dependencies are also included.#
+
+The resulting platform will provide players with an interactive dependency graph capable of visualizing dependency chains, incompatibilities, missing dependencies, and version conflicts in a more accessible and understandable manner.
+
 [.line-through.red]#By shifting the experience away from text-heavy troubleshooting and toward a clear visual representation, the Minecraft Dependency Visualizer aims to reduce confusion, improve accessibility for all players, and make modpack setup and maintenance significantly easier.#
 
 === 1.7 Concepts
