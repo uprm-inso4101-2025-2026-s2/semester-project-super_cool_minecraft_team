@@ -1343,4 +1343,4 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
     setTimeout(filterInstalledMods, 0);
-});
+})});

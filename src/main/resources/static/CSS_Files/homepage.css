@@ -124,18 +124,30 @@ body#page-about::before {
 
 /* Button */
 #get-mods-btn {
+    background-color: var(--color-green);
+    color: var(--color-text);
+    border: none;
     font-size: 2.5rem;
+    font-weight: 600; 
     padding: 22px 80px;
+    box-shadow: 0 12px 0 #267326, 0 20px 25px rgba(0,0,0,0.35);
+    cursor: pointer;
     letter-spacing: 1.5px;
+    text-shadow: 2px 2px 0 #267326;
+    transition: all 0.1s ease;
     display: inline-block;
+    font-family: 'Monocraft', sans-serif;
 }
 
 #get-mods-btn:hover {
-    filter: brightness(1.08);
+    background-color: var(--color-green-hover);
+    transform: translateY(-3px);
+    box-shadow: 0 15px 0 #267326, 0 22px 28px rgba(0,0,0,0.4);
 }
 
 #get-mods-btn:active {
-    filter: brightness(0.95);
+    transform: translateY(9px);
+    box-shadow: 0 5px 0 #267326, 0 15px 20px rgba(0,0,0,0.3);
 }
 
 @media (max-width: 1024px) {
@@ -206,6 +218,7 @@ body#page-about::before {
     #get-mods-btn {
         font-size: 1.5rem;
         padding: 15px 40px;
+        border-radius: 40px;
     }
 }
 
@@ -391,19 +404,36 @@ font-family: 'Monocraft', sans-serif;
     width: 100%;
     margin-top: 30px;
 
-    display: inline-flex;
+    display: block;
     text-align: center;
+    text-decoration: none;
+
+    background-color: var(--color-green);
+    color: var(--color-text);
+    border: none;
 
     font-size: 1.6rem;
+    font-weight: 600;
+
     padding: 18px 40px;
+
+    box-shadow: 0 8px 0 #267326;
+    cursor: pointer;
+
+    font-family: 'Monocraft', sans-serif;
+
+    transition: all 0.1s ease;
 }
 
 #about-upload-button:hover{
-    filter: brightness(1.08);
+    background-color: var(--color-green-hover);
+    transform: translateY(-3px);
+    box-shadow: 0 15px 0 #267326, 0 22px 28px rgba(0,0,0,0.4);
 }
 
 #about-upload-button:active{
-    filter: brightness(0.95);
+    transform: translateY(5px);
+    box-shadow: 0 3px 0 #267326;
 }
 
 #about-message p{

@@ -21,12 +21,4 @@ public class MainController {
     public String about() {
         return "about";
     }
-
-
-    @GetMapping("/missing-dependencies")
-    public String missingDependencies(Model model) {
-        model.addAttribute("loader", "Fabric");
-        model.addAttribute("minecraftVersion", "1.20.1");
-        return "missing-dependencies";
-    }
 }
