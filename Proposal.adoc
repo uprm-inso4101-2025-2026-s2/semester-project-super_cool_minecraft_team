@@ -1710,7 +1710,6 @@ context loads properly without throwing any errors during startup. The result th
 
 --
 
-NOTE: Vague tests included previously have been replaced with concrete test files we have in the code repository, along with a description of where/how we implemented them.
 
 
 [.line-through.red]#The team validates the requirements and domain understanding through structured scenario-based walkthroughs.#
@@ -1883,6 +1882,73 @@ NOTE: Vague tests included previously have been replaced with concrete test file
 
 
 Verification will be considered successful when all functional requirements are met and no critical defects are present.
+
+
+.ZipProcessingService.tla
+[source,tla]
+----
+---------------- MODULE ZipProcessingService ----------------
+EXTENDS Naturals, Sequences, FiniteSets
+
+\* CONSTANTS represent the inputs found inside the uploaded ZIP
+CONSTANTS ModArchives,    \* The set of all mod identifiers present in the ZIP folder
+          DependsOn       \* A function mapping each mod to a set of its required dependencies
+
+\* VARIABLES represent the state objects inside processModpackZip()
+VARIABLES unprocessed,    \* Simulates the remaining archives to be parsed
+          installed,      \* Corresponds to your 'installedModIds' Set
+          missing,        \* Corresponds to your 'missingDependencies' List
+          system_state    \* "Parsing", "Detecting", or "Done"
+
+vars == <<unprocessed, installed, missing, system_state>>
+
+\* --- INITIALIZATION ---
+Init == 
+    /\ unprocessed = ModArchives
+    /\ installed = {}
+    /\ missing = {}
+    /\ system_state = "Parsing"
+
+\* --- TRANSITIONS (The Business Logic) ---
+
+\* Simulates: processSingleModArchive()
+\* Takes a mod from the zip, reads its ID, and adds it to installedModIds
+ParseMod(m) ==
+    /\ system_state = "Parsing"
+    /\ m \in unprocessed
+    /\ unprocessed' = unprocessed \ {m}
+    /\ installed' = installed \union {m}
+    /\ UNCHANGED <<missing, system_state>>
+
+\* Simulates: Finishing the archive iteration before detecting missing deps
+TransitionToDetecting ==
+    /\ system_state = "Parsing"
+    /\ unprocessed = {}
+    /\ system_state' = "Detecting"
+    /\ UNCHANGED <<installed, missing, unprocessed>>
+
+\* Simulates: detectMissingDependencies()
+\* Iterates over all discovered mods and checks if their dependencies are in installedModIds
+DetectMissing ==
+    /\ system_state = "Detecting"
+    /\ missing' = { dep \in UNION {DependsOn[m] : m \in installed} : dep \notin installed }
+    /\ system_state' = "Done"
+    /\ UNCHANGED <<unprocessed, installed>>
+
+\* --- NEXT STATE CALCULATION ---
+Next == 
+    \/ (\E m \in unprocessed : ParseMod(m))
+    \/ TransitionToDetecting
+    \/ DetectMissing
+
+\* --- INVARIANTS (Properties to Verify) ---
+
+\* Invariant: If the system finishes successfully, no dependencies should be missing.
+\* Running the TLC Model Checker will purposefully try to violate this by injecting
+\* incomplete ModArchives configurations to ensure your logic catches the missing items.
+AllDependenciesSatisfied ==
+    system_state = "Done" => missing = {}
+----
 
 === 3.3 AI Disclosure Statement
 
