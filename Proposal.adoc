@@ -1370,7 +1370,7 @@ Since the expected number of concurrent users depends on the final scope of the 
 [.line-through.red]#Reliability and Availability: The system must maintain high availability during active usage.
 Automatic recovery mechanisms must handle network failures, API interruptions, and temporary service outages.
 The backend must prevent corruption of dependency and modpack data and ensure consistent graph construction results.#
- 
+
 [.line-through.red]#External Metadata Handling: The system must retrieve dependency and incompatibility data from external platforms such as CurseForge and Modrinth.
 The backend must handle rate limits, temporary service failures, incomplete responses, and data inconsistencies.
 When external services are unavailable, the system must use cached or previously processed data when possible and provide meaningful feedback to the user.#
@@ -1476,34 +1476,43 @@ This subsystem is kept separate from the graph and frontend visualization render
 
 === 3.1 Concept Formation
 
-[.red.line-through]#The Team A domain sketch illustrates the operation of the Mod Dependency Analyzer tool.#
+[.line-through.red]#Based on these observations:#
 
-[.green]#The domain sketch illustrates the operation of the Mod Dependency Analyzer tool.#
+** [.line-through.red]#Mod: an artifact software uploaded by the user. It is the software whose dependencies we wish to display.#
+** [.line-through.red]#Dependency: relationship that indicates that one mod requires another in order to function in the game.#
+** [.line-through.red]#DTO: abstraction used to carry mod and dependency data. It is responsible for facilitating the necessary information (regarding a mod's dependencies) for graph construction using the D3.js library in the frontend.#
+** [.line-through.red]#Dependency Graph: structured network formed by interconnected dependency relationships within the mods uploaded by the user.#
+* [.line-through.red]#Grouping decisions: libraries needed and mods needed for a mod to work are grouped as Dependency because both are prerequisites.#
+* [.line-through.red]#Conflicts: dependency refers to both libraries and mods; graph refers to a data structure and not a visual representation.#
 
-* Based on these observations:
-** Mod: an artifact software uploaded by the user. [.green]#It is the software whose dependencies we wish to display.#
-** Dependency: relationship that indicates that one mod requires another [.green]#in order to function in the game#.
-** DTO: abstraction used to carry mod and dependency data. [.green]#It is responsible for facilitating the necessary information (regarding a mod's dependencies) for graph construction using the D3.js library in the frontend.#
-** Dependency Graph: structured network formed by interconnected dependency relationships [.green]#within the mods uploaded by the user#.
-* Grouping decisions: libraries needed and mods needed for a mod to work are grouped as Dependency because both are prerequisites.
-* Conflicts: dependency refers to both libraries and mods; graph refers to a data structure and not a visual representation.
+* [.green]#Based on observations of Minecraft mod ecosystems, Mods are understood as software components that rarely function independently within a Modpack configuration.#
+* [.green]#Mods frequently rely on libraries, APIs, loaders, and other Mods in order to operate correctly within a specific Minecraft version.#
+* [.green]#These relationships reveal that dependencies are not isolated requirements, but interconnected constraints that collectively determine whether a Modpack configuration is valid.#
+* [.green]#From these observations, the concept of Dependency is abstracted as a directed relationship in which one Mod requires another component to exist or satisfy specific compatibility conditions.#
+* [.green]#Modpacks are therefore understood as dependency-driven configurations whose stability depends on satisfying loader requirements, version constraints, and incompatibility restrictions.#
+* [.green]#The Dependency Graph emerges as a conceptual representation of these relationships, allowing dependency structures, compatibility chains, and conflict propagation to be analyzed at an abstract level rather than as isolated Mod interactions.#
+* [.green]#Libraries, APIs, and supporting Mods are grouped under the broader abstraction of Dependency because they all function as prerequisites required for correct Mod behavior within the ecosystem.#
+* [.green]#Conflicts are conceptualized as incompatibility relationships that prevent certain Mods or dependency configurations from coexisting within the same Modpack environment.#
 
+[.line-through.red]#The Team B analysis focuses on situations where declared dependencies must be located and associated in order to complete a mod configuration.#
 
+[.green]#The analysis also revealed that dependency management extends beyond identifying relationships between Mods. Players must additionally determine whether required components exist, whether compatible versions are available, and whether dependency requirements can be satisfied within the current Modpack configuration.#
 
-[.red.line-through]#The Team B analysis focuses on situations where declared dependencies must be located and associated in order to complete a mod configuration.#
+* [.line-through.red]#Required dependencies are often not included in the initial modpack configuration, which is why we must make use of an external API to give the service the required information.#
+* [.line-through.red]#Missing components must be identified by consulting external mod repositories.#
+* [.line-through.red]#Resolving dependency issues involves not only recognizing relationships between mods, but also locating the components that satisfy those relationships.#
+* [.line-through.red]#Mod repositories function as reference environments that describe and provide the required mods.#
 
-[.green]#In the analysis for situations where declared dependencies must be located and associated in order to complete a mod configuration:#
+[.line-through.red]#From these observations, dependency resolution is understood as a domain process connecting declared relationships with available components.#
 
-* Required dependencies are often not included in the initial modpack configuration, [.green]#which is why we must make use of an external API to give the service the required information#.
-* Missing components must be identified by consulting external mod repositories.
-* Resolving dependency issues involves not only recognizing relationships between mods, but also locating the components that satisfy those relationships.
-* Mod repositories function as reference environments that describe and provide the required mods.
+* [.line-through.red]#A dependency implies that the required mod exists in the ecosystem and must be discoverable.#
+* [.line-through.red]#Completing a configuration involves identifying and associating those components with the current modpack.#
+* [.line-through.red]#External sources are treated as part of the environment where dependencies are satisfied.#
 
-From these observations, dependency resolution is understood as a domain process connecting declared relationships with available components.
-
-* A dependency implies that the required mod exists in the ecosystem and must be discoverable.
-* Completing a configuration involves identifying and associating those components with the current modpack.
-* External sources are treated as part of the environment where dependencies are satisfied.
+* [.green]#Missing dependencies are treated as unresolved requirements within the Modpack configuration.#
+* [.green]#External mod repositories are understood as part of the surrounding ecosystem where dependency requirements may be satisfied.#
+* [.green]#Dependency resolution is therefore abstracted as the process of associating declared requirements with compatible and discoverable components available within the Minecraft mod ecosystem.#
+* [.green]#This abstraction allows dependency validity, compatibility analysis, and conflict detection to be reasoned about independently from implementation-specific mechanisms or visualization details.#
 
 ==== Component responsibilities & Interactions:
 
