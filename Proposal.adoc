@@ -571,170 +571,144 @@ Each requirement is grounded in the domain narrative and domain events.
 * [.line-through.red]#The subsystem must be capable of receiving dependency metadata from the Mod Uploading subsystem, including mod identifiers, version information, and declared dependencies.#
 * [.line-through.red]#IR-1 — Metadata Reception: The subsystem shall receive dependency metadata from the Mod Uploading subsystem, including mod identifiers, version information, and declared dependency relationships.#
 
-  IR-1 MetaData reception: The Dependency Resolution subsystem accepts dependency metadata from the Mod Upload subsystem in the form of a structured list of mod entries, where each entry contains a Modrinth project identifier and a version string, from which declared dependency relationships will be extracted and processed.
+  IR-1 — Metadata Reception: The system must receive dependency metadata from uploaded Mods, including Mod identifiers, Minecraft versions, Mod loader information, and declared dependency relationships required for dependency analysis.
 
 * [.line-through.red]#Queries to the Modrinth API (or similar repositories) should allow the system to locate required mods using dependency identifiers.#
 * [.line-through.red]#IR-2 — External Repository Querying: The subsystem shall query external repositories (e.g., Modrinth API) using dependency identifiers to locate required Mods and retrieve associated metadata.#
 
-  IR-2 External Repository Querying: The Dependency Resolution subsystem shall querie the Modrinth API in sequence using the received project slug: first retrieving the project ID, then retrieving the available project versions, and finally retrieving the declared dependencies associated with those versions. Each one of these returned dependencies have their own project slug and version string, which will be used to recursively query the API until all transitive dependencies are resolved or identified as missing." 
+  IR-2 — External Repository Querying: The system must query external Mod repositories such as Modrinth using Mod identifiers and version information in order to retrieve dependency metadata, compatibility information, and available dependency versions.
 
 * [.line-through.red]#Download URLs for compatible dependency versions must be retrieved and made available for installation.#
 * [.line-through.red]#IR-3 — Download URL Retrieval: The subsystem shall retrieve download URLs for compatible dependency versions from external repositories and provide them to the corresponding subsystem for installation.#
 
-  IR-3 Url Retrieval: The Dependency Resolution subsystem shall retrieve version metadata for resolved dependencies from the Modrinth API, which includes file download URLs within the returned version data, and makes those URLs available to the frontend for player reference only. The subsystem does not perform any download or installation operations just returns the URL from which it can be downloaded.
+  IR-3 — Download URL Retrieval: The system must retrieve download references for compatible dependency versions from external repositories and present those references to users for manual access.
 
 * [.line-through.red]#Structured results of the dependency resolution process are returned to the Visualization subsystem, including resolved dependencies, version matches, and any unresolved items.#
 * [.line-through.red]#IR-4 — Resolution Result Transfer: The subsystem returns structured dependency resolution results to the Visualization subsystem, including resolved dependencies, version matches, unresolved dependencies, incompatibilities, and version constraint violations.#
 
-  IR-4 Resolution Result Transfer: The Dependency Resolution subsystem shall return a structured ValidationResponse to the frontend containing: a list of missing required dependency identifiers, a list of mod identifiers involved in circular dependency chains, and a list of resolved dependency entries each containing the dependency identifier, a preferred download URL filtered by loader and Minecraft version compatibility, and a fallback Modrinth page URL when no compatible version is found.
+  IR-4 — Resolution Result Transfer: The system must provide structured dependency analysis results including resolved dependencies, unresolved dependencies, incompatibilities, circular dependency chains, and version compatibility information.
 
 * [.line-through.red]#Notifications are provided whenever a required dependency cannot be resolved, ensuring the system or user is aware of the issue.#
 * [.line-through.red]#IR-5 — Unresolved Dependency Notification: The subsystem shall generate a notification whenever a required dependency cannot be resolved.#
 
-  IR-5 Unresolved Dependency Reporting: The Dependency Resolution subsystem shall populate the missing dependencies list within the ValidationResponse for each required dependency that cannot be satisfied. The frontend renders each unresolved dependency as a card displaying the dependency identifier, required version, loader, and Minecraft version, with a status badge indicating whether a download URL was resolved or not. When no compatible version can be located, the frontend displays an explicit message stating that no download link could be resolved for that dependency.
+  IR-5 — Unresolved Dependency Reporting: The system must display clear notifications whenever required dependencies cannot be resolved or when compatible dependency versions cannot be identified.
 
 * [.line-through.red]#Failed API requests should trigger automatic retries up to a configurable limit to maintain reliability.#
 * [.line-through.red]#IR-6 — API Retry Handling: The subsystem shall retry failed external API requests up to a configurable maximum number of attempts.#
 
-  IR-6 External API Timeout and Error Handling: The Dependency Resolution subsystem shall handle failed external API requests by throwing a descriptive ApiException that identifies the failure type, including unauthorized access (401), resource not found (404), rate limiting (429), server error (500), and service unavailability (503). All requests to the Modrinth API is subject to a 10 second connection and response timeout, after which the request will be considered failed and an appropriate exception will be raised.
+  IR-6 — External API Timeout and Error Handling: The system must detect failed external API requests, return descriptive error information, and prevent unresolved API failures from interrupting dependency analysis operations.
 
 * [.line-through.red]#All interactions with external APIs are logged for debugging, verification, and auditing purposes.#
 * [.line-through.red]#IR-7 — External Interaction Logging: The subsystem shall log all interactions with external repositories, including requests, responses, and failures.#
 
-  IR-7 Resolution and Error Logging: The Dependency Resolution subsystem shall log successful dependency URL resolutions including the dependency identifier and resolved URL, and logs parsing errors encountered during external API responses including the dependency identifier and error message. Logs will be written to standard output for successful resolutions and standard error for failures.
+  IR-7 — Resolution and Error Logging: The system must log dependency analysis failures, invalid metadata responses, and external repository communication errors for debugging and verification purposes.
 
 ---
 
 ===== User Interface Requirements
 
 * [.line-through.red]#Allow users to upload mod files or submit mod metadata for processing.#
-  UI-1 — The system shall provide means for users to upload mod files or submit mod metadata for processing.
+  UI-1 — The system must provide means for users to upload Mod files or submit Mod metadata for dependency analysis.
 
 * [.line-through.red]#Validate uploaded metadata and report errors for missing or malformed entries.#
-  UI-2 — The system shall validate uploaded metadata and report errors for missing or malformed entries.
+  UI-2 — The system must validate uploaded metadata and display error messages for malformed, incomplete, or unsupported Mod information.
 
 * [.line-through.red]#Provide client-side feedback and visual indicators during file upload.#
-  UI-3 — The interface shall provide visual feedback and progress indicators during file upload operations.
+  UI-3 — The interface must display visual feedback and progress indicators during Mod upload operations.
 
 * [.line-through.red]#Implement responsive UI behavior to ensure usability across screen sizes.#
-  UI-4 — The interface shall implement responsive behavior to support usability across different screen sizes.
+  UI-4 — The interface must maintain responsive behavior across different screen sizes and device resolutions.
 
 * [.line-through.red]#Allow users to visually explore mod dependency relationships through an interactive dependency graph.#
-  UI-5 — The system shall provide an interactive dependency graph to visualize mod dependency relationships.
+  UI-5 — The system must provide an interactive dependency graph allowing users to visually explore Mod dependency relationships.
 
 * [.line-through.red]#Allow users to select a mod and view its required, optional, and incompatible dependencies.#
-* [.line-through,red]#UI-6 — The interface shall allow users to select a mod and view its required, optional, and incompatible dependencies.#
+* [.line-through.red]#UI-6 — The interface shall allow users to select a mod and view its required, optional, and incompatible dependencies.#
 
-  UI-6 - The interface shall enable players to select a mod and display its required, optional, and incompatible dependencies.
+  UI-6 — The interface must allow users to select a Mod and inspect its required, optional, and incompatible dependencies.
 
 * [.line-through.red]#Provide a search interface to locate mods by name or identifier.#
-  UI-7 — The system shall provide a search interface to locate Mods by name or identifier.
+  UI-7 — The system must provide a search interface allowing users to locate Mods using names or identifiers.
 
 * [.line-through.red]#Display clear visual indicators to distinguish between satisfied, missing, and incompatible dependencies.#
-  UI-8 — The interface shall display visual indicators distinguishing satisfied, missing, and incompatible dependencies.
+  UI-8 — The interface must display clear visual indicators distinguishing satisfied, missing, incompatible, and unresolved dependencies.
 
 * [.line-through.red]#Provide a detailed view panel showing information about the selected mod and its dependency relationships.#
-  UI-9 — The interface shall display a detailed view panel containing information about the selected Mod and its dependency relationships.
+  UI-9 — The interface must provide a detailed information panel displaying the selected Mod together with its dependency relationships and compatibility information.
 
 * [.line-through.red]#Allow users to navigate between related mods directly from the dependency visualization.#
 * [.line-through.red]#UI-10 — The interface shall allow navigation between related Mods through the dependency visualization.#
 
-  UI-10 - The interface shall provide navigation between related mods through the dependency visualization.
+  UI-10 — The interface must provide navigation between related Mods directly through the dependency visualization.
 
 * [.line-through.red]#Provide clear feedback messages when dependency data cannot be loaded or is incomplete.#
-  UI-11 — The system shall provide feedback messages when dependency data cannot be loaded or is incomplete.
+  UI-11 — The system must display clear feedback messages whenever dependency data cannot be loaded, validated, or completely resolved.
 
 * [.line-through.red]#Maintain consistent layout and labeling to ensure ease of understanding for non-technical users.#
-  UI-12 — The interface shall maintain consistent layout and labeling for ease of understanding by non-technical users.
+  UI-12 — The interface must maintain consistent layout structure, terminology, and labeling to support understanding by non-technical users.
 
 ==== 2.3.4 Machine Requirements
 
 Performance:
 
 * [.line-through.red]#The subsystem shall process dependency resolution requests efficiently, ensuring reasonable response times under typical user workloads.#
-  MR-1 — The subsystem shall process dependency resolution requests and re-render the dependency graph within 2 seconds after a mod is added, removed, or modified, for modpacks containing up to 150 Mods.
-
-NOTE: Modified original text to expand the mod threshold capacity from 100 mods to 150 mods and specified exact graph re-rendering conditions. This incorporates granular performance metrics from Section 2.8 to remove structural redundancy.
+  MR-1 — The system must process dependency resolution requests and update the dependency graph within 2 seconds after a Mod is added, removed, or modified in Modpacks containing up to 150 Mods.
 
 * [.line-through.red]#The system shall support multiple simultaneous requests without significant performance degradation or instability.#
-  MR-2 — The system shall support at least 50 concurrent dependency resolution requests without failure, maintaining stable performance without crashing when handling concurrent download and graph update operations for at least 20 simultaneous active users.
-
-NOTE: Modified text to combine Section 2.3.4’s higher concurrency metric (50 requests) with Section 2.8’s specific multi-operation safety rules (download and graph updates running concurrently) to construct a non-contradictory backend constraint.
+  MR-2 — The system must support at least 50 simultaneous dependency analysis requests without crashing or causing major performance degradation while supporting at least 20 active users concurrently.
 
 * [.line-through.red]#Retrieval of dependency metadata and download links shall be performed in a timely manner to maintain smooth workflow execution.#
-  MR-3 — The system shall retrieve dependency metadata and download links within 1 second per external request, responding to an external mod metadata lookup request (e.g., Modrinth) within 3 seconds under a normal load of $\le$ 20 simultaneous users.
-
-NOTE: Added the 3-second/20-user external lookup context from Section 2.8 to provide an objective, testable threshold under specific load states.
+  MR-3 — The system must retrieve dependency metadata and compatible download references from external repositories within 3 seconds under normal operating conditions with up to 20 simultaneous users.
 
 * [.line-through.red]#The subsystem shall efficiently read and analyze modpack contents, including individual mod files, to detect dependencies and incompatibilities.#
-  MR-4 — The subsystem shall analyze, validate, and normalize modpack contents to detect dependencies and incompatibilities within 2 seconds for modpacks containing up to 100 Mods, ensuring accurate representation of required, optional, and incompatible dependencies along with version constraints.
-
-NOTE: Modified text to absorb validation, normalization, and dependency mapping rules from Section 2.8’s Integrity section into the primary contents-analysis contract.
+  MR-4 — The system must analyze Modpack contents, validate dependency relationships, and detect incompatibilities within 2 seconds for Modpacks containing up to 100 Mods.
 
 ---
 
 Reliability:
 
 * [.line-through.red]#The subsystem shall maintain stable operation during normal usage, with minimal downtime.#
-  MR-5 — The subsystem shall maintain at least 99% uptime under normal operating conditions, maintaining at least 95% uptime specifically during scheduled operational hours.
-
-NOTE: Reconciled uptime rules by keeping the stricter 99% standard from 2.3.4 as the primary metric, while appending the "scheduled operational hours" qualifier extracted from Section 2.8.
+  MR-5 — The system must maintain at least 99% uptime during normal operating conditions.
 
 * [.line-through.red]#External API failures shall be handled gracefully, ensuring partial failures do not crash the system or corrupt stored data.#
-  MR-6 — The system shall handle external API failures gracefully without crashing, preserving all previously processed data; if an external API (e.g., Modrinth) fails or becomes unreachable, the system must return a clear error message to the player within 5 seconds, allow a retry, and fall back to cached or previously processed data when available.
-
-NOTE: Modified text to expand the original API fallback logic, explicitly introducing the missing "API Failure Paths" category from Section 2.8 (5-second player notifications, retry options, and cache management rules).
+  MR-6 — The system must handle external repository failures without crashing, preserve previously processed dependency data, and display descriptive error information to players within 5 seconds after a failure occurs.
 
 * [.line-through.red]#Errors and exceptions shall be logged to support debugging, testing, and verification activities.#
-  MR-7 — The system shall log all errors and exceptions, including timestamps and error details, and implement monitoring to detect performance bottlenecks and abnormal resource consumption.
-
-NOTE: Modified text to incorporate logging-driven monitoring parameters from Section 2.8's Resource Usage section.
+  MR-7 — The system must log dependency analysis errors, invalid metadata responses, and repository communication failures together with timestamps and diagnostic information.
 
 ---
 
 Resource and Stability:
 
 * [.line-through.red]#The subsystem shall operate within reasonable CPU and memory limits to avoid negatively impacting other system components.#
-  MR-8 — The subsystem shall not exceed 70% CPU utilization and 512 MB of memory under normal workload conditions, explicitly encompassing active graph construction and metadata processing tasks.
-
-NOTE: Modified text to define the exact workloads (graph construction and metadata processing) flagged in Section 2.8's resource references.
+  MR-8 — The system must operate within a maximum of 70% CPU utilization and 512 MB of memory during normal dependency analysis workloads.
 
 * [.line-through.red]#The system shall ensure consistent behavior during extended processing tasks such as large modpack analysis.#
-  MR-9 — The system shall maintain stable operation during graph processing and analysis of modpacks containing up to 500 Mods without failure, satisfying the following step-down processing intervals:
-  
-  ** Less than 5 seconds for modpacks containing between 30 and 100 mods.
-  ** Less than 10 seconds for modpacks containing up to 200 mods.
-  ** Between 30 seconds and 2 minutes for extreme cases containing between 200 and 500 mods depending on graph complexity.
+  MR-9 — The system must maintain stable operation while processing Modpacks containing up to 500 Mods according to the following performance intervals:
 
-  NOTE: Modified text to replace general stability phrasing with highly detailed, non-conflicting performance tiers extracted directly from Section 2.8's "Graph Processing Performance" metrics.
+  ** Less than 5 seconds for Modpacks containing between 30 and 100 Mods.
+  ** Less than 10 seconds for Modpacks containing between 100 and 200 Mods.
+  ** Between 30 seconds and 2 minutes for Modpacks containing between 200 and 500 Mods depending on dependency graph complexity.
 
 ---
 
 Scalability:
 
 * [.line-through.red]#The system shall support growth in mod volume, dependency complexity, and user activity without requiring architectural redesign.#
-  MR-10 — The system shall support horizontal scaling and growth in mod volume, dependency complexity, and player demand without requiring architectural redesign, safely scaling to modpacks containing up to 500 Mods without degradation in functionality (criteria for scaling beyond 30 simultaneous users remains to be defined through further research).
-
-NOTE: Modified text to append "horizontal scaling," "player demand," and the explicit 30-user research boundary derived from Section 2.8's Scalability section.
+  MR-10 — The system must support increasing Mod volume, dependency complexity, and player activity without requiring complete architectural redesign while maintaining support for Modpacks containing up to 500 Mods.
 
 * [.line-through.red]#The subsystem architecture shall allow integration of additional mod sources or APIs in future iterations.#
-  MR-11 — The subsystem architecture shall be modular to allow extensions and improvements without redesigning core components, supporting the integration of at least one additional external mod repository or API without requiring major architectural changes.
+  MR-11 — The system architecture must support integration of additional external Mod repositories and metadata sources without requiring redesign of core dependency analysis components.
 
-NOTE: Modified text to merge Section 2.8’s modular architecture clause directly into the existing repository expansion rule.
-  
 ---
 
-Data Integrity & Degradation (Newly Incorporated Categories):
+Data Integrity & Graceful Degradation:
 
-* MR-12 (Data Integrity - Download Performance) — The system shall download and append a mod file ($\le$ 20MB) to the modpack archive within 10 seconds, excluding external network delays beyond the system’s control.
-  
-NOTE: Extracted from Section 2.8 Performance Requirements and introduced as a new Machine Requirement to capture file transfer constraints missing from the original 2.3.4 layout.
+* MR-12 — The system must validate dependency metadata and dependency references before presenting dependency analysis results to players, preventing duplicate dependency entries with identical identifiers from appearing without explicit confirmation.
 
-* MR-13 (Data Integrity - Archive Validation) — The system shall validate that a downloaded mod file is successfully retrieved and structurally valid before appending it to the modpack archive, preventing duplicate mod files with identical identifiers from being added without explicit player confirmation.
+* MR-13 — The system must degrade gracefully during heavy workload conditions by prioritizing essential dependency analysis operations, throttling excessive requests, and queueing additional requests with delays not exceeding 10 seconds when active user limits are exceeded.
 
-NOTE: Extracted from Section 2.8 Integrity Requirements and appended as a brand-new Machine Requirement to establish rigorous data verification parameters.
-
-* MR-14 (Graceful Degradation & Throttling) — Under heavy load or resource-constrained conditions, the system shall degrade gracefully by prioritizing essential operations, applying request throttling to prevent unexpected termination, and queuing additional active requests with a maximum delay of 10 seconds if simultaneous active users exceed 20 (allowing metadata lookup response times to temporarily increase up to 8 seconds).
+* MR-14 (Graceful Degradation & Throttling) — Under heavy load or resource-constrained conditions, the system [.line-through.red]#shall# must degrade gracefully by prioritizing essential operations, applying request throttling to prevent unexpected termination, and queuing additional active requests with a maximum delay of 10 seconds if simultaneous active users exceed 20 (allowing metadata lookup response times to temporarily increase up to 8 seconds).
 
 NOTE: Consolidates all graceful degradation parameters, heavy-load thresholds, and request-throttled limits from Section 2.8 into a brand-new engineering contract within Section 2.3.4.
 
