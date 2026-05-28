@@ -1880,8 +1880,8 @@ context loads properly without throwing any errors during startup. The result th
 
 Verification will be considered successful when all functional requirements are met and no critical defects are present.
 
+=== TLA+
 
-.ZipProcessingService.tla
 [source,tla]
 ----
 ---------------- MODULE ZipProcessingService ----------------
@@ -1946,6 +1946,89 @@ Next ==
 AllDependenciesSatisfied ==
     system_state = "Done" => missing = {}
 ----
+
+
+=== Log Book: Meeting History and Milestone Progress
+
+This section documents the project's progression, team synchronization efforts, and technical discussions across all milestones.
+
+=== Milestone 1: Planning and Proposal (Feb 4 - Feb 27, 2026)
+Focus: Architecture, diagramming, framework selection, and proposal development.
+
+*Sprint 1 (Feb 4 - Feb 13):*
+
+- The first official full online team meeting occurred on February 7. This meeting centered around planning our project, brainstorming frameworks to use, programming languages, and project goals. In this meeting, we decided on dividing into three different sub-teams.
+
+- We scheduled regular sub-team meetings on Microsoft Teams, to keep an organized flow and manage communication.
+
+- The first few team meetings centered around initial project scope, selecting frameworks for visualization and API interaction.
+
+- *Feb 6 & Feb 13:* Full Group Meeting. We coordinated architectural goals in the classroom, conducted a weekly SCRUM meeting, reviewed progress, and planned subsequent steps for project setup.
+
+=== Recurring Meeting Schedule
+To maintain alignment across teams, the following recurring schedule was established in this milestone:
+
+|===
+| Time | Meeting Group
+| Thursdays 3:00 PM - 4:00 PM | Zip Extraction & Homepage Team (Team C)
+| Thursdays 5:00 PM - 6:00 PM | Graph Visualization Team (Team A)
+| Fridays 8:00 PM - 9:00 PM | Fetch Dependencies Team (Team B)
+| Every Friday | Full Group Sync
+| Saturdays 8:00 PM - 9:00 PM | Team Managers Sync
+|===
+
+*Sprint 2 (Feb 13 - Feb 27):*
+
+- *Weekly Team Meetings:* Sub-teams held initial sessions on Microsoft Teams to organize their specific workflows. The Graph Visualization Team began researching graph libraries; The Fetch Dependencies Team investigated the Modrinth API; Zip Extraction & Homepage Team reviewed JSON parsing requirements for fabric.mod.json.
+
+- *Documentation/Presentation Focus:* Meetings dedicated exclusively to finalizing the project proposal and formal documentation.
+
+- *Full Group Meeting (Fridays):* Presentation rehearsal and final proposal sign-off.
+
+=== Milestone 2: Core Feature Implementation (Mar 2 - Apr 5, 2026)
+Focus: Coding the visualizer, zip processing, and dependency fetching logic.
+
+*Sprint 1 (Mar 2 - Mar 19):*
+
+- *Graph Visualization Team:* Weekly meetings focused on the implementation of D3.js nodes, SVG canvas setup, and force-directed layouts.
+
+- *Fetch Dependencies Team:* Weekly meetings centered on integrating Modrinth API endpoints to fetch metadata for dependencies.
+
+- *Zip Extraction & Homepage Team:* Weekly meetings focused on the ZipProcessingService, specifically parsing fabric.mod.json files and establishing UI scaffolding for the homepage.
+
+- *Full Group Meeting (Fridays):* We integrated the disparate modules (Frontend, API service, and Zip parser) and discussed data transmission standards between the modules.
+
+*Sprint 2 (Mar 19 - Apr 5):*
+
+- *Weekly Team Meetings:* Debugging implementation hurdles and resolving JSON mapping conflicts between the backend service and the frontend DTOs.
+
+- *Documentation Focus:* March 27 and April 3 meetings were dedicated to preparing mid-project status reports and progress presentations for the class.
+
+- *Full Group Meeting (Fridays):* Reviewing the integrated system, performing tests on modpack uploads, and verifying the dependency visualizer display.
+
+
+=== Interruption of Development (April - May 6)
+
+It is important to highlight that development was interrupted between milestone 2 and 3 due to a student strike at our university. This is the reason for the large gap between the end of milestone 2 and the start of milestone 3. Development was officially resumed on May 6.
+
+=== Milestone 3: Refinement and New Features (May 6 - May 27, 2026)
+Focus: Optimizing performance and adding advanced features.
+
+*Sprint 1 (May 6 - May 17):*
+
+- *Weekly Team Meetings:* Refinement of the dependency resolution logic. Graph Visualization Team polished the graph nodes; Fetch Dependencies Team created several unit tests.
+
+- *Full Group Meeting (Fridays):* Planning for final sprint, dividing documentation work.
+
+
+*Sprint 2 (May 17 - May 27):*
+
+- *Weekly Team Meetings:* Finalizing new features and adding several visual improvements. Teams resolved edge cases regarding missing dependencies.
+
+- *Documentation Focus:* May 22, May 25, and May 26 were dedicated to the final documentation wrap-up and preparing the code and project for final delivery, and the presentation.
+
+- *Full Group Meeting (Fridays):* Final sprint review, system validation, and preparation of the final presentation materials.
+
 
 === 3.3 AI Disclosure Statement
 
