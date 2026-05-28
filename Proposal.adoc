@@ -21,22 +21,16 @@ ICOM4009 | INSO4101 | Introduction to Software Engineering
 
 ==== 1.2.2 Team Leaders
 
-* Team A - responsible for the dependency graph subsystem, including building the internal graph structure, implementing cycle detection and transitive dependency resolution, and producing structured graph data for frontend visualization.
-
 ** Zabdiel J. Valentin-Perez
 ** Karilys A. Muñiz-Ramos
-
-* Team B -  responsible for the external API integration and dependency resolution subsystem, including querying the Modrinth API, detecting missing and circular dependencies, and returning structured resolution results to the frontend.
 ** Gabriel A. Sanchez-Santos
-** Ricardo Burgos
-
-* Team C - responsible for the frontend web application, including handling modpack uploads, transmitting mod data to the backend, and rendering the dependency graph and resolution results for the player.
+** [.line-through.red]#Ricardo Burgos#
+** Carlos Rodriguez
 ** Victor M. De Jesús
 ** Javier M. Aguilo Agosto
 
 ==== 1.2.3 Team Members
 
-* Team A
 ** Christian J. Berberena
 ** Julian A. Laracuente-Matos
 ** Yahir J. Reyes-Padilla
@@ -48,8 +42,6 @@ ICOM4009 | INSO4101 | Introduction to Software Engineering
 ** Nathalie M. Castro-Mojica
 ** Merced J. Rivera-Mercado
 ** Isamar Z. Garcia-Rivera
-
-* Team B
 ** Joyson J. Martinez-Andujar
 ** Lorenzo Ramos-Martinez
 ** Wesley M. Rodriguez-Mojica
@@ -59,8 +51,6 @@ ICOM4009 | INSO4101 | Introduction to Software Engineering
 ** Kevin L. Ruiz-Sanchez
 ** Jan E. Ramos-Vazquez
 ** Cheselyn Morales-Santiago
-
-* Team C
 ** Alexander M. Garcia
 ** Edgar Y. Colon-Sanchez
 ** Hector J. Vale-Melendez
@@ -76,13 +66,23 @@ If these dependencies are not met, the game will crash or fail to launch.
 This leads to user frustration and wasted time.
 These dependencies are not easy to access; while it would be better to have them on the main download page, they are usually provided as plain text in metadata or in dedicated wikis that less-experienced users may not find.#
 
-Minecraft mods frequently depend on other mods, libraries, specific mod loaders, and particular Minecraft versions in order to function correctly. These requirements form a set of dependencies that must be satisfied before the game can run successfully.
+[.line-through.red]#Minecraft mods frequently depend on other mods, libraries, specific mod loaders, and particular Minecraft versions in order to function correctly. These requirements form a set of dependencies that must be satisfied before the game can run successfully.#
 
-If these dependencies are missing or incompatible, Minecraft may fail to launch or crash during runtime. This creates frustration for players and often leads to wasted time troubleshooting mod configurations.
+[.line-through.red]#If these dependencies are missing or incompatible, Minecraft may fail to launch or crash during runtime. This creates frustration for players and often leads to wasted time troubleshooting mod configurations.#
 
-One of the primary difficulties is that dependency information is not always presented in an accessible format. In many cases, the required dependencies are only listed in technical metadata files or scattered across community-maintained documentation and wikis. As a result, players who are unfamiliar with modding terminology or metadata structures often struggle to understand which additional mods are required or why conflicts occur.
+[.line-through.red]#One of the primary difficulties is that dependency information is not always presented in an accessible format. In many cases, the required dependencies are only listed in technical metadata files or scattered across community-maintained documentation and wikis. As a result, players who are unfamiliar with modding terminology or metadata structures often struggle to understand which additional mods are required or why conflicts occur.#
 
-This lack of clear and centralized dependency information makes modpack configuration unnecessarily complex, particularly for less experienced players.
+[.line-through.red]#This lack of clear and centralized dependency information makes modpack configuration unnecessarily complex, particularly for less experienced players.#
+
+Minecraft modding has become increasingly complex because many mods depend on specific loaders, libraries, and Minecraft versions in order to work correctly.
+
+For example, a player may install Sodium for performance improvements on Fabric 1.20.1, only to discover that another installed mod requires Forge or NeoForge instead of Fabric. In other situations, mods such as Create or Farmer’s Delight may require additional libraries like Flywheel or Architectury API. If these dependencies are missing or incompatible, Minecraft may crash during startup, freeze while loading, or display confusing error messages that many players do not understand.
+
+Another common problem occurs when players mix mods designed for different Minecraft versions. A mod built for Minecraft 1.19.2 may appear compatible at first but fail completely when used in 1.20.1. Modpacks with dozens or even hundreds of mods make these problems significantly harder to identify manually.
+
+Although the required information usually exists somewhere, it is often scattered across CurseForge pages, GitHub repositories, Discord servers, wiki pages, or metadata files such as fabric.mod.json and mods.toml. Less experienced players frequently struggle to determine which dependency is missing, which mod is causing a conflict, or whether the issue is related to the mod loader itself.
+
+As a result, players often spend large amounts of time troubleshooting crashes, removing mods one by one, searching through logs, and reinstalling modpacks instead of actually playing the game.
 
 === 1.4 Needs and Ideas
 
@@ -141,53 +141,97 @@ Overall, these ideas aim to improve how players interact with mod configurations
 
 ==== 1.5.1 Project Scope
 
-* This project operates within the domain of gaming software tooling, specifically targeting the Minecraft Java Edition modding ecosystem.
-* Minecraft modding involves the integration of community-developed modifications that extend or alter gameplay, requiring understanding of complex dependency relationships between mod files, mod loaders, and game versions.
-* The project addresses the broader challenge of dependency management and mod compatibility analysis, areas where existing tooling is either too technical for general players or entirely absent.
-* The scope encompasses domain engineering, requirements engineering, software architecture, and the design and development of a web-based dependency visualization platform that makes mod management more accessible and understandable for a non-technical audience.
+* [.line-through.red]#This project operates within the domain of gaming software tooling, specifically targeting the Minecraft Java Edition modding ecosystem.#
+* [.line-through.red]#Minecraft modding involves the integration of community-developed modifications that extend or alter gameplay, requiring understanding of complex dependency relationships between mod files, mod loaders, and game versions.#
+* [.line-through.red]#The project addresses the broader challenge of dependency management and mod compatibility analysis, areas where existing tooling is either too technical for general players or entirely absent.#
+* [.line-through.red]#The scope encompasses domain engineering, requirements engineering, software architecture, and the design and development of a web-based dependency visualization platform that makes mod management more accessible and understandable for a non-technical audience.#
+
+* The project operates within the broader domain of software systems that support dependency analysis, compatibility reasoning, and configuration validation within modular environments.
+* The scope focuses on the class of problems associated with understanding relationships between interconnected software components and determining whether configurations satisfy dependency and compatibility conditions.
+* The project includes domain analysis, requirements engineering, behavioral modeling, software architecture design, and validation activities required to study dependency-driven configurations and their interactions.
+* The project also includes the design of a system intended to improve understanding of dependency relationships, incompatibilities, and configuration consistency within Modpack environments.
+* The scope is limited to dependency analysis, compatibility reasoning, and visualization support, and does not include direct execution or modification of the target game environment.
 
 ==== 1.5.2 Project Span
 
-* The platform will target players of Minecraft Java Edition using either the Fabric or Forge mod loaders, the two most widely adopted modding frameworks for the game.
-* It will support the analysis of individual mod files and medium-sized modpacks, defined as collections typically ranging from a handful of mods up to roughly one hundred.
-* Mod metadata will be sourced from CurseForge and Modrinth, the two primary mod distribution repositories for Minecraft.
-* The platform will classify mods by runtime context, distinguishing between client-side, host-side, and client-host-sided mods.
-* Dependencies will be resolved transitively and classified as required, optional, or incompatible.
-* Where metadata is available, the platform will surface known version incompatibilities and link players to the relevant CurseForge or Modrinth pages for missing or outdated dependencies.
-* The platform will function strictly as a decision-support tool and will not modify the user's game installation or launch the game.
+* [.line-through.red]#The platform will target players of Minecraft Java Edition using either the Fabric or Forge mod loaders, the two most widely adopted modding frameworks for the game.#
+* [.line-through.red]#It will support the analysis of individual mod files and medium-sized modpacks, defined as collections typically ranging from a handful of mods up to roughly one hundred.#
+* [.line-through.red]#Mod metadata will be sourced from CurseForge and Modrinth, the two primary mod distribution repositories for Minecraft.#
+* [.line-through.red]#The platform will classify mods by runtime context, distinguishing between client-side, host-side, and client-host-sided mods.#
+* [.line-through.red]#Dependencies will be resolved transitively and classified as required, optional, or incompatible.#
+* [.line-through.red]#Where metadata is available, the platform will surface known version incompatibilities and link players to the relevant CurseForge or Modrinth pages for missing or outdated dependencies.#
+* [.line-through.red]#The platform will function strictly as a decision-support tool and will not modify the user's game installation or launch the game.#
+
+* The project span includes the analysis of dependency relationships between Mods within Modpack configurations.
+* The system considers dependency requirements, compatibility restrictions, missing components, and version-related validity conditions that affect overall configuration consistency.
+* The project includes representation and analysis of direct and indirect dependency relationships in order to support understanding of complex dependency structures.
+* The project focuses on helping players reason about dependency validity and incompatibility conditions before attempting to use a configuration.
+* The project is limited to analysis, validation support, and dependency visualization activities within the Modpack environment.
 
 ===== 1.5.2.1 Inclusions
 
-The project will focus on the design, development, and evaluation of a web-based proof-of-concept platform for visualizing Minecraft mod dependencies.
+[.line-through.red]#The project will focus on the design, development, and evaluation of a web-based proof-of-concept platform for visualizing Minecraft mod dependencies.#
+
+The project includes the design, development, and evaluation of a web-based dependency visualization platform for Minecraft Mods.
+
 The core activities included in the project span are:
 
 * Platform Development: Create an interactive, browser-based prototype that visualizes mods as nodes and their dependencies as directed edges in a graph data structure.
-  The platform will be designed to support a curated dataset of mods, rather than attempting to index the entire CurseForge and Modrinth repositories.
-* Metadata Parsing and Normalization: Develop scripts to programmatically parse dependency metadata from a preselected set of mods sourced from CurseForge and Modrinth.
-  This includes identifying required dependencies, optional dependencies, and incompatible mod versions.
-  The project will handle all mod metadata in accordance with ethical data handling principles, ensuring that any data acquisition, storage, and processing respects the terms of use and privacy expectations established by the source repositories.
-  The data will then be normalized into a unified internal schema to manage differences between the two source platforms.
-* Visual Highlighting of Critical Information: Implement visual cues within the graph interface to draw user attention to key issues.
-  This will include distinct highlighting for missing dependencies, version incompatibilities, and optional relationships.
-* Decision-Support Features: Enable players to interact with the graph and access relevant information.
-  Upon selecting a specific mod node, the platform will display:
+The platform will support a curated dataset of Mods rather than attempting to index all available repositories.
+
+* Metadata Parsing and Normalization: Develop scripts to parse dependency metadata from CurseForge and Modrinth and normalize the resulting information into a unified internal schema.
+
+[.line-through.red]#* Visual Highlighting of Critical Information: Implement visual cues within the graph interface to draw user attention to key issues.
+This will include distinct highlighting for missing dependencies, version incompatibilities, and optional relationships.#
+
+* Detection and visual highlighting of:
+** missing dependencies,
+** incompatibility conflicts,
+** circular dependencies,
+** and version constraint violations.
+
+[.line-through.red]#* Decision-Support Features: Enable players to interact with the graph and access relevant information.
+Upon selecting a specific mod node, the platform will display:
 ** Its direct and transitive dependents (i.e., which other mods rely on it).
 ** A plain-language explanation of its dependency requirements (e.g., "Required for game launch on the client-side").
-** A simulation of the potential impact, highlighting which other mods would be affected if the selected mod were removed or updated.
-* Evaluation with Sample Modpacks: Conduct a formal evaluation of the prototype's effectiveness using sample modpacks.
+** A simulation of the potential impact, highlighting which other mods would be affected if the selected mod were removed or updated.#
+
+* User interaction features including:
+** graph navigation,
+** Mod inspection,
+** dependency exploration,
+** and visualization of direct and transitive dependency chains.
+
+* Evaluation and testing of the platform using representative Minecraft modpacks.
 
 ===== 1.5.2.2 Exclusions
 
-To maintain a realistic scope and focus on the core problem of visualization and understanding, the following activities are explicitly excluded from the project span:
+To maintain a realistic scope and focus on dependency visualization and dependency analysis, the following activities are explicitly excluded from the project span:
 
-* Automated Installation or Management: The platform will function solely as a decision-support tool.
-  It will not download, install, update, remove, or modify a user's Minecraft instance.
-* Exhaustive Mod Indexing: The project will not attempt to index or visualize all mods available on CurseForge and Modrinth.
-  The focus will be on a curated, representative dataset sufficient to demonstrate the platform's functionality and core features.
-* Generalization to Other Games: Potential for future generalization is acknowledged (Section 6), but the development and testing of the prototype will be strictly confined to the Minecraft modding ecosystem.
-* Addressing Runtime Errors: The project will not build a system that diagnoses live game crashes or reads Minecraft log files.
-  Its purpose is preventative and analytical, focusing on understanding dependencies before launching the game.
-* Commercial Deployment: The final deliverable will be a functional prototype for academic evaluation, not a production-ready, publicly hosted service.
+[.line-through.red]#* Automated Installation or Management: The platform will function solely as a decision-support tool.
+It will not download, install, update, remove, or modify a user's Minecraft instance.#
+
+* Automatic installation, updating, removal, or management of Mods.
+
+* Direct modification of the player's Minecraft installation.
+
+[.line-through.red]#* Exhaustive Mod Indexing: The project will not attempt to index or visualize all mods available on CurseForge and Modrinth.
+The focus will be on a curated, representative dataset sufficient to demonstrate the platform's functionality and core features.#
+
+* Exhaustive indexing of all Minecraft Mods available online.
+
+[.line-through.red]#* Generalization to Other Games: Potential for future generalization is acknowledged (Section 6), but the development and testing of the prototype will be strictly confined to the Minecraft modding ecosystem.#
+
+* Generalization to games outside the Minecraft ecosystem.
+
+[.line-through.red]#* Addressing Runtime Errors: The project will not build a system that diagnoses live game crashes or reads Minecraft log files.
+Its purpose is preventative and analytical, focusing on understanding dependencies before launching the game.#
+
+* Runtime crash-log diagnosis or live debugging of Minecraft instances.
+
+* Automatic repair or correction of dependency conflicts.
+
+* Commercial deployment or public hosting of the platform.
 
 ===== 1.5.2.3 Key Focus Areas and Methodology
 
@@ -216,35 +260,76 @@ The project milestones and key dates are as follows:
 These dates define the structured time frame within which all planning, development, evaluation, and reporting activities will be conducted.
 All deliverables and presentations will be completed in accordance with this timeline to ensure timely progress and academic review.
 
-=== 1.6 Synopsis
+=== 1.6 Stakeholders
+
+The following stakeholders are directly or indirectly affected by the Minecraft Dependency Visualizer project.
+
+==== Primary Stakeholders
+
+* Minecraft Players  
+Players who create, install, or maintain modpacks and require clear dependency and compatibility information.
+
+* Modpack Creators  
+Users responsible for assembling large collections of Mods and maintaining compatibility between dependencies, loaders, and Minecraft versions.
+
+* Multiplayer Server Administrators  
+Individuals responsible for maintaining stable shared modded environments across multiple players.
+
+==== Secondary Stakeholders
+
+* Mod Developers  
+Developers whose Mods may be analyzed, visualized, or validated by the platform.
+
+* Development Team  
+The student team responsible for requirements engineering, implementation, validation, and maintenance of the platform.
+
+* Course Instructors and Evaluators  
+Individuals responsible for evaluating the correctness, completeness, and engineering quality of the project.
+
+=== 1.7 Synopsis
 
 [.line-through.red]#Minecraft modding has become a common way for players to expand and personalize the game experience, but it also introduces a recurring challenge: many mods rely on other mods, libraries, specific loaders, and specific Minecraft versions in order to function correctly.
 When these dependencies are missing, incompatible, or incorrectly ordered, Minecraft may fail to launch or crash during runtime.#
 
-Minecraft mods often depend on other mods, libraries, mod loaders, and specific Minecraft versions. When these dependencies are missing or incompatible, the game may fail to launch or crash.
+[.line-through.red]#Minecraft mods often depend on other mods, libraries, mod loaders, and specific Minecraft versions. When these dependencies are missing or incompatible, the game may fail to launch or crash.#
+
+The Minecraft Dependency Visualizer is a web-based platform intended to improve how Minecraft players understand dependency relationships between Mods, loaders, libraries, and game versions.
 
 [.line-through.red]#This situation is often made worse by the lack of accessibility in dependency documentation, since players are frequently forced to interpret technical plain text and logs, and many mods do not clearly display their dependencies or incompatibilities on their main pages.
 As a result, many players become frustrated and abandon the idea of using mods because they cannot easily understand what is going wrong.#
 
-Players frequently struggle to understand these relationships because dependency information is usually presented as technical metadata or logs.
+[.line-through.red]#Players frequently struggle to understand these relationships because dependency information is usually presented as technical metadata or logs.#
+
+The project addresses the difficulty players experience when configuring modpacks containing missing dependencies, incompatible versions, and unresolved dependency chains.
 
 [.line-through.red]#To help diminish the effects of this problem, the team proposes the Minecraft Dependency Visualizer, a web-based platform intended to make dependency management more understandable and approachable.#
 
-The Minecraft Dependency Visualizer is a web-based platform designed to make mod dependency relationships easier to understand.
+[.line-through.red]#The Minecraft Dependency Visualizer is a web-based platform designed to make mod dependency relationships easier to understand.#
+
+To address this problem, the project includes domain engineering activities to analyze the Minecraft modding ecosystem and identify relevant dependency relationships and conflict scenarios.
 
 [.line-through.red]#The platform will represent mods as nodes and dependencies as directed connections, forming a Dynamic Dependency Graph that users can explore.#
 
-The system will analyze mod relationships and represent them as a dynamic dependency graph that players can explore interactively.
+[.line-through.red]#The system will analyze mod relationships and represent them as a dynamic dependency graph that players can explore interactively.#
 
-Players will be able to select a mod and view which mods depend on it, as well as why it is required within a configuration.
+Requirements engineering activities are included to formally capture system behaviors, interface requirements, dependency rules, and validation constraints derived from the domain.
 
-In addition, the platform will support identifying and signaling conflicts through incompatibility information, helping players recognize when certain mods cannot coexist in the same mod configuration.
+[.line-through.red]#Players will be able to select a mod and view which mods depend on it, as well as why it is required within a configuration.#
 
-At the core of the platform is the ability to analyze a user's selected mod collection (modpack) and validate it through dependency resolution and conflict analysis.
-Dependencies will be classified into exactly one type—required, optional, or incompatible—and the platform will represent dependencies transitively, ensuring that dependencies of dependencies are also included.
+Software architecture design activities are included to define the interaction between frontend visualization components, backend dependency analysis services, and external metadata repositories such as Modrinth and CurseForge.
+
+[.line-through.red]#In addition, the platform will support identifying and signaling conflicts through incompatibility information, helping players recognize when certain mods cannot coexist in the same mod configuration.#
+
+Validation and verification activities are included to evaluate dependency analysis accuracy, graph generation correctness, conflict detection behavior, and overall system reliability.
+
+[.line-through.red]#At the core of the platform is the ability to analyze a user's selected mod collection (modpack) and validate it through dependency resolution and conflict analysis.
+Dependencies will be classified into exactly one type—required, optional, or incompatible—and the platform will represent dependencies transitively, ensuring that dependencies of dependencies are also included.#
+
+The resulting platform will provide players with an interactive dependency graph capable of visualizing dependency chains, incompatibilities, missing dependencies, and version conflicts in a more accessible and understandable manner.
+
 [.line-through.red]#By shifting the experience away from text-heavy troubleshooting and toward a clear visual representation, the Minecraft Dependency Visualizer aims to reduce confusion, improve accessibility for all players, and make modpack setup and maintenance significantly easier.#
 
-=== 1.7 Concepts
+=== 1.8 Concepts
 
 * *Concept 1: Mod (Entity)* +
   A packaged software extension for Minecraft that adds or changes gameplay functionality and declares metadata such as version, supported Minecraft and Mod Loader versions, and dependency constraints.
@@ -259,7 +344,34 @@ Dependencies will be classified into exactly one type—required, optional, or i
 * *Concept 6: Dependency Resolution (Behavior)* +
   The process of determining whether a Modpack satisfies all required Dependencies, including transitive ones, and does not violate declared Incompatibilities or Version Constraints.
 
-=== 1.8 Assumptions and Dependencies
+=== 1.9 Risk Analysis Cycle
+
+The project follows an iterative risk analysis cycle throughout development.
+
+The cycle consists of four stages:
+
+. Risk Identification  
+Potential technical, architectural, or external risks are identified during planning and development activities.
+
+. Risk Analysis  
+Each identified risk is evaluated according to:
+* likelihood of occurrence,
+* potential system impact,
+* and effect on project stability or development progress.
+
+. Risk Mitigation  
+Preventive or corrective measures are implemented to reduce the probability or impact of the identified risk.
+
+Examples include:
+* API fallback handling,
+* cached metadata responses,
+* exception handling,
+* and modular system architecture.
+
+. Risk Monitoring  
+Risks are continuously monitored during implementation, integration, testing, and validation activities to identify changes in severity or newly emerging risks.
+
+=== 1.10 Assumptions and Dependencies
 
 [.line-through.red]#* Assumption A: Reliable access to Minecraft mod metadata sources is available during development. +
   Dependency: The project depends on these sources to design and test dependency parsing and resolution logic. +
@@ -287,7 +399,8 @@ Dependencies will be classified into exactly one type—required, optional, or i
 
 - *Dependency:* The team depends on access to development environments, testing tools, and datasets.
 - *Risk:* Misconfigured or unavailable tools may slow development or introduce implementation errors.
-=== 1.9 Implicit and Derived Goals
+
+=== 1.11 Implicit and Derived Goals
 
 [.line-through.red]#* Goal 1: Simplify and automate the management of Minecraft mods and libraries to ensure all dependencies are correctly installed and compatible, reducing errors and manual configuration for users.#
 
@@ -324,9 +437,27 @@ A player named marst, based on a crash log posted in mid-2024, built a modpack o
 
 Within the mod ecosystem of Minecraft, [.line-through.red]#users# players construct gameplay configurations by combining independently developed modifications, each of which declares structural constraints through metadata. A mod specifies its identity, supported versions, required dependencies, optional dependencies, and declared incompatibilities.When multiple mods are grouped into a modpack, they form a configuration whose validity depends on the collective satisfaction of all declared requirements and constraints. Adding or removing a mod triggers domain behaviours such as dependency expansion through transitive requirements, compatibility evaluation, and conflict detection.A configuration is considered structurally valid only if every required dependency is present in a compatible version and no declared incompatibilities exist among included mods. These relationships can be abstracted as a dependency network in which mods participate in directed requirement relations and constraint relations.[.line-through.red]#When these constraints are not satisfied, players may experience issues such as game crashes during startup, loading failures, missing content, or unstable gameplay behavior.In real scenarios, a player may attempt to launch the game after adding several mods and encounter immediate crashes, error messages, or incomplete loading of features. These situations often require trial-and-error actions, such as removing mods, changing versions, or searching for missing dependencies, highlighting the complexity of maintaining a valid mod configuration.# When dependencies are missing, players experience crashes on startup with error messages listing the absent mods. When version constraints are not satisfied, the game refuses to load and names each offending mod individually. When two mods declare mutual incompatibility as Canvas Renderer and Sodium do both may be present in the folder, the game loads, but one overrides or breaks the other, producing incorrect rendering, missing features, or runtime crashes with no clear indication of the conflict's source. In all cases, resolving the problem requires players to manually trace relationships across multiple mod pages, changelogs, and community forums, with no unified view of how their mods interact.
 
-=== 2.3 Requirements
+=== 2.3 Business Process
 
-=== 2.3.1 Personas
+The current dependency management process within the Minecraft modding ecosystem is largely manual and fragmented.
+
+A typical workflow currently follows these steps:
+
+. A player downloads one or more Mods from repositories such as Modrinth or CurseForge.
+. The player manually reviews dependency information from metadata pages, documentation, or community discussions.
+. Mods are installed into the Minecraft instance.
+. Minecraft attempts to launch the Modpack.
+. If dependencies are missing or incompatible, the game may fail to launch or crash.
+. The player manually searches for missing dependencies or compatible versions.
+. The process repeats until the Modpack becomes stable.
+
+This process is time-consuming, error-prone, and difficult for less technical users.
+
+The Minecraft Dependency Visualizer improves this process by automatically analyzing dependency relationships, validating version constraints, detecting incompatibilities, and visually presenting dependency structures before runtime failures occur.
+
+=== 2.4 Requirements
+
+=== 2.4.1 Personas
 
 [.line-through.red]#The following personas represent typical stakeholders who would use the mod dependency analyzer web application.#
 [.line-through.red]#They justify the previously defined epics and user stories.#
@@ -446,7 +577,7 @@ Frustrations:
 Why this persona matters:
 Daniel highlights the need for version control, dependency tracking, and reliable validation across shared environments.
 
-==== 2.3.2 Domain Requirements
+==== 2.4.2 Domain Requirements
 
 This section derives requirements from observed properties of the Minecraft modding domain.
 Each requirement is grounded in the domain narrative and domain events.
@@ -507,198 +638,172 @@ Each requirement is grounded in the domain narrative and domain events.
 ** circular dependency chains, identified by the full list of Mod identifiers involved.
   
 
-==== 2.3.3 Interface Requirements
+==== 2.4.3 Interface Requirements
 
 ===== External System Interfaces
 
 * [.line-through.red]#The subsystem must be capable of receiving dependency metadata from the Mod Uploading subsystem, including mod identifiers, version information, and declared dependencies.#
 * [.line-through.red]#IR-1 — Metadata Reception: The subsystem shall receive dependency metadata from the Mod Uploading subsystem, including mod identifiers, version information, and declared dependency relationships.#
 
-  IR-1 MetaData reception: The Dependency Resolution subsystem accepts dependency metadata from the Mod Upload subsystem in the form of a structured list of mod entries, where each entry contains a Modrinth project identifier and a version string, from which declared dependency relationships will be extracted and processed.
+  IR-1 — Metadata Reception: The system must receive dependency metadata from uploaded Mods, including Mod identifiers, Minecraft versions, Mod loader information, and declared dependency relationships required for dependency analysis.
 
 * [.line-through.red]#Queries to the Modrinth API (or similar repositories) should allow the system to locate required mods using dependency identifiers.#
 * [.line-through.red]#IR-2 — External Repository Querying: The subsystem shall query external repositories (e.g., Modrinth API) using dependency identifiers to locate required Mods and retrieve associated metadata.#
 
-  IR-2 External Repository Querying: The Dependency Resolution subsystem shall querie the Modrinth API in sequence using the received project slug: first retrieving the project ID, then retrieving the available project versions, and finally retrieving the declared dependencies associated with those versions. Each one of these returned dependencies have their own project slug and version string, which will be used to recursively query the API until all transitive dependencies are resolved or identified as missing." 
+  IR-2 — External Repository Querying: The system must query external Mod repositories such as Modrinth using Mod identifiers and version information in order to retrieve dependency metadata, compatibility information, and available dependency versions.
 
 * [.line-through.red]#Download URLs for compatible dependency versions must be retrieved and made available for installation.#
 * [.line-through.red]#IR-3 — Download URL Retrieval: The subsystem shall retrieve download URLs for compatible dependency versions from external repositories and provide them to the corresponding subsystem for installation.#
 
-  IR-3 Url Retrieval: The Dependency Resolution subsystem shall retrieve version metadata for resolved dependencies from the Modrinth API, which includes file download URLs within the returned version data, and makes those URLs available to the frontend for player reference only. The subsystem does not perform any download or installation operations just returns the URL from which it can be downloaded.
+  IR-3 — Download URL Retrieval: The system must retrieve download references for compatible dependency versions from external repositories and present those references to users for manual access.
 
 * [.line-through.red]#Structured results of the dependency resolution process are returned to the Visualization subsystem, including resolved dependencies, version matches, and any unresolved items.#
 * [.line-through.red]#IR-4 — Resolution Result Transfer: The subsystem returns structured dependency resolution results to the Visualization subsystem, including resolved dependencies, version matches, unresolved dependencies, incompatibilities, and version constraint violations.#
 
-  IR-4 Resolution Result Transfer: The Dependency Resolution subsystem shall return a structured ValidationResponse to the frontend containing: a list of missing required dependency identifiers, a list of mod identifiers involved in circular dependency chains, and a list of resolved dependency entries each containing the dependency identifier, a preferred download URL filtered by loader and Minecraft version compatibility, and a fallback Modrinth page URL when no compatible version is found.
+  IR-4 — Resolution Result Transfer: The system must provide structured dependency analysis results including resolved dependencies, unresolved dependencies, incompatibilities, circular dependency chains, and version compatibility information.
 
 * [.line-through.red]#Notifications are provided whenever a required dependency cannot be resolved, ensuring the system or user is aware of the issue.#
 * [.line-through.red]#IR-5 — Unresolved Dependency Notification: The subsystem shall generate a notification whenever a required dependency cannot be resolved.#
 
-  IR-5 Unresolved Dependency Reporting: The Dependency Resolution subsystem shall populate the missing dependencies list within the ValidationResponse for each required dependency that cannot be satisfied. The frontend renders each unresolved dependency as a card displaying the dependency identifier, required version, loader, and Minecraft version, with a status badge indicating whether a download URL was resolved or not. When no compatible version can be located, the frontend displays an explicit message stating that no download link could be resolved for that dependency.
+  IR-5 — Unresolved Dependency Reporting: The system must display clear notifications whenever required dependencies cannot be resolved or when compatible dependency versions cannot be identified.
 
 * [.line-through.red]#Failed API requests should trigger automatic retries up to a configurable limit to maintain reliability.#
 * [.line-through.red]#IR-6 — API Retry Handling: The subsystem shall retry failed external API requests up to a configurable maximum number of attempts.#
 
-  IR-6 External API Timeout and Error Handling: The Dependency Resolution subsystem shall handle failed external API requests by throwing a descriptive ApiException that identifies the failure type, including unauthorized access (401), resource not found (404), rate limiting (429), server error (500), and service unavailability (503). All requests to the Modrinth API is subject to a 10 second connection and response timeout, after which the request will be considered failed and an appropriate exception will be raised.
+  IR-6 — External API Timeout and Error Handling: The system must detect failed external API requests, return descriptive error information, and prevent unresolved API failures from interrupting dependency analysis operations.
 
 * [.line-through.red]#All interactions with external APIs are logged for debugging, verification, and auditing purposes.#
 * [.line-through.red]#IR-7 — External Interaction Logging: The subsystem shall log all interactions with external repositories, including requests, responses, and failures.#
 
-  IR-7 Resolution and Error Logging: The Dependency Resolution subsystem shall log successful dependency URL resolutions including the dependency identifier and resolved URL, and logs parsing errors encountered during external API responses including the dependency identifier and error message. Logs will be written to standard output for successful resolutions and standard error for failures.
+  IR-7 — Resolution and Error Logging: The system must log dependency analysis failures, invalid metadata responses, and external repository communication errors for debugging and verification purposes.
 
 ---
 
 ===== User Interface Requirements
 
 * [.line-through.red]#Allow users to upload mod files or submit mod metadata for processing.#
-  UI-1 — The system shall provide means for users to upload mod files or submit mod metadata for processing.
+  UI-1 — The system must provide means for users to upload Mod files or submit Mod metadata for dependency analysis.
 
 * [.line-through.red]#Validate uploaded metadata and report errors for missing or malformed entries.#
-  UI-2 — The system shall validate uploaded metadata and report errors for missing or malformed entries.
+  UI-2 — The system must validate uploaded metadata and display error messages for malformed, incomplete, or unsupported Mod information.
 
 * [.line-through.red]#Provide client-side feedback and visual indicators during file upload.#
-  UI-3 — The interface shall provide visual feedback and progress indicators during file upload operations.
+  UI-3 — The interface must display visual feedback and progress indicators during Mod upload operations.
 
 * [.line-through.red]#Implement responsive UI behavior to ensure usability across screen sizes.#
-  UI-4 — The interface shall implement responsive behavior to support usability across different screen sizes.
+  UI-4 — The interface must maintain responsive behavior across different screen sizes and device resolutions.
 
 * [.line-through.red]#Allow users to visually explore mod dependency relationships through an interactive dependency graph.#
-  UI-5 — The system shall provide an interactive dependency graph to visualize mod dependency relationships.
+  UI-5 — The system must provide an interactive dependency graph allowing users to visually explore Mod dependency relationships.
 
 * [.line-through.red]#Allow users to select a mod and view its required, optional, and incompatible dependencies.#
-* [.line-through,red]#UI-6 — The interface shall allow users to select a mod and view its required, optional, and incompatible dependencies.#
+* [.line-through.red]#UI-6 — The interface shall allow users to select a mod and view its required, optional, and incompatible dependencies.#
 
-  UI-6 - The interface shall enable players to select a mod and display its required, optional, and incompatible dependencies.
+  UI-6 — The interface must allow users to select a Mod and inspect its required, optional, and incompatible dependencies.
 
 * [.line-through.red]#Provide a search interface to locate mods by name or identifier.#
-  UI-7 — The system shall provide a search interface to locate Mods by name or identifier.
+  UI-7 — The system must provide a search interface allowing users to locate Mods using names or identifiers.
 
 * [.line-through.red]#Display clear visual indicators to distinguish between satisfied, missing, and incompatible dependencies.#
-  UI-8 — The interface shall display visual indicators distinguishing satisfied, missing, and incompatible dependencies.
+  UI-8 — The interface must display clear visual indicators distinguishing satisfied, missing, incompatible, and unresolved dependencies.
 
 * [.line-through.red]#Provide a detailed view panel showing information about the selected mod and its dependency relationships.#
-  UI-9 — The interface shall display a detailed view panel containing information about the selected Mod and its dependency relationships.
+  UI-9 — The interface must provide a detailed information panel displaying the selected Mod together with its dependency relationships and compatibility information.
 
 * [.line-through.red]#Allow users to navigate between related mods directly from the dependency visualization.#
 * [.line-through.red]#UI-10 — The interface shall allow navigation between related Mods through the dependency visualization.#
 
-  UI-10 - The interface shall provide navigation between related mods through the dependency visualization.
+  UI-10 — The interface must provide navigation between related Mods directly through the dependency visualization.
 
 * [.line-through.red]#Provide clear feedback messages when dependency data cannot be loaded or is incomplete.#
-  UI-11 — The system shall provide feedback messages when dependency data cannot be loaded or is incomplete.
+  UI-11 — The system must display clear feedback messages whenever dependency data cannot be loaded, validated, or completely resolved.
 
 * [.line-through.red]#Maintain consistent layout and labeling to ensure ease of understanding for non-technical users.#
-  UI-12 — The interface shall maintain consistent layout and labeling for ease of understanding by non-technical users.
+  UI-12 — The interface must maintain consistent layout structure, terminology, and labeling to support understanding by non-technical users.
 
-==== 2.3.4 Machine Requirements
+==== 2.4.4 Machine Requirements
 
 Performance:
 
 * [.line-through.red]#The subsystem shall process dependency resolution requests efficiently, ensuring reasonable response times under typical user workloads.#
-  MR-1 — The subsystem shall process dependency resolution requests and re-render the dependency graph within 2 seconds after a mod is added, removed, or modified, for modpacks containing up to 150 Mods.
-
-NOTE: Modified original text to expand the mod threshold capacity from 100 mods to 150 mods and specified exact graph re-rendering conditions. This incorporates granular performance metrics from Section 2.8 to remove structural redundancy.
+  MR-1 — The system must process dependency resolution requests and update the dependency graph within 2 seconds after a Mod is added, removed, or modified in Modpacks containing up to 150 Mods.
 
 * [.line-through.red]#The system shall support multiple simultaneous requests without significant performance degradation or instability.#
-  MR-2 — The system shall support at least 50 concurrent dependency resolution requests without failure, maintaining stable performance without crashing when handling concurrent download and graph update operations for at least 20 simultaneous active users.
-
-NOTE: Modified text to combine Section 2.3.4’s higher concurrency metric (50 requests) with Section 2.8’s specific multi-operation safety rules (download and graph updates running concurrently) to construct a non-contradictory backend constraint.
+  MR-2 — The system must support at least 50 simultaneous dependency analysis requests without crashing or causing major performance degradation while supporting at least 20 active users concurrently.
 
 * [.line-through.red]#Retrieval of dependency metadata and download links shall be performed in a timely manner to maintain smooth workflow execution.#
-  MR-3 — The system shall retrieve dependency metadata and download links within 1 second per external request, responding to an external mod metadata lookup request (e.g., Modrinth) within 3 seconds under a normal load of $\le$ 20 simultaneous users.
-
-NOTE: Added the 3-second/20-user external lookup context from Section 2.8 to provide an objective, testable threshold under specific load states.
+  MR-3 — The system must retrieve dependency metadata and compatible download references from external repositories within 3 seconds under normal operating conditions with up to 20 simultaneous users.
 
 * [.line-through.red]#The subsystem shall efficiently read and analyze modpack contents, including individual mod files, to detect dependencies and incompatibilities.#
-  MR-4 — The subsystem shall analyze, validate, and normalize modpack contents to detect dependencies and incompatibilities within 2 seconds for modpacks containing up to 100 Mods, ensuring accurate representation of required, optional, and incompatible dependencies along with version constraints.
-
-NOTE: Modified text to absorb validation, normalization, and dependency mapping rules from Section 2.8’s Integrity section into the primary contents-analysis contract.
+  MR-4 — The system must analyze Modpack contents, validate dependency relationships, and detect incompatibilities within 2 seconds for Modpacks containing up to 100 Mods.
 
 ---
 
 Reliability:
 
 * [.line-through.red]#The subsystem shall maintain stable operation during normal usage, with minimal downtime.#
-  MR-5 — The subsystem shall maintain at least 99% uptime under normal operating conditions, maintaining at least 95% uptime specifically during scheduled operational hours.
-
-NOTE: Reconciled uptime rules by keeping the stricter 99% standard from 2.3.4 as the primary metric, while appending the "scheduled operational hours" qualifier extracted from Section 2.8.
+  MR-5 — The system must maintain at least 99% uptime during normal operating conditions.
 
 * [.line-through.red]#External API failures shall be handled gracefully, ensuring partial failures do not crash the system or corrupt stored data.#
-  MR-6 — The system shall handle external API failures gracefully without crashing, preserving all previously processed data; if an external API (e.g., Modrinth) fails or becomes unreachable, the system must return a clear error message to the player within 5 seconds, allow a retry, and fall back to cached or previously processed data when available.
-
-NOTE: Modified text to expand the original API fallback logic, explicitly introducing the missing "API Failure Paths" category from Section 2.8 (5-second player notifications, retry options, and cache management rules).
+  MR-6 — The system must handle external repository failures without crashing, preserve previously processed dependency data, and display descriptive error information to players within 5 seconds after a failure occurs.
 
 * [.line-through.red]#Errors and exceptions shall be logged to support debugging, testing, and verification activities.#
-  MR-7 — The system shall log all errors and exceptions, including timestamps and error details, and implement monitoring to detect performance bottlenecks and abnormal resource consumption.
-
-NOTE: Modified text to incorporate logging-driven monitoring parameters from Section 2.8's Resource Usage section.
+  MR-7 — The system must log dependency analysis errors, invalid metadata responses, and repository communication failures together with timestamps and diagnostic information.
 
 ---
 
 Resource and Stability:
 
 * [.line-through.red]#The subsystem shall operate within reasonable CPU and memory limits to avoid negatively impacting other system components.#
-  MR-8 — The subsystem shall not exceed 70% CPU utilization and 512 MB of memory under normal workload conditions, explicitly encompassing active graph construction and metadata processing tasks.
-
-NOTE: Modified text to define the exact workloads (graph construction and metadata processing) flagged in Section 2.8's resource references.
+  MR-8 — The system must operate within a maximum of 70% CPU utilization and 512 MB of memory during normal dependency analysis workloads.
 
 * [.line-through.red]#The system shall ensure consistent behavior during extended processing tasks such as large modpack analysis.#
-  MR-9 — The system shall maintain stable operation during graph processing and analysis of modpacks containing up to 500 Mods without failure, satisfying the following step-down processing intervals:
-  
-  ** Less than 5 seconds for modpacks containing between 30 and 100 mods.
-  ** Less than 10 seconds for modpacks containing up to 200 mods.
-  ** Between 30 seconds and 2 minutes for extreme cases containing between 200 and 500 mods depending on graph complexity.
+  MR-9 — The system must maintain stable operation while processing Modpacks containing up to 500 Mods according to the following performance intervals:
 
-  NOTE: Modified text to replace general stability phrasing with highly detailed, non-conflicting performance tiers extracted directly from Section 2.8's "Graph Processing Performance" metrics.
+  ** Less than 5 seconds for Modpacks containing between 30 and 100 Mods.
+  ** Less than 10 seconds for Modpacks containing between 100 and 200 Mods.
+  ** Between 30 seconds and 2 minutes for Modpacks containing between 200 and 500 Mods depending on dependency graph complexity.
 
 ---
 
 Scalability:
 
 * [.line-through.red]#The system shall support growth in mod volume, dependency complexity, and user activity without requiring architectural redesign.#
-  MR-10 — The system shall support horizontal scaling and growth in mod volume, dependency complexity, and player demand without requiring architectural redesign, safely scaling to modpacks containing up to 500 Mods without degradation in functionality (criteria for scaling beyond 30 simultaneous users remains to be defined through further research).
-
-NOTE: Modified text to append "horizontal scaling," "player demand," and the explicit 30-user research boundary derived from Section 2.8's Scalability section.
+  MR-10 — The system must support increasing Mod volume, dependency complexity, and player activity without requiring complete architectural redesign while maintaining support for Modpacks containing up to 500 Mods.
 
 * [.line-through.red]#The subsystem architecture shall allow integration of additional mod sources or APIs in future iterations.#
-  MR-11 — The subsystem architecture shall be modular to allow extensions and improvements without redesigning core components, supporting the integration of at least one additional external mod repository or API without requiring major architectural changes.
+  MR-11 — The system architecture must support integration of additional external Mod repositories and metadata sources without requiring redesign of core dependency analysis components.
 
-NOTE: Modified text to merge Section 2.8’s modular architecture clause directly into the existing repository expansion rule.
-  
 ---
 
-Data Integrity & Degradation (Newly Incorporated Categories):
+Data Integrity & Graceful Degradation:
 
-* MR-12 (Data Integrity - Download Performance) — The system shall download and append a mod file ($\le$ 20MB) to the modpack archive within 10 seconds, excluding external network delays beyond the system’s control.
-  
-NOTE: Extracted from Section 2.8 Performance Requirements and introduced as a new Machine Requirement to capture file transfer constraints missing from the original 2.3.4 layout.
+* MR-12 — The system must validate dependency metadata and dependency references before presenting dependency analysis results to players, preventing duplicate dependency entries with identical identifiers from appearing without explicit confirmation.
 
-* MR-13 (Data Integrity - Archive Validation) — The system shall validate that a downloaded mod file is successfully retrieved and structurally valid before appending it to the modpack archive, preventing duplicate mod files with identical identifiers from being added without explicit player confirmation.
+* MR-13 — The system must degrade gracefully during heavy workload conditions by prioritizing essential dependency analysis operations, throttling excessive requests, and queueing additional requests with delays not exceeding 10 seconds when active user limits are exceeded.
 
-NOTE: Extracted from Section 2.8 Integrity Requirements and appended as a brand-new Machine Requirement to establish rigorous data verification parameters.
+* MR-14 (Graceful Degradation & Throttling) — Under heavy load or resource-constrained conditions, the system [.line-through.red]#shall# must degrade gracefully by prioritizing essential operations, applying request throttling to prevent unexpected termination, and queuing additional active requests with a maximum delay of 10 seconds if simultaneous active users exceed 20 (allowing metadata lookup response times to temporarily increase up to 8 seconds).
 
-* MR-14 (Graceful Degradation & Throttling) — Under heavy load or resource-constrained conditions, the system shall degrade gracefully by prioritizing essential operations, applying request throttling to prevent unexpected termination, and queuing additional active requests with a maximum delay of 10 seconds if simultaneous active users exceed 20 (allowing metadata lookup response times to temporarily increase up to 8 seconds).
-
-NOTE: Consolidates all graceful degradation parameters, heavy-load thresholds, and request-throttled limits from Section 2.8 into a brand-new engineering contract within Section 2.3.4.
-
-
-=== 2.4 Terminology
+=== 2.5 Terminology
 
 This section defines the core terms that will be used throughout the project.
 These definitions apply to both the backend dependency logic and the frontend graph interface.
-
-Goal: Keep the language consistent across documentation and communication.
 
 A key distinction in this terminology is the difference between domain concepts and system concepts.
 Domain concepts refer to phenomena that exist in the Minecraft modding ecosystem independently of the application, such as Mod, Dependency, Incompatibility, Mod pack, and Version Constraint.
 System concepts are introduced by the design and implementation of the project itself, such as Mod Instance, Dependency Graph, Node, Edge, UploadQueue, and ValidationFeedback.
 
 This distinction helps avoid mixing properties of the observed domain with structures that only exist inside the system.
-As a result, the terminology supports clearer requirements, more consistent msodeling, and a better separation between domain understanding and implementation design.
+As a result, the terminology supports clearer requirements, more consistent [.line-through.red]#msodeling# modeling, and a better separation between domain understanding and implementation design.
+
+Two additional distinctions are worth clarifying upfront. First, Events and Actions are not the same thing: an Event is instantaneous and marks a transition between states (e.g., a conflict is detected), while an Action has duration and describes something the system or user does over time (e.g., resolving dependencies). Second, a State is a condition that persists until something changes it — a Modpack being in conflict is a State, not an Event. These distinctions affected several classifications below.
+
+Additionally, the Minecraft base game is treated as a mod-like entity in this model. It has an identifier (`minecraft`) and a version (e.g., `1.21.1`), and mods declare dependencies toward it the same way they do toward other mods. This lets the system handle Minecraft version constraints the same way it handles any other dependency constraint.
 
 Each term includes:
 
-* Classification (Entity, Relation, Attribute, Event, Behavior)
+* [.line-through.red]#Classification (Entity, Relation, Attribute, Event, Behavior)#
+* Classification (Entity, Relation, Attribute, Event, Behavior, State)
 * Phase Introduced (Domain = Minecraft ecosystem concept, System = project-specific concept)
 * Definition (Implementation-independent)
 
@@ -709,30 +814,57 @@ Each term includes:
   Phase Introduced: Domain +
   Definition: A mod (modification) is a packaged software extension that alters or adds functionality to Minecraft. A mod may introduce new content, mechanics, or systems and may declare dependencies or incompatibilities with other mods.
 
-. Dependency +
-  Classification: Relation +
-  Phase Introduced: Domain +
-  Definition: A dependency is a directed relationship in which one mod requires another mod in order to function correctly. If the required mod is missing or does not satisfy the stated version constraint, the dependent mod cannot operate as intended.
+. [.line-through.red]#Dependency# +
+  [.line-through.red]#Classification: Relation# +
+  [.line-through.red]#Phase Introduced: Domain# +
+  [.line-through.red]#Definition: A dependency is a directed relationship in which one mod requires another mod in order to function correctly. If the required mod is missing or does not satisfy the stated version constraint, the dependent mod cannot operate as intended.# +
++
+Dependency +
+Classification: Relation +
+Phase Introduced: Domain +
+Definition: A directed relation from a source Mod to a target Mod, stating that the source requires the target to be present and satisfy any associated Version Constraint to function correctly. A dependency cannot exist without both Mods — it is always between two specific participants. +
++
+A dependency is classified as a Relation rather than an Entity because it has no existence on its own; it only makes sense in the context of two Mods. It is not a Behavior either, since it does not describe a process — it describes a structural constraint that exists regardless of whether resolution has been run. When a dependency carries a specific version requirement (e.g., `fabric-api >= 0.90.0`), it is a versioned dependency. When no version is specified, any version of the target Mod is acceptable. +
++
+Example: Sodium declares a dependency on Fabric API. When a player updates Sodium, its version constraint on Fabric API may tighten, causing a previously working Modpack to break if the installed Fabric API no longer qualifies.
 
 . Optional Dependency +
   Classification: Relation +
   Phase Introduced: Domain +
-  Definition: A relationship where a mod can integrate with another mod if it is present, but does not require it for core functionality.
+  Definition: A relationship where a mod can integrate with another mod if it is present, but does not require it for core functionality. Like Dependency, it connects two specific Mods and cannot exist independently, so it is classified as a Relation for the same reasons.
 
 . Version +
   Classification: Attribute +
   Phase Introduced: Domain +
   Definition: A structured identifier assigned to a specific release of a mod. Versions are used to distinguish releases and evaluate compatibility between mods.
 
-. Version Constraint +
-  Classification: Attribute +
-  Phase Introduced: Domain +
-  Definition: A rule that specifies which versions of a mod are acceptable within a dependency relationship. A version constraint defines a valid range or condition that must be satisfied.
+. [.line-through.red]#Version Constraint# +
+  [.line-through.red]#Classification: Attribute# +
+  [.line-through.red]#Phase Introduced: Domain# +
+  [.line-through.red]#Definition: A rule that specifies which versions of a mod are acceptable within a dependency relationship. A version constraint defines a valid range or condition that must be satisfied.# +
++
+Version Constraint +
+Classification: Attribute +
+Phase Introduced: Domain +
+Definition: A rule attached to a Dependency relation that specifies which versions of the target Mod are acceptable (e.g., `>= 0.90.0`, `^1.4.0`). The constraint must be satisfied for the dependency to be considered resolved. +
++
+Version Constraint is an Attribute because it is a property of a Dependency — it does not exist on its own. When two dependencies in the same Modpack impose conflicting constraints on the same target Mod, the Modpack enters a Conflict state that cannot be fixed without changing one of the source Mods. +
++
+Example: Indium 1.0.21 requires `fabric-api <= 0.88.1`, while Geckolib 4 requires `fabric-api >= 0.90.0`. No single version of Fabric API satisfies both, so the Modpack is in conflict.
 
-. Minecraft Version +
-  Classification: Entity +
-  Phase Introduced: Domain +
-  Definition: A specific release of Minecraft and its updates. It defines the base environment and APIs that mods and mod loader target. Important for the compatibility constraint in the dependency graph.
+. [.line-through.red]#Minecraft Version# +
+  [.line-through.red]#Classification: Entity# +
+  [.line-through.red]#Phase Introduced: Domain# +
+  [.line-through.red]#Definition: A specific release of Minecraft and its updates. It defines the base environment and APIs that mods and mod loader target. Important for the compatibility constraint in the dependency graph.# +
++
+Minecraft Version +
+Classification: Entity +
+Phase Introduced: Domain +
+Definition: A specific release of Minecraft and its updates. It defines the base environment and APIs that mods and mod loaders target, and is central to compatibility constraints in the dependency graph. +
++
+Within the dependency model, the Minecraft base game behaves as a mod-like entity with identifier `minecraft` and a version string (e.g., `1.21.1`). Mods may declare a dependency on `minecraft` with a Version Constraint, resolved the same way as any other dependency. This allows the system to catch cases where a player runs a Modpack on a Minecraft version the mods do not support. +
++
+Example: A player moves their Modpack from Minecraft 1.20.1 to 1.21.1. Several mods declare `minecraft ~1.20` as a dependency. The system flags each of them as having an unresolved dependency against the new version.
 
 . Mod Loader +
   Classification: Entity +
@@ -769,35 +901,87 @@ Each term includes:
   Phase Introduced: System +
   Definition: A directed connection between two nodes that represents a dependency relationship.
 
-. Resolution +
-  Classification: Behavior +
-  Phase Introduced: System +
-  Definition: The process of evaluating whether all declared dependencies within a given mod set are satisfied according to version constraints and compatibility rules.
+. [.line-through.red]#Resolution# +
+  [.line-through.red]#Classification: Behavior# +
+  [.line-through.red]#Phase Introduced: System# +
+  [.line-through.red]#Definition: The process of evaluating whether all declared dependencies within a given mod set are satisfied according to version constraints and compatibility rules.# +
++
+Resolution +
+Classification: Behavior +
+Phase Introduced: System +
+Definition: The process of evaluating whether all declared Dependency relations within a Modpack are satisfied according to their Version Constraints and compatibility rules. It begins when a Modpack is submitted for analysis and ends when a Resolution Result is produced. +
++
+Resolution is a Behavior because it takes time — it is something the system does, not a moment in time. The moment it finishes is an Event (see section 2.7). What might look like separate processes — checking version rules, detecting conflicts, expanding transitive dependencies — are all phases of Resolution, not independent actions.
 
-. Conflict +
-  Classification: Event +
-  Phase Introduced: System +
-  Definition: A condition that occurs when dependency requirements or version constraints cannot be satisfied simultaneously. A conflict prevents successful resolution of the mod set.
+. [.line-through.red]#Conflict# +
+  [.line-through.red]#Classification: Event# +
+  [.line-through.red]#Phase Introduced: System# +
+  [.line-through.red]#Definition: A condition that occurs when dependency requirements or version constraints cannot be satisfied simultaneously. A conflict prevents successful resolution of the mod set.# +
++
+Conflict +
+Classification: [.line-through.red]#Event# State +
+Phase Introduced: System +
+Definition: A condition in which two or more Mods in a Modpack cannot coexist due to a declared Incompatibility or an unsatisfiable Version Constraint. The Modpack remains in this state until the problem is corrected. +
++
+Conflict was reclassified from Event to State because it is not instantaneous — it is a condition the Modpack sits in over time. The moment the conflict is first detected is the Event (see "Incompatibility Detected" in section 2.7). +
++
+Example: A player adds Canvas Renderer to a Modpack that already has Sodium. Since Canvas Renderer declares Sodium as incompatible, the Modpack enters a Conflict state and stays there until one of them is removed.
 
-. Compatibility +
-  Classification: Attribute +
-  Phase Introduced: Domain +
-  Definition: The state in which two or more mods, versions, or loaders can operate together without violating declared dependencies or constraints.
+. [.line-through.red]#Compatibility# +
+  [.line-through.red]#Classification: Attribute# +
+  [.line-through.red]#Phase Introduced: Domain# +
+  [.line-through.red]#Definition: The state in which two or more mods, versions, or loaders can operate together without violating declared dependencies or constraints.# +
++
+Compatibility +
+Classification: [.line-through.red]#Attribute# State +
+Phase Introduced: Domain +
+Definition: The condition in which two or more Mods, versions, or loaders can coexist in a Modpack without violating any declared Dependency relations, Incompatibility relations, or Version Constraints. +
++
+Compatibility was reclassified from Attribute to State because it describes the overall condition of a configuration at a point in time, not a property of any single Mod. It can change — a Modpack that is compatible today may become incompatible after a mod update. +
++
+Example: Sodium and Fabric API are compatible as long as the installed Fabric API version satisfies Sodium's constraint. If the player updates Sodium and the new version requires a higher Fabric API version than what is installed, the Modpack moves from a compatible to an incompatible state.
 
 . Installation State +
   Classification: Attribute +
   Phase Introduced: System +
   Definition: The current status of a mod instance within the managed environment, such as installed, missing, unresolved, or conflicting.
 
-. Transitive Dependency +
-  Classification: Relation +
-  Phase Introduced: System +
-  Definition: A dependency that arises indirectly through a chain of other dependencies. If Mod A depends on Mod B, and Mod B depends on Mod C, then Mod A has a transitive dependency on Mod C.
+. [.line-through.red]#Transitive Dependency# +
+  [.line-through.red]#Classification: Relation# +
+  [.line-through.red]#Phase Introduced: System# +
+  [.line-through.red]#Definition: A dependency that arises indirectly through a chain of other dependencies. If Mod A depends on Mod B, and Mod B depends on Mod C, then Mod A has a transitive dependency on Mod C.# +
++
+Transitive Dependency +
+Classification: Relation +
+Phase Introduced: System +
+Definition: A dependency that arises indirectly through a chain of other dependencies. If Mod A depends on Mod B, and Mod B depends on Mod C, then Mod A has a transitive dependency on Mod C. +
++
+Like Dependency, this is classified as a Relation. The difference is that transitive dependencies are not declared explicitly in any Mod's metadata — they emerge from following the chain of declared relations during Resolution. +
++
+Example: A player installs Autochef's Delight, which depends on Farmer's Delight, which depends on Fabric API. The Modpack ends up with a transitive dependency on Fabric API even though Autochef's Delight never mentions it.
 
 . Profile +
   Classification: Entity +
   Phase Introduced: System +
   Definition: A named container that stores a user's mod instances and their installation statuses.
+
+. Incompatibility +
+  Classification: Relation +
+  Phase Introduced: Domain +
+  Definition: A declared constraint between two Mods stating they must not coexist in the same Modpack. +
++
+Incompatibility is a Relation because it connects two specific Mods and has no meaning without both. It is worth distinguishing from Conflict: Incompatibility is the rule declared in a Mod's metadata, while Conflict is the State that results when that rule is violated in a Modpack. +
++
+Example: Canvas Renderer declares an Incompatibility with Sodium. If a player includes both in a Modpack, the result is a Conflict state.
+
+. Versioned Dependency +
+  Classification: Relation +
+  Phase Introduced: Domain +
+  Definition: A Dependency relation that carries an explicit Version Constraint on the target Mod. The source Mod functions correctly only if the target is present at a version within the declared range. +
++
+Many of the dependency problems seen in the Minecraft modding community come specifically from versioned dependencies where the acceptable version range is narrow or clashes with the range required by another mod in the same Modpack. +
++
+Example: Indium 1.0.21 requires `fabric-api <= 0.88.1` and Geckolib 4 requires `fabric-api >= 0.90.0`. Since no version of Fabric API satisfies both at once, the Modpack is in conflict.
 
 ==== Mod Uploading Terminology
 
@@ -831,45 +1015,80 @@ Each term includes:
   Phase: System +
   Definition: A designated UI area where users can drag files directly from their desktop to initiate upload.
 
-* FileSelected +
-  Classification: Event +
-  Phase: Domain +
-  Definition: User action of choosing a file through the file picker dialog.
+* [.line-through.red]#FileSelected# +
+  [.line-through.red]#Classification: Event# +
+  [.line-through.red]#Phase: Domain# +
+  [.line-through.red]#Definition: User action of choosing a file through the file picker dialog.# +
++
+FileSelected +
+Classification: Event +
+Phase: Domain +
+Definition: The moment a user selects a file through the file picker, triggering the transition from idle to file-selected state.
 
-* FileDropped +
-  Classification: Event +
-  Phase: Domain +
-  Definition: User action of dragging and releasing a file into the drag and drop zone.
+* [.line-through.red]#FileDropped# +
+  [.line-through.red]#Classification: Event# +
+  [.line-through.red]#Phase: Domain# +
+  [.line-through.red]#Definition: User action of dragging and releasing a file into the drag and drop zone.# +
++
+FileDropped +
+Classification: Event +
+Phase: Domain +
+Definition: The moment a user releases a file into the DragAndDropZone, triggering the transition from idle to file-selected state.
 
-* UploadStarted +
-  Classification: Event +
-  Phase: Domain +
-  Definition: User action of initiating the upload process after file selection.
+* [.line-through.red]#UploadStarted# +
+  [.line-through.red]#Classification: Event# +
+  [.line-through.red]#Phase: Domain# +
+  [.line-through.red]#Definition: User action of initiating the upload process after file selection.# +
++
+UploadStarted +
+Classification: Event +
+Phase: Domain +
+Definition: The moment the upload process begins, marking the transition from file-selected to uploading state.
 
-* UploadCancelled +
-  Classification: Event +
-  Phase: Domain +
-  Definition: User action that aborts an ongoing file upload.
+* [.line-through.red]#UploadCancelled# +
+  [.line-through.red]#Classification: Event# +
+  [.line-through.red]#Phase: Domain# +
+  [.line-through.red]#Definition: User action that aborts an ongoing file upload.# +
++
+UploadCancelled +
+Classification: Event +
+Phase: Domain +
+Definition: The moment an ongoing upload is aborted, marking the transition from uploading to cancelled state.
 
-* UploadPaused +
-  Classification: Event +
-  Phase: Domain +
-  Definition: User action that temporarily stops an active upload.
+* [.line-through.red]#UploadPaused# +
+  [.line-through.red]#Classification: Event# +
+  [.line-through.red]#Phase: Domain# +
+  [.line-through.red]#Definition: User action that temporarily stops an active upload.# +
++
+UploadPaused +
+Classification: Event +
+Phase: Domain +
+Definition: The moment an active upload is temporarily halted, marking the transition from uploading to paused state.
 
-* UploadResumed +
-  Classification: Event +
-  Phase: Domain +
-  Definition: User action that continues a paused upload.
+* [.line-through.red]#UploadResumed# +
+  [.line-through.red]#Classification: Event# +
+  [.line-through.red]#Phase: Domain# +
+  [.line-through.red]#Definition: User action that continues a paused upload.# +
++
+UploadResumed +
+Classification: Event +
+Phase: Domain +
+Definition: The moment a paused upload continues, marking the transition from paused to uploading state.
 
-* RetryUpload +
-  Classification: Event +
-  Phase: Domain +
-  Definition: User action that attempts to upload a previously failed file again.
+* [.line-through.red]#RetryUpload# +
+  [.line-through.red]#Classification: Event# +
+  [.line-through.red]#Phase: Domain# +
+  [.line-through.red]#Definition: User action that attempts to upload a previously failed file again.# +
++
+RetryUpload +
+Classification: Event +
+Phase: Domain +
+Definition: The moment a previously failed upload is reattempted, marking the transition from failed to uploading state.
 
 * UploadProgress +
   Classification: Attribute +
   Phase: System +
-  Definition: Numerical value 0 - 100  indicating how much of a file has been successfully transferred.
+  Definition: Numerical value 0 - 100 indicating how much of a file has been successfully transferred.
 
 * ProgressIndicator +
   Classification: Entity +
@@ -881,10 +1100,15 @@ Each term includes:
   Phase: System +
   Definition: Thumbnail, icon, or filename display representing the uploaded file.
 
-* ValidationFeedback +
-  Classification: Behavior +
-  Phase: System +
-  Definition: Visual messages displayed to users indicating if a selected file meets requirements.
+* [.line-through.red]#ValidationFeedback# +
+  [.line-through.red]#Classification: Behavior# +
+  [.line-through.red]#Phase: System# +
+  [.line-through.red]#Definition: Visual messages displayed to users indicating if a selected file meets requirements.# +
++
+ValidationFeedback +
+Classification: Behavior +
+Phase: System +
+Definition: The process of evaluating an uploaded file against format and size requirements and displaying the result to the user. It has duration — it starts when a file is selected and ends when the result is shown — so it is classified as a Behavior, not an Event.
 
 * ValidationError +
   Classification: Attribute +
@@ -896,10 +1120,15 @@ Each term includes:
   Phase: System +
   Definition: Notification that the selected file exceeds recommended size limits.
 
-* UploadComplete +
-  Classification: Event +
-  Phase: Domain +
-  Definition: Notification that all files have been successfully transferred to the server.
+* [.line-through.red]#UploadComplete# +
+  [.line-through.red]#Classification: Event# +
+  [.line-through.red]#Phase: Domain# +
+  [.line-through.red]#Definition: Notification that all files have been successfully transferred to the server.# +
++
+UploadComplete +
+Classification: Event +
+Phase: Domain +
+Definition: The moment all files have been successfully transferred to the server, marking the transition from uploading to completed state.
 
 * MetadataForm +
   Classification: Entity +
@@ -921,7 +1150,7 @@ Each term includes:
   Phase: System +
   Definition: Real-time display of data transfer rate during upload.
 
-=== 2.5 Domain Entities
+=== 2.6 Domain Entities
 
 * Mod: Represents a Minecraft modification that extends the base game and may declare dependencies or incompatibilities.
 * Dependency: Represents a directed requirement where one Mod depends on another Mod, possibly constrained by version.
@@ -935,32 +1164,53 @@ Each term includes:
 * Retrieved Mod: Represents a Mod successfully obtained to fulfill a Dependency requirement.
 * Resolution Result: Represents the outcome of dependency analysis, indicating satisfied, missing, or conflicting Mods.
 
-=== 2.6 Domain Functions
+=== 2.7 Domain Functions
 
-.A. Resolve Dependencies
+[.line-through.red]#A. Resolve Dependencies
 . Collect dependency information declared by each Mod in a Modpack.
 . Determine whether required dependencies are satisfied.
-. Produce a Resolution Result summarizing satisfied, missing, and conflicting items.
+. Produce a Resolution Result summarizing satisfied, missing, and conflicting items.#
+
+.A. Resolve Dependencies
+. Collect all required dependencies declared by each Mod in a Modpack.
+. Expand transitive dependencies by following dependency chains recursively.
+. Identify which required Mods are missing from the current Modpack configuration.
+. Produce a Resolution Result containing the complete required dependency set.
 
 .B. Find Missing Dependencies
 . Compare required dependencies against the Mods included in the Modpack.
 . List missing required dependencies in the Resolution Result.
 
-.C. Detect Conflicts / Incompatibilities
+[.line-through.red]#C. Detect Conflicts / Incompatibilities
 . Check incompatibility rules when available.
-. Identify mods that cannot coexist and record conflicts in the Resolution Result.
+. Identify mods that cannot coexist and record conflicts in the Resolution Result.#
+
+.C. Detect Conflicts / Incompatibilities
+. Evaluate declared incompatibility relationships between Mods.
+. Identify Mods that cannot coexist within the same Modpack configuration.
+. Record incompatibility violations separately from dependency resolution and version validation results.
+
+[.line-through.red]#D. Check Version Rules
+. Verify that mod versions satisfy dependency version constraints.
+. Record version mismatches in the Resolution Result.#
 
 .D. Check Version Rules
-. Verify that mod versions satisfy dependency version constraints.
-. Record version mismatches in the Resolution Result.
+. Compare installed Mod versions against declared version constraints.
+. Verify that each dependency satisfies the acceptable version range required by dependent Mods.
+. Record all version mismatches and unsupported version combinations in the Resolution Result.
 
 .E. Locate Mod Sources
 . Identify possible Mod Sources where missing dependencies can be found.
 . Collect candidate references/versions from those sources.
 
-.F. Create and Execute a Download Task
+[.line-through.red]#F. Create and Execute a Download Task
 . Create a Download Task for a selected candidate reference.
-. Retrieve the dependency as a Retrieved Mod (conceptually) for inclusion in the resolved configuration.
+. Retrieve the dependency as a Retrieved Mod (conceptually) for inclusion in the resolved configuration.#
+
+.F. Create and Execute a Download Task
+. Create a Download Task representing a candidate dependency retrieval operation.
+. Associate the selected dependency with its corresponding external download source.
+. Provide reference information required for player-directed retrieval without automatically downloading or installing Mods.
 
 .G. Build and Export the Dependency Graph
 . Add Mod nodes to the Dependency Graph.
@@ -968,150 +1218,272 @@ Each term includes:
 . Avoid duplicate nodes/edges when building the graph.
 . Export the Dependency Graph into a JSON representation for visualization.
 
-=== 2.7 Domain Events
+=== 2.8 Domain Events
 
-* [.line-through.red]#Event 1: Modpack Provided for Analysis +
-  Meaning: A modpack becomes available for dependency analysis. +
-  After: Its metadata can be examined and its declared dependencies can be identified. +
-  State Change: The modpack transitions from "not analyzed" to "analysis in progress."#
+* [.line-through.red]#Event 1: Modpack Uploaded +
+Triggered when: a user uploads a modpack or mod collection for analysis. +
+Outcome: The system initiates metadata parsing and begins extracting dependency information from all included mods. +
+State Change: not analyzed -> parsing in progress"#
 
-* [.line-through.red]#Event 2: Dependencies Identified +
-  Meaning: All declared dependencies of included mods have been extracted from metadata. +
-  After: Each dependency exists in normalized form and is classified as required, optional, incompatible, or version-constrained. +
-  State Change: Dependency data transitions from "raw metadata" to "identified and classified."#
+* Event 1: Modpack Submitted For Analysis +
+Triggered when: a player provides a modpack to the system for validation. +
+Outcome: The system begins dependency extraction and validation activities. +
+State Change: not analyzed -> analysis in progress"
 
-* [.line-through.red]#Event 3: Dependency Graph Exists +
-  Meaning: A dependency graph representing all declared relationships among mods has been constructed. +
-  After: All mods appear as nodes and their declared relationships exist as directed edges. +
-  State Change: The modpack transitions to "dependency graph constructed."#
+* [.line-through.red]#Event 2: Dependencies Extracted +
+Triggered when: metadata parsing completes and all mod dependencies are successfully identified. +
+Outcome: The system classifies each dependency as required, optional, or incompatible and prepares data for graph construction. +
+State Change: raw metadata -> normalized and classified"#
 
-* [.line-through.red]#Event 4: Missing Dependency Exists +
-  Meaning: A required dependency declared by a mod is not present in the modpack. +
-  After: The configuration is incomplete. +
-  State Change: The modpack transitions to "invalid missing required dependency."#
+* Event 2: Dependency Information Normalized +
+Triggered when: dependency metadata from uploaded mods is converted into the system's internal representation. +
+Outcome: Dependencies become available for validation and graph construction. +
+State Change: raw metadata -> normalized dependency model"
 
-* [.line-through.red]#Event 5: Incompatibility Exists +
-  Meaning: Two or more mods declare mutual incompatibility. +
-  After: The configuration contains conflicting components. +
-  State Change: The modpack transitions to "invalid incompatibility conflict."#
+* [.line-through.red]#Event 3: Dependency Graph Generated +
+Triggered when: the system successfully constructs the dependency graph from normalized dependency data. +
+Outcome: The graph is made available for visualization and analysis, representing all mods as nodes and their relationships as directed edges. +
+State Change: parsing in progress -> graph ready for visualization"#
 
-* [.line-through.red]#Event 6: Circular Dependency Exists +
-  Meaning: A cycle exists in the dependency relationships among mods. +
-  After: The dependency structure cannot be resolved hierarchically. +
-  State Change: The modpack transitions to "invalid circular dependency."#
+* Event 3: Dependency Graph Constructed +
+Triggered when: all validated dependency relationships are incorporated into the graph structure. +
+Outcome: The dependency graph becomes available for exploration and analysis. +
+State Change: dependency model available -> dependency graph available"
 
-* [.line-through.red]#Event 7: Version Constraint Violation Exists +
-  Meaning: A mod version does not satisfy the version constraints declared by dependent mods. +
-  After: The configuration violates declared version requirements. +
-  State Change: The modpack transitions to "invalid version constraint violation."#
+* [.line-through.red]#Event 4: Missing Dependency Detected +
+Triggered when: the system identifies that a mod declares a required dependency that is not present in the modpack. +
+Outcome: The system flags the missing dependency, identifies which mod requires it, and signals a critical configuration error. +
+State Change: graph ready for visualization -> invalid - missing required dependency"#
 
-* [.line-through.red]#Event 8: Transitive Dependencies Expanded +
-  Meaning: Indirect dependencies (dependencies of dependencies) have been incorporated into the dependency structure. +
-  After: The complete dependency chain exists. +
-  State Change: The modpack transitions from "direct dependencies only" to "complete dependency closure."#
+* Event 4: Dependency Requirement Becomes Unsatisfied +
+Triggered when: a required dependency referenced by a mod is absent from the modpack configuration. +
+Outcome: The configuration becomes incomplete and requires correction before validation can succeed. +
+State Change: dependency satisfied -> dependency unsatisfied"
 
-* [.line-through.red]#Event 9: Dependency Resolution Completed +
-  Meaning: The process of resolving all declared dependencies has finished. +
-  After: It is determined whether all required dependencies are satisfied. +
-  State Change: The modpack transitions from "resolution in progress" to either "resolved successfully" or "resolution failed."#
+* [.line-through.red]#Event 5: Incompatibility Detected +
+Triggered when: the system identifies that two or more mods in the modpack declare mutual incompatibility. +
+Outcome: The system highlights the conflicting mods and the reason for incompatibility in the dependency graph. +
+State Change: graph ready for visualization -> invalid - incompatibility conflict"#
 
-* [.line-through.red]#Event 10: Dependency Has Become Unsatisfied +
-  Meaning: A previously satisfied dependency becomes invalid due to mod removal, version change, or constraint violation. +
-  After: The configuration no longer satisfies all declared requirements. +
-  State Change: The modpack transitions from "dependency satisfied" to "dependency unsatisfied."#
+* Event 5: Invalid Mod Combination Introduced +
+Triggered when: a mod is added to a configuration containing another mod with which it declares incompatibility. +
+Outcome: The configuration enters an inconsistent state requiring correction. +
+State Change: compatible configuration -> incompatible configuration"
 
-* [.line-through.red]#Event 11: Modpack Configuration Validated +
-  Meaning: All dependency, incompatibility, circularity, and version checks have completed successfully. +
-  After: The modpack is structurally valid. +
-  State Change: The modpack transitions to "valid configuration."#
+* [.line-through.red]#Event 6: Circular Dependency Detected +
+Triggered when: the system identifies a cycle in the dependency graph (e.g., Mod A requires Mod B, and Mod B requires Mod A). +
+Outcome: The system reports the circular dependency chain and prevents graph construction from entering an infinite loop. +
+State Change: graph ready for visualization -> invalid - circular dependency"#
 
+* Event 6: Circular Dependency Introduced +
+Triggered when: dependency relationships form a cycle between mods. +
+Outcome: The dependency structure can no longer be resolved hierarchically. +
+State Change: acyclic dependency structure -> cyclic dependency structure"
 
-  
+* [.line-through.red]#Event 7: Version Constraint Violation Detected +
+Triggered when: a mod's version does not satisfy the version constraints specified by its dependent mods. +
+Outcome: The system identifies which mods have incompatible versions and suggests compatible alternatives or version updates. +
+State Change: graph ready for visualization -> invalid - version constraint violation"#
 
-* Event 1: Modpack Uploaded +
-  Triggered when: a user uploads a modpack or mod collection for analysis. +
-  Outcome: The system initiates metadata parsing and begins extracting dependency information from all included mods. +
-  State Change: not analyzed -> parsing in progress"
+* Event 7: Version Requirement Becomes Violated +
+Triggered when: a mod version no longer satisfies a declared dependency constraint. +
+Outcome: The configuration becomes version-inconsistent. +
+State Change: version-compatible configuration -> version-incompatible configuration"
 
-* Event 2: Dependencies Extracted +
-  Triggered when: metadata parsing completes and all mod dependencies are successfully identified. +
-  Outcome: The system classifies each dependency as required, optional, or incompatible and prepares data for graph construction. +
-  State Change: raw metadata -> normalized and classified"
+* [.line-through.red]#Event 8: Transitive Dependencies Resolved +
+Triggered when: the system expands the dependency graph to include all transitive dependencies (dependencies of dependencies). +
+Outcome: The complete dependency chain is made visible, showing not only direct dependencies but also indirect requirements. +
+State Change: direct dependencies only -> complete transitive dependency view"#
 
-* Event 3: Dependency Graph Generated +
-  Triggered when: the system successfully constructs the dependency graph from normalized dependency data. +
-  Outcome: The graph is made available for visualization and analysis, representing all mods as nodes and their relationships as directed edges. +
-  State Change: parsing in progress -> graph ready for visualization"
+* Event 8: Transitive Dependency Expansion Completed +
+Triggered when: indirect dependencies are fully incorporated into the dependency structure. +
+Outcome: Complete dependency chains become available for analysis. +
+State Change: direct dependency representation -> transitive dependency representation"
 
-* Event 4: Missing Dependency Detected +
-  Triggered when: the system identifies that a mod declares a required dependency that is not present in the modpack. +
-  Outcome: The system flags the missing dependency, identifies which mod requires it, and signals a critical configuration error. +
-  State Change: graph ready for visualization -> invalid - missing required dependency"
+* [.line-through.red]#Event 9: Modpack Configuration Validated +
+Triggered when: all dependency checks, incompatibility checks, and version constraint validations complete successfully. +
+Outcome: The system marks the modpack as structurally valid and ready for use, providing a summary of all valid mods and dependencies. +
+State Change: under validation -> valid and ready for deployment"#
 
-* Event 5: Incompatibility Detected +
-  Triggered when: the system identifies that two or more mods in the modpack declare mutual incompatibility. +
-  Outcome: The system highlights the conflicting mods and the reason for incompatibility in the dependency graph. +
-  State Change: graph ready for visualization -> invalid - incompatibility conflict"
+* Event 9: Modpack Validation Completed +
+Triggered when: all dependency and compatibility validations finish successfully. +
+Outcome: The configuration is confirmed to satisfy all declared structural requirements. +
+State Change: validation in progress -> validated configuration"
 
-* Event 6: Circular Dependency Detected +
-  Triggered when: the system identifies a cycle in the dependency graph (e.g., Mod A requires Mod B, and Mod B requires Mod A). +
-  Outcome: The system reports the circular dependency chain and prevents graph construction from entering an infinite loop. +
-  State Change: graph ready for visualization -> invalid - circular dependency"
+* [.line-through.red]#Event 10: Mod Removed or Updated +
+Triggered when: a user modifies the modpack by removing a mod or updating an existing mod to a new version. +
+Outcome: The system recalculates the dependency graph, identifies new missing dependencies or incompatibilities, and updates the visualization. +
+State Change: valid and ready for deployment -> composition modified - revalidation required"#
 
-* Event 7: Version Constraint Violation Detected +
-  Triggered when: a mod's version does not satisfy the version constraints specified by its dependent mods. +
-  Outcome: The system identifies which mods have incompatible versions and suggests compatible alternatives or version updates. +
-  State Change: graph ready for visualization -> invalid - version constraint violation"
+* Event 10: Modpack Composition Changed +
+Triggered when: a mod is added, removed, or updated within the configuration. +
+Outcome: Existing dependency guarantees may no longer remain valid. +
+State Change: validated configuration -> revalidation required"
 
-* Event 8: Transitive Dependencies Resolved +
-  Triggered when: the system expands the dependency graph to include all transitive dependencies (dependencies of dependencies). +
-  Outcome: The complete dependency chain is made visible, showing not only direct dependencies but also indirect requirements. +
-  State Change: direct dependencies only -> complete transitive dependency view"
+* [.line-through.red]#Event 11: Dependency Graph Visualized +
+Triggered when: the system renders the dependency graph for user interaction and exploration. +
+Outcome: Users can select mods, view which mods depend on them, understand why dependencies are required, and explore impact of potential removals. +
+State Change: analyzed -> interactive visualization available"#
 
-* Event 9: Modpack Configuration Validated +
-  Triggered when: all dependency checks, incompatibility checks, and version constraint validations complete successfully. +
-  Outcome: The system marks the modpack as structurally valid and ready for use, providing a summary of all valid mods and dependencies. +
-  State Change: under validation -> valid and ready for deployment"
+* [.line-through.red]#Event 12: Dependency Has Just Been Declared +
+Triggered when: a mod explicitly declares a required relationship with another mod within its metadata. +
+Outcome: The system records the dependency as a directed relationship in the dependency model and prepares it for validation and resolution. +
+State Change: no declared relationship -> declared dependency recorded"#
 
-* Event 10: Mod Removed or Updated +
-  Triggered when: a user modifies the modpack by removing a mod or updating an existing mod to a new version. +
-  Outcome: The system recalculates the dependency graph, identifies new missing dependencies or incompatibilities, and updates the visualization. +
-  State Change: valid and ready for deployment -> composition modified - revalidation required"
+* Event 11: Dependency Relationship Declared +
+Triggered when: a mod metadata definition introduces a dependency relationship with another mod. +
+Outcome: The dependency relationship becomes part of the dependency model. +
+State Change: no dependency relationship -> declared dependency relationship"
 
-* Event 11: Dependency Graph Visualized +
-  Triggered when: the system renders the dependency graph for user interaction and exploration. +
-  Outcome: Users can select mods, view which mods depend on them, understand why dependencies are required, and explore impact of potential removals. +
-  State Change: analyzed -> interactive visualization available"
+* [.line-through.red]#Event 13: Mod Has Just Been Added To Modpack +
+Triggered when: a user adds a new mod to an existing modpack configuration. +
+Outcome: The system updates the modpack composition, re-evaluates declared dependencies and incompatibilities, and schedules dependency resolution if required. +
+State Change: stable composition -> composition modified - revalidation required"#
 
-* Event 12: Dependency Has Just Been Declared +
-  Triggered when: a mod explicitly declares a required relationship with another mod within its metadata. +
-  Outcome: The system records the dependency as a directed relationship in the dependency model and prepares it for validation and resolution. +
-  State Change: no declared relationship -> declared dependency recorded"
+* [.line-through.red]#Event 14: Dependency Resolution Has Just Been Completed +
+Triggered when: the system completes the process of resolving all declared dependencies for the current modpack configuration. +
+Outcome: The system determines whether all required mods are present and whether any dependencies remain unsatisfied. +
+State Change: resolution in progress -> resolved successfully OR resolution failed"#
 
-* Event 13: Mod Has Just Been Added To Modpack +
-  Triggered when: a user adds a new mod to an existing modpack configuration. +
-  Outcome: The system updates the modpack composition, re-evaluates declared dependencies and incompatibilities, and schedules dependency resolution if required. +
-  State Change: stable composition -> composition modified - revalidation required"
+* Event 12: Dependency Resolution Completed +
+Triggered when: all dependency relationships have been evaluated against the current modpack configuration. +
+Outcome: The configuration receives a final dependency resolution status. +
+State Change: resolution in progress -> resolution completed"
 
-* Event 14: Dependency Resolution Has Just Been Completed +
-  Triggered when: the system completes the process of resolving all declared dependencies for the current modpack configuration. +
-  Outcome: The system determines whether all required mods are present and whether any dependencies remain unsatisfied. +
-  State Change: resolution in progress -> resolved successfully OR resolution failed"
+* [.line-through.red]#Event 15: Retrieved Mod Has Just Been Obtained +
+Triggered when: a required mod is successfully retrieved from a mod source to satisfy a previously declared dependency. +
+Outcome: The retrieved mod is added to the modpack configuration and incorporated into the dependency graph for further validation. +
+State Change: dependency unsatisfied -> dependency provisionally satisfied pending validation"#
 
-* Event 15: Retrieved Mod Has Just Been Obtained +
-  Triggered when: a required mod is successfully retrieved from a mod source to satisfy a previously declared dependency. +
-  Outcome: The retrieved mod is added to the modpack configuration and incorporated into the dependency graph for further validation. +
-  State Change: dependency unsatisfied -> dependency provisionally satisfied pending validation"
+* Event 13: Missing Dependency Added +
+Triggered when: a previously absent required dependency is incorporated into the modpack. +
+Outcome: The dependency relationship becomes provisionally satisfied pending revalidation. +
+State Change: dependency unsatisfied -> dependency provisionally satisfied"
 
-* Event 16: Dependency Has Just Become Unsatisfied +
-  Triggered when: a previously satisfied dependency becomes invalid due to mod removal, version change, or constraint violation. +
-  Outcome: The system flags the dependency as unsatisfied and initiates corrective actions such as retrieval suggestions or configuration warnings. +
-  State Change: dependency satisfied -> dependency unsatisfied"
+* [.line-through.red]#Event 16: Dependency Has Just Become Unsatisfied +
+Triggered when: a previously satisfied dependency becomes invalid due to mod removal, version change, or constraint violation. +
+Outcome: The system flags the dependency as unsatisfied and initiates corrective actions such as retrieval suggestions or configuration warnings. +
+State Change: dependency satisfied -> dependency unsatisfied"#
 
-* Event 17: Modpack Has Just Become Consistent +
-  Triggered when: all declared dependencies are satisfied and no declared incompatibilities are violated within the modpack configuration. +
-  Outcome: The system confirms the structural integrity of the modpack and allows it to proceed to validation or deployment stages. +
-  State Change: inconsistent or under validation -> consistent configuration state"
+* [.line-through.red]#Event 17: Modpack Has Just Become Consistent +
+Triggered when: all declared dependencies are satisfied and no declared incompatibilities are violated within the modpack configuration. +
+Outcome: The system confirms the structural integrity of the modpack and allows it to proceed to validation or deployment stages. +
+State Change: inconsistent or under validation -> consistent configuration state"#
+
+* Event 14: Modpack Consistency Achieved +
+Triggered when: all declared dependencies are satisfied and no incompatibility constraints are violated. +
+Outcome: The modpack reaches a structurally consistent configuration state. +
+State Change: inconsistent configuration -> consistent configuration"
+
+.Dependency Resolution Petri Net Model
+When mapping out state transitions for exhaustive model searching, translating domain requirements into a Petri net provides a strong foundation before writing formal specifications. The dependency resolution network is defined as a directed bipartite graph `PN = (P, T, F)`.
+
+image::docs/lectureTopicDeliverables/images/dependency-resolution-petri-net.png[Dependency Resolution Petri Net Model,pdfwidth=100%,align=center]
+
+*Places (P) - System States*
+
+These places represent the distinct states a modpack, a metadata entry, or an individual dependency can occupy during the resolution process.
+
+* *P1 (Idle):* The system is ready to receive input.
+* *P2 (Upload Queued):* A mod file or metadata list has been submitted by the player.
+* *P3 (Metadata Received):* Structured mod entries (identifier, version) are staged for processing.
+* *P4 (Awaiting API):* The system is waiting for a Modrinth API response.
+* *P5 (Dependency Evaluated):* API data is returned, and relationship types are identified.
+* *P6 (Missing Dependency):* A required dependency is identified as missing.
+* *P7 (Version Violation):* A dependency exists but fails the declared version constraints.
+* *P8 (Incompatibility):* An explicit incompatibility violation is detected between two mods.
+* *P9 (Cycle Detected):* A circular dependency chain is found.
+* *P10 (Mod Resolved):* A single mod and its direct constraints are fully satisfied.
+* *P11 (Structurally Valid):* All requirements are met, and no incompatibilities or cycles exist.
+* *P12 (Invalid Configuration):* The resolution result contains at least one error state.
+
+*Transitions (T) - System Actions*
+
+These transitions represent the domain behaviors and external interactions that move the system from one state to another.
+
+* *T1 (Submit Data):* The user uploads a modpack file or metadata list.
+* *T2 (Validate Format):* The system ensures the upload conforms to the supported format.
+* *T3 (Query Repository):* The system queries the API sequentially.
+* *T4 (API Timeout/Error):* The API fails to respond or returns an HTTP error.
+* *T5 (Parse Metadata):* The system extracts IDs, versions, and dependencies.
+* *T6 (Expand Transitive):* The system identifies new required dependencies.
+* *T7 (Check Missing):* The system evaluates if a required identifier is absent.
+* *T8 (Check Versions):* The system evaluates version constraints.
+* *T9 (Check Conflicts):* The system identifies declared incompatibilities.
+* *T10 (Trace Cycles):* The system walks the network to detect structural loops.
+* *T11 (Satisfy Node):* A mod clears all validation checks successfully.
+* *T12 (Aggregate Result):* The system compiles the final structured resolution result.
+
+*Flow Relations (F) - The Network Arcs*
+
+The following describes how tokens, representing mods or the overall modpack, flow through the system.
+
+*Initialization and Extraction*
+
+* P1 -> T1 -> P2
+* P2 -> T2 -> P3
+* P3 -> T3 -> P4
+
+*External Resolution Loop*
+
+* P4 -> T4 -> P6 (If API fails, dependency cannot be resolved and is marked missing.)
+* P4 -> T5 -> P5 (API succeeds and metadata is parsed.)
+* P5 -> T6 -> P3 (Transitive expansion loops back to the metadata queue for recursive querying.)
+
+*Constraint Evaluation*
+
+* P5 -> T7 -> P6 (Fails missing check.)
+* P5 -> T8 -> P7 (Fails version constraint check.)
+* P5 -> T9 -> P8 (Fails incompatibility check.)
+* P5 -> T10 -> P9 (Fails cycle check.)
+* P5 -> T11 -> P10 (Passes all checks.)
+
+*Final State Aggregation*
+
+* P10 -> T12 -> P11 (If the P3 queue is empty and P6, P7, P8, and P9 are completely empty.)
+* [P6, P7, P8, P9] -> T12 -> P12 (If any error states contain tokens, the modpack is structurally invalid.)
+
+.Algebraic Representation of Dependency Resolution
+According to the domain requirements, the dependency resolution system can be modeled as an algebra defined by `(A, Ω)`, where `A` is the carrier set and `Ω` is the set of operations. The principal idea is that elements, or values, and operations upon them yield such elements again.
+
+*The Carrier Sets (A)*
+
+An algebra requires a finite or infinite carrier set containing the values the system manipulates. In the system's architecture, the Java entities and Data Transfer Objects (DTOs) act as these sets:
+
+* *M (Mods):* The set of all individual Mod objects, representing identifiers, versions, and dependency lists.
+* *E (Edges):* The set of all dependency relationships, such as depends, breaks, and conflicts.
+* *G (Graphs / DTOs):* The set of all DTO objects, which bundle a complete configuration of _M_ and _E_, along with lists of missing and resolved dependencies.
+* *Z (Zip Archives):* The set of raw input files, represented as ZipFile or Path values.
+* *S (Strings / Identifiers):* The set of all mod IDs and version strings.
+
+Because the exact Java classes implementing these sets are known, this acts as a *concrete algebra* at runtime. Architecturally, however, it behaves as an *abstract algebra* because the specific elements, such as particular mod names, are not a concern for the underlying logic.
+
+*The Operations (Ω)*
+
+Operations in an algebra have a specific arity, which is the number of elements the operation takes as inputs. The system's Java methods function as mathematical mappings from carrier sets to other elements.
+
+*Extracting and Parsing*
+
+The ZipProcessingService takes a compressed file and yields a complete graph configuration.
+
+* `processModpackZip: Z -> G`
+* `readFabricModJsonFromArchive: Z -> M` conceptually extracts metadata to build a Mod.
+
+*Graph Mutation and Relationships*
+
+In software engineering, operations are easier to understand if they are self-contained and closed under operations.
+
+* `addRelationshipToSource: M x M x S -> M`
++
+This operation takes two Mods and a String, representing the relationship type, and mutates the source Mod. Algebraically, this is a 3-ary operation.
+
+*Filtering*
+
+Handling complex state without breaking the algebra requires operations that map back to the same structure. The `excludeRuntimeDependencies` method in `ModpackParsingService` serves this purpose:
+
+* `excludeRuntimeDependencies: G -> G`
+
+This operation is *closed under operations*. It takes a valid dependency graph, represented by the DTO, removes excluded mods, and yields a new, refined dependency graph `(G)`. This reduces conceptual dependencies and ensures that the concepts remain light-weight, adding little to the overall system complexity.
 
 === [.line-through.red]#2.8 Operational Requirements#
  
@@ -1153,7 +1525,7 @@ Since the expected number of concurrent users depends on the final scope of the 
 [.line-through.red]#Reliability and Availability: The system must maintain high availability during active usage.
 Automatic recovery mechanisms must handle network failures, API interruptions, and temporary service outages.
 The backend must prevent corruption of dependency and modpack data and ensure consistent graph construction results.#
- 
+
 [.line-through.red]#External Metadata Handling: The system must retrieve dependency and incompatibility data from external platforms such as CurseForge and Modrinth.
 The backend must handle rate limits, temporary service failures, incomplete responses, and data inconsistencies.
 When external services are unavailable, the system must use cached or previously processed data when possible and provide meaningful feedback to the user.#
@@ -1213,7 +1585,7 @@ Monitoring and logging must be implemented to detect performance bottlenecks and
  
 [.line-through.red]#NOTE: This introductory paragraph was redundant; content is covered by the structured requirements above and in Section 2.3.4.#
 
-=== 2.8 Software Architecture Design
+=== 2.9 Software Architecture Design
 
 The system follows a layered client - server architecture composed of four main components:
 
@@ -1249,45 +1621,53 @@ This subsystem is kept separate from the graph and frontend visualization render
 
 === Team C Frontend Web App and Visualization: 
 
-  Team C is responsible for the frontend web application layer. This includes accepting mod/modpack uploads in .zip format from players through a file picker interface and transmitting the uploaded uploaded file to the backend via a POST requst to the /api/modpack/zip endpoint. 
+Team C is responsible for the frontend web application layer. This includes accepting mod/modpack uploads in .zip format from players through a file picker interface and transmitting the uploaded uploaded file to the backend via a POST requst to the /api/modpack/zip endpoint.
   
-  Upon recieving the processed dependency data from the backend, the frontend renders the dependency graph and displays resolved and unresolved dependencies to the player. 
+Upon recieving the processed dependency data from the backend, the frontend renders the dependency graph and displays resolved and unresolved dependencies to the player.
   
-  Team C also implements client-side dependency resolution logic, including functions for retrieving direct dependencies and reverse dependents from the graph data structure, and maintains the graph state used by the visualization layer. The subsystem validates uploaded file formats before transmission and provides real-time status feedback to the player during the upload process.
-
+Team C also implements client-side dependency resolution logic, including functions for retrieving direct dependencies and reverse dependents from the graph data structure, and maintains the graph state used by the visualization layer. The subsystem validates uploaded file formats before transmission and provides real-time status feedback to the player during the upload process.
 
 == 3. Analytical
 
 === 3.1 Concept Formation
 
-[.red.line-through]#The Team A domain sketch illustrates the operation of the Mod Dependency Analyzer tool.#
+[.line-through.red]#Based on these observations:#
 
-[.green]#The domain sketch illustrates the operation of the Mod Dependency Analyzer tool.#
+** [.line-through.red]#Mod: an artifact software uploaded by the user. It is the software whose dependencies we wish to display.#
+** [.line-through.red]#Dependency: relationship that indicates that one mod requires another in order to function in the game.#
+** [.line-through.red]#DTO: abstraction used to carry mod and dependency data. It is responsible for facilitating the necessary information (regarding a mod's dependencies) for graph construction using the D3.js library in the frontend.#
+** [.line-through.red]#Dependency Graph: structured network formed by interconnected dependency relationships within the mods uploaded by the user.#
+* [.line-through.red]#Grouping decisions: libraries needed and mods needed for a mod to work are grouped as Dependency because both are prerequisites.#
+* [.line-through.red]#Conflicts: dependency refers to both libraries and mods; graph refers to a data structure and not a visual representation.#
 
-* Based on these observations:
-** Mod: an artifact software uploaded by the user. [.green]#It is the software whose dependencies we wish to display.#
-** Dependency: relationship that indicates that one mod requires another [.green]#in order to function in the game#.
-** DTO: abstraction used to carry mod and dependency data. [.green]#It is responsible for facilitating the necessary information (regarding a mod's dependencies) for graph construction using the D3.js library in the frontend.#
-** Dependency Graph: structured network formed by interconnected dependency relationships [.green]#within the mods uploaded by the user#.
-* Grouping decisions: libraries needed and mods needed for a mod to work are grouped as Dependency because both are prerequisites.
-* Conflicts: dependency refers to both libraries and mods; graph refers to a data structure and not a visual representation.
+* [.green]#Based on observations of Minecraft mod ecosystems, Mods are understood as software components that rarely function independently within a Modpack configuration.#
+* [.green]#Mods frequently rely on libraries, APIs, loaders, and other Mods in order to operate correctly within a specific Minecraft version.#
+* [.green]#These relationships reveal that dependencies are not isolated requirements, but interconnected constraints that collectively determine whether a Modpack configuration is valid.#
+* [.green]#From these observations, the concept of Dependency is abstracted as a directed relationship in which one Mod requires another component to exist or satisfy specific compatibility conditions.#
+* [.green]#Modpacks are therefore understood as dependency-driven configurations whose stability depends on satisfying loader requirements, version constraints, and incompatibility restrictions.#
+* [.green]#The Dependency Graph emerges as a conceptual representation of these relationships, allowing dependency structures, compatibility chains, and conflict propagation to be analyzed at an abstract level rather than as isolated Mod interactions.#
+* [.green]#Libraries, APIs, and supporting Mods are grouped under the broader abstraction of Dependency because they all function as prerequisites required for correct Mod behavior within the ecosystem.#
+* [.green]#Conflicts are conceptualized as incompatibility relationships that prevent certain Mods or dependency configurations from coexisting within the same Modpack environment.#
 
+[.line-through.red]#The Team B analysis focuses on situations where declared dependencies must be located and associated in order to complete a mod configuration.#
 
+[.green]#The analysis also revealed that dependency management extends beyond identifying relationships between Mods. Players must additionally determine whether required components exist, whether compatible versions are available, and whether dependency requirements can be satisfied within the current Modpack configuration.#
 
-[.red.line-through]#The Team B analysis focuses on situations where declared dependencies must be located and associated in order to complete a mod configuration.#
+* [.line-through.red]#Required dependencies are often not included in the initial modpack configuration, which is why we must make use of an external API to give the service the required information.#
+* [.line-through.red]#Missing components must be identified by consulting external mod repositories.#
+* [.line-through.red]#Resolving dependency issues involves not only recognizing relationships between mods, but also locating the components that satisfy those relationships.#
+* [.line-through.red]#Mod repositories function as reference environments that describe and provide the required mods.#
 
-[.green]#In the analysis for situations where declared dependencies must be located and associated in order to complete a mod configuration:#
+[.line-through.red]#From these observations, dependency resolution is understood as a domain process connecting declared relationships with available components.#
 
-* Required dependencies are often not included in the initial modpack configuration, [.green]#which is why we must make use of an external API to give the service the required information#.
-* Missing components must be identified by consulting external mod repositories.
-* Resolving dependency issues involves not only recognizing relationships between mods, but also locating the components that satisfy those relationships.
-* Mod repositories function as reference environments that describe and provide the required mods.
+* [.line-through.red]#A dependency implies that the required mod exists in the ecosystem and must be discoverable.#
+* [.line-through.red]#Completing a configuration involves identifying and associating those components with the current modpack.#
+* [.line-through.red]#External sources are treated as part of the environment where dependencies are satisfied.#
 
-From these observations, dependency resolution is understood as a domain process connecting declared relationships with available components.
-
-* A dependency implies that the required mod exists in the ecosystem and must be discoverable.
-* Completing a configuration involves identifying and associating those components with the current modpack.
-* External sources are treated as part of the environment where dependencies are satisfied.
+* [.green]#Missing dependencies are treated as unresolved requirements within the Modpack configuration.#
+* [.green]#External mod repositories are understood as part of the surrounding ecosystem where dependency requirements may be satisfied.#
+* [.green]#Dependency resolution is therefore abstracted as the process of associating declared requirements with compatible and discoverable components available within the Minecraft mod ecosystem.#
+* [.green]#This abstraction allows dependency validity, compatibility analysis, and conflict detection to be reasoned about independently from implementation-specific mechanisms or visualization details.#
 
 ==== Component responsibilities & Interactions:
 
@@ -1437,199 +1817,335 @@ context loads properly without throwing any errors during startup. The result th
 
 --
 
-NOTE: Vague tests included previously have been replaced with concrete test files we have in the code repository, along with a description of where/how we implemented them.
 
-[.red.line-through]
 
---
+[.line-through.red]#The team validates the requirements and domain understanding through structured scenario-based walkthroughs.#
+[.line-through.red]#These walkthroughs simulate realistic modpack configurations and are discussed collectively to identify ambiguities, missing edge cases, or incorrect assumptions about domain concepts such as Mod, Dependency, Incompatibility, and Modpack.#
 
-The team validates the requirements and domain understanding through structured scenario-based walkthroughs.
-These walkthroughs simulate realistic modpack configurations and are discussed collectively to identify ambiguities, missing edge cases, or incorrect assumptions about domain concepts such as Mod, Dependency, Incompatibility, and Modpack.
-
-The goal of validation is not to obtain approval, but to ensure that the system-to-be correctly reflects the domain relationships and user needs.
+[.line-through.red]#The goal of validation is not to obtain approval, but to ensure that the system-to-be correctly reflects the domain relationships and user needs.#
 
 
 
 
 
-Scenario 1: Missing Mandatory Dependency
+[.line-through.red]#Scenario 1: Missing Mandatory Dependency#
 
-Context: A user uploads a modpack containing Mod A, which declares a mandatory dependency on Mod B.
-Mod B is not included in the uploaded modpack.
+[.line-through.red]#Context: A user uploads a modpack containing Mod A, which declares a mandatory dependency on Mod B.#
+[.line-through.red]#Mod B is not included in the uploaded modpack.#
 
-Walkthrough Steps:
+[.line-through.red]#Walkthrough Steps:#
 
-. The system parses metadata of all uploaded mods.
-. The declared dependencies of Mod A are extracted.
-. The system checks whether Mod B exists in the modpack.
-. The dependency graph is generated.
-. Missing dependency is visually highlighted.
+. [.line-through.red]#The system parses metadata of all uploaded mods.#
+. [.line-through.red]#The declared dependencies of Mod A are extracted.#
+. [.line-through.red]#The system checks whether Mod B exists in the modpack.#
+. [.line-through.red]#The dependency graph is generated.#
+. [.line-through.red]#Missing dependency is visually highlighted.#
 
-Validation Outcome: During walkthrough discussion, the team clarified the distinction between mandatory and optional dependencies.
-The requirement was refined to explicitly differentiate these cases and ensure that only mandatory dependencies trigger critical warnings.
+[.line-through.red]#Validation Outcome: During walkthrough discussion, the team clarified the distinction between mandatory and optional dependencies.#
+[.line-through.red]#The requirement was refined to explicitly differentiate these cases and ensure that only mandatory dependencies trigger critical warnings.#
 
-Scenario 2: Circular Dependency Case
+[.line-through.red]#Scenario 2: Circular Dependency Case#
 
-Context: Mod A depends on Mod B, and Mod B depends on Mod A.
+[.line-through.red]#Context: Mod A depends on Mod B, and Mod B depends on Mod A.#
 
-Walkthrough Steps:
+[.line-through.red]#Walkthrough Steps:#
 
-. Dependencies are parsed.
-. The graph is constructed.
-. The system analyzes graph structure for cycles.
+. [.line-through.red]#Dependencies are parsed.#
+. [.line-through.red]#The graph is constructed.#
+. [.line-through.red]#The system analyzes graph structure for cycles.#
 
-Validation Outcome: A new requirement was added to explicitly detect circular dependencies and notify users when a cycle exists.
-The concept of "graph as structural model" was distinguished from "graph as visual representation."
-
---
+[.line-through.red]#Validation Outcome: A new requirement was added to explicitly detect circular dependencies and notify users when a cycle exists.#
+[.line-through.red]#The concept of "graph as structural model" was distinguished from "graph as visual representation."#
 
 
 
 
 
 
-[.red.line-through]#Our project employs multiple forms of testing and scenario-based validation to ensure that the Minecraft Dependency Visualizer behaves correctly and aligns with stakeholder expectations.#
+
+[.line-through.red]#Our project employs multiple forms of testing and scenario-based validation to ensure that the Minecraft Dependency Visualizer behaves correctly and aligns with stakeholder expectations.#
 
 
-[.red.line-through]
---
-Testing Approach
+[.line-through.red]#Testing Approach#
 
-*When:* Testing is performed continuously during development, with scenario walkthroughs conducted after implementing major features.
+[.line-through.red]#*When:* Testing is performed continuously during development, with scenario walkthroughs conducted after implementing major features.#
 
-*Who:* All team members participate, with each subteam validating their respective components.
+[.line-through.red]#*Who:* All team members participate, with each subteam validating their respective components.#
 
-*Why:* To ensure correctness of dependency handling, usability of the visualization, and handling of edge cases.
+[.line-through.red]#*Why:* To ensure correctness of dependency handling, usability of the visualization, and handling of edge cases.#
 
---
 
 ---
 
-[.red.line-through]
-
---
-Scenario 1: Required Dependency Detection
+[.line-through.red]#Scenario 1: Required Dependency Detection#
 
 
 
-*Dataset:* Sodium, Fabric API
+[.line-through.red]#*Dataset:* Sodium, Fabric API#
 
-*Workflow:*  
+[.line-through.red]#*Workflow:*#
 
-* User uploads a mod folder containing Sodium, which lists Fabric as an optional dependency in their website unbeknownst to the user.  
+* [.line-through.red]#User uploads a mod folder containing Sodium, which lists Fabric as an optional dependency in their website unbeknownst to the user.#
 
-* System receives the mods and parses them, sending them to CurseForge and Modrinth to obtain dependency information.
+* [.line-through.red]#System receives the mods and parses them, sending them to CurseForge and Modrinth to obtain dependency information.#
 
-* Dependency data is retrieved from backend and passed to frontend again through the DTO.  
+* [.line-through.red]#Dependency data is retrieved from backend and passed to frontend again through the DTO.#
 
-* The Dependency Graph is generated, showing Sodium depends on Fabric API through a line connecting both nodes.
+* [.line-through.red]#The Dependency Graph is generated, showing Sodium depends on Fabric API through a line connecting both nodes.#
 
-* User infers it is a required dependency rather than an optional dependency.
+* [.line-through.red]#User infers it is a required dependency rather than an optional dependency.#
 
-*Property Being Verified:*  
-The system correctly identifies and displays required dependencies.
+[.line-through.red]#*Property Being Verified:*#
+[.line-through.red]#The system correctly identifies and displays required dependencies.#
 
-*Gap Identified:*  
-Initial implementation did not clearly distinguish between required and optional dependencies in the UI.
+[.line-through.red]#*Gap Identified:*#
+[.line-through.red]#Initial implementation did not clearly distinguish between required and optional dependencies in the UI.#
 
-*Remedy:*  
-Added visual differentiation (styling and labels) and explicit user notifications. The system now differentiates between conflicting, optional, and required dependencies through different colors within the edges and nodes (red for conflicting, blue for required, yellow for optional).
-
-
-
-Scenario 2: Mod Incompatibility
-
-
-*Dataset:* Indium, Sodium, and Canvas Renderer were chosen as the dataset for this scenario, as they create a conflict. Indium depends on Sodium, but Canvas Renderer conflicts with Sodium. Thus, the user must decide which to keep if the system highlights this correctly.
-
-*Workflow:*  
-
-* User uploads a modpack containing Indium, Sodium, and Canvas Renderer, unaware there is a conflict.  
-
-* System parses and passes the mods in the folder to CurseForge and Modrinth APIs.
-
-* Incompatibility relationship is identified by one of the APIs and passed to frontend.
-
-* Graph displays the 3 mods, with a line in red to indicate conflict coming from Canvas Renderer to Sodium, and a line in blue indicating dependency from Indium to Sodium.
-
-*Property Being Verified:*  
-The system correctly identifies and communicates mod incompatibilities.
-
-*Gap Identified:*  
-Early versions lacked a clear representation of conflicts in the graph, but Scenario 1 led to implementation for a color-coded Dependency Graph. No further remedy is required in this scenario, as the test and remedy done for a previous scenario prepared the system for this data.
+[.line-through.red]#*Remedy:*#
+[.line-through.red]#Added visual differentiation (styling and labels) and explicit user notifications. The system now differentiates between conflicting, optional, and required dependencies through different colors within the edges and nodes (red for conflicting, blue for required, yellow for optional).#
 
 
 
-Scenario 3: Unsupported Mod
+[.line-through.red]#Scenario 2: Mod Incompatibility#
+
+
+[.line-through.red]#*Dataset:* Indium, Sodium, and Canvas Renderer were chosen as the dataset for this scenario, as they create a conflict. Indium depends on Sodium, but Canvas Renderer conflicts with Sodium. Thus, the user must decide which to keep if the system highlights this correctly.#
+
+[.line-through.red]#*Workflow:*#
+
+* [.line-through.red]#User uploads a modpack containing Indium, Sodium, and Canvas Renderer, unaware there is a conflict.#
+
+* [.line-through.red]#System parses and passes the mods in the folder to CurseForge and Modrinth APIs.#
+
+* [.line-through.red]#Incompatibility relationship is identified by one of the APIs and passed to frontend.#
+
+* [.line-through.red]#Graph displays the 3 mods, with a line in red to indicate conflict coming from Canvas Renderer to Sodium, and a line in blue indicating dependency from Indium to Sodium.#
+
+[.line-through.red]#*Property Being Verified:*#
+[.line-through.red]#The system correctly identifies and communicates mod incompatibilities.#
+
+[.line-through.red]#*Gap Identified:*#
+[.line-through.red]#Early versions lacked a clear representation of conflicts in the graph, but Scenario 1 led to implementation for a color-coded Dependency Graph. No further remedy is required in this scenario, as the test and remedy done for a previous scenario prepared the system for this data.#
 
 
 
-*Dataset:* Custom mod not indexed in Modrinth or CurseForge (this dataset was chosen as we must test system behavior with an unknown mod).
-
-*Workflow:*  
-
-* User uploads a folder containing an unknown mod, not registered in CurseForge or Modrinth.  
-
-* API lookup gets information for all other mods in the folder, but fails for the custom mod. Therefore, no information is retrieved for this mod.  
-
-* System attempts to process remaining mods in the folder with available dependency data and passes them to the frontend.
-
-* Dependency Graph is rendered with available data.  
-
-*Property Being Verified:*  
-The system handles incomplete or missing data properly.
-
-*Gap Identified:*  
-Initial implementation failed when encountering unknown mods, stopping the entire process.
-
-*Remedy:*  
-Modified logic to allow partial graph generation and mark unsupported mods with a distinct visual indicator containing an error message.
+[.line-through.red]#Scenario 3: Unsupported Mod#
 
 
 
-Validation Through Walkthroughs
+[.line-through.red]#*Dataset:* Custom mod not indexed in Modrinth or CurseForge (this dataset was chosen as we must test system behavior with an unknown mod).#
+
+[.line-through.red]#*Workflow:*#
+
+* [.line-through.red]#User uploads a folder containing an unknown mod, not registered in CurseForge or Modrinth.#
+
+* [.line-through.red]#API lookup gets information for all other mods in the folder, but fails for the custom mod. Therefore, no information is retrieved for this mod.#
+
+* [.line-through.red]#System attempts to process remaining mods in the folder with available dependency data and passes them to the frontend.#
+
+* [.line-through.red]#Dependency Graph is rendered with available data.#
+
+[.line-through.red]#*Property Being Verified:*#
+[.line-through.red]#The system handles incomplete or missing data properly.#
+
+[.line-through.red]#*Gap Identified:*#
+[.line-through.red]#Initial implementation failed when encountering unknown mods, stopping the entire process.#
+
+[.line-through.red]#*Remedy:*#
+[.line-through.red]#Modified logic to allow partial graph generation and mark unsupported mods with a distinct visual indicator containing an error message.#
 
 
-Scenario walkthroughs were conducted within the team to simulate real user interactions and validate assumptions about system behavior.
 
-These walkthroughs revealed several important insights:
-
-* Users expect clear differentiation between dependency types (required vs optional).  
-
-* Visual feedback is essential for understanding complex relationships such as conflicts and cycles.  
-
-* The system must remain functional even when encountering incomplete or unknown data.  
-
-These findings led to improvements in visualization clarity, error handling, and overall system adequacy.
-
---
+[.line-through.red]#Validation Through Walkthroughs#
 
 
-[.red.line-through]
+[.line-through.red]#Scenario walkthroughs were conducted within the team to simulate real user interactions and validate assumptions about system behavior.#
 
---
+[.line-through.red]#These walkthroughs revealed several important insights:#
 
-Verification ensures that the Minecraft Mod Dependency Visualizer functions as intended and satisfies the specified requirements.
-The system will be verified through functional testing and user validation.
+* [.line-through.red]#Users expect clear differentiation between dependency types (required vs optional).#
 
-* Unit Testing: Individual components such as metadata extraction and dependency parsing will be tested independently to ensure they produce correct and consistent results. This testing will be realized by uploading 3 mods into a folder. Preferably, the dataset would include mods Indium, Sodium, and Canvas Renderer, as this set of mods includes a dependency and a conflict within it. Indium depends on Sodium, but Sodium conflicts with Canvas Renderer. This makes it the perfect dataset for testing, as we can verify that the system is parsing dependencies and conflicts properly. In this test case, the mod folder would be passed to our frontend's mod receiver and we would monitor the backend's behavior when the mod ID is sent to the CurseForge and Modrinth APIs. If correct dependencies are returned in a JSON, this part of the system is working adequately.
+* [.line-through.red]#Visual feedback is essential for understanding complex relationships such as conflicts and cycles.#
 
-* Functional Testing: The system will be tested to confirm that a user can upload a mod file, generate a dependency graph, and receive accurate compatibility feedback.This test involves running the application itself and making sure the frontend receives the mod folder, parses it, and sends it to the backend to receive dependency information from CurseForge and Modrinth. We will confirm the system is functional once the JavaScript file executes the script to display the Dependency Graph, and we observe that all the correct nodes are connected to each other with the right colors as shown in the legend. The Dependency Graph should be fully interactive and all components of the page should display as intended, including the side panel and toggle buttons.
+* [.line-through.red]#The system must remain functional even when encountering incomplete or unknown data.#
 
-* User Validation: A small group of users will test the application to verify usability, clarity of the visualization, and correctness of the compatibility results.This test will be performed by giving a minimum of 5 people within the domain access to the application, and complete the entire process of accessing the application, navigating from the home page to the upload page (to determine its clarity), uploading a mod folder they would use for their Minecraft game, and interacting with the graph to test all of its features. After the test is realized, we will collect feedback from the users through a written survey allowing comments and suggestions. Feedback will be used to improve system behavior and interface design.
-  
-* Performance Testing: The system will be evaluated to ensure it processes mod files within the required response time and maintains stability under multiple usage scenarios.This test will be performed by adding a timer to different sections within the code (whenever a different action is done). A timer will be started when it receives the uploaded mod folder, and will stop once the information about the dependencies has been received from the APIs in use for mod dependencies. This time will be logged and examined with different mod folders of varying sizes. There will also be a timer for how long it takes to generate the graph after the mod information has been received. This will allow us to measure the response time and stability under different conditions.
+[.line-through.red]#These findings led to improvements in visualization clarity, error handling, and overall system adequacy.#
+
+
+
+
+[.line-through.red]#Verification ensures that the Minecraft Mod Dependency Visualizer functions as intended and satisfies the specified requirements.#
+[.line-through.red]#The system will be verified through functional testing and user validation.#
+
+* [.line-through.red]#Unit Testing: Individual components such as metadata extraction and dependency parsing will be tested independently to ensure they produce correct and consistent results. This testing will be realized by uploading 3 mods into a folder. Preferably, the dataset would include mods Indium, Sodium, and Canvas Renderer, as this set of mods includes a dependency and a conflict within it. Indium depends on Sodium, but Sodium conflicts with Canvas Renderer. This makes it the perfect dataset for testing, as we can verify that the system is parsing dependencies and conflicts properly. In this test case, the mod folder would be passed to our frontend's mod receiver and we would monitor the backend's behavior when the mod ID is sent to the CurseForge and Modrinth APIs. If correct dependencies are returned in a JSON, this part of the system is working adequately.#
+
+* [.line-through.red]#Functional Testing: The system will be tested to confirm that a user can upload a mod file, generate a dependency graph, and receive accurate compatibility feedback.This test involves running the application itself and making sure the frontend receives the mod folder, parses it, and sends it to the backend to receive dependency information from CurseForge and Modrinth. We will confirm the system is functional once the JavaScript file executes the script to display the Dependency Graph, and we observe that all the correct nodes are connected to each other with the right colors as shown in the legend. The Dependency Graph should be fully interactive and all components of the page should display as intended, including the side panel and toggle buttons.#
+
+* [.line-through.red]#User Validation: A small group of users will test the application to verify usability, clarity of the visualization, and correctness of the compatibility results.This test will be performed by giving a minimum of 5 people within the domain access to the application, and complete the entire process of accessing the application, navigating from the home page to the upload page (to determine its clarity), uploading a mod folder they would use for their Minecraft game, and interacting with the graph to test all of its features. After the test is realized, we will collect feedback from the users through a written survey allowing comments and suggestions. Feedback will be used to improve system behavior and interface design.#
+
+* [.line-through.red]#Performance Testing: The system will be evaluated to ensure it processes mod files within the required response time and maintains stability under multiple usage scenarios.This test will be performed by adding a timer to different sections within the code (whenever a different action is done). A timer will be started when it receives the uploaded mod folder, and will stop once the information about the dependencies has been received from the APIs in use for mod dependencies. This time will be logged and examined with different mod folders of varying sizes. There will also be a timer for how long it takes to generate the graph after the mod information has been received. This will allow us to measure the response time and stability under different conditions.#
+
+[.line-through.red]#Verification will be considered successful when all functional requirements are met and no critical defects are present.#
+
 
 Verification will be considered successful when all functional requirements are met and no critical defects are present.
 
---
+=== TLA+
 
-Verification will be considered successful when all functional requirements are met and no critical defects are present.
+[source,tla]
+----
+---------------- MODULE ZipProcessingService ----------------
+EXTENDS Naturals, Sequences, FiniteSets
 
-=== 3.3 AI disclosure
+\* CONSTANTS represent the inputs found inside the uploaded ZIP
+CONSTANTS ModArchives,    \* The set of all mod identifiers present in the ZIP folder
+          DependsOn       \* A function mapping each mod to a set of its required dependencies
 
-[.red]#This section discloses the use of AI tools in the development of the Minecraft Mod Dependency Visualizer.#
+\* VARIABLES represent the state objects inside processModpackZip()
+VARIABLES unprocessed,    \* Simulates the remaining archives to be parsed
+          installed,      \* Corresponds to your 'installedModIds' Set
+          missing,        \* Corresponds to your 'missingDependencies' List
+          system_state    \* "Parsing", "Detecting", or "Done"
 
-During the development of the Minecraft Mod Dependency Visualizer, the team utilized AI assistant tools — including ChatGPT, Claude, Gemini, and others — to assist with code generation, debugging, and documentation. These tools were used to enhance productivity, allowing developers to quickly research, explore implementation approaches, debug issues, and optimize different aspects of the project in shorter amounts of time. All final implementations were reviewed, tested, and approved by the team's developers to ensure accuracy and alignment with project requirements. Any AI-generated content — whether documentation, or structural suggestions — was treated as a starting point rather than a final product, with each developer exercising their own judgment to adapt, modify, or rewrite it as needed.
+vars == <<unprocessed, installed, missing, system_state>>
 
-The team views AI tools as exactly that — tools. Much like a search engine or a reference manual, they exist to reduce friction and accelerate work, not to replace the critical thinking, problem-solving, and engineering judgment that define good software development. Every meaningful design and implementation decision in this project was made and validated by a human team member. AI assistance helped us work smarter and faster, but the understanding and ownership of the project remain entirely with the team.
+\* --- INITIALIZATION ---
+Init == 
+    /\ unprocessed = ModArchives
+    /\ installed = {}
+    /\ missing = {}
+    /\ system_state = "Parsing"
+
+\* --- TRANSITIONS (The Business Logic) ---
+
+\* Simulates: processSingleModArchive()
+\* Takes a mod from the zip, reads its ID, and adds it to installedModIds
+ParseMod(m) ==
+    /\ system_state = "Parsing"
+    /\ m \in unprocessed
+    /\ unprocessed' = unprocessed \ {m}
+    /\ installed' = installed \union {m}
+    /\ UNCHANGED <<missing, system_state>>
+
+\* Simulates: Finishing the archive iteration before detecting missing deps
+TransitionToDetecting ==
+    /\ system_state = "Parsing"
+    /\ unprocessed = {}
+    /\ system_state' = "Detecting"
+    /\ UNCHANGED <<installed, missing, unprocessed>>
+
+\* Simulates: detectMissingDependencies()
+\* Iterates over all discovered mods and checks if their dependencies are in installedModIds
+DetectMissing ==
+    /\ system_state = "Detecting"
+    /\ missing' = { dep \in UNION {DependsOn[m] : m \in installed} : dep \notin installed }
+    /\ system_state' = "Done"
+    /\ UNCHANGED <<unprocessed, installed>>
+
+\* --- NEXT STATE CALCULATION ---
+Next == 
+    \/ (\E m \in unprocessed : ParseMod(m))
+    \/ TransitionToDetecting
+    \/ DetectMissing
+
+\* --- INVARIANTS (Properties to Verify) ---
+
+\* Invariant: If the system finishes successfully, no dependencies should be missing.
+\* Running the TLC Model Checker will purposefully try to violate this by injecting
+\* incomplete ModArchives configurations to ensure your logic catches the missing items.
+AllDependenciesSatisfied ==
+    system_state = "Done" => missing = {}
+----
+
+
+=== Log Book: Meeting History and Milestone Progress
+
+This section documents the project's progression, team synchronization efforts, and technical discussions across all milestones.
+
+=== Milestone 1: Planning and Proposal (Feb 4 - Feb 27, 2026)
+Focus: Architecture, diagramming, framework selection, and proposal development.
+
+*Sprint 1 (Feb 4 - Feb 13):*
+
+- The first official full online team meeting occurred on February 7. This meeting centered around planning our project, brainstorming frameworks to use, programming languages, and project goals. In this meeting, we decided on dividing into three different sub-teams.
+
+- We scheduled regular sub-team meetings on Microsoft Teams, to keep an organized flow and manage communication.
+
+- The first few team meetings centered around initial project scope, selecting frameworks for visualization and API interaction.
+
+- *Feb 6 & Feb 13:* Full Group Meeting. We coordinated architectural goals in the classroom, conducted a weekly SCRUM meeting, reviewed progress, and planned subsequent steps for project setup.
+
+=== Recurring Meeting Schedule
+To maintain alignment across teams, the following recurring schedule was established in this milestone:
+
+|===
+| Time | Meeting Group
+| Thursdays 3:00 PM - 4:00 PM | Zip Extraction & Homepage Team (Team C)
+| Thursdays 5:00 PM - 6:00 PM | Graph Visualization Team (Team A)
+| Fridays 8:00 PM - 9:00 PM | Fetch Dependencies Team (Team B)
+| Every Friday | Full Group Sync
+| Saturdays 8:00 PM - 9:00 PM | Team Managers Sync
+|===
+
+*Sprint 2 (Feb 13 - Feb 27):*
+
+- *Weekly Team Meetings:* Sub-teams held initial sessions on Microsoft Teams to organize their specific workflows. The Graph Visualization Team began researching graph libraries; The Fetch Dependencies Team investigated the Modrinth API; Zip Extraction & Homepage Team reviewed JSON parsing requirements for fabric.mod.json.
+
+- *Documentation/Presentation Focus:* Meetings dedicated exclusively to finalizing the project proposal and formal documentation.
+
+- *Full Group Meeting (Fridays):* Presentation rehearsal and final proposal sign-off.
+
+=== Milestone 2: Core Feature Implementation (Mar 2 - Apr 5, 2026)
+Focus: Coding the visualizer, zip processing, and dependency fetching logic.
+
+*Sprint 1 (Mar 2 - Mar 19):*
+
+- *Graph Visualization Team:* Weekly meetings focused on the implementation of D3.js nodes, SVG canvas setup, and force-directed layouts.
+
+- *Fetch Dependencies Team:* Weekly meetings centered on integrating Modrinth API endpoints to fetch metadata for dependencies.
+
+- *Zip Extraction & Homepage Team:* Weekly meetings focused on the ZipProcessingService, specifically parsing fabric.mod.json files and establishing UI scaffolding for the homepage.
+
+- *Full Group Meeting (Fridays):* We integrated the disparate modules (Frontend, API service, and Zip parser) and discussed data transmission standards between the modules.
+
+*Sprint 2 (Mar 19 - Apr 5):*
+
+- *Weekly Team Meetings:* Debugging implementation hurdles and resolving JSON mapping conflicts between the backend service and the frontend DTOs.
+
+- *Documentation Focus:* March 27 and April 3 meetings were dedicated to preparing mid-project status reports and progress presentations for the class.
+
+- *Full Group Meeting (Fridays):* Reviewing the integrated system, performing tests on modpack uploads, and verifying the dependency visualizer display.
+
+
+=== Interruption of Development (April - May 6)
+
+It is important to highlight that development was interrupted between milestone 2 and 3 due to a student strike at our university. This is the reason for the large gap between the end of milestone 2 and the start of milestone 3. Development was officially resumed on May 6.
+
+=== Milestone 3: Refinement and New Features (May 6 - May 27, 2026)
+Focus: Optimizing performance and adding advanced features.
+
+*Sprint 1 (May 6 - May 17):*
+
+- *Weekly Team Meetings:* Refinement of the dependency resolution logic. Graph Visualization Team polished the graph nodes; Fetch Dependencies Team created several unit tests.
+
+- *Full Group Meeting (Fridays):* Planning for final sprint, dividing documentation work.
+
+
+*Sprint 2 (May 17 - May 27):*
+
+- *Weekly Team Meetings:* Finalizing new features and adding several visual improvements. Teams resolved edge cases regarding missing dependencies.
+
+- *Documentation Focus:* May 22, May 25, and May 26 were dedicated to the final documentation wrap-up and preparing the code and project for final delivery, and the presentation.
+
+- *Full Group Meeting (Fridays):* Final sprint review, system validation, and preparation of the final presentation materials.
+
+
+=== 3.3 AI Disclosure Statement
+
+During the development of the Minecraft Mod Dependency Visualizer, the team used several AI-assisted tools, including ChatGPT, Claude, and Gemini, as part of the software development and documentation workflow. These tools were primarily used to assist with idea exploration, debugging support, code review assistance, wording improvements, documentation refinement, and researching possible implementation approaches.
+
+AI assistance was incorporated throughout development in a supportive role rather than as a replacement for developer decision-making. Team members frequently used AI tools to help explain technical concepts, identify possible causes of bugs, suggest alternative implementations, improve wording clarity in documentation, and accelerate repetitive development tasks. In some cases, AI-generated code snippets or structural suggestions were used as starting references during implementation.
+
+All AI-assisted output was reviewed, tested, modified, and validated by the development team before being incorporated into the project. Documentation generated with AI assistance was rewritten, reorganized, or expanded by team members to better reflect the actual behavior, architecture, and requirements of the system. Likewise, any code influenced by AI suggestions was manually inspected, integrated, debugged, and tested within the project environment before being accepted.
+
+The team maintained full responsibility for all technical decisions, system architecture, implementation choices, testing activities, and final project content. AI tools were used to support productivity and learning during development, but all final work submitted in the project represents decisions reviewed and approved by the human development team.
