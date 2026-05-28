@@ -21,22 +21,16 @@ ICOM4009 | INSO4101 | Introduction to Software Engineering
 
 ==== 1.2.2 Team Leaders
 
-* Team A - responsible for the dependency graph subsystem, including building the internal graph structure, implementing cycle detection and transitive dependency resolution, and producing structured graph data for frontend visualization.
-
 ** Zabdiel J. Valentin-Perez
 ** Karilys A. Muñiz-Ramos
-
-* Team B -  responsible for the external API integration and dependency resolution subsystem, including querying the Modrinth API, detecting missing and circular dependencies, and returning structured resolution results to the frontend.
 ** Gabriel A. Sanchez-Santos
-** Ricardo Burgos
-
-* Team C - responsible for the frontend web application, including handling modpack uploads, transmitting mod data to the backend, and rendering the dependency graph and resolution results for the player.
+** [.line-through.red]#Ricardo Burgos#
+** Carlos
 ** Victor M. De Jesús
 ** Javier M. Aguilo Agosto
 
 ==== 1.2.3 Team Members
 
-* Team A
 ** Christian J. Berberena
 ** Julian A. Laracuente-Matos
 ** Yahir J. Reyes-Padilla
@@ -48,8 +42,6 @@ ICOM4009 | INSO4101 | Introduction to Software Engineering
 ** Nathalie M. Castro-Mojica
 ** Merced J. Rivera-Mercado
 ** Isamar Z. Garcia-Rivera
-
-* Team B
 ** Joyson J. Martinez-Andujar
 ** Lorenzo Ramos-Martinez
 ** Wesley M. Rodriguez-Mojica
@@ -59,8 +51,6 @@ ICOM4009 | INSO4101 | Introduction to Software Engineering
 ** Kevin L. Ruiz-Sanchez
 ** Jan E. Ramos-Vazquez
 ** Cheselyn Morales-Santiago
-
-* Team C
 ** Alexander M. Garcia
 ** Edgar Y. Colon-Sanchez
 ** Hector J. Vale-Melendez
