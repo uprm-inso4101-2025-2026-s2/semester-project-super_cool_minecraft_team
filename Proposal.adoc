@@ -784,9 +784,6 @@ Data Integrity & Graceful Degradation:
 
 * MR-14 (Graceful Degradation & Throttling) — Under heavy load or resource-constrained conditions, the system [.line-through.red]#shall# must degrade gracefully by prioritizing essential operations, applying request throttling to prevent unexpected termination, and queuing additional active requests with a maximum delay of 10 seconds if simultaneous active users exceed 20 (allowing metadata lookup response times to temporarily increase up to 8 seconds).
 
-NOTE: Consolidates all graceful degradation parameters, heavy-load thresholds, and request-throttled limits from Section 2.8 into a brand-new engineering contract within Section 2.3.4.
-
-
 === 2.5 Terminology
 
 This section defines the core terms that will be used throughout the project.
