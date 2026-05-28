@@ -1375,6 +1375,116 @@ Triggered when: all declared dependencies are satisfied and no incompatibility c
 Outcome: The modpack reaches a structurally consistent configuration state. +
 State Change: inconsistent configuration -> consistent configuration"
 
+.Dependency Resolution Petri Net Model
+When mapping out state transitions for exhaustive model searching, translating domain requirements into a Petri net provides a strong foundation before writing formal specifications. The dependency resolution network is defined as a directed bipartite graph `PN = (P, T, F)`.
+
+image::docs/lectureTopicDeliverables/images/dependency-resolution-petri-net.png[Dependency Resolution Petri Net Model,pdfwidth=100%,align=center]
+
+*Places (P) - System States*
+
+These places represent the distinct states a modpack, a metadata entry, or an individual dependency can occupy during the resolution process.
+
+* *P1 (Idle):* The system is ready to receive input.
+* *P2 (Upload Queued):* A mod file or metadata list has been submitted by the player.
+* *P3 (Metadata Received):* Structured mod entries (identifier, version) are staged for processing.
+* *P4 (Awaiting API):* The system is waiting for a Modrinth API response.
+* *P5 (Dependency Evaluated):* API data is returned, and relationship types are identified.
+* *P6 (Missing Dependency):* A required dependency is identified as missing.
+* *P7 (Version Violation):* A dependency exists but fails the declared version constraints.
+* *P8 (Incompatibility):* An explicit incompatibility violation is detected between two mods.
+* *P9 (Cycle Detected):* A circular dependency chain is found.
+* *P10 (Mod Resolved):* A single mod and its direct constraints are fully satisfied.
+* *P11 (Structurally Valid):* All requirements are met, and no incompatibilities or cycles exist.
+* *P12 (Invalid Configuration):* The resolution result contains at least one error state.
+
+*Transitions (T) - System Actions*
+
+These transitions represent the domain behaviors and external interactions that move the system from one state to another.
+
+* *T1 (Submit Data):* The user uploads a modpack file or metadata list.
+* *T2 (Validate Format):* The system ensures the upload conforms to the supported format.
+* *T3 (Query Repository):* The system queries the API sequentially.
+* *T4 (API Timeout/Error):* The API fails to respond or returns an HTTP error.
+* *T5 (Parse Metadata):* The system extracts IDs, versions, and dependencies.
+* *T6 (Expand Transitive):* The system identifies new required dependencies.
+* *T7 (Check Missing):* The system evaluates if a required identifier is absent.
+* *T8 (Check Versions):* The system evaluates version constraints.
+* *T9 (Check Conflicts):* The system identifies declared incompatibilities.
+* *T10 (Trace Cycles):* The system walks the network to detect structural loops.
+* *T11 (Satisfy Node):* A mod clears all validation checks successfully.
+* *T12 (Aggregate Result):* The system compiles the final structured resolution result.
+
+*Flow Relations (F) - The Network Arcs*
+
+The following describes how tokens, representing mods or the overall modpack, flow through the system.
+
+*Initialization and Extraction*
+
+* P1 -> T1 -> P2
+* P2 -> T2 -> P3
+* P3 -> T3 -> P4
+
+*External Resolution Loop*
+
+* P4 -> T4 -> P6 (If API fails, dependency cannot be resolved and is marked missing.)
+* P4 -> T5 -> P5 (API succeeds and metadata is parsed.)
+* P5 -> T6 -> P3 (Transitive expansion loops back to the metadata queue for recursive querying.)
+
+*Constraint Evaluation*
+
+* P5 -> T7 -> P6 (Fails missing check.)
+* P5 -> T8 -> P7 (Fails version constraint check.)
+* P5 -> T9 -> P8 (Fails incompatibility check.)
+* P5 -> T10 -> P9 (Fails cycle check.)
+* P5 -> T11 -> P10 (Passes all checks.)
+
+*Final State Aggregation*
+
+* P10 -> T12 -> P11 (If the P3 queue is empty and P6, P7, P8, and P9 are completely empty.)
+* [P6, P7, P8, P9] -> T12 -> P12 (If any error states contain tokens, the modpack is structurally invalid.)
+
+.Algebraic Representation of Dependency Resolution
+According to the domain requirements, the dependency resolution system can be modeled as an algebra defined by `(A, Ω)`, where `A` is the carrier set and `Ω` is the set of operations. The principal idea is that elements, or values, and operations upon them yield such elements again.
+
+*The Carrier Sets (A)*
+
+An algebra requires a finite or infinite carrier set containing the values the system manipulates. In the system's architecture, the Java entities and Data Transfer Objects (DTOs) act as these sets:
+
+* *M (Mods):* The set of all individual Mod objects, representing identifiers, versions, and dependency lists.
+* *E (Edges):* The set of all dependency relationships, such as depends, breaks, and conflicts.
+* *G (Graphs / DTOs):* The set of all DTO objects, which bundle a complete configuration of _M_ and _E_, along with lists of missing and resolved dependencies.
+* *Z (Zip Archives):* The set of raw input files, represented as ZipFile or Path values.
+* *S (Strings / Identifiers):* The set of all mod IDs and version strings.
+
+Because the exact Java classes implementing these sets are known, this acts as a *concrete algebra* at runtime. Architecturally, however, it behaves as an *abstract algebra* because the specific elements, such as particular mod names, are not a concern for the underlying logic.
+
+*The Operations (Ω)*
+
+Operations in an algebra have a specific arity, which is the number of elements the operation takes as inputs. The system's Java methods function as mathematical mappings from carrier sets to other elements.
+
+*Extracting and Parsing*
+
+The ZipProcessingService takes a compressed file and yields a complete graph configuration.
+
+* `processModpackZip: Z -> G`
+* `readFabricModJsonFromArchive: Z -> M` conceptually extracts metadata to build a Mod.
+
+*Graph Mutation and Relationships*
+
+In software engineering, operations are easier to understand if they are self-contained and closed under operations.
+
+* `addRelationshipToSource: M x M x S -> M`
++
+This operation takes two Mods and a String, representing the relationship type, and mutates the source Mod. Algebraically, this is a 3-ary operation.
+
+*Filtering*
+
+Handling complex state without breaking the algebra requires operations that map back to the same structure. The `excludeRuntimeDependencies` method in `ModpackParsingService` serves this purpose:
+
+* `excludeRuntimeDependencies: G -> G`
+
+This operation is *closed under operations*. It takes a valid dependency graph, represented by the DTO, removes excluded mods, and yields a new, refined dependency graph `(G)`. This reduces conceptual dependencies and ensures that the concepts remain light-weight, adding little to the overall system complexity.
+
 === [.line-through.red]#2.8 Operational Requirements#
  
 [.line-through.red]#This section defines measurable criteria based on the Machine Requirements stated in Section 2.3.4.
