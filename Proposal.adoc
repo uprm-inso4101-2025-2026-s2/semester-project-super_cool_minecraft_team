@@ -260,7 +260,33 @@ The project milestones and key dates are as follows:
 These dates define the structured time frame within which all planning, development, evaluation, and reporting activities will be conducted.
 All deliverables and presentations will be completed in accordance with this timeline to ensure timely progress and academic review.
 
-=== 1.6 Synopsis
+=== 1.6 Stakeholders
+
+The following stakeholders are directly or indirectly affected by the Minecraft Dependency Visualizer project.
+
+==== Primary Stakeholders
+
+* Minecraft Players  
+Players who create, install, or maintain modpacks and require clear dependency and compatibility information.
+
+* Modpack Creators  
+Users responsible for assembling large collections of Mods and maintaining compatibility between dependencies, loaders, and Minecraft versions.
+
+* Multiplayer Server Administrators  
+Individuals responsible for maintaining stable shared modded environments across multiple players.
+
+==== Secondary Stakeholders
+
+* Mod Developers  
+Developers whose Mods may be analyzed, visualized, or validated by the platform.
+
+* Development Team  
+The student team responsible for requirements engineering, implementation, validation, and maintenance of the platform.
+
+* Course Instructors and Evaluators  
+Individuals responsible for evaluating the correctness, completeness, and engineering quality of the project.
+
+=== 1.7 Synopsis
 
 [.line-through.red]#Minecraft modding has become a common way for players to expand and personalize the game experience, but it also introduces a recurring challenge: many mods rely on other mods, libraries, specific loaders, and specific Minecraft versions in order to function correctly.
 When these dependencies are missing, incompatible, or incorrectly ordered, Minecraft may fail to launch or crash during runtime.#
@@ -303,7 +329,7 @@ The resulting platform will provide players with an interactive dependency graph
 
 [.line-through.red]#By shifting the experience away from text-heavy troubleshooting and toward a clear visual representation, the Minecraft Dependency Visualizer aims to reduce confusion, improve accessibility for all players, and make modpack setup and maintenance significantly easier.#
 
-=== 1.7 Concepts
+=== 1.8 Concepts
 
 * *Concept 1: Mod (Entity)* +
   A packaged software extension for Minecraft that adds or changes gameplay functionality and declares metadata such as version, supported Minecraft and Mod Loader versions, and dependency constraints.
@@ -318,7 +344,34 @@ The resulting platform will provide players with an interactive dependency graph
 * *Concept 6: Dependency Resolution (Behavior)* +
   The process of determining whether a Modpack satisfies all required Dependencies, including transitive ones, and does not violate declared Incompatibilities or Version Constraints.
 
-=== 1.8 Assumptions and Dependencies
+=== 1.9 Risk Analysis Cycle
+
+The project follows an iterative risk analysis cycle throughout development.
+
+The cycle consists of four stages:
+
+. Risk Identification  
+Potential technical, architectural, or external risks are identified during planning and development activities.
+
+. Risk Analysis  
+Each identified risk is evaluated according to:
+* likelihood of occurrence,
+* potential system impact,
+* and effect on project stability or development progress.
+
+. Risk Mitigation  
+Preventive or corrective measures are implemented to reduce the probability or impact of the identified risk.
+
+Examples include:
+* API fallback handling,
+* cached metadata responses,
+* exception handling,
+* and modular system architecture.
+
+. Risk Monitoring  
+Risks are continuously monitored during implementation, integration, testing, and validation activities to identify changes in severity or newly emerging risks.
+
+=== 1.10 Assumptions and Dependencies
 
 [.line-through.red]#* Assumption A: Reliable access to Minecraft mod metadata sources is available during development. +
   Dependency: The project depends on these sources to design and test dependency parsing and resolution logic. +
@@ -346,7 +399,8 @@ The resulting platform will provide players with an interactive dependency graph
 
 - *Dependency:* The team depends on access to development environments, testing tools, and datasets.
 - *Risk:* Misconfigured or unavailable tools may slow development or introduce implementation errors.
-=== 1.9 Implicit and Derived Goals
+
+=== 1.11 Implicit and Derived Goals
 
 [.line-through.red]#* Goal 1: Simplify and automate the management of Minecraft mods and libraries to ensure all dependencies are correctly installed and compatible, reducing errors and manual configuration for users.#
 
@@ -383,9 +437,27 @@ A player named marst, based on a crash log posted in mid-2024, built a modpack o
 
 Within the mod ecosystem of Minecraft, [.line-through.red]#users# players construct gameplay configurations by combining independently developed modifications, each of which declares structural constraints through metadata. A mod specifies its identity, supported versions, required dependencies, optional dependencies, and declared incompatibilities.When multiple mods are grouped into a modpack, they form a configuration whose validity depends on the collective satisfaction of all declared requirements and constraints. Adding or removing a mod triggers domain behaviours such as dependency expansion through transitive requirements, compatibility evaluation, and conflict detection.A configuration is considered structurally valid only if every required dependency is present in a compatible version and no declared incompatibilities exist among included mods. These relationships can be abstracted as a dependency network in which mods participate in directed requirement relations and constraint relations.[.line-through.red]#When these constraints are not satisfied, players may experience issues such as game crashes during startup, loading failures, missing content, or unstable gameplay behavior.In real scenarios, a player may attempt to launch the game after adding several mods and encounter immediate crashes, error messages, or incomplete loading of features. These situations often require trial-and-error actions, such as removing mods, changing versions, or searching for missing dependencies, highlighting the complexity of maintaining a valid mod configuration.# When dependencies are missing, players experience crashes on startup with error messages listing the absent mods. When version constraints are not satisfied, the game refuses to load and names each offending mod individually. When two mods declare mutual incompatibility as Canvas Renderer and Sodium do both may be present in the folder, the game loads, but one overrides or breaks the other, producing incorrect rendering, missing features, or runtime crashes with no clear indication of the conflict's source. In all cases, resolving the problem requires players to manually trace relationships across multiple mod pages, changelogs, and community forums, with no unified view of how their mods interact.
 
-=== 2.3 Requirements
+=== 2.3 Business Process
 
-=== 2.3.1 Personas
+The current dependency management process within the Minecraft modding ecosystem is largely manual and fragmented.
+
+A typical workflow currently follows these steps:
+
+. A player downloads one or more Mods from repositories such as Modrinth or CurseForge.
+. The player manually reviews dependency information from metadata pages, documentation, or community discussions.
+. Mods are installed into the Minecraft instance.
+. Minecraft attempts to launch the Modpack.
+. If dependencies are missing or incompatible, the game may fail to launch or crash.
+. The player manually searches for missing dependencies or compatible versions.
+. The process repeats until the Modpack becomes stable.
+
+This process is time-consuming, error-prone, and difficult for less technical users.
+
+The Minecraft Dependency Visualizer improves this process by automatically analyzing dependency relationships, validating version constraints, detecting incompatibilities, and visually presenting dependency structures before runtime failures occur.
+
+=== 2.4 Requirements
+
+=== 2.4.1 Personas
 
 [.line-through.red]#The following personas represent typical stakeholders who would use the mod dependency analyzer web application.#
 [.line-through.red]#They justify the previously defined epics and user stories.#
@@ -505,7 +577,7 @@ Frustrations:
 Why this persona matters:
 Daniel highlights the need for version control, dependency tracking, and reliable validation across shared environments.
 
-==== 2.3.2 Domain Requirements
+==== 2.4.2 Domain Requirements
 
 This section derives requirements from observed properties of the Minecraft modding domain.
 Each requirement is grounded in the domain narrative and domain events.
@@ -566,7 +638,7 @@ Each requirement is grounded in the domain narrative and domain events.
 ** circular dependency chains, identified by the full list of Mod identifiers involved.
   
 
-==== 2.3.3 Interface Requirements
+==== 2.4.3 Interface Requirements
 
 ===== External System Interfaces
 
@@ -649,7 +721,7 @@ Each requirement is grounded in the domain narrative and domain events.
 * [.line-through.red]#Maintain consistent layout and labeling to ensure ease of understanding for non-technical users.#
   UI-12 — The interface must maintain consistent layout structure, terminology, and labeling to support understanding by non-technical users.
 
-==== 2.3.4 Machine Requirements
+==== 2.4.4 Machine Requirements
 
 Performance:
 
@@ -715,7 +787,7 @@ Data Integrity & Graceful Degradation:
 NOTE: Consolidates all graceful degradation parameters, heavy-load thresholds, and request-throttled limits from Section 2.8 into a brand-new engineering contract within Section 2.3.4.
 
 
-=== 2.4 Terminology
+=== 2.5 Terminology
 
 This section defines the core terms that will be used throughout the project.
 These definitions apply to both the backend dependency logic and the frontend graph interface.
@@ -1081,7 +1153,7 @@ Definition: The moment all files have been successfully transferred to the serve
   Phase: System +
   Definition: Real-time display of data transfer rate during upload.
 
-=== 2.5 Domain Entities
+=== 2.6 Domain Entities
 
 * Mod: Represents a Minecraft modification that extends the base game and may declare dependencies or incompatibilities.
 * Dependency: Represents a directed requirement where one Mod depends on another Mod, possibly constrained by version.
@@ -1095,7 +1167,7 @@ Definition: The moment all files have been successfully transferred to the serve
 * Retrieved Mod: Represents a Mod successfully obtained to fulfill a Dependency requirement.
 * Resolution Result: Represents the outcome of dependency analysis, indicating satisfied, missing, or conflicting Mods.
 
-=== 2.6 Domain Functions
+=== 2.7 Domain Functions
 
 [.line-through.red]#A. Resolve Dependencies
 . Collect dependency information declared by each Mod in a Modpack.
@@ -1149,7 +1221,7 @@ Definition: The moment all files have been successfully transferred to the serve
 . Avoid duplicate nodes/edges when building the graph.
 . Export the Dependency Graph into a JSON representation for visualization.
 
-=== 2.7 Domain Events
+=== 2.8 Domain Events
 
 * [.line-through.red]#Event 1: Modpack Uploaded +
 Triggered when: a user uploads a modpack or mod collection for analysis. +
@@ -1406,7 +1478,7 @@ Monitoring and logging must be implemented to detect performance bottlenecks and
  
 [.line-through.red]#NOTE: This introductory paragraph was redundant; content is covered by the structured requirements above and in Section 2.3.4.#
 
-=== 2.8 Software Architecture Design
+=== 2.9 Software Architecture Design
 
 The system follows a layered client - server architecture composed of four main components:
 
