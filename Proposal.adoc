@@ -141,20 +141,32 @@ Overall, these ideas aim to improve how players interact with mod configurations
 
 ==== 1.5.1 Project Scope
 
-* This project operates within the domain of gaming software tooling, specifically targeting the Minecraft Java Edition modding ecosystem.
-* Minecraft modding involves the integration of community-developed modifications that extend or alter gameplay, requiring understanding of complex dependency relationships between mod files, mod loaders, and game versions.
-* The project addresses the broader challenge of dependency management and mod compatibility analysis, areas where existing tooling is either too technical for general players or entirely absent.
-* The scope encompasses domain engineering, requirements engineering, software architecture, and the design and development of a web-based dependency visualization platform that makes mod management more accessible and understandable for a non-technical audience.
+* [.line-through.red]#This project operates within the domain of gaming software tooling, specifically targeting the Minecraft Java Edition modding ecosystem.#
+* [.line-through.red]#Minecraft modding involves the integration of community-developed modifications that extend or alter gameplay, requiring understanding of complex dependency relationships between mod files, mod loaders, and game versions.#
+* [.line-through.red]#The project addresses the broader challenge of dependency management and mod compatibility analysis, areas where existing tooling is either too technical for general players or entirely absent.#
+* [.line-through.red]#The scope encompasses domain engineering, requirements engineering, software architecture, and the design and development of a web-based dependency visualization platform that makes mod management more accessible and understandable for a non-technical audience.#
+
+* The project operates within the broader domain of software systems that support dependency analysis, compatibility reasoning, and configuration validation within modular environments.
+* The scope focuses on the class of problems associated with understanding relationships between interconnected software components and determining whether configurations satisfy dependency and compatibility conditions.
+* The project includes domain analysis, requirements engineering, behavioral modeling, software architecture design, and validation activities required to study dependency-driven configurations and their interactions.
+* The project also includes the design of a system intended to improve understanding of dependency relationships, incompatibilities, and configuration consistency within Modpack environments.
+* The scope is limited to dependency analysis, compatibility reasoning, and visualization support, and does not include direct execution or modification of the target game environment.
 
 ==== 1.5.2 Project Span
 
-* The platform will target players of Minecraft Java Edition using either the Fabric or Forge mod loaders, the two most widely adopted modding frameworks for the game.
-* It will support the analysis of individual mod files and medium-sized modpacks, defined as collections typically ranging from a handful of mods up to roughly one hundred.
-* Mod metadata will be sourced from CurseForge and Modrinth, the two primary mod distribution repositories for Minecraft.
-* The platform will classify mods by runtime context, distinguishing between client-side, host-side, and client-host-sided mods.
-* Dependencies will be resolved transitively and classified as required, optional, or incompatible.
-* Where metadata is available, the platform will surface known version incompatibilities and link players to the relevant CurseForge or Modrinth pages for missing or outdated dependencies.
-* The platform will function strictly as a decision-support tool and will not modify the user's game installation or launch the game.
+* [.line-through.red]#The platform will target players of Minecraft Java Edition using either the Fabric or Forge mod loaders, the two most widely adopted modding frameworks for the game.#
+* [.line-through.red]#It will support the analysis of individual mod files and medium-sized modpacks, defined as collections typically ranging from a handful of mods up to roughly one hundred.#
+* [.line-through.red]#Mod metadata will be sourced from CurseForge and Modrinth, the two primary mod distribution repositories for Minecraft.#
+* [.line-through.red]#The platform will classify mods by runtime context, distinguishing between client-side, host-side, and client-host-sided mods.#
+* [.line-through.red]#Dependencies will be resolved transitively and classified as required, optional, or incompatible.#
+* [.line-through.red]#Where metadata is available, the platform will surface known version incompatibilities and link players to the relevant CurseForge or Modrinth pages for missing or outdated dependencies.#
+* [.line-through.red]#The platform will function strictly as a decision-support tool and will not modify the user's game installation or launch the game.#
+
+* The project span includes the analysis of dependency relationships between Mods within Modpack configurations.
+* The system considers dependency requirements, compatibility restrictions, missing components, and version-related validity conditions that affect overall configuration consistency.
+* The project includes representation and analysis of direct and indirect dependency relationships in order to support understanding of complex dependency structures.
+* The project focuses on helping players reason about dependency validity and incompatibility conditions before attempting to use a configuration.
+* The project is limited to analysis, validation support, and dependency visualization activities within the Modpack environment.
 
 ===== 1.5.2.1 Inclusions
 
