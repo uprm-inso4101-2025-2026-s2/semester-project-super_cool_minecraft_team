@@ -1442,11 +1442,11 @@ This subsystem is kept separate from the graph and frontend visualization render
 
 === Team C Frontend Web App and Visualization: 
 
-  Team C is responsible for the frontend web application layer. This includes accepting mod/modpack uploads in .zip format from players through a file picker interface and transmitting the uploaded uploaded file to the backend via a POST requst to the /api/modpack/zip endpoint. 
+Team C is responsible for the frontend web application layer. This includes accepting mod/modpack uploads in .zip format from players through a file picker interface and transmitting the uploaded uploaded file to the backend via a POST requst to the /api/modpack/zip endpoint.
   
-  Upon recieving the processed dependency data from the backend, the frontend renders the dependency graph and displays resolved and unresolved dependencies to the player. 
+Upon recieving the processed dependency data from the backend, the frontend renders the dependency graph and displays resolved and unresolved dependencies to the player.
   
-  Team C also implements client-side dependency resolution logic, including functions for retrieving direct dependencies and reverse dependents from the graph data structure, and maintains the graph state used by the visualization layer. The subsystem validates uploaded file formats before transmission and provides real-time status feedback to the player during the upload process.
+Team C also implements client-side dependency resolution logic, including functions for retrieving direct dependencies and reverse dependents from the graph data structure, and maintains the graph state used by the visualization layer. The subsystem validates uploaded file formats before transmission and provides real-time status feedback to the player during the upload process.
 
 == 3. Analytical
 
