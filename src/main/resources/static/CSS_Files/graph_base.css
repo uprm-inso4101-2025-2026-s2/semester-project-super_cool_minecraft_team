@@ -258,6 +258,11 @@ body {
     align-items: center;
 }
 
+.sidebar-group .btn-process + .btn-process,
+.sidebar-group .btn-process + a.btn-process {
+    margin-top: 10px;
+}
+
 .btn-process:hover {
     background: var(--green-hover);
 }
@@ -1172,7 +1177,7 @@ svg:active {
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
 }
 
 .sidebar-title-row .group-label {
