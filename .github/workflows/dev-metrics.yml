@@ -51,6 +51,7 @@ jobs:
         run: |
           mkdir -p /tmp/new-metrics
           mv inso-gh-query-metrics/*${{ github.repository_owner }}.md /tmp/new-metrics/
+          mv inso-gh-query-metrics/*${{ github.repository_owner }}.html /tmp/new-metrics/ 2>/dev/null || true
         shell: bash
       - name: Commit Metrics to inso-metrics branch
         run: |
@@ -64,7 +65,7 @@ jobs:
           mkdir -p ./metrics
           cp /tmp/new-metrics/*.md ./metrics/
 
-          git add metrics/*.md
+          git add metrics/*.md metrics/*.html
           git commit -m "[Automated] Milestone Metrics Update" || echo "No changes to commit"
 
           git push origin inso-metrics
