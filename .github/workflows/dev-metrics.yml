@@ -64,6 +64,7 @@ jobs:
 
           mkdir -p ./metrics
           cp /tmp/new-metrics/*.md ./metrics/
+          cp /tmp/new-metrics/*.html ./metrics/ 2>/dev/null || true
 
           git add metrics/*.md metrics/*.html
           git commit -m "[Automated] Milestone Metrics Update" || echo "No changes to commit"
