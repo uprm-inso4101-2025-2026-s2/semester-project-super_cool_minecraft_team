@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cycle Time & Lead Time — 2026-05-06 to 2026-05-27</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 20px;
+            background: #f6f8fa;
+            color: #1f2328;
+        }
+        h1 { font-size: 1.5rem; margin-bottom: 0.25rem; }
+        .subtitle { color: #656d76; margin-bottom: 1rem; }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            align-items: center;
+        }
+        .dev-checkboxes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .dev-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            background: #fff;
+            border: 1px solid #d0d7de;
+            border-radius: 999px;
+            padding: 0.25rem 0.66rem;
+            font-size: 0.85rem;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.15s;
+        }
+        .dev-chip:hover { background: #f3f4f6; }
+        .dev-chip input { margin: 0; cursor: pointer; }
+        .dev-chip.checked {
+            background: #ddf4ff;
+            border-color: #54aeff;
+            color: #0969da;
+        }
+        .agg-toggle {
+            display: inline-flex;
+            border: 1px solid #d0d7de;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .agg-toggle button {
+            border: none;
+            padding: 0.4rem 0.9rem;
+            background: #fff;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: background 0.15s;
+        }
+        .agg-toggle button.active {
+            background: #0969da;
+            color: #fff;
+        }
+        .chart-container {
+            background: #fff;
+            border: 1px solid #d0d7de;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .chart-container h2 { font-size: 1.1rem; margin: 0 0 0.5rem 0; }
+        .chart-wrapper { position: relative; height: 350px; }
+        .actions { display: flex; gap: 0.5rem; align-items: center; }
+    </style>
+</head>
+<body>
+    <h1>⏱️ Cycle Time & Lead Time</h1>
+    <p class="subtitle">Milestone: 2026-05-06 → 2026-05-27</p>
+
+    <div class="controls">
+        <div class="agg-toggle">
+            <button id="agg-avg" class="active" onclick="setAggregation('avg')">Average</button>
+            <button id="agg-sum" onclick="setAggregation('sum')">Sum</button>
+        </div>
+        <button onclick="selectAll(true)" style="font-size:0.85rem;border:1px solid #d0d7de;border-radius:6px;padding:0.4rem 0.8rem;background:#fff;cursor:pointer;">Select All</button>
+        <button onclick="selectAll(false)" style="font-size:0.85rem;border:1px solid #d0d7de;border-radius:6px;padding:0.4rem 0.8rem;background:#fff;cursor:pointer;">Deselect All</button>
+    </div>
+
+    <div class="dev-checkboxes" id="dev-checkboxes"></div>
+
+    <div class="chart-container">
+        <h2>Cycle Time (Assignment → Closure)</h2>
+        <div class="chart-wrapper"><canvas id="cycleChart"></canvas></div>
+    </div>
+
+    <div class="chart-container">
+        <h2>Lead Time (Creation → Closure)</h2>
+        <div class="chart-wrapper"><canvas id="leadChart"></canvas></div>
+    </div>
+
+    <script>
+        const rawData = {"developers": ["Chese157", "cxprss", "bookeraswanrobinsonswanson", "gabrielsanchez19", "Jan-E-Ramos", "RicardoBurgoss", "mercedrivera", "AMGP-eng", "TapeByChris", "Andrews247", "EdgarColonSanchez", "DarkJusticiars", "KarilysMuniz", "HectorJVale", "VazquezManuel1", "Formulawastaken", "dalianaOrtiz", "klrskevin1726", "RomorPR", "Joy-Martinez", "nathaliecstro", "Carlosirod", "alondrasf", "luisitOO00", "julianlaracuente", "Victor1514-soft", "CarlosNegron-prog", "ZabdielValentin", "robertofuertes", "sergiocartagena22", "JavierAguilo090", "andressroldann", "jordandeleon105", "williamcolon58", "Yahirjrp", "Jaiden-Roman", "ReynaldoFalcon"], "issueNumbers": [493, 498, 500, 501, 502, 504, 507, 511, 513, 514, 515, 516, 517, 519, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 535, 539, 540, 541, 544, 545, 551, 552, 554, 555, 556, 559, 560, 562, 565, 566, 567, 568, 569, 570, 571, 572, 573, 575, 576, 577, 579, 580, 581, 585, 586, 588, 589, 591, 592, 593, 594, 595, 596, 598, 600, 601, 603, 605, 607, 610, 611, 615, 616, 618, 625, 629, 633, 634, 635, 636, 638, 639, 640, 641, 642, 645, 647, 648, 649, 651, 652, 653, 655, 656, 659, 661, 662, 664, 665, 669, 671, 672, 673, 674, 696, 700, 703, 705, 706, 709, 712, 713, 717, 726, 732, 734, 735, 739, 740, 741, 760], "chartData": {"Chese157": {"cycle": {"523": 96.5188888888889, "530": 117.01222222222222, "651": 20.213333333333335, "652": 47.99666666666667, "653": 47.8925}, "lead": {"523": 223.72055555555556, "530": 231.53861111111112, "651": 20.290277777777778, "652": 48.02722222222222, "653": 47.98555555555556}}, "cxprss": {"cycle": {}, "lead": {}}, "bookeraswanrobinsonswanson": {"cycle": {}, "lead": {}}, "gabrielsanchez19": {"cycle": {"511": 68.67361111111111, "572": 72.49111111111111, "573": 72.53194444444445, "601": 27.05527777777778, "638": 18.790277777777778}, "lead": {"511": 75.5775, "572": 79.15333333333334, "573": 79.15805555555555, "601": 27.269444444444446, "638": 25.18166666666667}}, "Jan-E-Ramos": {"cycle": {"529": 6.8694444444444445, "568": 24.190833333333334, "567": 24.205833333333334, "569": 24.155, "607": 0.0125, "649": 2.460277777777778, "648": 2.435277777777778}, "lead": {"529": 20.113611111111112, "568": 24.285, "567": 24.320555555555554, "569": 24.249166666666667, "607": 18.258333333333333, "649": 2.941666666666667, "648": 3.049722222222222}}, "RicardoBurgoss": {"cycle": {"531": 93.32027777777778, "589": 119.83277777777778, "595": 119.55416666666666}, "lead": {"531": 107.82111111111111, "589": 119.95138888888889, "595": 119.90333333333334}}, "mercedrivera": {"cycle": {"498": 0.0, "500": 110.76388888888889, "502": 66.90083333333334, "566": 56.088055555555556, "672": 0.3325}, "lead": {"498": 0.0, "500": 329.18055555555554, "502": 285.12, "566": 75.47027777777778, "672": 26.798055555555557}}, "AMGP-eng": {"cycle": {}, "lead": {}}, "TapeByChris": {"cycle": {"593": 0.0, "595": 119.55416666666666}, "lead": {"593": 0.0, "595": 119.90333333333334}}, "Andrews247": {"cycle": {"662": 0.0033333333333333335, "734": 4.0744444444444445}, "lead": {"662": 40.72388888888889, "734": 4.5}}, "EdgarColonSanchez": {"cycle": {"515": 0.0, "521": 269.40694444444443}, "lead": {"515": 0.0, "521": 271.3461111111111}}, "DarkJusticiars": {"cycle": {"501": 126.08111111111111, "519": 211.26166666666666, "579": 0.0005555555555555556, "580": 0.060833333333333336, "581": 95.06916666666666, "611": 70.38166666666666, "760": 3.3405555555555555}, "lead": {"501": 220.76361111111112, "519": 250.04888888888888, "579": 111.69944444444444, "580": 111.64805555555556, "581": 111.71388888888889, "611": 78.02, "760": 3.3405555555555555}}, "KarilysMuniz": {"cycle": {"504": 124.40638888888888, "535": 0.0, "555": 91.22444444444444, "635": 22.60972222222222, "636": 22.57472222222222}, "lead": {"504": 217.91944444444445, "535": 0.0, "555": 94.99944444444445, "635": 22.898055555555555, "636": 22.593055555555555}}, "HectorJVale": {"cycle": {"521": 269.40694444444443, "522": 0.0}, "lead": {"521": 271.3461111111111, "522": 0.0}}, "VazquezManuel1": {"cycle": {"594": 0.0, "596": 27.50611111111111}, "lead": {"594": 0.0, "596": 27.862222222222222}}, "Formulawastaken": {"cycle": {"527": 12.203611111111112, "603": 26.191666666666666, "639": 0.0019444444444444444, "656": 18.011111111111113, "669": -53.55111111111111, "696": -1.1569444444444446}, "lead": {"527": 24.852222222222224, "603": 26.305555555555557, "639": 5.9222222222222225, "656": 18.973055555555554, "669": 18.08972222222222, "696": 3.0236111111111112}}, "dalianaOrtiz": {"cycle": {"521": 269.40694444444443}, "lead": {"521": 271.3461111111111}}, "klrskevin1726": {"cycle": {"513": 140.74833333333333, "544": 116.8313888888889, "575": 17.151944444444446, "605": 0.42527777777777775, "645": 2.405, "659": 17.84777777777778, "700": 0.29583333333333334, "709": 2.365}, "lead": {"513": 163.8713888888889, "544": 118.89805555555556, "575": 19.588333333333335, "605": 0.45305555555555554, "645": 4.5375, "659": 17.88861111111111, "700": 2.0069444444444446, "709": 2.4002777777777777}}, "RomorPR": {"cycle": {"591": 0.0}, "lead": {"591": 0.0}}, "Joy-Martinez": {"cycle": {"524": 46.011944444444445, "618": 24.435, "664": 0.006111111111111111, "665": 0.005555555555555556}, "lead": {"524": 173.1775, "618": 28.482222222222223, "664": 13.583333333333334, "665": 13.573611111111111}}, "nathaliecstro": {"cycle": {"739": 3.582777777777778, "740": 3.5919444444444446, "741": 2.9586111111111113}, "lead": {"739": 5.034722222222222, "740": 4.985555555555556, "741": 4.302777777777778}}, "Carlosirod": {"cycle": {"528": 0.0, "529": 6.8694444444444445, "634": 20.540277777777778, "760": 3.3405555555555555}, "lead": {"528": 0.0, "529": 20.113611111111112, "634": 35.32833333333333, "760": 3.3405555555555555}}, "alondrasf": {"cycle": {"552": 46.381388888888885, "570": 36.55694444444445, "571": 132.44416666666666, "600": 17.593055555555555, "610": 52.825, "671": 0.016666666666666666}, "lead": {"552": 94.66055555555556, "570": 48.6425, "571": 144.48888888888888, "600": 20.00027777777778, "610": 61.363055555555555, "671": 0.05638888888888889}}, "luisitOO00": {"cycle": {"554": 80.24055555555556, "559": 6.004722222222222, "560": 5.957222222222223, "585": 101.44444444444444, "760": 3.3405555555555555}, "lead": {"554": 80.24055555555556, "559": 6.0136111111111115, "560": 5.964166666666666, "585": 101.44444444444444, "760": 3.3405555555555555}}, "julianlaracuente": {"cycle": {"535": 0.0, "556": 22.370833333333334, "576": 98.10166666666667, "577": 97.77111111111111, "586": 97.79722222222222, "588": 97.74722222222222, "647": 29.789722222222224}, "lead": {"535": 0.0, "556": 43.272777777777776, "576": 119.66527777777777, "577": 119.3575, "586": 100.8536111111111, "588": 100.75722222222223, "647": 49.39}}, "Victor1514-soft": {"cycle": {"493": 192.66583333333332, "514": 44.948055555555555, "554": 80.24055555555556, "598": 29.93138888888889, "625": 70.72083333333333, "726": 4.141388888888889, "735": 1.7494444444444444, "760": 3.3405555555555555}, "lead": {"493": 192.66583333333332, "514": 44.948055555555555, "554": 80.24055555555556, "598": 29.93138888888889, "625": 72.86833333333334, "726": 4.141666666666667, "735": 2.1455555555555557, "760": 3.3405555555555555}}, "CarlosNegron-prog": {"cycle": {"539": 7.622222222222222, "541": 210.78833333333333, "565": 127.18944444444445, "705": 8.147222222222222, "703": 8.128333333333334}, "lead": {"539": 8.901388888888889, "541": 211.66944444444445, "565": 146.71694444444444, "705": 15.209722222222222, "703": 15.313611111111111}}, "ZabdielValentin": {"cycle": {"545": 6.315833333333333, "615": 30.363611111111112, "616": 30.336944444444445, "633": 0.0, "661": -53.498333333333335, "717": -43.395}, "lead": {"545": 6.685555555555555, "615": 79.24138888888889, "616": 79.19388888888889, "633": 0.0, "661": 34.97666666666667, "717": 1.1355555555555557}}, "robertofuertes": {"cycle": {"526": 239.3986111111111, "562": 126.86305555555556, "629": 30.116666666666667, "655": 29.976666666666667, "673": 8.231111111111112, "674": 8.248333333333333, "706": 8.26361111111111}, "lead": {"526": 264.79083333333335, "562": 167.07777777777778, "629": 72.24944444444445, "655": 47.34861111111111, "673": 34.4025, "674": 34.15277777777778, "706": 15.063333333333333}}, "sergiocartagena22": {"cycle": {}, "lead": {}}, "JavierAguilo090": {"cycle": {"515": 0.0, "712": 4.461666666666667, "713": 3.8738888888888887}, "lead": {"515": 0.0, "712": 4.461666666666667, "713": 3.8741666666666665}}, "andressroldann": {"cycle": {}, "lead": {}}, "jordandeleon105": {"cycle": {"525": 7.253333333333333, "592": 72.52527777777777, "596": 27.50611111111111}, "lead": {"525": 34.4525, "592": 72.83805555555556, "596": 27.862222222222222}}, "williamcolon58": {"cycle": {"507": 24.9725, "516": 103.38694444444444, "517": 103.26416666666667, "585": 101.44444444444444, "760": 3.3405555555555555}, "lead": {"507": 24.9725, "516": 103.38861111111112, "517": 103.26444444444445, "585": 101.44444444444444, "760": 3.3405555555555555}}, "Yahirjrp": {"cycle": {"540": 66.00944444444444, "551": 46.47638888888889, "640": 4.346666666666667, "641": 7.9325, "642": 7.934444444444445, "732": -26.70916666666667}, "lead": {"540": 68.61805555555556, "551": 94.71388888888889, "640": 58.19222222222222, "641": 60.76611111111111, "642": 60.72944444444445, "732": 0.245}}, "Jaiden-Roman": {"cycle": {}, "lead": {}}, "ReynaldoFalcon": {"cycle": {"521": 269.40694444444443, "522": 0.0}, "lead": {"521": 271.3461111111111, "522": 0.0}}}};
+        let aggregation = 'avg';
+        let selectedDevs = new Set(rawData.developers);
+        let cycleChart, leadChart;
+
+        const COLORS = [
+            '#0969da', '#1a7f37', '#bf3989', '#d1242f', '#9333ea',
+            '#ca8a04', '#0891b2', '#4a154b', '#2d33be', '#bc4b00'
+        ];
+
+        function devColor(i) {
+            return COLORS[i % COLORS.length];
+        }
+
+        function renderCheckboxes() {
+            const container = document.getElementById('dev-checkboxes');
+            container.innerHTML = '';
+            rawData.developers.forEach((dev, i) => {
+                const chip = document.createElement('label');
+                chip.className = 'dev-chip' + (selectedDevs.has(dev) ? ' checked' : '');
+                chip.innerHTML = `<input type="checkbox" ${selectedDevs.has(dev) ? 'checked' : ''} onchange="toggleDev('${dev}')"><span style="width:10px;height:10px;border-radius:50%;background:${devColor(i)};display:inline-block;"></span>${dev}`;
+                container.appendChild(chip);
+            });
+        }
+
+        function toggleDev(dev) {
+            if (selectedDevs.has(dev)) selectedDevs.delete(dev);
+            else selectedDevs.add(dev);
+            renderCheckboxes();
+            updateCharts();
+        }
+
+        function selectAll(on) {
+            selectedDevs = on ? new Set(rawData.developers) : new Set();
+            renderCheckboxes();
+            updateCharts();
+        }
+
+        function setAggregation(agg) {
+            aggregation = agg;
+            document.getElementById('agg-avg').classList.toggle('active', agg === 'avg');
+            document.getElementById('agg-sum').classList.toggle('active', agg === 'sum');
+            updateCharts();
+        }
+
+        function buildDatasets(metric) {
+            const labels = rawData.issueNumbers.map(n => '#' + n);
+            const datasets = [];
+            const selectedDevsArray = rawData.developers.filter((d, i) => selectedDevs.has(d));
+            if (selectedDevsArray.length === 0) return { labels, datasets };
+            const values = rawData.issueNumbers.map(issueNum => {
+                const vals = selectedDevsArray
+                    .map(dev => rawData.chartData[dev][metric][issueNum])
+                    .filter(v => v !== undefined && v !== null);
+                if (vals.length === 0) return null;
+                if (aggregation === 'sum') return vals.reduce((a, b) => a + b, 0);
+                return vals.reduce((a, b) => a + b, 0) / vals.length;
+            });
+            const label = aggregation === 'sum'
+                ? `Sum of ${selectedDevsArray.length} dev(s)`
+                : `Average of ${selectedDevsArray.length} dev(s)`;
+            datasets.push({
+                label: label,
+                data: values,
+                borderColor: '#0969da',
+                backgroundColor: '#0969da' + '33',
+                tension: 0.3,
+                fill: false,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                spanGaps: true,
+            });
+            return { labels, datasets };
+        }
+
+        function buildChartConfig(metric, title) {
+            const { labels, datasets } = buildDatasets(metric);
+            return {
+                type: 'line',
+                data: { labels, datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(ctx) {
+                                    const hours = ctx.parsed.y;
+                                    const days = (hours / 24).toFixed(1);
+                                    return ctx.dataset.label + ': ' + hours.toFixed(1) + 'h (' + days + 'd)';
+                                }
+                            }
+                        },
+                        legend: { position: 'bottom' }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Hours' }
+                        },
+                        x: {
+                            title: { display: true, text: 'Issue' }
+                        }
+                    }
+                }
+            };
+        }
+
+        function updateCharts() {
+            if (cycleChart) cycleChart.destroy();
+            if (leadChart) leadChart.destroy();
+            cycleChart = new Chart(document.getElementById('cycleChart'), buildChartConfig('cycle', 'Cycle Time'));
+            leadChart = new Chart(document.getElementById('leadChart'), buildChartConfig('lead', 'Lead Time'));
+        }
+
+        renderCheckboxes();
+        updateCharts();
+    </script>
+</body>
+</html>
