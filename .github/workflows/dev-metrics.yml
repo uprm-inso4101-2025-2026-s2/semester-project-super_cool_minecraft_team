@@ -47,11 +47,13 @@ jobs:
         env:
           GITHUB_API_TOKEN: ${{ secrets.GH_API_TOKEN }}
           ORGANIZATION: ${{ github.repository_owner }}
+          PAGES_BASE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
       - name: Move Generated Metrics to Temp Directory
         run: |
           mkdir -p /tmp/new-metrics
           mv inso-gh-query-metrics/*${{ github.repository_owner }}.md /tmp/new-metrics/
           mv inso-gh-query-metrics/*${{ github.repository_owner }}.html /tmp/new-metrics/ 2>/dev/null || true
+          mv inso-gh-query-metrics/index.html /tmp/new-metrics/ 2>/dev/null || true
         shell: bash
       - name: Commit Metrics to inso-metrics branch
         run: |
@@ -70,6 +72,22 @@ jobs:
           git commit -m "[Automated] Milestone Metrics Update" || echo "No changes to commit"
 
           git push origin inso-metrics
+        shell: bash
+      - name: Deploy Interactive Charts to GitHub Pages
+        run: |
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+
+          git fetch origin gh-pages 2>/dev/null || true
+          git checkout gh-pages 2>/dev/null || git checkout -b gh-pages
+
+          mkdir -p ./metrics
+          cp /tmp/new-metrics/*.html ./metrics/
+          cp /tmp/new-metrics/index.html ./index.html 2>/dev/null || true
+
+          git add metrics/*.html index.html
+          git commit -m "[Automated] Deploy Interactive Charts" || echo "No changes to commit"
+          git push origin gh-pages
         shell: bash
       - name: Create Pull Request
         run: |
