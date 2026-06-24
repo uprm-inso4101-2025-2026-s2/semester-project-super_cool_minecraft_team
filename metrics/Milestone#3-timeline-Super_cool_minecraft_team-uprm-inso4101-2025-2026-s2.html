@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cumulative Contribution Timeline — 2026-05-06 to 2026-05-27</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 20px;
+            background: #f6f8fa;
+            color: #1f2328;
+        }
+        h1 { font-size: 1.5rem; margin-bottom: 0.25rem; }
+        .subtitle { color: #656d76; margin-bottom: 1rem; }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            align-items: center;
+        }
+        .dev-checkboxes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .dev-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            background: #fff;
+            border: 1px solid #d0d7de;
+            border-radius: 999px;
+            padding: 0.25rem 0.66rem;
+            font-size: 0.85rem;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.15s;
+        }
+        .dev-chip:hover { background: #f3f4f6; }
+        .dev-chip input { margin: 0; cursor: pointer; }
+        .dev-chip.checked {
+            background: #ddf4ff;
+            border-color: #54aeff;
+            color: #0969da;
+        }
+        .chart-container {
+            background: #fff;
+            border: 1px solid #d0d7de;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .chart-container h2 { font-size: 1.1rem; margin: 0 0 0.5rem 0; }
+        .chart-wrapper { position: relative; height: 400px; }
+    </style>
+</head>
+<body>
+    <h1>📈 Cumulative Contribution Timeline</h1>
+    <p class="subtitle">Milestone: 2026-05-06 â 2026-05-27 â Steady slopes indicate consistent contributors; flat lines followed by spikes indicate bursty work patterns.</p>
+
+    <div class="controls">
+        <button onclick="selectAll(true)" style="font-size:0.85rem;border:1px solid #d0d7de;border-radius:6px;padding:0.4rem 0.8rem;background:#fff;cursor:pointer;">Select All</button>
+        <button onclick="selectAll(false)" style="font-size:0.85rem;border:1px solid #d0d7de;border-radius:6px;padding:0.4rem 0.8rem;background:#fff;cursor:pointer;">Deselect All</button>
+    </div>
+
+    <div class="dev-checkboxes" id="dev-checkboxes"></div>
+
+    <div class="chart-container">
+        <h2>Cumulative Points Closed Per Day</h2>
+        <div class="chart-wrapper"><canvas id="timelineChart"></canvas></div>
+    </div>
+
+    <script>
+        const rawData = {"developers": ["Chese157", "cxprss", "bookeraswanrobinsonswanson", "gabrielsanchez19", "Jan-E-Ramos", "RicardoBurgoss", "mercedrivera", "AMGP-eng", "TapeByChris", "Andrews247", "EdgarColonSanchez", "DarkJusticiars", "KarilysMuniz", "HectorJVale", "VazquezManuel1", "Formulawastaken", "dalianaOrtiz", "klrskevin1726", "RomorPR", "Joy-Martinez", "nathaliecstro", "Carlosirod", "alondrasf", "luisitOO00", "julianlaracuente", "Victor1514-soft", "CarlosNegron-prog", "ZabdielValentin", "robertofuertes", "sergiocartagena22", "JavierAguilo090", "andressroldann", "jordandeleon105", "williamcolon58", "Yahirjrp", "Jaiden-Roman", "ReynaldoFalcon"], "dates": ["2026-05-06", "2026-05-07", "2026-05-14", "2026-05-15", "2026-05-16", "2026-05-17", "2026-05-18", "2026-05-19", "2026-05-20", "2026-05-21", "2026-05-22", "2026-05-23", "2026-05-24", "2026-05-25", "2026-05-26", "2026-05-27", "2026-05-28"], "chartData": {"Chese157": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 37.8, 122.1, 148.6, 148.6, 148.6], "cxprss": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "bookeraswanrobinsonswanson": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "gabrielsanchez19": [0.0, 0.0, 0.0, 0.0, 65.4, 65.4, 65.4, 65.4, 65.4, 65.4, 65.4, 98.3, 140.8, 167.3, 167.3, 167.3, 167.3], "Jan-E-Ramos": [0.0, 0.0, 0.0, 0.0, 36.0, 36.0, 36.0, 36.0, 36.0, 71.8, 71.8, 82.5, 82.5, 104.7, 104.7, 104.7, 104.7], "RicardoBurgoss": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 56.8, 56.8, 56.8, 56.8, 56.8, 56.8, 56.8, 115.2, 115.2], "mercedrivera": [0.0, 71.6, 71.6, 71.6, 71.6, 71.6, 71.6, 106.4, 106.4, 126.2, 126.2, 126.2, 158.2, 158.2, 192.8, 192.8, 192.8], "AMGP-eng": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "TapeByChris": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 32.2, 32.2, 32.2, 32.2, 32.2, 48.3, 48.3], "Andrews247": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 15.5, 25.0, 25.0], "EdgarColonSanchez": [0.0, 0.0, 28.9, 28.9, 28.9, 28.9, 28.9, 28.9, 28.9, 28.9, 28.9, 28.9, 28.9, 28.9, 33.5, 33.5, 33.5], "DarkJusticiars": [0.0, 0.0, 0.0, 0.0, 0.0, 29.8, 29.8, 29.8, 29.8, 29.8, 29.8, 29.8, 29.8, 55.6, 134.4, 134.4, 140.4], "KarilysMuniz": [0.0, 0.0, 0.0, 0.0, 19.9, 19.9, 19.9, 19.9, 19.9, 19.9, 66.3, 66.3, 66.3, 154.8, 154.8, 154.8, 154.8], "HectorJVale": [0.0, 0.0, 0.0, 2.7, 2.7, 2.7, 2.7, 2.7, 2.7, 2.7, 2.7, 2.7, 2.7, 2.7, 7.2, 7.2, 7.2], "VazquezManuel1": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 32.9, 51.7, 51.7, 51.7, 51.7, 51.7, 51.7], "Formulawastaken": [0.0, 0.0, 0.0, 0.0, 0.0, 18.9, 18.9, 18.9, 18.9, 18.9, 18.9, 49.1, 49.7, 50.2, 57.9, 57.9, 57.9], "dalianaOrtiz": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.5, 4.5, 4.5], "klrskevin1726": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 52.3, 74.3, 121.3, 121.3, 121.3, 158.4, 174.2, 174.2, 174.2], "RomorPR": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 42.3, 42.3, 42.3, 42.3, 42.3, 42.3, 42.3], "Joy-Martinez": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 37.8, 37.8, 43.4, 76.6, 76.6, 76.6, 76.6], "nathaliecstro": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 32.1, 32.1], "Carlosirod": [0.0, 0.0, 0.0, 0.0, 68.5, 68.5, 68.5, 68.5, 68.5, 68.5, 68.5, 68.5, 68.5, 74.0, 74.0, 74.0, 80.0], "alondrasf": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 30.0, 30.0, 110.8, 110.8, 172.4, 172.4, 220.4, 220.4], "luisitOO00": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 35.9, 35.9, 50.4, 50.4, 50.4, 50.4, 58.4, 58.4, 64.4], "julianlaracuente": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 46.4, 46.4, 46.4, 46.4, 46.4, 46.4, 188.4, 188.4, 188.4], "Victor1514-soft": [0.0, 0.0, 0.0, 28.9, 28.9, 28.9, 28.9, 28.9, 28.9, 28.9, 43.4, 43.4, 48.8, 48.8, 61.8, 92.7, 98.7], "CarlosNegron-prog": [0.0, 0.0, 0.0, 0.0, 0.0, 30.8, 30.8, 30.8, 30.8, 30.8, 30.8, 30.8, 30.8, 51.9, 88.5, 112.6, 112.6], "ZabdielValentin": [0.0, 0.0, 0.0, 0.0, 0.0, 30.8, 30.8, 30.8, 30.8, 30.8, 30.8, 30.8, 48.1, 48.1, 124.8, 124.8, 124.8], "robertofuertes": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 82.3, 118.6, 118.6], "sergiocartagena22": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "JavierAguilo090": [0.0, 0.0, 28.9, 28.9, 28.9, 28.9, 28.9, 28.9, 28.9, 28.9, 28.9, 28.9, 28.9, 28.9, 48.8, 48.8, 48.8], "andressroldann": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "jordandeleon105": [0.0, 0.0, 0.0, 0.0, 0.0, 37.8, 37.8, 37.8, 37.8, 37.8, 37.8, 56.6, 56.6, 99.6, 99.6, 99.6, 99.6], "williamcolon58": [0.0, 0.0, 26.6, 26.6, 26.6, 26.6, 49.5, 49.5, 49.5, 49.5, 49.5, 49.5, 49.5, 49.5, 57.6, 57.6, 63.6], "Yahirjrp": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 30.8, 30.8, 72.8, 72.8, 72.8, 72.8, 72.8, 72.8, 119.8, 119.8], "Jaiden-Roman": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "ReynaldoFalcon": [0.0, 0.0, 0.0, 2.7, 2.7, 2.7, 2.7, 2.7, 2.7, 2.7, 2.7, 2.7, 2.7, 2.7, 7.2, 7.2, 7.2]}};
+        let selectedDevs = new Set(rawData.developers);
+        let timelineChart;
+
+        const COLORS = [
+            '#0969da', '#1a7f37', '#bf3989', '#d1242f', '#9333ea',
+            '#ca8a04', '#0891b2', '#4a154b', '#2d33be', '#bc4b00'
+        ];
+
+        function devColor(i) {
+            return COLORS[i % COLORS.length];
+        }
+
+        function renderCheckboxes() {
+            const container = document.getElementById('dev-checkboxes');
+            container.innerHTML = '';
+            rawData.developers.forEach((dev, i) => {
+                const chip = document.createElement('label');
+                chip.className = 'dev-chip' + (selectedDevs.has(dev) ? ' checked' : '');
+                chip.innerHTML = `<input type="checkbox" ${selectedDevs.has(dev) ? 'checked' : ''} onchange="toggleDev('${dev}')"><span style="width:10px;height:10px;border-radius:50%;background:${devColor(i)};display:inline-block;"></span>${dev}`;
+                container.appendChild(chip);
+            });
+        }
+
+        function toggleDev(dev) {
+            if (selectedDevs.has(dev)) selectedDevs.delete(dev);
+            else selectedDevs.add(dev);
+            renderCheckboxes();
+            updateChart();
+        }
+
+        function selectAll(on) {
+            selectedDevs = on ? new Set(rawData.developers) : new Set();
+            renderCheckboxes();
+            updateChart();
+        }
+
+        function updateChart() {
+            if (timelineChart) timelineChart.destroy();
+            const labels = rawData.dates;
+            const datasets = [];
+            rawData.developers.forEach((dev, i) => {
+                if (!selectedDevs.has(dev)) return;
+                datasets.push({
+                    label: dev,
+                    data: rawData.chartData[dev],
+                    borderColor: devColor(i),
+                    backgroundColor: devColor(i) + '33',
+                    tension: 0.1,
+                    fill: false,
+                    pointRadius: 3,
+                    pointHoverRadius: 5,
+                    spanGaps: true,
+                });
+            });
+            timelineChart = new Chart(document.getElementById('timelineChart'), {
+                type: 'line',
+                data: { labels, datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(ctx) {
+                                    return ctx.dataset.label + ': ' + ctx.parsed.y + ' pts';
+                                }
+                            }
+                        },
+                        legend: { position: 'bottom' }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Cumulative Points Closed' }
+                        },
+                        x: {
+                            title: { display: true, text: 'Date' },
+                            ticks: { maxRotation: 45, autoSkip: true, maxTicksLimit: 15 }
+                        }
+                    }
+                }
+            });
+        }
+
+        renderCheckboxes();
+        updateChart();
+    </script>
+</body>
+</html>
