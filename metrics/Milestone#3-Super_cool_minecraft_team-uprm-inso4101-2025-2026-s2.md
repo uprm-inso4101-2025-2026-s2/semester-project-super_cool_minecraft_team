@@ -1,6 +1,6 @@
 # Milestone Data
 
-## Date Generated: 2026-06-29
+## Date Generated: 2026-06-30
 | Developer | Points Closed | Percent Contribution | Indivudal Grade | Milestone Grade | Lecture Topic Tasks |
 | --------- | ------------- | -------------------- | --------------- | --------------- | ------------------- |
 | Chese157 | 148.6 | 5.1% | 100.0% | 100.0% | 3 |
@@ -89,88 +89,88 @@
 
 | Developer | Week #1 | Week #2 | Week #3 | Week #4 | Penalty |
 |---|---|---|---|---|---|
-| jordandeleon105 | No | Yes | No | Yes | 5.0 |
-| VictorRavelo | Yes | Yes | Yes | Yes | 0.0 |
-| julianlaracuente | No | Yes | Yes | No | 9.0 |
-| andressroldann | No | No | No | No | 15.0 |
+| RicardoBurgoss | Yes | Yes | No | No | 12.0 |
+| Yahirjrp | Yes | Yes | Yes | No | 8.0 |
 | EdgarColonSanchez | Yes | No | No | Yes | 6.0 |
-| Jaiden-Roman | No | No | No | No | 15.0 |
+| JavierAguilo090 | No | No | No | No | 15.0 |
+| CarlosNegron-prog | Yes | Yes | Yes | No | 8.0 |
+| mercedrivera | Yes | Yes | Yes | Yes | 0.0 |
+| klrskevin1726 | No | Yes | Yes | No | 9.0 |
+| RomorPR | No | No | No | No | 15.0 |
+| sergiocartagena22 | No | Yes | No | No | 13.0 |
+| Victor1514-soft | Yes | Yes | Yes | Yes | 0.0 |
+| VictorRavelo | Yes | Yes | Yes | Yes | 0.0 |
+| Joy-Martinez | No | Yes | No | Yes | 5.0 |
+| DarkJusticiars | Yes | Yes | Yes | Yes | 0.0 |
+| Carlosirod | No | Yes | Yes | No | 9.0 |
+| Jan-E-Ramos | Yes | Yes | No | Yes | 4.0 |
 | williamcolon58 | Yes | Yes | Yes | Yes | 0.0 |
 | Andrews247 | Yes | Yes | No | No | 12.0 |
-| bookeraswanrobinsonswanson | No | No | No | No | 15.0 |
-| nu-hazd | Yes | No | No | No | 14.0 |
-| Yahirjrp | Yes | Yes | Yes | No | 8.0 |
-| Chese157 | No | No | No | Yes | 7.0 |
-| ReynaldoFalcon | Yes | Yes | No | No | 12.0 |
-| Joy-Martinez | No | Yes | No | Yes | 5.0 |
-| mercedrivera | Yes | Yes | Yes | Yes | 0.0 |
 | HectorJVale | Yes | Yes | Yes | No | 8.0 |
-| Formulawastaken | No | Yes | No | Yes | 5.0 |
-| CarlosNegron-prog | Yes | Yes | Yes | No | 8.0 |
-| JavierAguilo090 | No | No | No | No | 15.0 |
-| cxprss | No | No | No | No | 15.0 |
-| klrskevin1726 | No | Yes | Yes | No | 9.0 |
-| RicardoBurgoss | Yes | Yes | No | No | 12.0 |
-| dalianaOrtiz | No | Yes | Yes | No | 9.0 |
-| gabrielsanchez19 | No | Yes | No | No | 13.0 |
-| Victor1514-soft | Yes | Yes | Yes | Yes | 0.0 |
-| robertofuertes | No | Yes | No | Yes | 5.0 |
-| AMGP-eng | No | No | No | No | 15.0 |
-| nathaliecstro | No | No | No | No | 15.0 |
-| RomorPR | No | No | No | No | 15.0 |
-| KarilysMuniz | Yes | Yes | No | Yes | 4.0 |
 | ZabdielValentin | No | Yes | Yes | No | 9.0 |
-| TapeByChris | No | No | No | No | 15.0 |
-| alondrasf | No | Yes | Yes | Yes | 1.0 |
-| Jan-E-Ramos | Yes | Yes | No | Yes | 4.0 |
-| Carlosirod | No | Yes | Yes | No | 9.0 |
-| luisitOO00 | Yes | No | Yes | Yes | 2.0 |
-| sergiocartagena22 | No | Yes | No | No | 13.0 |
-| DarkJusticiars | Yes | Yes | Yes | Yes | 0.0 |
 | harryto1 | No | No | No | No | 15.0 |
+| nu-hazd | Yes | No | No | No | 14.0 |
+| KarilysMuniz | Yes | Yes | No | Yes | 4.0 |
+| alondrasf | No | Yes | Yes | Yes | 1.0 |
+| robertofuertes | No | Yes | No | Yes | 5.0 |
+| TapeByChris | No | No | No | No | 15.0 |
+| bookeraswanrobinsonswanson | No | No | No | No | 15.0 |
 | VazquezManuel1 | No | No | No | No | 15.0 |
+| nathaliecstro | No | No | No | No | 15.0 |
+| Formulawastaken | No | Yes | No | Yes | 5.0 |
+| ReynaldoFalcon | Yes | Yes | No | No | 12.0 |
+| luisitOO00 | Yes | No | Yes | Yes | 2.0 |
+| Jaiden-Roman | No | No | No | No | 15.0 |
+| AMGP-eng | No | No | No | No | 15.0 |
+| cxprss | No | No | No | No | 15.0 |
+| andressroldann | No | No | No | No | 15.0 |
+| jordandeleon105 | No | Yes | No | Yes | 5.0 |
+| dalianaOrtiz | No | Yes | Yes | No | 9.0 |
+| julianlaracuente | No | Yes | Yes | No | 9.0 |
+| gabrielsanchez19 | No | Yes | No | No | 13.0 |
+| Chese157 | No | No | No | Yes | 7.0 |
 
 ## Point Percent by Label
 
-| Developer | Lecture Topic Task | bug | Team B | Team A | pending approval | help wanted | approved | Team C | enhancement | documentation |
+| Developer | documentation | Lecture Topic Task | bug | enhancement | Team A | help wanted | pending approval | Team C | Team B | approved |
 |---|---|---|---|---|---|---|---|---|---|---|
-| Chese157 | 30.9% | 0.0% | 100.0% | 0.0% | 0.0% | 0.0% | 100.0% | 0.0% | 0.0% | 0.0% |
+| Chese157 | 0.0% | 30.9% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 100.0% | 100.0% |
 | cxprss | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% |
 | bookeraswanrobinsonswanson | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% |
-| gabrielsanchez19 | 25.4% | 39.1% | 100.0% | 0.0% | 0.0% | 0.0% | 100.0% | 0.0% | 0.0% | 0.0% |
-| Jan-E-Ramos | 34.2% | 0.0% | 89.7% | 0.0% | 0.0% | 0.0% | 100.0% | 0.0% | 0.0% | 0.0% |
-| RicardoBurgoss | 0.0% | 0.0% | 100.0% | 0.0% | 0.0% | 0.0% | 100.0% | 0.0% | 0.0% | 0.0% |
-| mercedrivera | 0.0% | 0.0% | 0.0% | 100.0% | 0.0% | 18.0% | 83.4% | 0.0% | 28.4% | 0.0% |
+| gabrielsanchez19 | 0.0% | 25.4% | 39.1% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 100.0% | 100.0% |
+| Jan-E-Ramos | 0.0% | 34.2% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 89.7% | 100.0% |
+| RicardoBurgoss | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 100.0% | 100.0% |
+| mercedrivera | 0.0% | 0.0% | 0.0% | 28.4% | 100.0% | 18.0% | 0.0% | 0.0% | 0.0% | 83.4% |
 | AMGP-eng | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% |
-| TapeByChris | 0.0% | 0.0% | 100.0% | 0.0% | 0.0% | 0.0% | 100.0% | 0.0% | 0.0% | 0.0% |
-| Andrews247 | 38.1% | 0.0% | 0.0% | 100.0% | 61.9% | 0.0% | 38.1% | 0.0% | 0.0% | 0.0% |
-| EdgarColonSanchez | 0.0% | 86.5% | 0.0% | 0.0% | 0.0% | 0.0% | 100.0% | 100.0% | 0.0% | 0.0% |
-| DarkJusticiars | 21.2% | 0.0% | 0.0% | 95.7% | 34.8% | 0.0% | 65.2% | 0.0% | 21.2% | 4.3% |
-| KarilysMuniz | 12.8% | 0.0% | 0.0% | 100.0% | 57.2% | 0.0% | 42.8% | 0.0% | 28.6% | 28.6% |
-| HectorJVale | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 100.0% | 100.0% | 0.0% | 0.0% |
-| VazquezManuel1 | 0.0% | 0.0% | 100.0% | 0.0% | 0.0% | 0.0% | 100.0% | 0.0% | 0.0% | 0.0% |
-| Formulawastaken | 2.7% | 0.0% | 100.0% | 0.0% | 13.2% | 0.0% | 86.8% | 0.0% | 0.0% | 12.3% |
-| dalianaOrtiz | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 100.0% | 100.0% | 0.0% | 0.0% |
-| klrskevin1726 | 31.4% | 0.0% | 100.0% | 0.0% | 0.0% | 0.0% | 100.0% | 0.0% | 0.0% | 0.0% |
-| RomorPR | 0.0% | 0.0% | 100.0% | 0.0% | 0.0% | 0.0% | 100.0% | 0.0% | 0.0% | 0.0% |
-| Joy-Martinez | 43.3% | 0.0% | 100.0% | 0.0% | 0.0% | 0.0% | 100.0% | 0.0% | 0.0% | 0.0% |
-| nathaliecstro | 100.0% | 0.0% | 0.0% | 100.0% | 0.0% | 0.0% | 55.6% | 0.0% | 0.0% | 0.0% |
-| Carlosirod | 0.0% | 0.0% | 92.5% | 0.0% | 0.0% | 0.0% | 100.0% | 0.0% | 0.0% | 7.5% |
-| alondrasf | 0.0% | 0.0% | 0.0% | 28.5% | 0.0% | 0.0% | 100.0% | 0.0% | 0.0% | 74.2% |
-| luisitOO00 | 55.7% | 0.0% | 0.0% | 0.0% | 55.7% | 0.0% | 44.3% | 90.7% | 0.0% | 9.3% |
-| julianlaracuente | 21.0% | 0.0% | 0.0% | 79.0% | 0.0% | 0.0% | 79.0% | 0.0% | 0.0% | 21.0% |
-| Victor1514-soft | 37.2% | 28.9% | 0.0% | 0.0% | 13.1% | 0.0% | 58.0% | 65.0% | 0.0% | 19.2% |
-| CarlosNegron-prog | 21.5% | 0.0% | 0.0% | 100.0% | 0.0% | 0.0% | 46.1% | 0.0% | 0.0% | 0.0% |
-| ZabdielValentin | 8.2% | 0.0% | 0.0% | 100.0% | 13.8% | 0.0% | 78.0% | 0.0% | 0.0% | 0.0% |
-| robertofuertes | 31.5% | 0.0% | 0.0% | 100.0% | 0.0% | 0.0% | 100.0% | 0.0% | 0.0% | 0.0% |
+| TapeByChris | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 100.0% | 100.0% |
+| Andrews247 | 0.0% | 38.1% | 0.0% | 0.0% | 100.0% | 0.0% | 61.9% | 0.0% | 0.0% | 38.1% |
+| EdgarColonSanchez | 0.0% | 0.0% | 86.5% | 0.0% | 0.0% | 0.0% | 0.0% | 100.0% | 0.0% | 100.0% |
+| DarkJusticiars | 4.3% | 21.2% | 0.0% | 21.2% | 95.7% | 0.0% | 34.8% | 0.0% | 0.0% | 65.2% |
+| KarilysMuniz | 28.6% | 12.8% | 0.0% | 28.6% | 100.0% | 0.0% | 57.2% | 0.0% | 0.0% | 42.8% |
+| HectorJVale | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 100.0% | 0.0% | 100.0% |
+| VazquezManuel1 | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 100.0% | 100.0% |
+| Formulawastaken | 12.3% | 2.7% | 0.0% | 0.0% | 0.0% | 0.0% | 13.2% | 0.0% | 100.0% | 86.8% |
+| dalianaOrtiz | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 100.0% | 0.0% | 100.0% |
+| klrskevin1726 | 0.0% | 31.4% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 100.0% | 100.0% |
+| RomorPR | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 100.0% | 100.0% |
+| Joy-Martinez | 0.0% | 43.3% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 100.0% | 100.0% |
+| nathaliecstro | 0.0% | 100.0% | 0.0% | 0.0% | 100.0% | 0.0% | 0.0% | 0.0% | 0.0% | 55.6% |
+| Carlosirod | 7.5% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 92.5% | 100.0% |
+| alondrasf | 74.2% | 0.0% | 0.0% | 0.0% | 28.5% | 0.0% | 0.0% | 0.0% | 0.0% | 100.0% |
+| luisitOO00 | 9.3% | 55.7% | 0.0% | 0.0% | 0.0% | 0.0% | 55.7% | 90.7% | 0.0% | 44.3% |
+| julianlaracuente | 21.0% | 21.0% | 0.0% | 0.0% | 79.0% | 0.0% | 0.0% | 0.0% | 0.0% | 79.0% |
+| Victor1514-soft | 19.2% | 37.2% | 28.9% | 0.0% | 0.0% | 0.0% | 13.1% | 65.0% | 0.0% | 58.0% |
+| CarlosNegron-prog | 0.0% | 21.5% | 0.0% | 0.0% | 100.0% | 0.0% | 0.0% | 0.0% | 0.0% | 46.1% |
+| ZabdielValentin | 0.0% | 8.2% | 0.0% | 0.0% | 100.0% | 0.0% | 13.8% | 0.0% | 0.0% | 78.0% |
+| robertofuertes | 0.0% | 31.5% | 0.0% | 0.0% | 100.0% | 0.0% | 0.0% | 0.0% | 0.0% | 100.0% |
 | sergiocartagena22 | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% |
-| JavierAguilo090 | 40.6% | 59.4% | 0.0% | 0.0% | 0.0% | 0.0% | 100.0% | 100.0% | 0.0% | 0.0% |
+| JavierAguilo090 | 0.0% | 40.6% | 59.4% | 0.0% | 0.0% | 0.0% | 0.0% | 100.0% | 0.0% | 100.0% |
 | andressroldann | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% |
-| jordandeleon105 | 0.0% | 0.0% | 100.0% | 0.0% | 0.0% | 0.0% | 100.0% | 0.0% | 0.0% | 0.0% |
-| williamcolon58 | 36.1% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 100.0% | 90.6% | 0.0% | 9.4% |
-| Yahirjrp | 34.6% | 0.0% | 0.0% | 100.0% | 4.6% | 0.0% | 83.8% | 0.0% | 0.0% | 0.0% |
+| jordandeleon105 | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 100.0% | 100.0% |
+| williamcolon58 | 9.4% | 36.1% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 90.6% | 0.0% | 100.0% |
+| Yahirjrp | 0.0% | 34.6% | 0.0% | 0.0% | 100.0% | 0.0% | 4.6% | 0.0% | 0.0% | 83.8% |
 | Jaiden-Roman | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% |
-| ReynaldoFalcon | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 100.0% | 100.0% | 0.0% | 0.0% |
+| ReynaldoFalcon | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 100.0% | 0.0% | 100.0% |
 # Metrics Generation Logs
 
 | Message |
